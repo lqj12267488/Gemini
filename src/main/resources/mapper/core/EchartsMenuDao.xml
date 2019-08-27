@@ -1,0 +1,914 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.EchartsMenuDao">
+    <select id="getrsglEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+    select * from
+    (select sum(case when sex = '1' then 1 else 0 end) || ',' ||
+        sum(case when sex = '2' then 1 else 0 end) as sex from T_RS_EMPLOYEE) m,
+    (select
+        count(t.age) || ',' ||
+        count(case
+           when t.age between 20 and 30 then
+             '20-30'
+             end
+        ) || ',' ||
+        count(case
+           when t.age between 31 and 40 then
+             '31-40'
+             end
+        ) || ',' ||
+        count(case
+           when t.age between 41 and 50 then
+             '41-50'
+             end
+        ) || ',' ||
+        count(case
+           when t.age >50 then
+             '>50'
+             end
+        ) as age
+    from
+    (select trunc((sysdate-birthday)/365,0) as age from T_RS_EMPLOYEE where birthday is not null) t) n,
+    (select wmsys.wm_concat(x.dic_name) as jzgzt from (select t.dic_name from T_SYS_DIC t where t.parent_id = (select t.id from T_SYS_DIC t where t.dic_code = 'JZGZT')) x) y,
+    (select
+        sum(case when  n.staff_status= '200' then 1 else 0 end) || ',' ||
+        sum(case when  n.staff_status= '201' then 1 else 0 end) || ',' ||
+        sum(case when  n.staff_status= '202' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '203' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '204' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '205' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '206' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '207' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '208' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '209' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '210' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '211' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '299' then 1 else 0 end) || ',' ||
+        sum(case when n.staff_status = '100' then 1 else 0 end)
+        as jzgztstatus from
+    (select t.staff_status from T_RS_EMPLOYEE t where t.staff_status is not null) n) z,
+    (select wmsys.wm_concat(o.sex) as deptsex from (select
+        i.deptdata || ',' || sum(case when i.sex = '1' then 1 else 0 end) || ',' ||
+        sum(case when i.sex = '2' then 1 else 0 end) as sex
+         from (select u.dept_name as deptdata,s.sex from T_RS_EMPLOYEE_DEPT t,T_RS_EMPLOYEE s,T_SYS_DEPT u
+        where t.person_id = s.person_id and u.dept_id = t.dept_id and s.sex is not null) i group by i.deptdata) o) p
+    </select>
+    <select id="getxtbgEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+        select * from
+            (select wmsys.wm_concat(a.notice) as notice from
+                 (select d.dept_name || ',' || sum(case when t.type = '1' then 1 else 0 end) || ',' ||
+                sum(case when t.type = '2' then 1 else 0 end) as notice from
+                T_SYS_NOTICE t,T_SYS_DEPT d where t.dept_id = d.dept_id group by d.dept_name) a) aa,
+            (select wmsys.wm_concat(w.noticetype) as oldnotice from
+                (select s.olddate || ',' || sum(case when s.type = '1' then 1 else 0 end) || ',' ||
+                sum(case when s.type = '2' then 1 else 0 end) as noticetype
+                from (select
+                substr(to_char(t.public_time,'YYYY-MM-DD'),1,7) as olddate,t.type
+                from T_SYS_NOTICE t where t.public_time is not null) s group by s.olddate) w) bb
+    </select>
+    <select id="getjwglEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+         select * from
+            (select wmsys.wm_concat(h.dic_name || ',' || sum(m.total_hours)) as zycourse from
+                (select t.major_direction,r.total_hours
+                from T_XG_MAJOR t,T_JW_COURSE s,T_JW_COURSEPLAN_DETAILS r
+                 where t.major_code = s.major_code and r.course_id = s.course_id) m,
+                 (select t.dic_name,t.dic_code from T_SYS_DIC t where
+                  t.parent_id = (select id from T_SYS_DIC  where dic_code = 'ZXZYFX')) h
+                  where m.major_direction = h.dic_code group by h.dic_name) aa,
+            (select wmsys.wm_concat(gg.dic_name || ',' || hh.dic_num) as scresult from
+            (select t.dic_name,t.dic_code from T_SYS_DIC t where
+            t.parent_id = (select id from T_SYS_DIC where dic_code = 'CGLX')order by t.dic_code) gg,
+            (select
+            substr(h.scresult,1,instr(h.scresult,',')-1) as dic_code,
+            substr(h.scresult,instr(h.scresult,',')+1) as dic_num
+            from
+            (
+            with t1 as
+            (
+            select mm.scresult scresult from (select
+            a.ax || '|' ||b.bx || '|' ||c.cx || '|' ||d.dx || '|' ||e.ex || '|' ||f.fx || '|' ||g.gx || '|' ||h.hx || '|' ||i.ix
+            as scresult
+            from
+            (select result_type || ',' || count(id) as ax from
+            T_JW_TEACHINGRESULT_PROJECT group by result_type) a,
+            (select result_type || ',' || count(id) as bx from
+            T_JW_TEACHINGRESULT_STANDARD group by result_type) b,
+            (select result_type || ',' || count(id) as cx from
+            T_JW_TEACHINGRESULT_MEDICINE group by result_type) c,
+            (select result_type || ',' || count(id) as dx from
+            T_JW_TEACHINGRESULT_PAPER group by result_type) d,
+            (select result_type || ',' || count(id) as ex from
+            T_JW_TEACHINGRESULT_ART group by result_type) e,
+            (select result_type || ',' || count(id) as fx from
+            T_JW_TEACHINGRESULT_GUIDE group by result_type) f,
+            (select result_type || ',' || count(id) as gx from
+            T_JW_TEACHINGRESULT_WRITING group by result_type) g,
+            (select result_type || ',' || count(id) as hx from
+            T_JW_TEACHINGRESULT_PATENT group by result_type) h,
+            (select result_type || ',' || count(id) as ix from
+            T_JW_TEACHINGRESULT_REPORT group by result_type) i ) mm
+            )
+            select distinct regexp_substr(scresult, '[^|]+',1,level) scresult
+            from t1
+            connect by level &lt;= length(scresult) - length(replace(scresult,'|','')) + 1
+            order by scresult
+            ) h
+            ) hh
+            where gg.dic_code = hh.dic_code
+            ) bb
+    </select>
+    <select id="getxsgzEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+        SELECT * FROM
+            (SELECT wmsys.wm_concat(s.schoolCount) AS schoolCount
+                FROM(SELECT FUNC_GET_DEPTNAME(c.departments_id)||','||COUNT (s.student_id) AS schoolCount
+                    FROM T_XG_STUDENT s,T_XG_STUDENT_CLASS sc,T_XG_CLASS c
+                    WHERE s.student_id=sc.student_id AND sc.class_id=c.class_id
+                    GROUP BY c.departments_id
+                    ORDER BY c.departments_id) s),
+            (SELECT wmsys.wm_concat(t.sexCount) AS sexCount
+                FROM (SELECT FUNC_GET_DEPTNAME(xc.departments_id)||','||
+                        SUM(CASE WHEN xs.sex = '1' THEN 1 ELSE 0 END)||','||
+                        SUM(CASE WHEN xs.sex = '2' THEN 1 ELSE 0 END) AS sexCount
+                    FROM T_XG_STUDENT xs,T_XG_STUDENT_CLASS xsc,T_XG_CLASS xc
+                    WHERE xs.student_id=xsc.student_id AND xsc.class_id=xc.class_id
+                    GROUP BY xc.departments_id
+                    ORDER BY xc.departments_id) t),
+            (SELECT wmsys.wm_concat(nn.nationCount) AS nationCount
+                FROM (select count(ss.student_id)||','||d.dic_name as nationCount
+                    FROM (select dic_code,dic_name
+                           FROM T_SYS_DIC where parent_id in (select id from T_SYS_DIC WHERE dic_code='MZ')) d
+                    right JOIN (select s.student_id,s.nation FROM T_XG_STUDENT s,T_XG_STUDENT_CLASS sc,T_XG_CLASS c
+                        WHERE s.student_id=sc.student_id AND sc.class_id=c.class_id and s.nation IS NOT NULL) ss
+                    on d.dic_code=ss.nation
+                    GROUP BY d.dic_code,d.dic_name
+                    ORDER by d.dic_code) nn ),
+            (select wmsys.wm_concat(q.nnum) as sxjy from
+                (select t.dept_name || ',' ||count(s.student_id) || ',' ||
+                count(u.student_id) as nnum
+                 from T_SYS_DEPT t
+                 left join
+                T_XG_INTERNSHIP_STUDENT s
+                on s.departments_id = t.dept_id
+                left join
+                T_XG_EMPLOYMENT_STUDENT u
+                on u.departments_id = t.dept_id
+                where t.dept_type = 8
+                group by t.dept_name) q) bb，
+            (SELECT wmsys.wm_concat(z.zzmmCount) AS zzmmCount
+                FROM (select count(ss.student_id)||','||d.dic_name as zzmmCount
+                    FROM (select dic_code,dic_name
+                        FROM T_SYS_DIC where parent_id in (select id from T_SYS_DIC WHERE dic_code='ZZMM')) d
+                    RIGHT JOIN (select s.student_id,s.POLITICAL_STATUS FROM T_XG_STUDENT s,T_XG_STUDENT_CLASS sc,T_XG_CLASS c
+                        WHERE s.student_id=sc.student_id AND sc.class_id=c.class_id AND s.POLITICAL_STATUS IS NOT NULL) ss
+                    ON d.dic_code=ss.POLITICAL_STATUS
+                    GROUP BY d.dic_code,d.dic_name
+                    ORDER by d.dic_code) z)
+    </select>
+    <select id="getCountDeptMajorEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+        SELECT *
+        FROM (SELECT wmsys.wm_concat(zoneCount) AS zoneCount
+                FROM(SELECT count(s.student_id)||','||FUNC_GET_DEPTNAME(c.departments_id) AS zoneCount
+                    FROM T_XG_STUDENT s,T_XG_STUDENT_CLASS sc,T_XG_CLASS c
+                    WHERE s.student_id=sc.student_id AND sc.class_id=c.class_id
+                    GROUP BY c.departments_id
+                    ORDER BY c.departments_id)),
+            (SELECT wmsys.wm_concat(majorCount) AS majorCount
+                FROM(SELECT count(x.student_id)||','||FUNC_GET_TABLEVALUE(g.major_code,'T_XG_MAJOR','MAJOR_CODE','MAJOR_NAME') AS majorCount
+                    FROM (SELECT major_code,departments_id from T_XG_MAJOR) g
+                    RIGHT JOIN (SELECT s.student_id,c.major_code FROM T_XG_STUDENT s,T_XG_STUDENT_CLASS sc,T_XG_CLASS c
+                        WHERE s.student_id=sc.student_id AND sc.class_id=c.class_id) x
+                    ON x.major_code=g.major_code
+                    GROUP BY g.departments_id,g.major_code
+                    ORDER BY g.departments_id,g.major_code))
+    </select>
+    <select id="getkhglEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+         select * from
+            (select wmsys.wm_concat(oo.nnum) as alltask from
+                (select nn.adate || ',' ||
+                (case when to_char(ll.nnum0) is null then '0' else to_char
+                (ll.nnum0) end) || ',' ||
+                (case when to_char(yy.nnum1) is null then '0' else to_char
+                (yy.nnum1) end) || ',' ||
+                (case when to_char(uu.nnum2) is null then '0' else to_char
+                (uu.nnum2) end) || ',' ||
+                (case when to_char(ii.nnum3) is null then '0' else to_char
+                (ii.nnum3) end) as nnum
+                from
+                (with t1 as
+                (
+                select h.ddate adate from
+                (select s.ddate || '01,'
+                || s.ddate || '02,' || s.ddate || '03,' || s.ddate || '04,'
+                || s.ddate || '05,' || s.ddate || '06,' || s.ddate || '07,'
+                || s.ddate || '08,' || s.ddate || '09,' || s.ddate || '10,'
+                || s.ddate || '11,' || s.ddate || '12'
+                as ddate from
+                (select to_char(sysdate,'YYYY-') as ddate from dual) s) h
+                )
+
+                select distinct regexp_substr(adate, '[^,]+',1,level) adate
+                from t1
+                connect by level &lt;= length(adate) - length(replace(adate,',','')) + 1
+                order by adate) nn
+                left join
+                (select s.ddate,sum(s.nnum) as nnum0 from
+                (select to_char(t.start_time,'YYYY-MM') as ddate, count(t.task_id) as nnum from T_KH_EVALUATION_TASK t
+                where t.task_type = 0
+                group by t.start_time
+                order by t.start_time) s
+                group by s.ddate
+                order by s.ddate) ll
+                on nn.adate = ll.ddate
+                left join
+                (select s.ddate,sum(s.nnum) as nnum1 from
+                (select to_char(t.start_time,'YYYY-MM') as ddate, count(t.task_id) as nnum from T_KH_EVALUATION_TASK t
+                where t.task_type = 1
+                group by t.start_time
+                order by t.start_time) s
+                group by s.ddate
+                order by s.ddate) yy
+                on nn.adate = yy.ddate
+                left join
+                (select s.ddate,sum(s.nnum) as nnum2 from
+                (select to_char(t.start_time,'YYYY-MM') as ddate, count(t.task_id) as nnum from T_KH_EVALUATION_TASK t
+                where t.task_type = 2
+                group by t.start_time
+                order by t.start_time) s
+                group by s.ddate
+                order by s.ddate) uu
+                on nn.adate = uu.ddate
+                left join
+                (select s.ddate,sum(s.nnum) as nnum3 from
+                (select to_char(t.start_time,'YYYY-MM') as ddate, count(t.task_id) as nnum from T_KH_EVALUATION_TASK t
+                where t.task_type = 3
+                group by t.start_time
+                order by t.start_time) s
+                group by s.ddate
+                order by s.ddate) ii
+                on nn.adate = ii.ddate
+                order by nn.adate) oo) aa,
+            (select wmsys.wm_concat(h.dic_name) as taskname from
+                (select t.dic_name from T_SYS_DIC t
+                where t.parent_id = (select id from T_SYS_DIC where dic_code = 'JSPJRWLX')
+                order by t.dic_code) h) bb,
+            (select wmsys.wm_concat(ee.score) as score from
+                (select ff.score || ',' ||
+                (case when to_char(gg.nnum) is null then '0' else to_char
+                (gg.nnum) end) || ',' ||
+                (case when to_char(jj.nnum) is null then '0' else to_char
+                (jj.nnum) end) as score
+                from
+                (select h.score from
+                (with t1 as
+                (
+                select t.score score from
+                (select '100,90,80,70,60,10' as score from dual) t
+                )
+
+                select distinct to_number(regexp_substr(score, '[^,]+',1,level)) score
+                from t1
+                connect by level &lt;= length(score) - length(replace(score,',','')) + 1
+                order by score desc) h) ff
+                left join
+                (select
+                (case when t.score = 100 then 100 else
+                case when t.score >=90 and t.score &lt; 100 then 90 else
+                case when t.score >=80 and t.score &lt;90 then 80 else
+                case when t.score >=70 and t.score &lt;80 then 70 else
+                case when t.score >=60 and t.score &lt;70 then 60 else
+                10
+                end end end end end) as score,
+                count(t.score) as nnum
+                from T_KH_EVALUATION_COMPLEX_TASK t
+                where t.test_flag = 1 and t.evaluation_type = 1
+                group by t.score
+                order by t.score desc) gg
+                on ff.score = gg.score
+                left join
+                (select
+                (case when t.score = 100 then 100 else
+                case when t.score >=90 and t.score &lt; 100 then 90 else
+                case when t.score >=80 and t.score &lt;90 then 80 else
+                case when t.score >=70 and t.score &lt;80 then 70 else
+                case when t.score >=60 and t.score &lt;70 then 60 else
+                10
+                end end end end end) as score,
+                count(t.score) as nnum
+                from T_KH_EVALUATION_COMPLEX_TASK t
+                where t.test_flag = 1 and t.evaluation_type = 0
+                group by t.score
+                order by t.score desc) jj
+                on ff.score = jj.score
+                order by ff.score desc) ee) cc
+    </select>
+    <select id="getzwglEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+        select * FROM
+            (select wmsys.wm_concat(n.assets) as assets from
+                (select
+                t.dic_name || ',' || sum(s.assets_num_all) as assets from T_SYS_USERDIC t,T_ZW_ASSETS s
+                 where t.dic_type = 'XCLB' and t.dic_code = s.assets_type
+                 group by t.dic_name) n) aa,
+            (select wmsys.wm_concat(h.nnum) as assetsstatus from
+                (select n.dic_name || ',' || sum(n.nnum) as nnum from
+                (select t.dic_name,t.dic_code,(case when m.nnum is null then 0 else m.nnum end) as nnum
+                from T_SYS_DIC t
+                left join
+                (select assets_num as nnum,status from T_ZW_ASSETS_DETAILS) m
+                on m.status = t.dic_code
+                where t.parent_id =
+                (select id from T_SYS_DIC where dic_code = 'XCZT')) n
+                group by n.dic_name) h) bb,
+            (select wmsys.wm_concat(m.repairs) as repairs from
+                (select t.dept_name || ',' || count(s.repair_id) as repairs from T_SYS_DEPT t,T_ZW_REPAIR s
+                where s.dept = t.dept_id
+                group by t.dept_name) m) cc
+    </select>
+    <select id="getdtglEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+        select * FROM
+            (select wmsys.wm_concat(b.party) party from
+                (select n.party from
+                (select h.dic_code,h.dic_name || ',' || count(m.member_roles) as party from
+                (select t.dic_name,t.dic_code from T_SYS_DIC t
+                where t.parent_id = (select id from T_SYS_DIC where dic_code = 'DYJS')) h
+                left join
+                (select * from T_DT_PARTYMEMBERS where person_type = 0) m
+                on h.dic_code = m.member_roles
+                group by h.dic_name,h.dic_code) n
+                order by n.dic_code) b) aa,
+            (select wmsys.wm_concat(hh.nnum) as partydept from
+                (select h.dept_name || ',' || (case when j.nnum is null then 0 else j.nnum end) as nnum from
+                (select t.dept_name,t.dept_id from T_SYS_DEPT t where t.parent_dept_id = 001) h
+                left join
+                (select dept_id,count(person_id) as nnum from
+                T_DT_PARTYMEMBERS where member_roles = 4 group by dept_id) j
+                on h.dept_id = j.dept_id) hh) bb
+    </select>
+    <select id="getjsgrkjEcharts" parameterType="java.lang.String" resultType="com.goisan.system.bean.EchartsMenu">
+        select wmsys.wm_concat(vv.jsinfo) as jsinfo from
+            (select kk.mmonth || ',' ||
+            (case when m.jsinfo is null then '0,0,0' else m.jsinfo end) as jsinfo from
+            (select hhh.mmonth,hhh.nnum from
+            (select hh.mmonth,to_number(replace(hh.mmonth,'月','')) as nnum from
+            (select h.* from
+            (with t1 as
+            (
+            select t.mmonth mmonth from (select '1月|2月|3月|4月|5月|6月|7月|8月|9月|10月|11月|12月' as mmonth from dual) t
+            )
+            select distinct regexp_substr(mmonth, '[^|]+',1,level) mmonth
+            from t1
+            connect by level &lt;= length(mmonth) - length(replace(mmonth,'|','')) + 1
+            order by mmonth) h) hh) hhh order by hhh.nnum) kk
+            left join
+            (select t.year|| ',' || t.basic_frequency || ',' ||t.no_sign_in_frequency
+            as jsinfo,t.month || '月' as nnum
+            from T_KQ_INFO t where t.creator = #{person} and t.valid_flag = '1' and
+            (select to_char(sysdate,'yyyy') from dual) = (select distinct year from T_KQ_INFO)) m
+            on m.nnum = kk.mmonth
+            order by kk.nnum) vv
+    </select>
+    <select id="getzykEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+        SELECT *
+        FROM
+        (SELECT count(CASE
+        WHEN RESOURCE_TYPE = '1'
+        THEN
+        '课件'
+        END
+        ) || ',' ||
+        count(CASE
+        WHEN RESOURCE_TYPE = '2'
+        THEN
+        '新闻'
+        END
+        ) || ',' ||
+        count(CASE
+        WHEN RESOURCE_TYPE = '3'
+        THEN
+        '教案'
+        END
+        ) || ',' ||
+        count(CASE
+        WHEN RESOURCE_TYPE = '4'
+        THEN
+        '素材'
+        END
+        ) || ',' ||
+        count(CASE
+        WHEN RESOURCE_TYPE = '5'
+        THEN
+        '习题'
+        END
+        ) || ',' ||
+        count(CASE
+        WHEN RESOURCE_TYPE = '6'
+        THEN
+        '学案'
+        END
+        ) || ',' ||
+        count(CASE
+        WHEN RESOURCE_TYPE = '7'
+        THEN
+        '档案'
+        END
+        ) || ',' ||
+        count(CASE
+        WHEN RESOURCE_TYPE = '8'
+        THEN
+        '微课'
+        END
+        ) || ',' ||
+        count(CASE
+        WHEN RESOURCE_TYPE = '99'
+        THEN
+        '其它'
+        END
+        ) AS countType
+        FROM zyk_resource_public) n,
+        (SELECT sum(CASE
+        WHEN RESOURCE_TYPE = '1'
+        THEN
+        1
+        ELSE
+        0
+        END) || ',' || sum(CASE
+        WHEN RESOURCE_TYPE = '2'
+        THEN
+        1
+        ELSE
+        0
+        END) || ',' ||
+        sum(CASE
+        WHEN RESOURCE_TYPE = '3'
+        THEN
+        1
+        ELSE
+        0
+        END) AS countView
+        FROM ZYK_RESOURCE_PUBLIC) y, (SELECT wm_concat(countSubject) AS countSubject
+        FROM (SELECT s.resource_subject_name || ',' ||
+        count(p.RESOURCE_SUBJECT_ID) countSubject
+        FROM zyk_resource_public p, zyk_type_subject s
+        WHERE s.resource_subject_id = p.resource_subject_id
+        GROUP BY p.RESOURCE_SUBJECT_ID, s.resource_subject_name)) z
+    </select>
+    <select id="getSxrsEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+        SELECT  countView , studentCOUNT - countView AS countType
+            FROM ( SELECT COUNT(es.student_id) AS countView from T_XG_EMPLOYMENT_STUDENT es)  ,
+                 ( SELECT COUNT(s.student_id) as studentCOUNT from T_XG_STUDENT s WHERE s.student_status = '6')
+    </select>
+    <select id="getSxlEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+        SELECT t.year AS countSubject,t.aa - DECODE(es.bb,'',0,es.bb ) AS countView ,DECODE(es.bb,'',0,es.bb ) AS countDownload
+            FROM (
+               SELECT year,count(year) AS aa FROM
+               ( SELECT  to_char(change_time,'YYYY') AS year FROM  T_XG_STUDENT
+                         WHERE student_status = '6'
+               ) group by year  ) t,
+               (
+                   SELECT year,count(year) AS bb FROM
+                   (
+                    SELECT  to_char(s.change_time,'YYYY') as year
+                        FROM  T_XG_EMPLOYMENT_STUDENT e , T_XG_STUDENT s WHERE e.student_id = s.student_id
+                   ) GROUP BY year
+               ) es
+        WHERE t.year = es.year(+)
+    </select>
+    <select id="getAchievementEcharts" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT wmsys.wm_concat(ee.score) as score
+        FROM (
+            SELECT ff.score || '@' || (case when to_char(gg.nnum) is null then '0' else to_char(gg.nnum) end) as score
+            FROM (
+                SELECT h.score
+                FROM (with t1 as (select t.score score
+                FROM (SELECT '90,80,70,60,10' as score FROM dual) t)
+                SELECT distinct to_number(regexp_substr(score,'[^,]+',1,level)) score
+                FROM t1
+                connect by level &lt;= length(score) - length(replace(score, ',', '')) + 1
+                order by score desc) h
+            ) ff
+            left join (
+                SELECT score, count(t.score) as nnum
+                FROM (
+                    SELECT
+                        (   case  when SI.score >= 90 and SI.score &lt;= 100 then  90
+                              else
+                                case  when SI.score >= 80 and SI.score &lt; 90 then 80
+                                  else
+                                    case when SI.score >= 70 and SI.score &lt; 80 then  70
+                                      else
+                                        case when SI.score >= 60 and SI.score &lt; 70 then  60
+                                          else 10
+                                        end
+                                    end
+                                end
+                            end
+                        ) as score
+                    FROM    T_JW_SCORE_IMPORT              SI,
+                            T_JW_ARRAYCLASS_RESULT_CLASS   RC,
+                            T_JW_ARRAYCLASS_TEACHER_COURSE TC
+                        WHERE RC.DEPARTMENTS_ID = SI.DEPARTMENTS_ID
+                            AND RC.MAJOR_CODE = SI.MAJOR_CODE
+                            AND RC.TRAINING_LEVEL = SI.TRAINING_LEVEL
+                            AND RC.DEPARTMENTS_ID = TC.DEPARTMENTS_ID
+                            AND RC.MAJOR_CODE = TC.MAJOR_CODE
+                            AND RC.COURSE_ID = TC.COURSE_ID
+                            AND SI.COURSE_ID = TC.COURSE_ID
+                            AND RC.TRAINING_LEVEL = TC.TRAINING_LEVEL
+                            AND RC.TEACHER_PERSON_ID = TC.TEACHER_PERSON_ID
+                            <if test="id != null and id != '' ">
+                                AND RC.TEACHER_PERSON_ID = '${id}'
+                            </if>
+                            <if test="couseId != null and couseId != '' ">
+                                AND SI.COURSE_ID = '${couseId}'
+                            </if>
+                            <if test="classId != null and classId != '' ">
+                                AND SI.class_id = '${classId}'
+                            </if>
+                            AND SI.SCORE_EXAM_ID in
+                                (select e.score_exam_id  from T_JW_SCORE_EXAM e
+                                where term = (select max(term) from T_JW_SCORE_EXAM))
+                ) t
+                    group by t.score
+            ) gg
+            on ff.score = gg.score
+            order by gg.score desc
+        ) ee
+    </select>
+    <select id="getEChartSel" resultType="com.goisan.system.bean.Select2" >
+        SELECT
+            FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') || '(' ||
+                FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')|| ') -- ' ||
+                FUNC_GET_TABLEVALUE(COURSE_ID,'T_JW_COURSE','COURSE_ID','COURSE_NAME')  as text,
+            class_id  || ',' || COURSE_ID as id
+        from (
+            SELECT  si.major_code ,si.major_direction,si.training_level,si.class_id  ,si.COURSE_ID
+              FROM
+                    T_JW_SCORE_IMPORT              SI,
+                    T_JW_ARRAYCLASS_RESULT_CLASS   RC,
+                    T_JW_ARRAYCLASS_TEACHER_COURSE TC
+            where RC.DEPARTMENTS_ID = SI.DEPARTMENTS_ID
+            AND RC.MAJOR_CODE = SI.MAJOR_CODE
+            AND RC.TRAINING_LEVEL = SI.TRAINING_LEVEL
+            AND RC.DEPARTMENTS_ID = TC.DEPARTMENTS_ID
+            AND RC.MAJOR_CODE = TC.MAJOR_CODE
+            AND RC.COURSE_ID = TC.COURSE_ID
+            AND SI.COURSE_ID = TC.COURSE_ID
+            AND RC.TRAINING_LEVEL = TC.TRAINING_LEVEL
+            AND RC.TEACHER_PERSON_ID = TC.TEACHER_PERSON_ID
+            <if test="id != null and id != '' ">
+                AND RC.TEACHER_PERSON_ID = '${id}'
+            </if>
+            AND SI.SCORE_EXAM_ID in
+                (select e.score_exam_id  from T_JW_SCORE_EXAM e  where term = (select max(term) from T_JW_SCORE_EXAM))
+        )
+        group by major_code ,major_direction,training_level,class_id  ,COURSE_ID
+    </select>
+    <select id="getTaskScore" resultType="com.goisan.system.bean.EchartsMenu"
+            parameterType="java.lang.String">
+        SELECT et.task_name||' ('||to_char(et.start_time,'yyyy-mm-dd')||')' AS taskname,
+                trunc(nvl(eems.avgSCORE,0),2) AS alltask,
+                trunc(nvl(ES.SCORE,0),2) AS score
+            FROM  T_KH_EVALUATION_TASK et ,
+                  (SELECT eem.task_id ,avg(SCORE) AS avgSCORE  FROM T_KH_EVALUATION_EMPS_MEMBERS eem
+                     WHERE eem.valid_flag = '1' AND eem.EVALUATION_FLAG = '1' AND eem.INVALID_FLAG = '0' GROUP BY eem.task_id
+                  ) eems ,
+                  (SELECT T.task_id, avg(SCORE) AS SCORE FROM T_KH_EVALUATION_EMPS_MEMBERS t
+                      WHERE 1 = 1
+                        <if test="id != null and id != '' ">
+                            AND EMP_PERSON_ID = '${id}'
+                        </if>
+                      GROUP BY T.task_id
+                  ) ES
+            WHERE et.valid_flag = '1' AND et.task_id = eems.task_id AND  ES.task_id = eems.task_id AND
+                  et.EMP_GROUP_ID IN (SELECT t.GROUP_ID FROM T_KH_EVALUATION_EMPSLIST t
+                                      WHERE t.valid_flag = '1'
+                                            <if test="id != null and id != '' ">
+                                                AND t.person_id = '${id}'
+                                            </if>
+                                  )
+            ORDER BY et.start_time
+    </select>
+    <select id="getStudentNumber" resultType="com.goisan.system.bean.EchartsMenu"
+            parameterType="java.lang.String">
+        SELECT
+            FUNC_GET_TABLEVALUE(t.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') AS countSubject,
+            sum((SELECT count(c.student_id) FROM T_XG_STUDENT_CLASS c WHERE c.class_id = t.class_id)) AS countView
+        FROM T_XG_CLASS t
+        GROUP BY t.departments_id
+    </select>
+    <select id="getGraduationNumberByYear" resultType="com.goisan.system.bean.EchartsMenu"
+            parameterType="java.lang.String">
+        SELECT
+            r.year AS countView ,
+            r.num AS countType
+            FROM (
+              SELECT year, count(year) AS num
+              FROM (
+                    SELECT to_char(s.change_time, 'YYYY') as year
+                    FROM T_XG_EMPLOYMENT_STUDENT e, T_XG_STUDENT s
+                    WHERE e.student_id = s.student_id
+                    )
+                GROUP BY year
+              ORDER BY year DESC
+            ) r
+        WHERE rownum &lt; 5
+    </select>
+    <select id="getgraduatioByDept" resultType="com.goisan.system.bean.EchartsMenu"
+            parameterType="java.lang.String">
+        SELECT  countView, wmsys.wm_concat(countSubject) countSubject
+        FROM
+        (       SELECT year AS countView,  deptname|| ';' ||count( a2 ) AS countSubject  FROM
+                (
+                    SELECT  es.student_id as a2 , s.year ,FUNC_GET_DEPTNAME(s.departments_id) deptname
+                    FROM
+                         (
+                           SELECT sc.student_id , c.departments_id ,to_char(xs.change_time,'yyyy') as year
+                                  FROM t_Xg_Student xs,  T_XG_CLASS c , t_Xg_Student_Class sc
+                           WHERE c.class_id = sc.class_id and xs.student_id = sc.student_id and xs.student_status = '6'
+                         ) s  ,
+                         T_XG_EMPLOYMENT_STUDENT es
+                    WHERE s.student_id = es.student_id
+                ) t
+                GROUP BY year , deptname
+                ORDER BY year desc , deptname
+        )
+        GROUP BY countView
+        ORDER BY countView
+    </select>
+    <select  id="getTeacherProportion" resultType="com.goisan.system.bean.EchartsMenu">
+        SELECT FUNC_GET_DEPTNAME(DEPARTMENTS_ID) countType ,
+               count(teacher_person_id ) countView
+        FROM (
+            SELECT distinct array.teacher_person_id , array.DEPARTMENTS_ID
+            FROM T_JW_ARRAYCLASS_ARRAY array, t_jw_arrayclass arrClass
+            WHERE  array.arrayclass_id = arrClass.Arrayclass_Id
+                    and arrClass.ARRAYCLASS_FLAG = '1'
+                    and arrClass.term = (select value from T_SYS_PARAMETER where code = 'DQXQ')
+                           )
+        group by DEPARTMENTS_ID
+    </select>
+    <select id="getStudentScore" resultType="com.goisan.system.bean.EchartsMenu" parameterType="java.lang.String">
+        select
+            FUNC_GET_TABLEVALUE(avgscore.COURSE_ID,'T_JW_COURSE','COURSE_ID','COURSE_NAME') as countSubject,
+            trunc(avgscore.score,2) as countType,
+            s.score as countView from
+            (
+                select t.COURSE_ID,avg(t.score) score from T_JW_SCORE_IMPORT t
+                where t.term_id = (select max(term_id)  from T_JW_SCORE_IMPORT i where i.class_id = '${deptId}' )
+                group by t.COURSE_ID
+            ) avgscore ,
+            (
+                select t.COURSE_ID,t.score score from T_JW_SCORE_IMPORT t
+                where t.term_id = (select max(term_id)  from T_JW_SCORE_IMPORT i where i.class_id = '${deptId}' )
+                and t.student_id = '${id}' and t.class_id = '${deptId}'
+            ) s
+        where avgscore.COURSE_ID = s.COURSE_ID
+    </select>
+    <select id="getGraduatingByMajorECharts" resultType="com.goisan.system.bean.EchartsMenu"
+            parameterType="java.lang.String">
+        select  * from (
+            SELECT  t1.countView AS countType, t1.YEAR as countSubject, t2.studentCOUNT AS countView
+            FROM
+            (
+                SELECT COUNT(es.student_id) AS countView , TO_CHAR(S.CHANGE_TIME,'YYYY') AS YEAR
+                from T_XG_EMPLOYMENT_STUDENT es ,T_XG_STUDENT S
+                WHERE ES.STUDENT_ID = S.STUDENT_ID
+                and ES.STUDENT_ID in (
+                    select t2.student_id from T_XG_CLASS t ,  T_XG_STUDENT_CLASS t2
+                    where t.class_id = t2.class_id
+                    and t.major_code = (select c.major_code from T_XG_CLASS c
+                    where c.class_id ='${deptId}')
+                )
+                GROUP BY TO_CHAR(S.CHANGE_TIME,'YYYY')
+            ) t1 ,
+            (
+                SELECT COUNT(s.student_id) as studentCOUNT , TO_CHAR(S.CHANGE_TIME,'YYYY') AS YEAR
+                from T_XG_STUDENT s
+                WHERE s.student_status = '6'
+                and s.STUDENT_ID in (
+                    select t2.student_id from T_XG_CLASS t ,  T_XG_STUDENT_CLASS t2
+                    where t.class_id = t2.class_id
+                    and t.major_code = (select c.major_code from T_XG_CLASS c
+                    where c.class_id ='${deptId}')
+                )
+                GROUP BY TO_CHAR(S.CHANGE_TIME,'YYYY')
+            ) t2
+            where t1.YEAR(+) = t2.YEAR
+            ORDER BY T1.YEAR DESC
+            )
+        where rownum &lt; 6
+        ORDER BY countSubject DESC
+    </select>
+    <select id="getClassAvgScoreECharts" resultType="com.goisan.system.bean.EchartsMenu"
+            parameterType="java.lang.String">
+        SELECT
+            FUNC_GET_TABLEVALUE(s.COURSE_ID,'T_JW_COURSE','COURSE_ID','COURSE_NAME') as countSubject,
+            decode(avgscore.score ,'' , 0 , trunc(avgscore.score, 2))  as countType,
+            decode(s.score ,'' , 0 , trunc(s.score, 2))  as countView
+        FROM
+            (
+                SELECT
+                    t.COURSE_ID,avg(t.score) score
+                FROM T_JW_SCORE_IMPORT t
+                WHERE t.term_id =
+                    (SELECT max(term_id)  FROM T_JW_SCORE_IMPORT i WHERE i.class_id = '${deptId}' )
+                    and t.class_id = '${deptId}'
+                GROUP BY t.COURSE_ID
+            ) s ,
+            (
+                SELECT t.COURSE_ID,avg(t.score) score FROM T_JW_SCORE_IMPORT t
+                WHERE t.term_id =
+                    (SELECT max(term_id)  FROM T_JW_SCORE_IMPORT i WHERE i.class_id = '${deptId}' )
+                    and t.class_id in
+                    (
+                        SELECT t.class_id FROM T_XG_CLASS t
+                        WHERE t.major_code =
+                        (SELECT c.major_code FROM T_XG_CLASS c WHERE c.class_id = '${deptId}')
+                    )
+                and t.class_id &lt;> '${deptId}'
+                GROUP BY t.COURSE_ID
+            ) avgscore
+        WHERE avgscore.COURSE_ID(+) = s.COURSE_ID
+    </select>
+    <select id="getSjydEcharts" resultType="com.goisan.system.bean.EchartsMenu"
+            parameterType="com.goisan.system.bean.EchartsMenu">
+        SELECT count(CASE
+                       WHEN NEW_CONTENT like '%毕业%' THEN
+                        '毕业'
+                     END) || ',' || count(CASE
+                                            WHEN NEW_CONTENT like '%退学%' THEN
+                                             '退学'
+                                          END) || ',' ||
+               count(CASE
+                       WHEN NEW_CONTENT like '%转学%' THEN
+                        '转学'
+                     END) || ',' || count(CASE
+                                            WHEN NEW_CONTENT like '%休学%' THEN
+                                             '休学'
+                                          END) || ',' ||
+               count(CASE
+                       WHEN NEW_CONTENT like '%在籍%' THEN
+                        '在籍'
+                     END) || ',' ||
+               count(CASE
+                       WHEN (NEW_CONTENT NOT like '%毕业%' and  NEW_CONTENT NOT like '%退学%' and  NEW_CONTENT NOT like  '%转学%' and  NEW_CONTENT NOT like ' %休学%' and  NEW_CONTENT NOT like '%在籍%')  THEN
+                        '其它'
+                     END) AS newContent
+          FROM (select s.class_id,s.major_code,x.student_id,t.new_content
+          FROM T_XG_STUDENT_CHANGE_LOG t,t_xg_class s,t_xg_student_class x
+           where s.class_id=x.class_id and t.student_id=x.student_id
+            <if test="departmentsId != null and departmentsId != '' ">
+                AND s.departments_id = #{departmentsId}
+            </if>
+            <if test="classId != null and classId != '' ">
+                AND x.class_id = #{classId}
+            </if>
+            <if test="majorCode != null and majorCode != '' ">
+                AND s.major_code like '%'||#{majorCode}||'%'
+            </if>)
+    </select>
+    <select id="getxjydByYearEcharts" parameterType="com.goisan.system.bean.EchartsMenu"
+            resultType="com.goisan.system.bean.EchartsMenu">
+        select years,count(CASE
+        WHEN s.newContent like '%毕业%' THEN
+        '毕业'
+        END) graduationtb, count(CASE
+        WHEN s.newContent like '%退学%' THEN
+        '退学'
+        END) dropOuttb,
+        count(CASE
+        WHEN s.newContent like '%转学%' THEN
+        '转学'
+        END) transfertb, count(CASE
+        WHEN s.newContent like '%休学%' THEN
+        '休学'
+        END) hughOuttb,
+        count(CASE
+        WHEN s.newContent like '%在籍%' THEN
+        '在籍'
+        END) inTheBooktb,
+        count(CASE
+        WHEN (s.newContent NOT like '%毕业%' and  s.newContent NOT like '%退学%' and  s.newContent NOT like  '%转学%' and  s.newContent NOT like ' %休学%' and  s.newContent NOT like '%在籍%')  THEN
+        '其它'
+        END) othertb from (
+        select to_char(t.create_time,'yyyy') years,t.NEW_CONTENT newContent
+        from T_XG_STUDENT_CHANGE_LOG t,t_xg_class d,t_xg_student_class x
+        where d.class_id=x.class_id and t.student_id=x.student_id
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND d.departments_id = #{departmentsId}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND x.class_id = #{classId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND d.major_code like '%'||#{majorCode}||'%'
+        </if>
+        ) s group by s.years
+    </select>
+
+    <select  id="gettestEcharts" resultType="com.goisan.system.bean.EchartsMenu">
+      SELECT *
+        FROM ( SELECT wmsys.wm_concat(a.resultt) AS majorCount
+               FROM( select d.dept_name || ','  || count( m.departments_id) as resultt
+               from
+                T_XG_MAJOR m ,T_SYS_DEPT d
+                where d.teaching_flag = '1'and d.dept_id = m.departments_id   group by d.dept_name,d.dept_id
+                order by d.dept_id)a )aa,
+                (SELECT wmsys.wm_concat(studentCount) AS studentCount
+                FROM( select l.departments_id || ',' ||  count(distinct s.STUDENT_ID) as studentCount
+           from T_XG_STUDENT s, T_XG_STUDENT_CLASS r, T_XG_CLASS l
+                 where 1 = 1
+                       AND s.student_id = r.student_id
+                        AND r.class_id = l.class_id
+                         group by  l.departments_id
+                         order by l.departments_id ) ba) bb,
+              (SELECT wmsys.wm_concat(a.dept_name) as deptnames
+             FROM (select dept_name from T_SYS_DEPT t
+             where teaching_flag = '1' )a )ab,
+              (select wmsys.wm_concat(aa.deptcoun) as deptcount
+             from (  SELECT   count(d.dept_name) deptcoun
+ FROM t_rs_employee      e,
+               t_sys_dept         d,
+               t_rs_employee_dept ed,
+               t_sys_user         u
+         WHERE e.person_id = ed.person_id
+           AND ed.dept_id = d.dept_id
+           AND u.user_id = e.person_id
+           AND e.valid_flag = '1'
+           AND d.teaching_flag = '1'
+          group by d.dept_id
+          order by d.dept_id ) aa )ac,
+          (SELECT wmsys.wm_concat(ac.sexCount)  as sexTypes
+          FROM (
+           SELECT   count(e.sex) sexCount
+ FROM t_rs_employee      e,
+               t_sys_dept         d,
+               t_rs_employee_dept ed,
+               t_sys_user         u
+         WHERE e.person_id = ed.person_id
+           AND ed.dept_id = d.dept_id
+           AND u.user_id = e.person_id
+           AND e.valid_flag = '1'
+          AND e.sex in (1,2)
+           AND d.teaching_flag = '1'
+          group by e.sex
+          order by e.sex
+           )ac  )ad,
+           (SELECT wmsys.wm_concat(ae.finalEducatio || ',' ||ae.finalEducation ) as finalEducations
+            from(
+             SELECT
+         t.final_education finalEducatio,
+         count(t.FINAL_EDUCATION) as finalEducation
+        FROM T_JW_TEACHER_CONDITION t
+        WHERE 1 = 1
+        group by t.FINAL_EDUCATION
+             )ae )af,
+             (SELECT wmsys.wm_concat(ag.title   || ',' ||ag.titlecount ) as technical
+             from (
+                  SELECT
+             t.TITLE title,
+              count(t.title) titlecount
+               FROM T_JW_TEACHER_CONDITION t
+                WHERE 1 = 1
+                group by title
+             )ag )ah ,
+             (SELECT wmsys.wm_concat(al.teacherCount ) as doubleTeacher
+             from (
+             SELECT
+                      count(t.TEACHER_ID) teacherCount
+                      FROM T_JW_DOUBLE_DIVISION_TEACHER t
+             )al  )am,(
+                  select
+        count(t.age) || ',' ||
+        count(case
+           when t.age between 20 and 30 then
+             '20-30'
+             end
+        ) || ',' ||
+        count(case
+           when t.age between 31 and 40 then
+             '31-40'
+             end
+        ) || ',' ||
+        count(case
+           when t.age between 41 and 50 then
+             '41-50'
+             end
+        ) || ',' ||
+        count(case
+           when t.age >50 then
+             '>50'
+             end
+        ) as ageCount
+    from
+    (select trunc((sysdate-birthday)/365,0) as age from T_RS_EMPLOYEE where birthday is not null) t
+       )
+
+    </select>
+
+
+
+
+
+</mapper>

@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--create by wq
+    2017/09/20-->
+<mapper namespace="com.goisan.logistics.dormmanage.dao.DormManageDao">
+    <!--公共方法-->
+    <!--通过学生id获取性别和身份证号-->
+    <select id="getStudentSexIdcardName" resultType="com.goisan.system.bean.Student"
+            parameterType="java.lang.String">
+        SELECT
+        FUNC_GET_DICVALUE(SEX,'XB') sexShow,sex,idcard,name
+        FROM T_XG_STUDENT
+        WHERE student_id=#{studengId}
+    </select>
+
+    <!--学生宿委会初始化方法-->
+    <select id="getStudentDormList" parameterType="com.goisan.logistics.dormmanage.bean.StudentDorm"
+            resultType="com.goisan.logistics.dormmanage.bean.StudentDorm">
+        SELECT
+        t.studentdorm_id studentDormId,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime,
+        to_char(t.start_Time,'yyyy-mm-dd') startTime,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.tel
+        FROM T_ZW_STUDENTDORM t
+        WHERE
+        t.valid_flag = '1'
+        AND
+        1 = 1
+        <if test="studentName">
+            AND t.student_name like '%'||'${studentName}'||'%'
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+
+    <select id="getStudentDormById" parameterType="com.goisan.logistics.dormmanage.bean.StudentDorm"
+            resultType="com.goisan.logistics.dormmanage.bean.StudentDorm">
+        SELECT
+        t.studentdorm_id studentDormId,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.tel
+        FROM
+        T_ZW_STUDENTDORM t
+        WHERE t.studentdorm_id = '${studentDormId}'
+    </select>
+    <insert id="insertStudentDorm" parameterType="com.goisan.logistics.dormmanage.bean.StudentDorm">
+        insert into T_ZW_STUDENTDORM
+        (STUDENTDORM_ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        SEX,IDCARD,CREATOR,CREATE_TIME,CREATE_DEPT,START_TIME,TEL,STUDENT_NAME )
+        values (FUNC_GET_UUID,'${studentId}','${departmentsId}','${majorCode}','${majorDirection}','${trainingLevel}','${classId}',
+        '${sex}','${idcard}','${creator}',sysdate,'${createDept}',sysdate,'${tel}','${studentName}')
+    </insert>
+    <update id="updateStudentDormById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse">
+        update
+        T_ZW_STUDENTDORM
+        SET
+        STUDENT_ID='${studentId}',
+        DEPARTMENTS_ID='${departmentsId}',
+        MAJOR_CODE='${majorCode}',
+        MAJOR_DIRECTION='${majorDirection}',
+        TRAINING_LEVEL='${trainingLevel}',
+        CLASS_ID='${classId}',
+        SEX='${sex}',
+        IDCARD='${idcard}',
+        changer='${changer}',
+        change_time=sysdate,
+        change_dept='${changeDept}',
+        tel='${tel}',
+        student_name = '${studentName}'
+        WHERE  studentdorm_id = '${studentDormId}'
+    </update>
+    <update id="deleteStudentDormById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse">
+        update
+        T_ZW_STUDENTDORM t
+        SET
+        t.valid_flag = '0',
+        t.end_time = sysdate
+        WHERE  studentdorm_id = '${studentDormId}'
+    </update>
+    <select id="getStudentDormListLog" parameterType="com.goisan.logistics.dormmanage.bean.StudentDorm"
+            resultType="com.goisan.logistics.dormmanage.bean.StudentDorm">
+        SELECT
+        t.studentdorm_id studentDormId,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime,
+        to_char(t.start_Time,'yyyy-mm-dd hh24:mi') startTime,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.tel,
+        to_char(t.end_Time,'yyyy-mm-dd hh24:mi') endTime
+        FROM T_ZW_STUDENTDORM t
+        WHERE
+        t.valid_flag = '0'
+        AND
+        1 = 1
+        <if test="startTime != null and startTime != '' ">
+            AND to_char(t.START_TIME,'yyyy-mm-dd hh24:mi') like '%${startTime}%'
+        </if>
+        <if test="endTime != null and endTime != '' ">
+            AND to_char(t.end_Time,'yyyy-mm-dd hh24:mi') like '%${endTime}%'
+        </if>
+        <if test="studentName !=null and studentName !=''">
+            AND t.student_name like '%'||'${studentName}'||'%'
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getStudentPlanJobList" parameterType="com.goisan.logistics.dormmanage.bean.StudentPlanJob"
+            resultType="com.goisan.logistics.dormmanage.bean.StudentPlanJob">
+        select t.student_order_id studentOrderId,
+        to_char(t.office__start_time,'yyyy-mm-dd hh24:mi') officeStartTime,
+        to_char(t.office_end_time,'yyyy-mm-dd hh24:mi') officeEndTime,
+        FUNC_GET_TABLEVALUE(t.building_id,'t_jw_building','id','building_name')buildingName,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_ZW_STUDENTDORM','student_id','student_name') studentName,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_ZW_STUDENTDORM','student_id','tel') tel
+        from T_ZW_STUDENT_ORDEROFFICE t
+        WHERE 1 = 1
+        AND
+        t.valid_flag = '1'
+        <if test="officeStartTime != null and officeStartTime != '' ">
+            AND t.office__start_time >=to_date('${officeStartTime}','yyyy-mm-dd hh24:mi')
+        </if>
+        <if test="officeEndTime != null and officeEndTime != '' ">
+            AND '${officeEndTime}'>=to_char(t.office_end_time,'yyyy-mm-dd hh24:mi')
+        </if>
+    </select>
+
+    <insert id="insertStudentPlanJob" parameterType="com.goisan.logistics.dormmanage.bean.StudentPlanJob">
+        insert into T_ZW_STUDENT_ORDEROFFICE
+        (STUDENT_ORDER_ID,OFFICE__START_TIME,OFFICE_END_TIME,BUILDING_ID,STUDENT_ID,
+        CREATOR,CREATE_TIME,CREATE_DEPT )
+        values (FUNC_GET_UUID,to_date('${officeStartTime}','yyyy-mm-dd hh24:mi'),to_date('${officeEndTime}','yyyy-mm-dd hh24:mi'),'${buildingId}','${studentId}'
+        ,'${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getStudentPlanJobById" parameterType="com.goisan.logistics.dormmanage.bean.StudentPlanJob"
+            resultType="com.goisan.logistics.dormmanage.bean.StudentPlanJob">
+        select t.student_order_id   studentOrderId,
+        to_char(t.office__start_time,'yyyy-mm-dd' )|| 'T' || to_char(t.office__start_time,'hh24:mi')officeStartTime,
+        to_char(t.office_end_time,'yyyy-mm-dd')|| 'T' ||to_char(t.office_end_time,'hh24:mi') officeEndTime,
+        t.building_id,
+        t.student_id
+        from T_ZW_STUDENT_ORDEROFFICE t WHERE student_order_id = '${studentOrderId}'
+    </select>
+    <update id="updateStudentPlanJobById" parameterType="com.goisan.logistics.dormmanage.bean.StudentPlanJob">
+        UPDATE T_ZW_STUDENT_ORDEROFFICE t
+        SET
+        office__start_time = to_date('${officeEndTime}','yyyy-mm-dd hh24:mi'),
+        office_end_time = to_date('${officeEndTime}','yyyy-mm-dd hh24:mi'),
+        BUILDING_ID = '${buildingId}',
+        STUDENT_ID = '${studentId}',
+        changer='${changer}',
+        change_time=sysdate,
+        change_dept='${changeDept}'
+        WHERE student_order_id = '${studentOrderId}'
+    </update>
+    <update id="deleteStudentPlanJobById" parameterType="com.goisan.logistics.dormmanage.bean.StudentPlanJob">
+        UPDATE T_ZW_STUDENT_ORDEROFFICE SET valid_flag = '0' WHERE student_order_id = '${studentOrderId}'
+    </update>
+    <!--教师排班人员维护-->
+    <select id="getTeacherPlanJobList" parameterType="com.goisan.logistics.dormmanage.bean.TeacherPlanJob"
+            resultType="com.goisan.logistics.dormmanage.bean.TeacherPlanJob">
+        select t.teacher_order_id teacherOrderId,
+        to_char(t.office__start_time ,'yyyy-mm-dd hh24:mi') officeStartTime,
+        to_char(t.office_end_time ,'yyyy-mm-dd hh24:mi') officeEndTime,
+        FUNC_GET_TABLEVALUE(t.building_id,'t_jw_building','id','building_name') buildingName,
+        e.name teacherName,
+        e.idcard,
+        e.sex,
+        t.tel,
+        t.REMARK remark,
+        FUNC_GET_TABLEVALUE(t.teacherDept,'t_sys_dept','dept_id','dept_name') teacherDept
+        from T_ZW_TEACHER_ORDEROFFICE t, T_RS_EMPLOYEE e
+        where t.teacher_id = e.person_id
+        AND t.valid_flag = '1'
+        <if test="officeStartTime != null and officeStartTime != '' ">
+            AND t.office__start_time >=to_date('${officeStartTime}','yyyy-mm-dd')
+        </if>
+        <if test="officeEndTime != null and officeEndTime != '' ">
+            AND '${officeEndTime}'>=to_char(t.office_end_time,'yyyy-mm-dd')
+        </if>
+    </select>
+    <insert id="insertTeacherPlanJob" parameterType="com.goisan.logistics.dormmanage.bean.TeacherPlanJob">
+        insert into T_ZW_TEACHER_ORDEROFFICE
+        (TEACHER_ORDER_ID,OFFICE__START_TIME,BUILDING_ID,TEACHER_ID,
+        CREATOR,CREATE_TIME,CREATE_DEPT,TEACHERDEPT,TEL,REMARK)
+        values (FUNC_GET_UUID,to_date('${officeStartTime}','yyyy-mm-dd hh24:mi'),'${buildingId}','${teacherId}'
+        ,'${creator}',sysdate,'${createDept}','${teacherDept}','${tel}','${remark}')
+    </insert>
+    <select id="getTeacherPlanJobById" parameterType="com.goisan.logistics.dormmanage.bean.TeacherPlanJob"
+            resultType="com.goisan.logistics.dormmanage.bean.TeacherPlanJob">
+        select t.teacher_order_id   teacherOrderId,
+
+        to_char(t.office__start_time,'yyyy-mm-dd') || 'T' || to_char(t.office__start_time,'hh24:mi') officeStartTime,
+        to_char(t.office_end_time ,'yyyy-mm-dd')|| 'T' || to_char(t.office_end_time,'hh24:mi') officeEndTime,
+        t.building_id buildingId,
+        FUNC_GET_TABLEVALUE(t.teacher_id,'T_RS_EMPLOYEE','person_id','name')||' ---- '||FUNC_GET_TABLEVALUE(t.teacherDept,'t_sys_dept','dept_id','dept_name') teacherName,
+        t.tel,
+        t.REMARK
+        from T_ZW_TEACHER_ORDEROFFICE t WHERE teacher_order_id = '${teacherOrderId}'
+    </select>
+    <update id="updateTeacherPlanJobById" parameterType="com.goisan.logistics.dormmanage.bean.TeacherPlanJob">
+        UPDATE T_ZW_TEACHER_ORDEROFFICE t
+        SET
+        office__start_time = to_date('${officeStartTime}','yyyy-mm-dd hh24:mi'),
+        BUILDING_ID = '${buildingId}',
+        TEL = '${tel}',
+        changer='${changer}',
+        change_time=sysdate,
+        change_dept='${changeDept}',
+        remark='${remark}'
+        WHERE teacher_order_id = '${teacherOrderId}'
+    </update>
+    <update id="shiftShiftById" parameterType="com.goisan.logistics.dormmanage.bean.TeacherPlanJob">
+        UPDATE T_ZW_TEACHER_ORDEROFFICE t
+        SET
+        OFFICE_END_TIME=sysdate
+        WHERE teacher_order_id = '${teacherOrderId}'
+    </update>
+    <update id="deleteTeacherPlanJobById" parameterType="com.goisan.logistics.dormmanage.bean.TeacherPlanJob">
+        UPDATE T_ZW_TEACHER_ORDEROFFICE SET valid_flag = '0' WHERE teacher_order_id = '${teacherOrderId}'
+    </update>
+
+    <!--寝室管理-->
+    <select id="getDormManageList" parameterType="com.goisan.logistics.dormmanage.bean.DormManage"
+            resultType="com.goisan.logistics.dormmanage.bean.DormManage">
+        select
+        t.manage_id manageId,
+        t.dormitory_id dormitoryId,
+        FUNC_GET_TABLEVALUE(t.student_id,'t_xg_student','student_id','name') studentName,
+        t.student_id studentId,
+        FUNC_GET_TABLEVALUE(t.teacher_id,'t_rs_employee','person_id','name') teacherName,
+        t.teacher_id teacherId,
+        FUNC_GET_TABLEVALUE(t.dormitory_id, 't_jw_dorm', 'id', 'dorm_name') dormName,
+        FUNC_GET_TABLEVALUE(t.building_id,'T_JW_BUILDING','ID','BUILDING_NAME') buildingName,
+        FUNC_GET_TABLEVALUE(c.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsName,
+        FUNC_GET_TABLEVALUE(c.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCodeName,
+        c.class_name className,
+        t.remark remark,
+        FUNC_GET_DICVALUE(t.DORMMANAGE_TYPE,'LQLX') dormManageType,
+        to_char(t.START_TIME,'yyyy-mm-dd') startTime,
+        to_char(t.END_TIME,'yyyy-mm-dd') endTime
+        from T_ZW_DORM_MANAGE t,t_xg_student s,t_xg_student_class sc,t_xg_class c
+        where t.student_id = s.student_id and s.student_id = sc.student_id and sc.class_id = c.class_id
+        <if test="startTime != null and startTime!= '' ">
+            AND t.start_Time like '%'||to_date('${startTime}','yyyy-mm-dd')||'%'
+        </if>
+        <if test="endTime != null and endTime != '' ">
+            AND  t.end_time like '%'||to_date('${endTime}','yyyy-mm-dd')||'%'
+        </if>
+        <if test="studentId != null and studentId != '' and studentId != 'null' ">
+            AND t.student_id = '${studentId}'
+        </if>
+        <if test="classId != null and classId != '' and classId != 'null' ">
+            AND c.CLASS_ID = '${classId}'
+        </if>
+        <if test="majorCodeId != null and majorCodeId != '' and majorCodeId != 'null' ">
+            AND c.MAJOR_CODE = '${majorCodeId}'
+        </if>
+        <if test="deparmentsId != null and deparmentsId != '' and deparmentsId != 'null' ">
+            AND c.DEPARTMENTS_ID = '${deparmentsId}'
+        </if>
+        <if test="dormManageType != null and dormManageType != '' ">
+            AND t.DORMMANAGE_TYPE = '${dormManageType}'
+        </if>
+        <if test="buildingId != null and buildingId != '' ">
+            AND t.building_id = '${buildingId}'
+        </if>
+        <if test="dormitoryId != null and dormitoryId != '' ">
+            AND t.dormitory_id = '${dormitoryId}'
+        </if>
+        AND t.valid_flag = '1'
+    </select>
+    <insert id="insertDormManage" parameterType="com.goisan.logistics.dormmanage.bean.DormManage">
+        insert into T_ZW_DORM_MANAGE
+        (manage_id,dormitory_id,student_id,teacher_id,START_TIME,END_TIME,remark,BUILDING_ID,
+        CREATOR,CREATE_TIME,CREATE_DEPT,DORMMANAGE_TYPE)
+        values (FUNC_GET_UUID,'${dormitoryId}','${studentId}','${teacherId}',to_date('${startTime}','yyyy-mm-dd hh24:mi'),to_date('${endTime}','yyyy-mm-dd hh24:mi'),'${remark}'
+        ,'${buildingId}','${creator}',sysdate,'${createDept}','${dormManageType}')
+    </insert>
+    <select id="getDormManageById" parameterType="com.goisan.logistics.dormmanage.bean.DormManage"
+            resultType="com.goisan.logistics.dormmanage.bean.DormManage">
+        select
+        t.manage_id manageId,
+        t.building_id buildingId,
+        FUNC_GET_TABLEVALUE(t.building_id,'t_jw_building','id','building_name') buildingName,
+        FUNC_GET_TABLEVALUE(t.dormitory_id, 't_jw_dorm', 'id', 'dorm_name') dormName,
+        t.dormitory_id dormitoryId,
+        FUNC_GET_TABLEVALUE(t.student_id,'t_xg_student','student_id','name') studentName,
+        t.student_id studentId,
+        FUNC_GET_TABLEVALUE(t.teacher_id,'t_rs_employee','person_id','name') teacherName,
+        t.teacher_id teacherId,
+        c.departments_id deparmentsId,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi')   endTime,
+        FUNC_GET_TABLEVALUE(c.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsName,
+        FUNC_GET_TABLEVALUE(c.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCodeName,
+        c.class_name className,
+        c.CLASS_ID classId,
+        c.major_code majorCodeId,
+        t.remark remark,
+        FUNC_GET_DICVALUE(t.DORMMANAGE_TYPE,'LQLX') dormManageType
+        from T_ZW_DORM_MANAGE t,t_xg_student s,t_xg_student_class sc,t_xg_class c
+        where t.student_id = s.student_id and s.student_id = sc.student_id and sc.class_id = c.class_id and t.manage_id = '${manageId}'
+    </select>
+    <update id="updateDormManageById" parameterType="com.goisan.logistics.dormmanage.bean.DormManage">
+        UPDATE T_ZW_DORM_MANAGE t
+        SET
+        start_Time = to_date('${startTime}','yyyy-mm-dd hh24:mi'),
+        end_Time = to_date('${endTime}','yyyy-mm-dd hh24:mi'),
+        student_id = '${studentId}',
+        BUILDING_ID = '${buildingId}',
+        remark = '${remark}',
+        DORMITORY_ID = '${dormitoryId}',
+        changer='${changer}',
+        change_time=sysdate,
+        change_dept='${changeDept}',
+        DORMMANAGE_TYPE = '${dormManageType}'
+        WHERE MANAGE_ID = '${manageId}'
+    </update>
+    <update id="deleteDormManageById" parameterType="com.goisan.logistics.dormmanage.bean.DormManage">
+        UPDATE T_ZW_DORM_MANAGE SET valid_flag = '0' WHERE MANAGE_ID = '${manageId}'
+    </update>
+    <select id="checkStudentDorm" parameterType="com.goisan.logistics.dormmanage.bean.StudentDorm"
+            resultType="com.goisan.logistics.dormmanage.bean.StudentDorm">
+        select * from T_ZW_STUDENTDORM t where t.student_id ='${studentId}' and t.valid_flag = '1'
+    </select>
+    <select id="checkStudentDelete" parameterType="com.goisan.logistics.dormmanage.bean.StudentDorm"
+            resultType="com.goisan.logistics.dormmanage.bean.StudentDorm">
+        select * from T_ZW_STUDENT_ORDEROFFICE t WHERE t.student_id ='${studentId}' and t.valid_flag = '1'
+    </select>
+    <!--通过班级查询学生并升序排列-->
+    <select id="getStudentByClassIdNotDorm" resultType="com.goisan.system.bean.Select2">
+        SELECT t1.STUDENT_ID id,t1.NAME text
+        FROM t_xg_student t1,t_xg_student_class t2
+        WHERE t2.CLASS_ID = #{classId} and
+        t1.student_id = t2.student_id AND t1.student_id NOT IN (select distinct t.student_id from T_ZW_STUDENTDORM t where t.valid_flag = '1')
+        ORDER BY FUNC_GET_TABLEVALUE(t1.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME')
+    </select>
+</mapper>
+
+

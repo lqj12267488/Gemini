@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--create by wq 2017/10/12-->
+<mapper namespace="com.goisan.educational.score.dao.ScoreCourseDao">
+    <select id="getScoreCourseList" parameterType="com.goisan.educational.score.bean.ScoreCourse"
+            resultType="com.goisan.educational.score.bean.ScoreCourse">
+        SELECT
+        t.SUBJECT_ID subjectId,
+        t.SCORE_EXAM_ID scoreExamId,
+        t.SCORE_EXAM_NAME scoreExamName,
+        FUNC_GET_TABLEVALUE(t.PLAN_ID, 'T_JW_COURSEPLAN', 'PLAN_ID', 'PLAN_NAME') planId,
+        FUNC_GET_DICVALUE(t.COURSE_TYPE,'KCLX') courseType,
+        t.COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID) departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorShow,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.TOTAL_SCORE totalScore,
+        t.PASS_SCORE passScore,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime ,
+        FUNC_GET_DICVALUE(t.course_flag,'KSLX')  courseFlag
+        FROM T_JW_SCORE_SUBJECT t
+        WHERE 1 = 1
+        <if test="scoreExamId != null and scoreExamId != '' ">
+            AND t.SCORE_EXAM_ID = #{scoreExamId}
+        </if>
+        <if test="courseType != null and courseType != '' ">
+            AND t.COURSE_TYPE = #{courseType}
+        </if>
+        <if test="courseId != null and courseId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') LIKE #{courseId}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getScoreCourseById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.score.bean.ScoreCourse">
+        SELECT
+        t.SUBJECT_ID subjectId,
+        t.SCORE_EXAM_ID scoreExamId,
+        t.SCORE_EXAM_NAME scoreExamName,
+        t.PLAN_ID planId,
+        t.COURSE_TYPE courseType,
+        t.COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        t.DEPARTMENTS_ID departmentsId,
+        t.MAJOR_CODE || ','|| t.TRAINING_LEVEL majorCode,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') majorShow,
+        t.TOTAL_SCORE totalScore,
+        t.PASS_SCORE passScore ,
+        course_flag courseFlag
+        FROM
+        T_JW_SCORE_SUBJECT t
+        WHERE t.SUBJECT_ID = #{subjectId}
+    </select>
+    <insert id="insertScoreCourse" parameterType="com.goisan.educational.score.bean.ScoreCourse">
+        insert into T_JW_SCORE_SUBJECT
+        (SUBJECT_ID,SCORE_EXAM_ID,SCORE_EXAM_NAME,PLAN_ID,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,
+        COURSE_TYPE,COURSE_ID,TOTAL_SCORE,PASS_SCORE,course_flag,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values
+        (FUNC_GET_UUID,#{scoreExamId},FUNC_GET_TABLEVALUE(#{scoreExamId},'T_JW_SCORE_EXAM','SCORE_EXAM_ID','SCORE_EXAM_NAME'),#{planId},
+        #{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},
+        #{courseType},#{courseId},#{totalScore},#{passScore},#{courseFlag},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateScoreCourseById" parameterType="com.goisan.educational.score.bean.ScoreCourse">
+        update
+        T_JW_SCORE_SUBJECT
+        SET
+        SCORE_EXAM_ID=#{scoreExamId},
+        SCORE_EXAM_NAME=#{scoreExamName},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        COURSE_TYPE=#{courseType},
+        COURSE_ID=#{courseId},
+        TOTAL_SCORE=#{totalScore},
+        PASS_SCORE=#{passScore},
+        course_flag=#{courseFlag},
+        CHANGER=#{changer},
+        CHANGE_TIME=sysdate,
+        CHANGE_DEPT=#{changeDept}
+        WHERE SUBJECT_ID = #{subjectId}
+    </update>
+    <delete id="deleteScoreCourseById"  parameterType="java.lang.String">
+        DELETE FROM T_JW_SCORE_SUBJECT WHERE SUBJECT_ID = #{subjectId}
+    </delete>
+    <!--通过专业-方向-层次下拉选择查询课程-->
+    <select id="getCourseByMajorShow" resultType="com.goisan.system.bean.Select2">
+        SELECT COURSE_ID id,COURSE_NAME text
+        FROM T_JW_COURSE
+        WHERE MAJOR_CODE||','||TRAINING_LEVEL = #{majorShow}
+    </select>
+
+    <!--通过教学任务，班级查询课程-->
+    <select id="getCourseByPlanAndClass" resultType="com.goisan.system.bean.Select2">
+      SELECT course_id id,
+               FUNC_GET_TABLEVALUE(course_id,
+                                   'T_JW_COURSE',
+                                   'course_id',
+                                   'course_name')||'----'|| FUNC_GET_TABLEVALUE(teacher_id,
+                                   'T_SYS_USER',
+                                   'user_id',
+                                   'name') text
+          FROM T_JW_TEACHINGTASK t where t.class_info= #{classInfo} and t.semester = #{term}
+         ORDER BY create_time DESC
+    </select>
+
+    <!--通过课程类型下拉选择查询课程-->
+    <select id="getCourseByType" resultType="com.goisan.system.bean.Select2">
+        SELECT COURSE_ID id,COURSE_NAME text
+        FROM T_JW_COURSE
+        WHERE course_type='1' and  valid_flag = '1'
+    </select>
+    <!--通过教学计划导入课程-->
+    <insert id="importCourse" parameterType="com.goisan.educational.score.bean.ScoreCourse">
+        INSERT INTO T_JW_SCORE_SUBJECT
+        (SUBJECT_ID,SCORE_EXAM_ID,
+        SCORE_EXAM_NAME,PLAN_ID,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,
+        COURSE_TYPE,COURSE_ID,TOTAL_SCORE,PASS_SCORE,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        SELECT
+        FUNC_GET_UUID SUBJECT_ID,SCORE_EXAM_ID,
+        SCORE_EXAM_NAME,PLAN_ID,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,
+        COURSE_TYPE,COURSE_ID,'100' as TOTAL_SCORE,'60' PASS_SCORE,
+        CREATOR,CREATE_TIME,CREATE_DEPT
+        FROM
+            (SELECT DISTINCT #{scoreExamId} SCORE_EXAM_ID,
+            FUNC_GET_TABLEVALUE(#{scoreExamId},'T_JW_SCORE_EXAM', 'SCORE_EXAM_ID', 'SCORE_EXAM_NAME') SCORE_EXAM_NAME,#{planId} PLAN_ID,
+            sc.DEPARTMENTS_ID,sc.MAJOR_CODE,sc.MAJOR_DIRECTION,sc.TRAINING_LEVEL,
+            FUNC_GET_TABLEVALUE(s.COURSE_ID,'T_JW_COURSE', 'COURSE_ID', 'COURSE_TYPE') COURSE_TYPE,s.COURSE_ID,
+            #{creator} CREATOR,sysdate CREATE_TIME,#{createDept} CREATE_DEPT
+            FROM
+            (SELECT DISTINCT * FROM T_JW_COURSEPLAN_SIGN WHERE PLAN_ID=#{planId}) s,T_JW_COURSEPLAN_SIGN_CLASS sc
+            WHERE s.SIGN_ID=sc.SIGN_ID)
+</insert>
+<!--通过教学计划导入班级及录入教师-->
+    <insert id="importClassPerson" parameterType="com.goisan.educational.score.bean.ScoreCourse">
+        INSERT INTO T_JW_SCORE_CLASS
+        (SCORE_CLASS_ID,SUBJECT_ID,PLAN_ID,
+        SCORE_EXAM_ID,SCORE_EXAM_NAME,
+        COURSE_ID,CLASS_ID,PERSON_ID,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        SELECT
+        FUNC_GET_UUID SCORE_CLASS_ID,SUBJECT_ID,PLAN_ID,
+        SCORE_EXAM_ID,SCORE_EXAM_NAME,
+        COURSE_ID,CLASS_ID,PERSON_ID,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,
+        CREATOR,CREATE_TIME,CREATE_DEPT
+        FROM
+            (SELECT DISTINCT t.SUBJECT_ID,#{planId} PLAN_ID,
+            t.SCORE_EXAM_ID,t.SCORE_EXAM_NAME,
+            t.COURSE_ID,sc.CLASS_ID,s.PERSON_ID,
+            t.DEPARTMENTS_ID,t.MAJOR_CODE,t.MAJOR_DIRECTION,t.TRAINING_LEVEL,
+            #{creator} CREATOR,sysdate CREATE_TIME,#{createDept} CREATE_DEPT
+            FROM T_JW_SCORE_SUBJECT t,
+            (SELECT DISTINCT * FROM T_JW_COURSEPLAN_SIGN WHERE PLAN_ID=#{planId} AND PERSON_ID IS NOT NULL) s,T_JW_COURSEPLAN_SIGN_CLASS sc
+            WHERE s.SIGN_ID=sc.SIGN_ID AND t.PLAN_ID=s.PLAN_ID AND t.COURSE_ID=s.COURSE_ID)
+    </insert>
+<!--考试班级设置-->
+    <!--获取班级下拉树-专业核心-->
+    <select id="getClassTreeForScoreCourse" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        distinct
+        m.dept_id id,
+        m.dept_name name,
+        m.parent_dept_id pid
+        FROM t_sys_dept m,T_XG_MAJOR d,T_JW_COURSE j
+        WHERE m.dept_id = '001' or (m.dept_type &lt; 9 AND j.valid_flag = 1
+        and j.departments_id = m.dept_id and d.departments_id = m.dept_id)
+        UNION
+        SELECT
+        distinct
+        d.major_code id,
+        d.major_name name,
+        d.departments_id pId
+        FROM T_XG_MAJOR d, T_JW_COURSE jj
+        WHERE d.valid_flag = 1 and jj.major_code = d.major_code
+        UNION
+        SELECT
+        distinct
+        cc.class_id id,
+        cc.class_name name,
+        cc.major_code pid
+        FROM t_xg_class cc, T_XG_MAJOR dd,T_JW_COURSE jjj
+        WHERE jjj.valid_flag = 1 and dd.major_code = cc.major_code
+        and jjj.major_code = dd.major_code
+    </select>
+    <!--获取班级下拉树-公共基础-->
+    <select id="getClassTreeForPublishCourse" resultType="com.goisan.system.bean.Tree">
+        SELECT distinct m.dept_id id, m.dept_name name, m.parent_dept_id pid
+        FROM t_sys_dept m, T_XG_MAJOR d
+        WHERE m.dept_id = '001'
+        or (m.dept_type &lt; 9 and m.valid_flag=1
+        and d.departments_id = m.dept_id)
+        UNION
+        SELECT distinct d.major_code id, d.major_name name, d.departments_id pId
+        FROM T_XG_MAJOR d
+        WHERE d.valid_flag = 1
+        UNION
+        SELECT distinct cc.class_id id, cc.class_name name, cc.major_code pid
+        FROM t_xg_class cc, T_XG_MAJOR dd
+        WHERE cc.valid_flag = 1
+        and dd.major_code = cc.major_code
+    </select>
+    <!--多选班级保存-->
+    <insert id="insertScoreClass" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        INSERT INTO T_JW_SCORE_CLASS
+        (SCORE_CLASS_ID,SUBJECT_ID,PLAN_ID,
+        SCORE_EXAM_ID,SCORE_EXAM_NAME,
+        COURSE_ID,CLASS_ID,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        SELECT
+        #{scoreClassId} SCORE_CLASS_ID,#{subjectId},#{planId},
+        t.SCORE_EXAM_ID,FUNC_GET_TABLEVALUE(t.SCORE_EXAM_ID,'T_JW_SCORE_EXAM', 'SCORE_EXAM_ID', 'SCORE_EXAM_NAME') SCORE_EXAM_NAME,
+        t.COURSE_ID,#{classId} CLASS_ID,
+        s.DEPARTMENTS_ID,s.MAJOR_CODE,s.MAJOR_DIRECTION,s.TRAINING_LEVEL,
+        #{creator} CREATOR,sysdate CREATE_TIME,#{createDept} CREATE_DEPT
+        FROM T_JW_SCORE_SUBJECT t,T_XG_CLASS s
+        WHERE t.SUBJECT_ID=#{subjectId} AND s.CLASS_ID=#{classId}
+    </insert>
+    <!--通过课程主键查询班级-->
+    <select id="getClassBySubjectId" parameterType="java.lang.String" resultType="com.goisan.educational.score.bean.ScoreClass">
+        SELECT * FROM T_JW_SCORE_CLASS WHERE subject_id = #{subjectId}
+    </select>
+    <!--删除考试班级-->
+    <delete id="deleteScoreClass" parameterType="java.lang.String">
+        DELETE FROM T_JW_SCORE_CLASS
+        WHERE score_class_id = #{scoreClassId}
+    </delete>
+    <!--通过课程主键删除班级-->
+    <delete id="deleteClassBySubjectId" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        DELETE FROM T_JW_SCORE_CLASS
+        WHERE subject_id =#{subjectId}
+    </delete>
+    <!--通过课程主键删除班级-->
+    <delete id="deleteScoreBySubjectId" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        DELETE FROM T_JW_SCORE_IMPORT
+        WHERE subject_id =#{subjectId}
+    </delete>
+
+</mapper>

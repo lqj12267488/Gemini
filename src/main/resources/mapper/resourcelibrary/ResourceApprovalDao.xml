@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.approval.dao.ResourceApprovalDao">
+    <select id="getResourceApprovalList"
+            parameterType="com.goisan.approval.bean.ResourceApproval"
+            resultType="com.goisan.approval.bean.ResourceApproval">
+        select approval_id,resource_id,
+          resource_name,request_dept,
+          requester,
+          decode(requester,'','',(FUNC_GET_USERNAME(requester) || '--' || FUNC_GET_DEPTNAME(request_dept))) requesterShow,
+        request_date,request_reason,
+          request_type, func_get_dicvalue(request_type,'ZYK_ZYSQLX') requestTypeShow,
+          request_flag,
+          func_get_dicvalue(request_flag,'ZYK_ZYSQZT') requestFlagShow,
+          approval_dept,approver,
+          decode(approver,'','',(FUNC_GET_USERNAME(approver) || '--' || FUNC_GET_DEPTNAME(approval_dept))) approverShow,
+          approval_time,approval_flag,approval_opinion
+          from ZYK_APPROVAL
+        WHERE 1 = 1 AND valid_flag = '1'
+        <if test="creator !='' and creator!=null">
+            AND creator = #{creator}
+        </if>
+        <if test="resourceName !='' and resourceName!=null">
+            AND resource_name like '%'||#{resourceName}||'%'
+        </if>
+        <if test="requestType !='' and requestType!=null">
+            AND request_type = #{requestType}
+        </if>
+        <if test="requester !='' and requester!=null">
+            AND requester = #{requester}
+        </if>
+        <if test="requestFlag !='' and requestFlag!=null">
+            AND request_flag = #{requestFlag}
+        </if>
+        ORDER BY REQUEST_FLAG , create_time DESC
+
+    </select>
+    <insert id="saveResourceApproval" parameterType="com.goisan.approval.bean.ResourceApproval">
+        insert into zyk_approval
+        (approval_id,resource_id,resource_name,request_dept,requester,
+        request_date,request_reason,request_type,request_flag,approval_dept,
+        approver,approval_time,approval_flag,approval_opinion,creator,create_time,create_dept)
+        values
+        (#{approvalId},#{resourceId},#{resourceName},#{requestDept},#{requester},
+        #{requestDate},#{requestReason},#{requestType},#{requestFlag},#{approvalDept},
+        #{approver},#{approvalTime},#{approvalFlag},#{approvalOpinion},#{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getResourceApprovalById" parameterType="java.lang.String"
+            resultType="com.goisan.approval.bean.ResourceApproval">
+        select
+          approval_id,resource_id,
+          resource_name,request_dept,requester,
+          decode(requester,'','',(FUNC_GET_USERNAME(requester) || '--' || FUNC_GET_DEPTNAME(request_dept))) requesterShow,
+          request_date,request_reason,
+          request_type, func_get_dicvalue(request_type,'ZYK_ZYSQLX') requestTypeShow,
+          request_flag,
+          func_get_dicvalue(request_flag,'ZYK_ZYSQZT') requestFlagShow,
+          approval_dept,approver,
+          decode(approver,'','',(FUNC_GET_USERNAME(approver) || '  ----  ' || FUNC_GET_DEPTNAME(approval_dept))) approverShow,
+          approval_time,approval_flag,approval_opinion
+          from ZYK_APPROVAL where approval_id = #{id}
+    </select>
+    <update id="updateResourceApproval" parameterType="com.goisan.approval.bean.ResourceApproval">
+        update zyk_approval set request_dept=#{requestDept},requester=#{requester},request_date=#{requestDate},request_reason=#{requestReason},request_type=#{requestType},request_flag=#{requestFlag},approval_dept=#{approvalDept},approver=#{approver},approval_time=#{approvalTime},approval_flag=#{approvalFlag},approval_opinion=#{approvalOpinion},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept} where approval_id = #{approval_id}
+    </update>
+    <update id="setResourceApproval" parameterType="com.goisan.approval.bean.ResourceApproval">
+        update zyk_approval
+        set request_flag=#{requestFlag},
+        approval_dept=#{approvalDept},
+        approver=#{approver},
+        approval_time=sysdate,
+        approval_flag=#{approvalFlag},
+        approval_opinion=#{approvalOpinion},
+        changer=#{changer},
+        change_time= sysdate,
+        change_dept=#{changeDept}
+        where approval_id = #{approvalId}
+    </update>
+    <delete id="delResourceApproval" parameterType="java.lang.String">
+        update zyk_approval  set  REQUEST_FLAG = '4' , APPROVAL_FLAG = '4' where approval_id = #{id}
+    </delete>
+    <update id="updateResourcePublice" parameterType="java.lang.String">
+        UPDATE ZYK_RESOURCE_PRIVATE SET PUBLIC_FLAG = '0' WHERE RESOURCE_ID = #{resourceId}
+    </update>
+    <insert id="addApprovalPublic" parameterType="com.goisan.approval.bean.ResourceApproval">
+        insert INTO ZYK_APPROVAL
+          (APPROVAL_ID,RESOURCE_ID,RESOURCE_NAME,
+            REQUEST_DEPT,REQUESTER,REQUEST_DATE,
+            REQUEST_REASON,REQUEST_TYPE,
+            REQUEST_FLAG,APPROVAL_DEPT,APPROVER,
+            CREATOR,CREATE_TIME,CREATE_DEPT)
+          SELECT '${approvalId}' as APPROVAL_ID,RESOURCE_ID,RESOURCE_NAME,
+                 '${createDept}' as REQUEST_DEPT,'${creator}'  as REQUESTER,sysdate as REQUEST_DATE,
+                 '${requestReason}' as REQUEST_REASON,'${requestType}' as REQUEST_TYPE,
+                 '1' as REQUEST_FLAG,'${approvalDept}' as APPROVAL_DEPT,'${approver}' as APPROVER,
+                 '${creator}' as CREATOR,sysdate as CREATE_TIME, '${createDept}' as CREATE_DEPT
+            FROM ZYK_RESOURCE_PRIVATE
+            WHERE RESOURCE_ID = #{resourceId}
+    </insert>
+
+</mapper>

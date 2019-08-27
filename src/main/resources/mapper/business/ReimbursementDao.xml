@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.ReimbursementDao">
+    <!--主页查询-->
+    <select id="reimbursementInfo" resultType="com.goisan.synergy.workflow.bean.Reimbursement" parameterType="com.goisan.synergy.workflow.bean.Reimbursement">
+        SELECT
+        t.id,
+        func_get_username(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate ,
+        t.CAUSE rcause,
+        t.CONTENT content,
+        t.MONEY money
+        FROM
+        T_BG_REIMBURSEMENT_WF t
+        WHERE 1=1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE '%'||'${requestDate}'||'%'
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        AND
+        t.REQUEST_FLAG='0'
+        ORDER BY t.create_time DESC
+    </select>
+    <!--新增保存-->
+    <insert id="insertReimbursement" parameterType="java.lang.String">
+        INSERT INTO
+        T_BG_REIMBURSEMENT_WF
+        (id,CAUSE,CONTENT,MONEY,REQUESTER,REQUEST_DEPT,REQUEST_DATE,creator,create_dept,create_time) values
+        (FUNC_GET_UUID,'${rcause}','${content}','${money}','${requester}','${requestDept}',to_date('${requestDate}','yyyy-mm-dd'),'${creator}','${createDept}',sysdate)
+    </insert>
+    <!--删除-->
+    <delete id="deleteReimbursement"  parameterType="java.lang.String">
+        DELETE FROM  T_BG_REIMBURSEMENT_WF WHERE id = #{id}
+    </delete>
+    <!--修改查询-->
+    <select id="getReimbursementById" resultType="com.goisan.synergy.workflow.bean.Reimbursement"
+            parameterType="com.goisan.synergy.workflow.bean.Reimbursement">
+        SELECT
+        t.id,
+        func_get_username(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate ,
+        t.CAUSE rcause,
+        t.CONTENT content,
+        t.MONEY money
+        FROM
+        T_BG_REIMBURSEMENT_WF t
+        WHERE id = #{id} ORDER BY t.request_date desc
+    </select>
+    <!--修改-->
+    <update id="updateReimbursement" parameterType="com.goisan.synergy.workflow.bean.Reimbursement">
+        update
+        T_BG_REIMBURSEMENT_WF
+        SET
+        request_date=to_date(#{requestDate},'yyyy-mm-dd'),
+        cause=#{rcause},
+        REQUESTER=#{requester},
+        REQUEST_DEPT=#{requestDept},
+        content=#{content},
+        MONEY=#{money},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <!--通过人员id查询人员名称-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <!--通过部门id查询部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <!--待办查询-->
+    <select id="getReimbursementProcess" resultType="com.goisan.synergy.workflow.bean.Reimbursement"
+            parameterType="com.goisan.synergy.workflow.bean.Reimbursement">
+        SELECT
+        t.id,
+        func_get_username(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate ,
+        t.CAUSE rcause,
+        t.CONTENT content,
+        t.MONEY money
+        FROM
+        T_BG_REIMBURSEMENT_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE '%'||'${requestDate}'||'%'
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE '%'||'${requester}'||'%'
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE '%'||'${requestDept}'||'%'
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <!--已办查询-->
+    <select id="getReimbursementComplete" resultType="com.goisan.synergy.workflow.bean.Reimbursement"
+            parameterType="com.goisan.synergy.workflow.bean.Reimbursement">
+        SELECT
+        DISTINCT
+        t.id,
+        func_get_username(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        t.CAUSE rcause,
+        t.MONEY,
+        t.content,
+        t.create_time,
+        t.feedback,
+        func_get_dicvalue(t.request_flag,'GZLLZZT') requestFlag,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackFlag
+        FROM
+        T_BG_REIMBURSEMENT_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE '%'||'${requestDate}'||'%'
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE '%'||'${requester}'||'%'
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE '%'||'${requestDept}'||'%'
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--报销关联-->
+    <select id="getWorkflowIdByWorkflowCode" parameterType="String" resultType="String">
+        SELECT workflow_id FROM T_SYS_WORKFLOW WHERE WORKFLOW_CODE = #{workflowCode}
+    </select>
+    <!--款项待办未关联应用的-->
+    <select id="getUnRelationList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.IndexUnAudti">
+        SELECT DISTINCT
+        e.NAME || ': ' || w.workflow_name text,
+        e.NAME creator,
+        w.WORKFLOW_NAME,
+        wr.URL,
+        wr.app_url,
+        to_char(ws.CREATE_TIME, 'yyyy-mm-dd hh24:mi') createTime,
+        ws.TABLE_NAME tableName,
+        ws.BUSINESS_ID
+        FROM
+        T_SYS_WORKFLOW_HANDLE wh, T_SYS_WORKFLOW_START ws, T_SYS_WORKFLOW_RELATION wr, T_SYS_WORKFLOW w,
+        T_RS_EMPLOYEE e
+        WHERE
+        wh.HANDLE_USER =#{personId}  AND ws.STATE = '2' and w.workflow_id!=#{wid} AND w.workflow_id LIKE #{workflowId} AND ws.START_ID = wh.START_ID
+        AND ws.WORKFLOW_ID = wr.WORKFLOW_ID AND
+        w.WORKFLOW_ID = ws.WORKFLOW_ID AND ws.CREATOR = e.PERSON_ID
+        and ws.business_id not in (select business_id from t_bg_funds_relation_wf fr where funds_id = #{id})
+    </select>
+    <!--款项待办已关联应用的-->
+    <select id="getRelationListById" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.IndexUnAudti">
+        SELECT DISTINCT
+        e.NAME || ': ' || w.workflow_name text,
+        e.NAME creator,
+        w.WORKFLOW_NAME,
+        wr.URL,
+        wr.app_url,
+        to_char(ws.CREATE_TIME, 'yyyy-mm-dd hh24:mi') createTime,
+        ws.TABLE_NAME tableName,
+        ws.BUSINESS_ID
+        FROM
+        T_SYS_WORKFLOW_HANDLE wh, T_SYS_WORKFLOW_START ws, T_SYS_WORKFLOW_RELATION wr, T_SYS_WORKFLOW w,
+        T_RS_EMPLOYEE e
+        WHERE
+        ws.STATE = '2' and w.workflow_id!=#{wid} AND ws.START_ID = wh.START_ID
+        AND ws.WORKFLOW_ID = wr.WORKFLOW_ID AND
+        w.WORKFLOW_ID = ws.WORKFLOW_ID AND ws.CREATOR = e.PERSON_ID
+        and ws.business_id in (select business_id from t_bg_funds_relation_wf fr where funds_id = #{id})
+    </select>
+</mapper>

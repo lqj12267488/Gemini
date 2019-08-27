@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <!--union-->
+<mapper namespace="com.goisan.personnel.leave.dao.LeaveCancelDao">
+    <select id="getLeaveCancelList" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        DISTINCT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.start_time,'yyyy-mm-dd') startTime,
+        to_char(t.end_time,'yyyy-mm-dd')  endTime,
+        t.request_days requestDays,
+        FUNC_GET_DICVALUE(t.leave_type,'QJLX') leaveType,
+        t.reason reason,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_LEAVE_WF t
+        where  (t.request_flag = '2' or t.request_flag = '4')
+        <if test="leaveType != '' and  leaveType != null">
+            AND t.leave_type = #{leaveType}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        AND
+        t.id not in
+        (SELECT
+        DISTINCT
+        t.id
+        FROM
+        T_RS_LEAVE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r,T_RS_LEAVE_CANCEL_WF w
+        where 1 = 1 AND (t.request_flag = '2' or t.request_flag = '4')AND w.request_flag !='0'
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id  AND t.id=w.leave_id)
+    </select>
+    <select id="selectId" resultType="string" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT id FROM T_RS_LEAVE_CANCEL_WF where leave_id=#{id}
+    </select>
+    <select id="selectFlag" resultType="String" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT t.request_flag FROM  T_RS_LEAVE_CANCEL_WF t where t.leave_id=#{id}
+    </select>
+    <select id="getLeaveById" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        to_char(request_date,'yyyy-mm-dd') || 'T' || to_char(request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(start_time,'yyyy-mm-dd') as startTime,
+        to_char(end_time,'yyyy-mm-dd') as endTime,
+        request_days requestDays,
+        FUNC_GET_DICVALUE(leave_type,'QJLX') leaveType,
+        reason reason,
+        request_flag,
+        creator,
+        create_time,
+        create_dept,
+        changer,
+        change_time,
+        change_dept,
+        valid_flag
+        FROM
+        T_RS_LEAVE_WF
+        WHERE 1 = 1 AND id = #{id}
+        ORDER BY create_time desc
+    </select>
+    <select id="getCancelById" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+      SELECT
+        t.id,
+        t.leave_id leaveId,
+        FUNC_GET_DEPTNAME(t.cancel_request_dept) cancelRequestDept,
+        to_char(t.cancel_request_date,'yyyy-mm-dd') || 'T' || to_char(t.cancel_request_date,'hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(t.cancel_requester) cancelRequester,
+        to_char(t.cancel_start_time,'yyyy-mm-dd')  as cancelStartTime,
+        to_char(t.cancel_end_time,'yyyy-mm-dd')  as cancelEndTime,
+        t.real_days realDays,
+        t.cancel_reason cancelReason,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_LEAVE_CANCEL_WF t
+        WHERE 1 = 1 AND t.id = #{id}
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getEditProcessById" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        t.id,
+        t.leave_id leaveId,
+        FUNC_GET_DEPTNAME(t.cancel_request_dept) cancelRequestDept,
+        to_char(t.cancel_request_date,'yyyy-mm-dd') || 'T' || to_char(t.cancel_request_date,'hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(t.cancel_requester) cancelRequester,
+        to_char(t.cancel_start_time,'yyyy-mm-dd') as cancelStartTime,
+        to_char(t.cancel_end_time,'yyyy-mm-dd') as cancelEndTime,
+        t.real_days realDays,
+        t.cancel_reason cancelReason,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_LEAVE_CANCEL_WF t
+        WHERE 1 = 1 AND t.id = #{id}
+        ORDER BY create_time desc
+    </select>
+    <select id="selectLeaveCancelById" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        id,
+        leave_id leaveId,
+        FUNC_GET_DEPTNAME(cancel_request_dept) cancelRequestDept,
+        to_char(cancel_request_date,'yyyy-mm-dd') || 'T' || to_char(cancel_request_date,'hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(cancel_requester) cancelRequester,
+        to_char(cancel_start_time,'yyyy-mm-dd') as cancelStartTime,
+        to_char(cancel_end_time,'yyyy-mm-dd') as cancelEndTime,
+        real_days realDays,
+        cancel_reason cancelReason,
+        request_flag,
+        creator,
+        create_time,
+        create_dept,
+        changer,
+        change_time,
+        change_dept,
+        valid_flag
+        FROM
+        T_RS_LEAVE_CANCEL_WF
+        WHERE 1 = 1 AND leave_id = #{id}
+        ORDER BY create_time desc
+    </select>
+    <select id="selectLeaveCancelId" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="java.lang.String">
+        SELECT
+        id,
+        leave_id leaveId,
+        FUNC_GET_DEPTNAME(cancel_request_dept) cancelRequestDept,
+        to_char(cancel_request_date,'yyyy-mm-dd hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(cancel_requester) cancelRequester,
+        to_char(cancel_start_time,'yyyy-mm-dd') as cancelStartTime,
+        to_char(cancel_end_time,'yyyy-mm-dd') as cancelEndTime,
+        real_days realDays,
+        cancel_reason cancelReason,
+        request_flag,
+        creator,
+        create_time,
+        create_dept,
+        changer,
+        change_time,
+        change_dept,
+        valid_flag
+        FROM
+        T_RS_LEAVE_CANCEL_WF
+        WHERE 1 = 1 AND id = #{id}
+        ORDER BY create_time desc
+    </select>
+    <select id="selectLeaveCancel" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        id,
+        leave_id leaveId,
+        FUNC_GET_DEPTNAME(cancel_request_dept) cancelRequestDept,
+        to_char(cancel_request_date,'yyyy-mm-dd') || 'T' || to_char(cancel_request_date,'hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(cancel_requester) cancelRequester,
+        to_char(cancel_start_time,'yyyy-mm-dd') as cancelStartTime,
+        to_char(cancel_end_time,'yyyy-mm-dd') as cancelEndTime,
+        real_days realDays,
+        cancel_reason cancelReason,
+        request_flag,
+        creator,
+        create_time,
+        create_dept,
+        changer,
+        change_time,
+        change_dept,
+        valid_flag
+        FROM
+        T_RS_LEAVE_CANCEL_WF
+        WHERE 1 = 1 AND leave_id = #{id}
+        ORDER BY create_time desc
+    </select>
+    <select id="getAllList" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        DISTINCT
+        t.id,
+        FUNC_GET_DEPTNAME(r.request_dept) requestDept,
+        FUNC_GET_USERNAME(r.requester) requester,
+        to_char(r.start_time,'yyyy-mm-dd')  as startTime,
+        to_char(r.end_time,'yyyy-mm-dd') as endTime,
+        to_char(t.cancel_start_time,'yyyy-mm-dd') cancelStartTime,
+        to_char(t.cancel_end_time,'yyyy-mm-dd') cancelEndTime,
+        r.creator,
+        r.create_time,
+        r.create_dept,
+        r.changer,
+        r.change_time,
+        r.change_dept,
+        r.valid_flag
+        FROM
+        T_RS_LEAVE_WF r,T_RS_LEAVE_CANCEL_WF t
+        WHERE 1 = 1 AND( r.request_flag = '2' or t.request_flag = '2' or r.request_flag = '4' or t.request_flag = '4') AND t.leave_id=r.id
+        <!--<if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>-->
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(r.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(r.requester) LIKE #{requester}
+        </if>
+        ORDER BY r.create_time desc
+    </select>
+    <select id="selectOne" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        r.id,
+        FUNC_GET_DEPTNAME(r.request_dept) requestDept,
+        to_char(r.request_date,'yyyy-mm-dd') || 'T' || to_char(r.request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(r.requester) requester,
+        to_char(r.start_time,'yyyy-mm-dd')  as startTime,
+        to_char(r.end_time,'yyyy-mm-dd') as endTime,
+        r.request_days requestDays,
+        FUNC_GET_DICVALUE(r.leave_type,'QJLX') leaveType,
+        r.reason reason,
+        FUNC_GET_DEPTNAME(t.cancel_request_dept) cancelRequestDept,
+        to_char(t.cancel_request_date,'yyyy-mm-dd')|| 'T' || to_char(r.request_date,'hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(t.cancel_requester) cancelRequester,
+        to_char(t.cancel_start_time,'yyyy-mm-dd') cancelStartTime,
+        to_char(t.cancel_end_time,'yyyy-mm-dd') cancelEndTime,
+        t.real_days realDays,
+        t.cancel_reason cancelReason,
+        r.creator,
+        r.create_time,
+        r.create_dept,
+        r.changer,
+        r.change_time,
+        r.change_dept,
+        r.valid_flag
+        FROM
+        T_RS_LEAVE_WF r,T_RS_LEAVE_CANCEL_WF t
+        WHERE 1 = 1 AND t.id = #{id} AND r.id=t.leave_id
+        ORDER BY r.create_time desc
+    </select>
+    <select id="getById" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(r.request_dept) requestDept,
+        to_char(r.request_date,'yyyy-mm-dd') || 'T' || to_char(r.request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(r.requester) requester,
+        to_char(r.start_time,'yyyy-mm-dd')  as startTime,
+        to_char(r.end_time,'yyyy-mm-dd') as endTime,
+        r.request_days requestDays,
+        FUNC_GET_DICVALUE(r.leave_type,'QJLX') leaveType,
+        r.reason reason,
+        FUNC_GET_DEPTNAME(t.cancel_request_dept) cancelRequestDept,
+        to_char(t.cancel_request_date,'yyyy-mm-dd hh24:mi')|| 'T' || to_char(r.request_date,'hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(t.cancel_requester) cancelRequester,
+        to_char(t.cancel_start_time,'yyyy-mm-dd') cancelStartTime,
+        to_char(t.cancel_end_time,'yyyy-mm-dd') cancelEndTime,
+        t.real_days realDays,
+        t.cancel_reason cancelReason,
+        r.creator,
+        r.create_time,
+        r.create_dept,
+        r.changer,
+        r.change_time,
+        r.change_dept,
+        r.valid_flag
+        FROM
+        T_RS_LEAVE_WF r,T_RS_LEAVE_CANCEL_WF t
+        WHERE 1 = 1 AND r.id = #{id} AND r.id=t.leave_id
+        ORDER BY r.create_time desc
+    </select>
+    <select id="getLeaveCancelById" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        r.id,
+        FUNC_GET_DEPTNAME(r.request_dept) requestDept,
+        to_char(r.request_date,'yyyy-mm-dd') || 'T' || to_char(r.request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(r.requester) requester,
+        to_char(r.start_time,'yyyy-mm-dd')  as startTime,
+        to_char(r.end_time,'yyyy-mm-dd') as endTime,
+        r.request_days requestDays,
+        FUNC_GET_DICVALUE(r.leave_type,'QJLX') leaveType,
+        r.reason reason,
+        r.creator,
+        r.create_time,
+        r.create_dept,
+        r.changer,
+        r.change_time,
+        r.change_dept,
+        r.valid_flag
+        FROM
+        T_RS_LEAVE_WF r
+        WHERE 1 = 1 AND r.id = #{id}
+        ORDER BY r.create_time desc
+    </select>
+    <insert id="insertLeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        INSERT INTO
+        T_RS_LEAVE_CANCEL_WF
+        (id,leave_id,cancel_request_dept,cancel_requester,cancel_request_date,cancel_start_time,cancel_end_time,cancel_reason,real_days,creator,create_time,create_dept,request_flag) values
+        (FUNC_GET_UUID,'${leaveId}','${createDept}','${creator}',to_date('${cancelRequestDate}','yyyy-mm-dd hh24:mi'),to_date('${cancelStartTime}','yyyy-mm-dd'),to_date('${cancelEndTime}','yyyy-mm-dd'),'${cancelReason}','${realDays}','${creator}',sysdate,'${createDept}','0')
+    </insert>
+    <delete id="deleteLeaveCancelById"  parameterType="java.lang.String">
+        DELETE FROM T_RS_LEAVE_CANCEL_WF WHERE id = #{id}
+    </delete>
+    <update id="updateLeaveCancelById" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        update
+        T_RS_LEAVE_CANCEL_WF
+        SET
+        id = #{id},
+        cancel_start_time = to_date(#{cancelStartTime},'yyyy-mm-dd'),
+        cancel_end_time = to_date(#{cancelEndTime},'yyyy-mm-dd'),
+        real_days = #{realDays},
+        cancel_reason = #{cancelReason},
+        creator = #{creator},
+        create_time = sysdate,
+        create_dept = #{createDept},
+        changer= #{creator},
+        change_time= sysdate,
+        change_dept= #{createDept}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessList" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        t.id,
+        t.leave_id leaveId,
+        FUNC_GET_DEPTNAME(t.cancel_request_dept) cancelRequestDept,
+        to_char(t.cancel_request_date,'yyyy-mm-dd hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(t.cancel_requester) cancelRequester,
+        to_char(t.cancel_start_time,'yyyy-mm-dd') cancelStartTime,
+        to_char(t.cancel_end_time,'yyyy-mm-dd') cancelEndTime,
+        t.real_days realDays,
+        t.cancel_reason cancelReason,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_LEAVE_CANCEL_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="cancelRequestDept != null and cancelRequestDept != '' ">
+            AND func_get_deptname(t.cancel_request_dept) LIKE #{cancelRequestDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="cancelRequester != null and cancelRequester != '' ">
+            AND FUNC_GET_USERNAME(t.cancel_requester) LIKE #{cancelRequester}
+        </if>
+        <if test="cancelRequestDate != null and cancelRequestDate != '' ">
+            AND to_char(t.cancel_request_date,'yyyy-mm-dd') LIKE #{cancelRequestDate}
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.personnel.leave.bean.LeaveCancel" parameterType="com.goisan.personnel.leave.bean.LeaveCancel">
+        SELECT
+        DISTINCT
+        t.id,
+        t.leave_id leaveId,
+        FUNC_GET_DEPTNAME(t.cancel_request_dept) cancelRequestDept,
+        to_char(t.cancel_request_date,'yyyy-mm-dd hh24:mi')  cancelRequestDate,
+        FUNC_GET_USERNAME(t.cancel_requester) cancelRequester,
+        to_char(t.cancel_start_time,'yyyy-mm-dd') cancelStartTime,
+        to_char(t.cancel_end_time,'yyyy-mm-dd') cancelEndTime,
+        t.real_days realDays,
+        t.cancel_reason cancelReason,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_LEAVE_CANCEL_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="cancelRequestDept != null and cancelRequestDept != '' ">
+            AND func_get_deptname(t.cancel_request_dept) LIKE #{cancelRequestDept}
+        </if>
+        <if test="cancelRequester != null and cancelRequester != '' ">
+            AND FUNC_GET_USERNAME(t.cancel_requester) LIKE #{cancelRequester}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="cancelRequestDate != null and cancelRequestDate != '' ">
+            AND to_char(t.cancel_request_date,'yyyy-mm-dd') LIKE #{cancelRequestDate}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+</mapper>
+

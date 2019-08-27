@@ -1,0 +1,24 @@
+<html>
+<head>
+    <script src="jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var db = openDatabase('testDB', '1.0', 'Test DB', 2 * 1024 * 1024);
+        db.transaction(function (context) {
+            context.executeSql('CREATE TABLE IF NOT EXISTS testTable (id UNIQUE, name)');
+            context.executeSql('INSERT INTO testTable (id, name) VALUES (0, "Byron")');
+            context.executeSql('INSERT INTO testTable (id, name) VALUES (1, "Casper")');
+            context.executeSql('INSERT INTO testTable (id, name) VALUES (2, "Frank")');
+        });
+        db.transaction(function (context) {
+            context.executeSql('SELECT * FROM testTable', [], function (context, results) {
+                var len = results.rows.length, i;
+                console.log('Got ' + len + ' rows.');
+                for (i = 0; i < len; i++) {
+                    console.log('id: ' + results.rows.item(i).id);
+                    console.log('name: ' + results.rows.item(i).name);
+                }
+            });
+        })
+    </script>
+</head>
+</html>

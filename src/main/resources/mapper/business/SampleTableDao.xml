@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.practice.dao.SampleTableDao">
+    <select id="getTableManagementList" parameterType="com.goisan.practice.bean.SampleTable"
+            resultType="com.goisan.practice.bean.SampleTable">
+        SELECT
+        ID id,
+        SAMPLE_NAME sampleName
+        FROM T_JY_PRACTICE_SAMPLE_TABLE
+    </select>
+    <select id="getArchivesById" parameterType="java.lang.String"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        ARCHIVES_ID archivesId,
+        ARCHIVES_CODE archivesCode,
+        DEPT_CODE deptCode,
+        to_char(request_date,'yyyy-mm-dd') requestDate,
+        SCHOOL_CODE schoolCode,
+        ONE_LEVEL oneLevel,
+        TWO_LEVEL twoLevel,
+        FILE_TYPE fileType,
+        REQUEST_FLAG requestFlag,
+        REQUEST_TYPE requestType,
+        REMARK remark,
+        REASON reason,
+        FUNC_GET_USERNAME(CREATOR) creator,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) createDept
+        FROM DZDA_MESSAGE
+        WHERE ARCHIVES_ID=#{archivesId}
+    </select>
+    <insert id="insertSampleTable" parameterType="com.goisan.practice.bean.SampleTable">
+        INSERT INTO T_JY_PRACTICE_SAMPLE_TABLE
+        (id,SAMPLE_NAME,
+        CREATOR,CREATE_DEPT,CREATE_TIME)
+        VALUES
+        (#{id},#{sampleName},
+        #{creator},#{createDept},sysdate)
+    </insert>
+    <update id="updateSampleTableById" parameterType="com.goisan.practice.bean.SampleTable">
+        UPDATE T_JY_PRACTICE_SAMPLE_TABLE SET
+        SAMPLE_NAME=#{sampleName},
+        CHANGER=#{changer},
+        CHANGE_DEPT=#{changeDept},
+        CHANGE_TIME=sysdate
+        WHERE id=#{id}
+    </update>
+    <update id="updateValidFlag" parameterType="com.goisan.archives.bean.Archives">
+        UPDATE DZDA_MESSAGE SET
+        VALID_FLAG=#{validFlag}
+        WHERE ARCHIVES_ID=#{archivesId}
+    </update>
+    <delete id="deleteSampleTableById" parameterType="java.lang.String">
+        DELETE FROM T_JY_PRACTICE_SAMPLE_TABLE WHERE ID=#{id}
+    </delete>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE dept_id = #{deptId}
+    </select>
+    <!--查询所有部门id和名称-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--查询所有人员id和姓名-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getDeptList" resultType="com.goisan.system.bean.Select2">
+        SELECT DEPT_ID id,DEPT_NAME text
+        FROM T_SYS_DEPT
+        WHERE valid_flag = '1'
+        ORDER BY DEPT_ORDER
+    </select>
+    <select id="getStaffBelongs" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT decode(STAFF_BELONGS,'','0',STAFF_BELONGS)
+        FROM T_RS_EMPLOYEE
+        WHERE PERSON_ID=#{personId}
+    </select>
+    <!--附件-->
+    <select id="getSampleTableById" parameterType="java.lang.String"
+            resultType="com.goisan.practice.bean.SampleTable">
+        SELECT
+        SAMPLE_NAME
+        FROM T_JY_PRACTICE_SAMPLE_TABLE
+        WHERE id = #{id}
+    </select>
+    <select id="getArchivesFileById" parameterType="java.lang.String"
+            resultType="com.goisan.archives.bean.ArchivesFile">
+        SELECT
+        FILE_URL fileUrl,
+        FILE_NAME fileName,
+        FILE_SUFFIX fileSuffix
+        FROM DZDA_FILES
+        WHERE FILE_ID = #{fileId}
+    </select>
+    <insert id="insertArchivesFile" parameterType="com.goisan.archives.bean.ArchivesFile">
+        INSERT INTO
+        DZDA_FILES
+        (FILE_ID,ARCHIVES_ID,FILE_NAME,FILE_URL,
+        FILE_SUFFIX,FILE_SIZE,COVER_URL,COVER_TYPE,FILE_STATE,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,#{archivesId},#{fileName},#{fileUrl},
+        #{fileSuffix},#{fileSize},#{coverUrl},#{coverType},#{fileState},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <delete id="deleteFileByFileId" parameterType="java.lang.String">
+        DELETE FROM DZDA_FILES WHERE FILE_ID=#{fileId}
+    </delete>
+    <delete id="deleteFileByArchivesId" parameterType="java.lang.String">
+        DELETE FROM DZDA_FILES WHERE ARCHIVES_ID=#{archivesId}
+    </delete>
+    <select id="getArchivesLogList" parameterType="com.goisan.archives.bean.Archives"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        log_id,
+        ARCHIVES_ID,
+        PERSON_ID,
+        DEPT_ID,
+        OPERATE_TYPE,
+        FUNC_GET_DICVALUE(OPERATE_TYPE,'ZYK_CZLX') operateType,
+        FUNC_GET_USERNAME(PERSON_ID) personId,
+        FUNC_GET_DEPTNAME(DEPT_ID) deptId,
+        to_char(OPERATE_TIME, 'yyyy-mm-dd hh24:mi') operateTime,
+        remark
+        from DZDA_LOG where VALID_FLAG='1'
+        <if test="operateType !=null and operateType!=''">
+            and OPERATE_TYPE=#{operateType}
+        </if>
+        order by operateTime desc
+    </select>
+    <!--教师档案操作申请与审核-->
+    <!--档案信息修改申请状态-->
+    <update id="archivesRequestFlag" parameterType="com.goisan.archives.bean.Archives">
+        UPDATE DZDA_MESSAGE SET
+        REQUEST_FLAG=#{requestFlag}
+        WHERE ARCHIVES_ID=#{archivesId}
+    </update>
+    <update id="archivesEditRequest" parameterType="com.goisan.archives.bean.Archives">
+        UPDATE DZDA_MESSAGE SET
+        REASON =#{reason},
+        REQUEST_FLAG=#{requestFlag}
+        WHERE ARCHIVES_ID=#{archivesId}
+    </update>
+    <update id="updateArchivesDelStateById" parameterType="com.goisan.archives.bean.Archives">
+        UPDATE DZDA_MESSAGE SET
+        DEL_STATE =#{delState},
+        CHANGER = #{changer},
+        CHANGE_DEPT = #{changeDept},
+        CHANGE_TIME = sysdate
+        WHERE ARCHIVES_ID=#{archivesId}
+    </update>
+    <select id="getArchivesRecycleBinList" parameterType="com.goisan.archives.bean.Archives"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        ARCHIVES_ID archivesId,
+        ARCHIVES_CODE archivesCode,
+        DEPT_CODE deptCode,
+        to_char(request_date,'yyyy-mm-dd') requestDate,
+        SCHOOL_CODE schoolCode,
+        FUNC_GET_TABLEVALUE(ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
+        FUNC_GET_TABLEVALUE(TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
+        FUNC_GET_DICVALUE(FILE_TYPE,'DALX') fileType,
+        CASE WHEN REQUEST_FLAG='0' THEN '已提交'
+        WHEN REQUEST_FLAG='1' THEN '待审核'
+        WHEN REQUEST_FLAG='2' THEN '通过'
+        WHEN REQUEST_FLAG='3' THEN '驳回'
+        ELSE '无' END state,
+        REQUEST_FLAG requestFlag,
+        REQUEST_TYPE requestType,
+        REMARK remark,
+        EDITED_ID editedId,
+        FUNC_GET_USERNAME(CREATOR) creator,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) createDept,
+        CREATE_TIME createTime
+        FROM DZDA_MESSAGE
+        WHERE 1=1 AND DEL_STATE = '1'
+        <if test="changer != 'sa'  and changer != null and changer != '' ">
+            AND CHANGER= #{changer}
+        </if>
+        <if test="deptName != null and deptName != '' ">
+            AND FUNC_GET_DEPTNAME(CREATE_DEPT) LIKE '%'||#{deptName}||'%'
+        </if>
+        <if test="personName != null and personName != '' ">
+            AND FUNC_GET_USERNAME(CREATOR) LIKE '%'||#{personName}||'%'
+        </if>
+        <if test="schoolCode!=null and schoolCode!=''">
+            AND SCHOOL_CODE=#{schoolCode}
+        </if>
+        <if test="deptCode!=null and deptCode!=''">
+            AND DEPT_CODE=#{deptCode}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND request_date= #{requestDate}
+        </if>
+        <if test="oneLevel!=null and oneLevel!=''">
+            AND ONE_LEVEL=#{oneLevel}
+        </if>
+        <if test="twoLevel!=null and twoLevel!=''">
+            AND TWO_LEVEL=#{twoLevel}
+        </if>
+        <if test="fileType!=null and fileType!=''">
+            AND FILE_TYPE=#{fileType}
+        </if>
+        <if test="requestFlag!=null and requestFlag!=''">
+            AND REQUEST_FLAG=#{requestFlag}
+        </if>
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <delete id="delRoleEmpDeptByArchivesId" parameterType="java.lang.String">
+        DELETE DZDA_ROLE WHERE archives_id = #{id}
+    </delete>
+    <insert id="insertRoleEmpDept" parameterType="com.goisan.archives.bean.ArchivesRole">
+        INSERT INTO DZDA_ROLE
+        (ID,PERSON_ID,DEPT_ID,CREATOR,CREATE_TIME,CREATE_DEPT,ARCHIVES_ID)
+        values
+        (func_get_uuid,#{personId},#{deptId},#{creator},sysdate,#{createDept} ,#{archivesId})
+    </insert>
+    <select id="getArchivesDeptAndPersonTree" resultType="com.goisan.system.bean.EmpDeptTree"
+            parameterType="java.lang.String">
+        SELECT
+        id,
+        name,
+        pid,
+        isper1   AS isper,
+        checked1 AS checked
+        FROM
+        (
+        SELECT
+        dept_id             id,
+        dept_name || '(部门)' name,
+        parent_dept_id      pid,
+        'false' AS          isper1,
+        'false' AS          checked1
+        FROM t_sys_dept WHERE VALID_FLAG = '1'
+        UNION ALL
+        (SELECT
+        t.*,
+        nvl2(t3.id, 'true', 'false') AS checked1
+        FROM
+        (SELECT
+        t1.person_id id,
+        t1.name      name,
+        t2.dept_id   pid,
+        'true' AS    isper1
+        FROM T_RS_EMPLOYEE t1, T_RS_EMPLOYEE_DEPT t2 ,t_sys_dept d
+        WHERE t1.person_id = t2.person_id AND t1.VALID_FLAG = '1' AND d.VALID_FLAG = '1' AND t2.dept_id=d.dept_id
+        ORDER BY t2.person_order
+        ) t
+        LEFT JOIN DZDA_ROLE t3 ON t.id = t3.person_id AND t.pid = t3.dept_id
+        AND t3.archives_id = #{archivesId}
+        )
+        )
+    </select>
+    <select id="getPrintById" parameterType="java.lang.String"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        ARCHIVES_ID archivesId,
+        ARCHIVES_CODE archivesCode,
+        DEPT_CODE deptCode,
+        to_char(request_date,'yyyy-mm-dd') requestDate,
+        SCHOOL_CODE schoolCode,
+        FUNC_GET_TABLEVALUE(ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
+        FUNC_GET_TABLEVALUE(TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
+        FUNC_GET_DICVALUE(FILE_TYPE,'DALX') fileType,
+        REQUEST_FLAG requestFlag,
+        REQUEST_TYPE requestType,
+        REMARK remark,
+        REASON reason,
+        FUNC_GET_USERNAME(CREATOR) creator,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) createDept
+        FROM DZDA_MESSAGE
+        WHERE ARCHIVES_ID=#{archivesId}
+    </select>
+    <select id="getAllArchivesList" parameterType="com.goisan.archives.bean.Archives"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        m.ARCHIVES_ID archivesId,
+        m.ARCHIVES_CODE archivesCode,
+        m.DEPT_CODE deptCode,
+        to_char(m.request_date,'yyyy-mm-dd') requestDate,
+        m.SCHOOL_CODE schoolCode,
+        FUNC_GET_TABLEVALUE( m.ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
+        FUNC_GET_TABLEVALUE( m.TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
+        FUNC_GET_DICVALUE( m.FILE_TYPE,'DALX') fileType,
+        CASE WHEN m.REQUEST_FLAG='0' THEN '已提交'
+        WHEN m.REQUEST_FLAG='1' THEN '待审核'
+        WHEN m.REQUEST_FLAG='2' THEN '通过'
+        WHEN m.REQUEST_FLAG='3' THEN '驳回'
+        ELSE '无' END state,
+        m.REQUEST_FLAG requestFlag,
+        m.REQUEST_TYPE requestType,
+        m.REMARK remark,
+        m.EDITED_ID editedId,
+        FUNC_GET_USERNAME( m.CREATOR) creator,
+        FUNC_GET_DEPTNAME( m.CREATE_DEPT) createDept,
+        m.CREATE_TIME createTime
+        FROM DZDA_MESSAGE m,DZDA_ROLE r
+        WHERE 1=1 AND m.VALID_FLAG='1' AND m.DEL_STATE = '0' AND m.request_flag = '0'
+        <if test="roleFlag == 1 ">
+           AND m.create_dept = #{createDept} OR m.archives_id = r.archives_id AND r.dept_id = #{createDept}
+        </if>
+        <if test="condition  != null and condition != '' ">
+            AND FUNC_GET_DEPTNAME(m.CREATE_DEPT) LIKE '%'||#{condition}||'%'
+            OR FUNC_GET_USERNAME(m.CREATOR) LIKE '%'||#{condition}||'%'
+            OR FUNC_GET_TABLEVALUE(m.TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') LIKE '%'||#{condition}||'%'
+            OR FUNC_GET_TABLEVALUE(m.ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') LIKE '%'||#{condition}||'%'
+            OR FUNC_GET_DICVALUE(m.FILE_TYPE,'DALX') LIKE '%'||#{condition}||'%'
+            OR to_char(m.request_date,'yyyy-mm-dd') LIKE '%'||#{condition}||'%'
+            OR m.REMARK LIKE '%'||#{condition}||'%'
+        </if>
+        ORDER BY m.CREATE_TIME DESC
+    </select>
+    <insert id="insertArchivesLog" parameterType="com.goisan.archives.bean.Archives">
+        INSERT INTO DZDA_LOG
+        (LOG_ID,ARCHIVES_ID,PERSON_ID,DEPT_ID,OPERATE_TYPE,OPERATE_TIME,REMARK,
+        CREATOR,CREATE_DEPT,CREATE_TIME)
+        VALUES
+        (FUNC_GET_UUID,#{archivesId},#{creator},#{createDept},#{operateType},sysdate,#{remark},
+        #{creator},#{createDept},sysdate)
+    </insert>
+</mapper>

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.score.dao.ScoreClassDao">
+    <select id="getScoreClassList" resultType="com.goisan.educational.score.bean.ScoreClass" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        SELECT
+        score_class_id   scoreClassId,
+        subject_id  subjectId,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','class_id','class_name') classId,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentsId,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name')  majorCode,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevel,
+        major_direction  majorDirection,
+        plan_id planId,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+        FUNC_GET_USERNAME(teacher_person_id)  personId,
+        FUNC_GET_DEPTNAME(teacher_dept_id) teacherDeptId,
+        score_exam_id  scoreExamId,
+        score_exam_name scoreExamName,
+        creator,
+        create_time,
+        create_dept,
+        changer,
+        change_time,
+        change_dept,
+        valid_flag
+        FROM
+        T_JW_SCORE_CLASS
+        where 1 = 1
+        <if test="courseId != null and courseId != '' ">
+            AND FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') LIKE '%'|| #{courseId} ||'%'
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','class_id','class_name') like '%'|| #{classId} || '%'
+        </if>
+        <if test="scoreExamName != null and scoreExamName != '' ">
+            AND score_exam_name like '%'|| #{scoreExamName} ||'%'
+        </if>
+
+        ORDER BY create_time desc
+    </select>
+    <select id="getScoreClassById" resultType="com.goisan.educational.score.bean.ScoreClass" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        SELECT
+        score_class_id   scoreClassId,
+        subject_id  subjectId,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','class_id','class_name') classId,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentsId,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name')  majorCode,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevel,
+        major_direction  majorDirection,
+        plan_id planId,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+        person_id personId,
+        teacher_dept_id teacherDeptId,
+        teacher_person_id  teacherPersonId,
+        course_id courseId,
+        score_exam_id  scoreExamId,
+        score_exam_name scoreExamName,
+        creator,
+        create_time,
+        create_dept,
+        changer,
+        change_time,
+        change_dept,
+        valid_flag
+        FROM
+        T_JW_SCORE_CLASS t
+        WHERE score_class_id = #{scoreClassId} ORDER BY create_time desc
+    </select>
+    <insert id="insertScoreClassSubject" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        INSERT INTO
+        T_JW_SCORE_CLASS
+        (score_class_id,
+        subject_id,
+        departments_id,
+        major_code,
+        major_direction,
+        training_level,
+        plan_id,
+        person_id,
+        course_id,
+        score_exam_id,
+        score_exam_name,
+        creator,create_time,create_dept) values
+        (FUNC_GET_UUID,
+        '${subjectId}','${departmentsId}','${majorCode}','${majorDirection}',
+        '${trainingLevel}','${planId}','${personId}','${courseId}','${scoreExamId}','${scoreExamName}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <insert id="insertScoreClass" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        INSERT INTO
+        T_JW_SCORE_CLASS
+        (score_class_id,
+        subject_id,
+        class_id,
+        departments_id,
+        major_code,
+        major_direction,
+        training_level,
+        plan_id,
+        course_id,
+        score_exam_id,
+        score_exam_name,
+        creator,create_time,create_dept) values
+        (FUNC_GET_UUID,
+        '${subjectId}','${classId}','${departmentsId}','${majorCode}','${majorDirection}',
+        '${trainingLevel}','${planId}','${courseId}','${scoreExamId}','${scoreExamName}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <delete id="deleteScoreClassById"  parameterType="java.lang.String">
+        DELETE FROM T_JW_SCORE_CLASS WHERE score_class_id = #{scoreClassId}
+    </delete>
+    <update id="updatePersonIdByScore" parameterType="java.lang.String">
+        UPDATE
+        T_JW_SCORE_CLASS
+        SET
+        teacher_dept_id = '',
+        teacher_person_id = ''
+        WHERE  score_class_id = #{scoreClassId}
+    </update>
+    <update id="updateScoreClassById" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        update
+        T_JW_SCORE_CLASS
+        SET
+        person_id = #{personId},
+        changer= #{changer},
+        change_time= sysdate,
+        teacher_dept_id = #{teacherDeptId},
+        teacher_person_id = #{teacherPersonId},
+        change_dept= #{changeDept}
+        WHERE
+        score_class_id = #{scoreClassId}
+    </update>
+    <select id="selectScoreCourse" parameterType="java.lang.String" resultType="com.goisan.educational.score.bean.ScoreCourse">
+        SELECT
+        SUBJECT_ID subjectId,
+        SCORE_EXAM_ID scoreExamId,
+        SCORE_EXAM_NAME scoreExamName,
+        PLAN_ID planId,
+        COURSE_TYPE courseType,
+        COURSE_ID courseId,
+        DEPARTMENTS_ID departmentsId,
+        MAJOR_CODE majorCode,
+        MAJOR_DIRECTION  majorDirection,
+        TRAINING_LEVEL  trainingLevel
+        from T_JW_SCORE_SUBJECT
+        WHERE subject_id = #{subjectId}
+    </select>
+    <select id="getClassTreeByScoreClass" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        distinct
+        m.dept_id id,
+        m.dept_name name,
+        m.parent_dept_id pid
+        FROM t_sys_dept m,T_XG_MAJOR d,T_JW_COURSE j
+        WHERE m.dept_id = '001' or (m.dept_type &lt; 9 AND j.valid_flag = 1
+        and j.departments_id = m.dept_id and d.departments_id = m.dept_id)
+        UNION
+        SELECT
+        distinct
+        d.major_code id,
+        d.major_name name,
+        d.departments_id pId
+        FROM T_XG_MAJOR d, T_JW_COURSE jj
+        WHERE d.valid_flag = 1 and jj.major_code = d.major_code
+        UNION
+        SELECT
+        distinct
+        cc.class_id id,
+        cc.class_name name,
+        cc.major_code pid
+        FROM t_xg_class cc, T_XG_MAJOR dd,T_JW_COURSE jjj
+        WHERE jjj.valid_flag = 1 and dd.major_code = cc.major_code
+        and jjj.major_code = dd.major_code
+    </select>
+    <select id="getClassByScoreClassId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.score.bean.ScoreClass">
+        SELECT * FROM T_JW_SCORE_CLASS WHERE score_class_id = #{scoreClassId}
+    </select>
+    <delete id="deleteScoreClassByClass" parameterType="com.goisan.educational.score.bean.ScoreClass">
+        DELETE FROM T_JW_SCORE_CLASS
+        WHERE subject_id =#{subjectId} AND score_class_id != #{scoreClassId}
+    </delete>
+    <delete id="delScoreClass" parameterType="java.lang.String">
+        DELETE FROM T_JW_SCORE_CLASS
+        WHERE score_class_id = #{scoreClassId}
+    </delete>
+    <delete id="delScoreByClassId" parameterType="java.lang.String">
+        DELETE FROM T_JW_SCORE_IMPORT
+        WHERE score_class_id = #{scoreClassId}
+    </delete>
+    <select id="selectScoreClassSubjectId" parameterType="java.lang.String" resultType="java.lang.Object">
+        SELECT  score_class_id scoreClassId FROM T_JW_SCORE_CLASS WHERE subject_id = #{subjectId}
+    </select>
+    <insert id="saveScoreClassAll" parameterType="com.goisan.educational.courseSign.bean.CourseSignClass">
+        insert INTO T_JW_SCORE_CLASS
+        (score_class_id,
+        subject_id,
+        plan_id,
+        person_id,
+        teacher_dept_id,
+        teacher_person_id,
+        course_id,
+        score_exam_id,
+        score_exam_name,
+        departments_id,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,CREATOR,CREATE_TIME,CREATE_DEPT,VALID_FLAG)
+        VALUES
+        (#{scoreClassId},#{subjectId},#{planId},#{personId},#{teacherDeptId},#{teacherPersonId},#{courseId},#{scoreExamId},#{scoreExamName},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},#{creator},sysdate,#{createDept},'1')
+    </insert>
+    <update id="updateScoreClassListByScoreClassId" parameterType="java.lang.String">
+        UPDATE
+        T_JW_SCORE_CLASS
+        SET
+        class_id = (select wmsys.wm_concat(t.class_id) as class_id from T_JW_SCORE_CLASS t where t.score_class_id = #{scoreClassId})
+        WHERE
+        score_class_id = #{scoreClassId}
+    </update>
+    <select id="getClassByScoreId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.score.bean.ScoreClass">
+        SELECT * FROM T_JW_SCORE_CLASS WHERE score_class_id = #{scoreClassId}
+    </select>
+    <!--FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,-->
+    <select id="getScoreClassByIds" parameterType="java.lang.String"
+            resultType="com.goisan.educational.score.bean.ScoreClass">
+        SELECT
+        score_class_id,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','class_id','class_name') class_id
+        FROM t_jw_score_class
+        WHERE score_class_id IN (${scoreClassIds})
+    </select>
+    <select id="getScoreClassTableDict" resultType="com.goisan.system.bean.Select2"
+            parameterType="com.goisan.system.bean.TableDict">
+        SELECT DISTINCT
+        ${id} AS id ,
+        ${text} AS text
+        FROM ${tableName}
+        <if test="where != null and where != '' ">
+            ${where}
+        </if>
+    </select>
+</mapper>
+
+

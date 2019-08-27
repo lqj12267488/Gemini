@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.crawler.dao.ContentDao">
+    <select id="getContentList"
+            parameterType="com.goisan.crawler.bean.Content"
+            resultType="com.goisan.crawler.bean.Content">
+        SELECT
+          id,
+          url,
+          title,
+          grab_date,
+          FUNC_GET_TABLEVALUE(WEB_ID, 'YQ_WEBCHANNEL', 'id', 'channel_name')         channel_name,
+          FUNC_GET_TABLEVALUE(WEB_ID, 'YQ_WEBCHANNEL', 'id', 'WEB_NAME')             web_id,
+          SENSI_WORDS,
+          FUNC_GET_TABLEVALUE(sensi_level, 'YQ_SENSILEVEL', 'store_value', 'show_value') sensi_level,
+          pid
+        FROM YQ_CONTENT
+
+    </select>
+</mapper>

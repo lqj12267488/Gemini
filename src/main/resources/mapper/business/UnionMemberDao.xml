@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="com.goisan.personnel.unionmember.dao.UnionMemberDao">
+    <select id="getUnionMemberList" parameterType="com.goisan.personnel.unionmember.bean.UnionMember"
+            resultType="com.goisan.personnel.unionmember.bean.UnionMember">
+        SELECT id id,
+        person_id personId,
+        FUNC_GET_USERNAME(person_id) personIdShow,
+        FUNC_GET_DEPTNAME(dept_id) deptIdShow,
+        dept_id deptId,
+        member_number memberNumber,
+        union_duties  unionDuties,
+        to_char(join_time,'yyyy-mm-dd') as joinTime,
+        remark remark,
+        creator creator,
+        create_time createTime,
+        create_dept createDept,
+        valid_flag
+        FROM
+        T_RS_UNION_MEMBER
+        WHERE 1 = 1 AND valid_flag = '1'
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(person_id) like '%'||#{personId}||'%'
+        </if>
+        <if test="memberNumber != null and memberNumber !='' ">
+            AND  member_number  like '%'||#{memberNumber}||'%'
+        </if>
+        <if test="joinTime != null and joinTime !='' ">
+            AND to_char(join_time,'yyyy-mm-dd') like '%'||#{joinTime}||'%'
+        </if>
+    </select>
+    <select id="getUnionMemberById" parameterType="java.lang.String"
+            resultType="com.goisan.personnel.unionmember.bean.UnionMember">
+        SELECT id id,
+        FUNC_GET_USERNAME(person_id) personIdShow,
+        FUNC_GET_DEPTNAME(dept_id) deptIdShow,
+        person_id personId,
+        dept_id deptId,
+        member_number memberNumber,
+        union_duties  unionDuties,
+        to_char(join_time,'yyyy-mm-dd') || 'T' || to_char(join_time,'hh24:mi') as joinTime,
+        remark remark,
+        creator creator,
+        create_time createTime,
+        create_dept createDept,
+        valid_flag
+        FROM T_RS_UNION_MEMBER
+        WHERE 1 = 1 AND VALID_FLAG = '1' AND id = #{id}
+    </select>
+    <insert id="insertUnionMember" parameterType="com.goisan.personnel.unionmember.bean.UnionMember">
+        INSERT INTO
+        T_RS_UNION_MEMBER
+        (id,person_id,
+        dept_id,
+        member_number,
+        union_duties,
+        join_time,
+        remark,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag) values
+        (FUNC_GET_UUID,
+        '${personId}',
+        '${deptId}',
+        '${memberNumber}',
+        '${unionDuties}',
+        to_date('${joinTime}','yyyy-mm-dd hh24:mi'),
+        '${remark}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <update id="updateUnionMember" parameterType="com.goisan.personnel.unionmember.bean.UnionMember">
+        UPDATE  T_RS_UNION_MEMBER  SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        member_number = #{memberNumber},
+        union_duties = #{unionDuties},
+        join_time = to_date(#{joinTime},'yyyy-mm-dd  hh24:mi'),
+        remark = #{remark}
+        WHERE  id = #{id}
+    </update>
+
+    <delete id="deleteUnionMember" parameterType="com.goisan.personnel.unionmember.bean.UnionMember">
+        DELETE FROM T_RS_UNION_MEMBER WHERE id = #{id}
+    </delete>
+    <select id="getPersonIdDeptId" parameterType="com.goisan.personnel.unionmember.bean.UnionMember"
+            resultType="com.goisan.personnel.unionmember.bean.UnionMember">
+        SELECT id id,
+        FUNC_GET_USERNAME(person_id) personIdShow,
+        FUNC_GET_DEPTNAME(dept_id) deptIdShow,
+        person_id personId,
+        dept_id deptId,
+        member_number memberNumber,
+        union_duties  unionDuties,
+        to_char(join_time,'yyyy-mm-dd') || 'T' || to_char(join_time,'hh24:mi') as joinTime,
+        remark remark,
+        creator creator,
+        create_time createTime,
+        create_dept createDept,
+        valid_flag
+        FROM T_RS_UNION_MEMBER
+        WHERE 1 = 1 AND VALID_FLAG = '1' AND person_id = #{personId} AND dept_id = #{deptId}
+    </select>
+    <select id="getUnionNumber" parameterType="com.goisan.personnel.unionmember.bean.UnionMember"
+            resultType="com.goisan.personnel.unionmember.bean.UnionMember">
+        SELECT id id,
+        FUNC_GET_USERNAME(person_id) personIdShow,
+        FUNC_GET_DEPTNAME(dept_id) deptIdShow,
+        person_id personId,
+        dept_id deptId,
+        member_number memberNumber,
+        union_duties  unionDuties,
+        to_char(join_time,'yyyy-mm-dd') || 'T' || to_char(join_time,'hh24:mi') as joinTime,
+        remark remark,
+        creator creator,
+        create_time createTime,
+        create_dept createDept,
+        valid_flag
+        FROM T_RS_UNION_MEMBER
+        WHERE 1 = 1 AND VALID_FLAG = '1' AND member_number = #{memberNumber}
+    </select>
+
+</mapper>

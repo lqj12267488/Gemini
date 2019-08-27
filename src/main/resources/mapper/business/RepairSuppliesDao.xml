@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.logistics.repair.dao.RepairSuppliesDao">
+    <select id="RepairSuppliesAction" resultType="com.goisan.logistics.repair.bean.RepairSupplies"
+            parameterType="com.goisan.logistics.repair.bean.RepairSupplies">
+        SELECT
+        t.supplies_id id,
+        t.supplies_name suppliesname,
+        func_get_userdicvalue(t.supplies_name,'WXHCXX') suppliesnameShow,
+        func_get_userdicvalue(t.supplies_type,'WXHCLX') suppliestypeShow,
+--         t.supplies_type suppliestype,
+        t.supplies_num suppliesnum,
+        t.supplies_in_num suppliesInnum,
+        t.unit unit,
+        t.price price,
+        t.specifications specifications,
+        t.brand brand,
+        t.remark remark,
+        to_char(t.in_time,'yyyy-mm-dd hh24:mi') as intime,
+        t.create_time createTime
+        FROM
+        T_ZW_REPAIRSUPPLIES t
+        WHERE 1 = 1
+        AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="intime != null and intime != '' ">
+            AND  to_char(t.in_time,'yyyy-mm-dd') LIKE #{intime}
+        </if>
+    </select>
+    <select id="RepairSuppliesComplete" resultType="com.goisan.logistics.repair.bean.RepairSupplies"
+            parameterType="com.goisan.logistics.repair.bean.RepairSupplies">
+        SELECT
+        t.SUPPLIES_ID id,
+        t.supplies_name suppliesname,
+        func_get_userdicvalue(t.supplies_type,'WXHCLX') suppliestypeShow,
+        t.supplies_num suppliesnum,
+        t.SUPPLIES_IN_NUM suppliesInnum,
+        t.unit unit,
+        t.price price,
+        t.specifications specifications,
+        t.brand brand,
+        t.remark remark,
+        to_char(t.in_time,'yyyy-mm-dd hh24:mi') as intime
+        from T_ZW_REPAIRSUPPLIES t
+        WHERE 1 = 1
+        AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="intime != null and intime != '' ">
+            AND to_char(t.in_time, 'yyyy-mm-dd') LIKE '%${intime}%'
+        </if>
+        <if test="suppliesname != null and suppliesname != '' ">
+            AND t.supplies_name LIKE '%${suppliesname}%'
+        </if>
+        <if test="brand != null and brand != '' ">
+            AND t.brand LIKE '%${brand}%'
+        </if>
+        <!--<if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator = #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>-->
+        ORDER BY t.create_time DESC
+    </select>
+    <delete id="deleteRepairSuppliesById" parameterType="java.lang.String">
+        DELETE FROM  T_ZW_REPAIRSUPPLIES WHERE SUPPLIES_ID = #{id}
+    </delete>
+    <select id="getRepairSuppliesById" parameterType="java.lang.String" resultType="com.goisan.logistics.repair.bean.RepairSupplies">
+        SELECT
+        t.SUPPLIES_ID id,
+        func_get_userdicvalue(t.supplies_name,'WXHCXX') suppliesnameShow,
+        func_get_userdicvalue(t.supplies_type,'WXHCLX') suppliestypeShow,
+        t.supplies_type suppliestype,
+        t.supplies_name suppliesname,
+        t.supplies_num suppliesnum,
+        t.unit unit,
+        t.price price,
+        t.specifications specifications,
+        t.brand brand,
+        t.remark remark,
+        to_char(t.in_time,'yyyy-mm-dd') || 'T' || to_char(t.in_time,'hh24:mi') as intime
+        FROM
+        T_ZW_REPAIRSUPPLIES t
+        WHERE SUPPLIES_ID = #{id} ORDER BY t.create_time DESC
+    </select>
+    <update id="updateRepairSuppliesById" parameterType="com.goisan.logistics.repair.bean.RepairSupplies">
+    update
+    T_ZW_REPAIRSUPPLIES
+    SET
+    SUPPLIES_ID = #{id},
+    supplies_name = #{suppliesname},
+    supplies_type= #{suppliestype},
+    supplies_num = #{suppliesnum},
+    unit = #{unit},
+    price = #{price},
+    specifications = #{specifications},
+    brand = #{brand},
+    remark = #{remark},
+    in_time = sysdate
+    WHERE
+    SUPPLIES_ID = #{id}
+</update>
+    <insert id="insertRepairSupplies" parameterType="com.goisan.logistics.repair.bean.RepairSupplies">
+        insert into
+        T_ZW_REPAIRSUPPLIES
+        (SUPPLIES_ID,supplies_name,supplies_type,supplies_num,supplies_in_num,unit,price,specifications,brand,remark,in_time,creator,create_time,create_dept)values
+        (FUNC_GET_UUID,'${suppliesname}','${suppliestype}','${suppliesnum}','${suppliesnum}','${unit}','${price}','${specifications}','${brand}','${remark}',sysdate,'${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="selectDept" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="selectPerson" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+
+    <!--查ID-->
+    <select id="getById" parameterType="java.lang.String" resultType="com.goisan.logistics.repair.bean.RepairSupplies">
+        SELECT
+        t.SUPPLIES_ID id
+        FROM
+        T_ZW_REPAIRSUPPLIES t
+        WHERE SUPPLIES_ID = #{rid}
+    </select>
+    <!--查库存数量-->
+    <select id="getSuppliesInnum" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select
+       SUPPLIES_IN_NUM suppliesInnum
+        FROM T_ZW_REPAIRSUPPLIES
+        where
+        SUPPLIES_id=#{id}
+    </select>
+
+    <update id="updateSuppliesInNum" parameterType="com.goisan.logistics.repair.bean.RepairSupplies">
+        update T_ZW_REPAIRSUPPLIES
+        set SUPPLIES_IN_NUM = #{suppliesInnum}
+        where SUPPLIES_id = #{suppliesid}
+    </update>
+    <!--查耗材名称-->
+    <select id="getName" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select
+        SUPPLIES_NAME
+        FROM T_ZW_REPAIRSUPPLIES
+        where
+        SUPPLIES_id=#{id}
+    </select>
+    <!--添加耗材—新增耗材保存-->
+    <insert id="saveAddSupplies" parameterType="com.goisan.logistics.repair.bean.RepairSupplies">
+        insert into
+        T_ZW_REPAIR_ITEMS
+        (REPAIR_ITEMS_ID,REPAIR_ID,SUPPLIES_ID,SUPPLIES_TYPE,SUPPLIES_NAME,SUPPLIES_NUM,UNIT,REMARK,CREATOR,CREATE_TIME,CREATE_DEPT)values
+        (FUNC_GET_UUID,'${repairID}','${suppliesid}','${suppliestype}','${suppliesname}','${suppliesnum}','${unit}','${remark}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--修改是否使用状态-->
+    <update id="updateSuppliesFlag" parameterType="com.goisan.logistics.repair.bean.RepairSupplies">
+        update
+        T_ZW_REPAIR
+        SET
+        SUPPLIES_FLAG=#{status}
+        WHERE
+        REPAIR_ID = #{repairID}
+    </update>
+    <!--修改库存数量-->
+    <update id="updateSuppliesnum" parameterType="com.goisan.logistics.repair.bean.RepairSupplies">
+        update
+        T_ZW_REPAIRSUPPLIES
+        SET
+        SUPPLIES_IN_NUM=#{suppliesInnum}
+        WHERE
+        SUPPLIES_ID = #{suppliesid}
+    </update>
+    <!--删除添加的耗材-->
+    <delete id="deleteSupplies" parameterType="java.lang.String">
+        DELETE FROM  T_ZW_REPAIR_ITEMS WHERE REPAIR_ITEMS_ID = #{id}
+    </delete>
+    <select id="countByReapairId" parameterType="string" resultType="int">
+        select count(*) from T_ZW_REPAIR_ITEMS where REPAIR_ID =#{repairId}
+    </select>
+</mapper>

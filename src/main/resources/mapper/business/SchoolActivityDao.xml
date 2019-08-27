@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--协同办公-校外人员进校参加活动管理
+    Created and modify by wq on 2017/10/11.
+-->
+<mapper namespace="com.goisan.synergy.workflow.dao.SchoolActivityDao">
+    <!--申请页查表-->
+    <select id="getSchoolActivityList" resultType="com.goisan.synergy.workflow.bean.SchoolActivity"
+            parameterType="com.goisan.synergy.workflow.bean.SchoolActivity">
+        SELECT
+        t.ID id,
+        t.ACTIVITY_NAME activityName,
+        t.ACTIVITY_CONTENT activityContent,
+        t.ACTIVITY_PLACE activityPlace,
+        to_char(t.START_TIME,'yyyy-mm-dd hh24:mi') startTime,
+        to_char(t.END_TIME,'yyyy-mm-dd hh24:mi') endTime,
+        t.PEOPLE_NUMBER peopleNumber,
+        t.CAR_NUMBER carNumber,
+        FUNC_GET_DEPTNAME(t.REQUEST_DEPT) requestDept,
+        FUNC_GET_USERNAME(t.REQUESTER) requester,
+        to_char(t.REQUEST_TIME,'yyyy-mm-dd hh24:mi') requestTime,
+        t.CONTACT_PHONE contactPhone,
+        t.SAFETY_STEP safetyStep,
+        t.REMARK remark,
+        t.CREATOR,
+        t.CREATE_TIME,
+        t.CREATE_DEPT,
+        t.REQUEST_FLAG requestFlag
+        FROM
+        T_BG_SCHOOLACTIVITY_WF t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="requestTime != null and requestTime != '' ">
+            AND to_char(t.REQUEST_TIME,'yyyy-mm-dd') LIKE #{requestTime}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <!--通过id查询申请-->
+    <select id="getSchoolActivityById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.SchoolActivity">
+        SELECT
+        t.ID id,
+        t.ACTIVITY_NAME activityName,
+        t.ACTIVITY_CONTENT activityContent,
+        t.ACTIVITY_PLACE activityPlace,
+        to_char(t.START_TIME,'yyyy-mm-dd') || 'T' || to_char(t.REQUEST_TIME,'hh24:mi') startTime,
+        to_char(t.START_TIME,'yyyy-mm-dd hh24:mi') startDate,
+        to_char(t.END_TIME,'yyyy-mm-dd') || 'T' || to_char(t.REQUEST_TIME,'hh24:mi') endTime,
+        to_char(t.END_TIME,'yyyy-mm-dd hh24:mi') endDate,
+        t.PEOPLE_NUMBER peopleNumber,
+        t.CAR_NUMBER carNumber,
+        FUNC_GET_DEPTNAME(t.REQUEST_DEPT) requestDept,
+        FUNC_GET_USERNAME(t.REQUESTER) requester,
+        to_char(t.REQUEST_TIME,'yyyy-mm-dd') || 'T' || to_char(t.REQUEST_TIME,'hh24:mi') requestTime,
+        to_char(t.REQUEST_TIME,'yyyy-mm-dd hh24:mi') requestDate,
+        t.CONTACT_PHONE contactPhone,
+        t.SAFETY_STEP safetyStep,
+        t.REMARK remark,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime,
+        t.CREATE_DEPT createDept,
+        t.REQUEST_FLAG requestFlag
+        FROM
+        T_BG_SCHOOLACTIVITY_WF t
+        WHERE ID = #{id} ORDER BY t.CREATE_TIME DESC
+    </select>
+    <!--申请添加-->
+    <insert id="insertSchoolActivity" parameterType="com.goisan.synergy.workflow.bean.SchoolActivity">
+        insert into
+        T_BG_SCHOOLACTIVITY_WF t
+        (ID,ACTIVITY_NAME,ACTIVITY_CONTENT,ACTIVITY_PLACE,
+        START_TIME,END_TIME,PEOPLE_NUMBER,CAR_NUMBER,
+        REQUEST_DEPT,REQUESTER,REQUEST_TIME,
+        CONTACT_PHONE,SAFETY_STEP,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT) values
+        (FUNC_GET_UUID,#{activityName},#{activityContent},#{activityPlace},
+        to_date(#{startTime},'yyyy-mm-dd hh24:mi'),to_date(#{endTime},'yyyy-mm-dd hh24:mi'),#{peopleNumber},#{carNumber},
+        #{requestDept},#{requester},to_date(#{requestTime},'yyyy-mm-dd hh24:mi'),
+        #{contactPhone},#{safetyStep},#{remark},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <!--申请修改-->
+    <update id="updateSchoolActivity" parameterType="com.goisan.synergy.workflow.bean.SchoolActivity">
+        update
+        T_BG_SCHOOLACTIVITY_WF
+        SET
+        ID=#{id},
+        ACTIVITY_NAME=#{activityName},
+        ACTIVITY_CONTENT=#{activityContent},
+        ACTIVITY_PLACE=#{activityPlace},
+        START_TIME = to_date(#{startTime},'yyyy-mm-dd hh24:mi'),
+        END_TIME = to_date(#{endTime},'yyyy-mm-dd hh24:mi'),
+        PEOPLE_NUMBER=#{peopleNumber},
+        CAR_NUMBER=#{carNumber},
+        REQUEST_DEPT =#{requestDept},
+        REQUESTER =#{requester},
+        REQUEST_TIME = to_date(#{requestTime},'yyyy-mm-dd hh24:mi'),
+        CONTACT_PHONE=#{contactPhone},
+        SAFETY_STEP=#{safetyStep},
+        REMARK=#{remark},
+        CHANGER = #{changer},
+        CHANGE_TIME = sysdate,
+        CHANGE_DEPT = #{changeDept}
+        WHERE
+        ID = #{id}
+    </update>
+    <!--申请删除-->
+    <delete id="deleteSchoolActivity" parameterType="java.lang.String">
+        DELETE FROM T_BG_SCHOOLACTIVITY_WF WHERE ID = #{id}
+    </delete>
+    <!--待办页查表-->
+    <select id="getSchoolActivityProcessList" resultType="com.goisan.synergy.workflow.bean.SchoolActivity"
+            parameterType="com.goisan.synergy.workflow.bean.SchoolActivity">
+        SELECT
+        t.ID id,
+        t.ACTIVITY_NAME activityName,
+        t.ACTIVITY_CONTENT activityContent,
+        t.ACTIVITY_PLACE activityPlace,
+        to_char(t.START_TIME,'yyyy-mm-dd hh24:mi') startTime,
+        to_char(t.END_TIME,'yyyy-mm-dd hh24:mi') endTime,
+        t.PEOPLE_NUMBER peopleNumber,
+        t.CAR_NUMBER carNumber,
+        FUNC_GET_DEPTNAME(t.REQUEST_DEPT) requestDept,
+        FUNC_GET_USERNAME(t.REQUESTER) requester,
+        to_char(t.REQUEST_TIME,'yyyy-mm-dd hh24:mi') requestTime,
+        t.CONTACT_PHONE contactPhone,
+        t.SAFETY_STEP safetyStep,
+        t.REMARK remark,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime,
+        t.CREATE_DEPT createDept,
+        t.REQUEST_FLAG requestFlag,
+        t.FEEDBACK feedback
+        FROM
+        T_BG_SCHOOLACTIVITY_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.REQUEST_DEPT) LIKE #{requestDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.REQUESTER) LIKE #{requester}
+        </if>
+        <if test="requestTime != null and requestTime != '' ">
+            AND to_char(t.REQUEST_TIME, 'yyyy-mm-dd') LIKE #{requestTime}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.ID = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <!--已办页查表-->
+    <select id="getSchoolActivityCompleteList" resultType="com.goisan.synergy.workflow.bean.SchoolActivity"
+            parameterType="com.goisan.synergy.workflow.bean.SchoolActivity">
+        SELECT DISTINCT
+        t.ID id,
+        t.ACTIVITY_NAME activityName,
+        t.ACTIVITY_CONTENT activityContent,
+        t.ACTIVITY_PLACE activityPlace,
+        to_char(t.START_TIME,'yyyy-mm-dd hh24:mi') startTime,
+        to_char(t.END_TIME,'yyyy-mm-dd hh24:mi') endTime,
+        t.PEOPLE_NUMBER peopleNumber,
+        t.CAR_NUMBER carNumber,
+        FUNC_GET_DEPTNAME(t.REQUEST_DEPT) requestDept,
+        FUNC_GET_USERNAME(t.REQUESTER) requester,
+        to_char(t.REQUEST_TIME,'yyyy-mm-dd hh24:mi') requestTime,
+        t.CONTACT_PHONE contactPhone,
+        t.SAFETY_STEP safetyStep,
+        t.REMARK remark,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime,
+        t.CREATE_DEPT createDept,
+        FUNC_GET_DICVALUE(t.REQUEST_FLAG,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,
+        t.FEEDBACK feedback
+        FROM
+        T_BG_SCHOOLACTIVITY_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.REQUEST_DEPT) LIKE #{requestDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.REQUESTER) LIKE #{requester}
+        </if>
+        <if test="requestTime != null and requestTime != '' ">
+            AND to_char(t.REQUEST_TIME, 'yyyy-mm-dd') LIKE #{requestTime}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--查询人员表-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <!--查询部门表-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--通过人员id查询人员姓名-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <!--通过部门id查询部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <!--获取所在部门所有人员-->
+    <select id="getDeptPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.Select2">
+        SELECT e.person_id id,e.name text
+        FROM T_RS_EMPLOYEE e,T_RS_EMPLOYEE_DEPT d
+        WHERE e.person_id = d.person_id and dept_id = #{deptId}
+        ORDER BY e.name
+    </select>
+</mapper>

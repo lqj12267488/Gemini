@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.facultyload.dao.FacultyLoadDao">
+    <select id="getFacultyLoadList"
+            parameterType="com.goisan.educational.facultyload.bean.FacultyLoad"
+            resultType="com.goisan.educational.facultyload.bean.FacultyLoad">
+        SELECT
+        t.*,
+        FUNC_GET_DICVALUE(t.term,'XQ') termName,
+        FUNC_GET_TABLEVALUE(t.teacher_id, 'T_SYS_USER', 'user_id', 'name') teacherName,
+        FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
+        FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'class_id', 'class_name') className,
+        FUNC_GET_TABLEVALUE(t.dept_id, 'T_SYS_DEPT', 'dept_id', 'dept_name') deptName
+        FROM T_JW_FACULTY_LOAD t
+        <where>
+            <if test="teacherId!=null and teacherId!=''">
+                t.teacher_id = #{teacherId}
+            </if>
+            <if test="courseId!=null and courseId!=''">
+                AND t.course_id = #{courseId}
+            </if>
+            <if test="term!=null and term!=''">
+                AND t.term = #{term}
+            </if>
+            <if test="deptId!=null and deptId!=''">
+                AND t.dept_id = #{deptId}
+            </if>
+        </where>
+        ORDER BY
+        create_time DESC
+    </select>
+    <insert id="insertFacultyLoad" parameterType="com.goisan.educational.facultyload.bean.FacultyLoad">
+        insert
+        into T_JW_FACULTY_LOAD (id,
+                                term,
+                                teacher_id,
+                                dept_id,
+                                course_id,
+                                class_id,
+                                student_num,
+                                week_time,
+                                week_num,
+                                pain_time,
+                                stop_time,
+                                stop_info,
+                                real_time,
+                                pay_rule,
+                                pain_pay,
+                                deductions_pay,
+                                real_pay,
+                                creator,
+                                create_time,
+                                create_dept)
+        values (#{id},
+                #{term},
+                #{teacherId},
+                #{deptId},
+                #{courseId},
+                #{classId},
+                #{studentNum},
+                #{weekTime},
+                #{weekNum},
+                #{painTime},
+                #{stopTime},
+                #{stopInfo},
+                #{realTime},
+                #{payRule},
+                #{painPay},
+                #{deductionsPay},
+                #{realPay},
+                #{creator},
+                #{createTime},
+                #{createDept})
+    </insert>
+    <select id="getFacultyLoadById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.facultyload.bean.FacultyLoad">
+        SELECT t.*,
+               FUNC_GET_DICVALUE(t.term, 'XQ')                                             termName,
+               FUNC_GET_TABLEVALUE(t.teacher_id, 'T_SYS_USER', 'user_id', 'name')          teacherName,
+               FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
+               FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'class_id', 'class_name')     className,
+               FUNC_GET_TABLEVALUE(t.dept_id, 'T_SYS_DEPT', 'dept_id', 'dept_name')        deptName
+        FROM T_JW_FACULTY_LOAD t
+        WHERE t.id = #{id}
+    </select>
+    <update id="updateFacultyLoad" parameterType="com.goisan.educational.facultyload.bean.FacultyLoad">
+        update T_JW_FACULTY_LOAD
+        set term=#{term},
+            teacher_id=#{teacherId},
+            dept_id=#{deptId},
+            course_id=#{courseId},
+            class_id=#{classId},
+            student_num=#{studentNum},
+            week_time=#{weekTime},
+            week_num=#{weekNum},
+            pain_time=#{painTime},
+            stop_time=#{stopTime},
+            stop_info=#{stopInfo},
+            real_time=#{realTime},
+            pay_rule=#{payRule},
+            pain_pay=#{painPay},
+            deductions_pay=#{deductionsPay},
+            real_pay=#{realPay},
+            changer=#{changer},
+            change_time=#{changeTime},
+            change_dept=#{changeDept}
+        where id = #{id}
+    </update>
+    <delete id="deleteFacultyLoadByIds" parameterType="java.lang.String">
+        delete
+        from T_JW_FACULTY_LOAD
+        where id = #{id}
+    </delete>
+    <select id="getSkjhSum" parameterType="String" resultType="int">
+        select count(*)
+        from T_JW_TEACHING_PLAN
+        where USER_ID = #{teacherId}
+          and term = #{term}
+    </select>
+    <select id="getSjSum" parameterType="String" resultType="int">
+        select count(*)
+        from T_JW_TESTPAPERANALYSIS t
+        where t.teacher_id = #{teacherId}
+          AND t.school_year = #{term}
+    </select>
+    <select id="getCJSum" parameterType="String" resultType="map">
+        select FUNC_GET_USERNAME(t2.TEACHER_ID)                                             "userName",
+               FUNC_GET_TABLEVALUE(t2.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') "courseName",
+               FUNC_GET_TABLEVALUE(t2.CLASS_INFO, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')   "className",
+               case
+                    when (select count(id)
+                         from T_JW_SCORE_IMPORT t4
+                         where SCORE_EXAM_ID = t3.EXAM_ID
+                           and t2.COURSE_ID = t4.COURSE_ID
+                           and t2.CLASS_INFO = t4.CLASS_ID
+                           and SUBMIT_FLAG = 1) > 0 then '2'
+                   when (select count(*)
+                         from T_JW_EXAM_STUDENT t5
+                         where t5.CLASS_ID = t1.CLASS_ID
+                           and t5.EXAM_ID = t3.EXAM_ID) = (select count(id)
+                                                           from T_JW_SCORE_IMPORT t4
+                                                           where SCORE_EXAM_ID = t3.EXAM_ID
+                                                             and t2.COURSE_ID = t4.COURSE_ID
+                                                             and t2.CLASS_INFO = t4.CLASS_ID
+                                                             and SUBMIT_FLAG = 1) then '1'
+                   else '0' end as                                                          "status"
+        from T_JW_EXAM_COURSE_CLASS t1,
+             T_JW_TEACHINGTASK t2,
+             T_JW_EXAM t3
+        where t1.CLASS_ID = t2.CLASS_INFO
+          and t2.COURSE_ID = t1.COURSE_ID
+          and t3.EXAM_ID = t1.EXAM_ID
+          and t3.TERM = t2.SEMESTER
+          and t3.exam_types=1
+          and t2.TEACHER_ID = #{teacherId}
+    </select>
+    <select id="getPjSum" parameterType="String" resultType="int">
+        SELECT round((SELECT count(*)
+                      FROM t_kh_evaluation_emps_members m
+                      WHERE m.task_id = e.task_id
+                        AND m.emps_id = e.emps_id
+                        AND m.evaluation_flag = '1') / (SELECT decode(count(*), 0, 1, count(*))
+                                                        FROM t_kh_evaluation_emps_members m
+                                                        WHERE m.task_id = e.task_id
+                                                          AND m.emps_id = e.emps_id) * 100) schedule
+        FROM (select l.*, t.task_id
+              from t_kh_evaluation_task t,
+                   T_KH_EVALUATION_EMPSLIST l
+              WHERE t.emp_group_id = l.group_id
+                and PERSON_ID = #{teacherId}) e
+
+    </select>
+    <select id="getJxjhSum" resultType="int">
+        SELECT count(*)
+        FROM T_JW_COURSEPLAN t1,T_JW_COURSEPLAN_TERM t2
+        WHERE t1.TEACHER_PERSON_ID = #{teacherId}
+          AND t1.PLAN_ID = t2.PLAN_ID
+          AND t1.YEAR||'0'||t2.TERM = #{term}
+    </select>
+</mapper>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.approval.dao.ResourcePublicDao">
+    <select id="getResourcePublicList"
+            parameterType="com.goisan.approval.bean.ResourcePublic"
+            resultType="com.goisan.approval.bean.ResourcePublic">
+        SELECT resource_id,resource_name,
+        FUNC_GET_DICVALUE(resource_type,'ZYK_ZYLX') resourceType,
+        resource_subject_id,
+        FUNC_GET_TABLEVALUE(resource_subject_id, 'ZYK_TYPE_SUBJECT', 'RESOURCE_SUBJECT_ID', 'RESOURCE_SUBJECT_NAME')
+        resourceSubjectIdShow,
+        resource_major_id,
+        FUNC_GET_TABLEVALUE(resource_major_id, 'ZYK_TYPE_MAJOR', 'RESOURCE_MAJOR_ID', 'RESOURCE_MAJOR_NAME')
+        resourceMajorIdShow,
+        resource_course_id,
+        FUNC_GET_TABLEVALUE(resource_course_id, 'ZYK_TYPE_course', 'resource_course_id', 'resource_course_name')
+        resourceCourseIdShow,
+        FUNC_GET_DICVALUE(resource_format,'ZYK_ZYGS') AS resourceFormat,
+        FUNC_GET_DICVALUE(public_flag, 'SF') public_flag,
+        FUNC_GET_DICVALUE(classic_flag, 'SF') classic_flag,
+        public_person_id,public_dept_id,
+        decode(public_person_id ,'','', FUNC_GET_USERNAME(public_person_id)||'--'|| FUNC_GET_DEPTNAME(public_dept_id))
+        publicPersonIdShow ,
+        to_char(public_time,'yyyy-mm-dd') as publicTime,
+        classic_flag classicFlagCode,
+        remark
+        FROM ZYK_RESOURCE_PUBLIC
+        WHERE VALID_FLAG = '1'
+        <if test="resourceSubjectId != null and resourceSubjectId != '' and resourceSubjectId != 'null'">
+            AND resource_subject_id = #{resourceSubjectId}
+        </if>
+        <if test="resourceMajorId != null and resourceMajorId != '' and resourceMajorId != 'null'">
+            AND resource_major_id = #{resourceMajorId}
+        </if>
+        <if test="resourceCourseId != null and resourceCourseId != '' and resourceCourseId != 'null'">
+            AND resource_course_id = #{resourceCourseId}
+        </if>
+        <if test="resourceName != null and resourceName != '' and resourceName != 'null'">
+            AND resource_name LIKE '%'||#{resourceName}||'%'
+        </if>
+        order by PUBLIC_TIME DESC
+    </select>
+    <insert id="saveResourcePublic" parameterType="com.goisan.approval.bean.ResourcePublic">
+        insert into zyk_resource_public
+        (resource_id,resource_name,resource_type,resource_subject_id,resource_major_id,
+          resource_course_id,resource_format,public_flag,classic_flag,public_person_id,public_dept_id,
+         VALID_FLAG, public_time,remark,creator,create_time,create_dept)
+        values
+        (#{resourceId},#{resourceName},#{resourceType},#{resourceSubjectId},#{resourceMajorId},
+          #{resourceCourseId},#{resourceFormat},#{publicFlag},#{classicFlag},#{publicPersonId},#{publicDeptId},
+          '1',to_date(#{publicTime},'yyyy-mm-dd'),#{remark},#{creator},sysdate,#{createDept})
+    </insert>
+    <insert id="addResourcePublic" parameterType="com.goisan.approval.bean.ResourcePublic">
+        INSERT INTO zyk_resource_public
+        (resource_id,resource_name,resource_type,resource_subject_id,resource_major_id,
+        resource_course_id,resource_format,
+        public_flag,classic_flag,public_person_id,public_dept_id,
+        VALID_FLAG, public_time,remark,creator,create_time,create_dept)
+        SELECT
+        resource_id,resource_name,resource_type,#{resourceSubjectId} AS resource_subject_id,#{resourceMajorId} AS resource_major_id,
+        #{resourceCourseId} AS resource_course_id,#{resourceFormat} AS resource_format,
+        '1' AS public_flag,classic_flag,creator AS public_person_id,create_dept AS public_dept_id,
+        '1' AS VALID_FLAG,sysdate AS public_time,remark,#{creator} AS creator,sysdate AS create_time,#{createDept} AS create_dept
+        FROM
+        ZYK_RESOURCE_PRIVATE WHERE RESOURCE_ID = #{resourceId}
+    </insert>
+    <select id="getResourcePublicById" parameterType="java.lang.String"
+            resultType="com.goisan.approval.bean.ResourcePublic">
+        select
+            resource_id,resource_name,resource_type,resource_subject_id,resource_major_id,
+            FUNC_GET_TABLEVALUE(resource_subject_id, 'ZYK_TYPE_SUBJECT', 'RESOURCE_SUBJECT_ID', 'RESOURCE_SUBJECT_NAME')  resourceSubjectIdShow,
+            FUNC_GET_TABLEVALUE(resource_major_id, 'ZYK_TYPE_MAJOR', 'RESOURCE_MAJOR_ID', 'RESOURCE_MAJOR_NAME')  resourceMajorIdShow,
+            FUNC_GET_TABLEVALUE(resource_course_id, 'ZYK_TYPE_course', 'resource_course_id', 'resource_course_name')  resourceCourseIdShow,
+            FUNC_GET_DICVALUE(resource_format,'ZYK_ZYGS') AS resourceFormatShow,
+            resource_course_id,resource_format,public_flag,classic_flag,public_person_id,public_dept_id,
+            to_char(public_time,'yyyy-mm-dd') publicTime,remark,
+            decode(public_person_id ,'','', FUNC_GET_USERNAME(public_person_id)||'----'|| FUNC_GET_DEPTNAME(public_dept_id)) publicPersonIdShow ,
+            public_time AS publicTime ,
+            (SELECT COUNT (id) AS count  FROM ZYK_COLLECTION WHERE valid_flag = 1 AND  resource_id = #{resourceId}
+                and person_id = '${creator}'
+            ) AS collection
+        from ZYK_RESOURCE_PUBLIC t where resource_id = #{resourceId}
+    </select>
+    <update id="updateResourcePublic" parameterType="com.goisan.approval.bean.ResourcePublic">
+        update zyk_resource_public set
+        resource_name=#{resourceName},
+        resource_type=#{resourceType},
+        resource_subject_id=#{resourceSubjectId},
+        resource_major_id=#{resourceMajorId},
+        resource_course_id=#{resourceCourseId},
+        resource_format=#{resourceFormat},
+        public_flag=#{publicFlag},
+        classic_flag=#{classicFlag},
+        PUBLIC_TIME=to_date(#{publicTime},'yyyy-mm-dd') ,
+        remark=#{remark},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        where resource_id = #{resourceId}
+    </update>
+    <delete id="delResourcePublic" parameterType="java.lang.String">
+        UPDATE  ZYK_RESOURCE_PUBLIC SET VALID_FLAG = '0' where resource_id = #{id}
+    </delete>
+    <select id="getPublicList"
+            parameterType="com.goisan.approval.bean.ResourcePublic"
+            resultType="com.goisan.indexsearch.bean.ResourceView">
+        select p.resource_id as resourceId,p.resource_name as resourceName,
+        p.resource_type as resourceType ,func_get_dicvalue(p.resource_type,'ZYK_ZYLX') resourceTypeShow ,
+        p.resource_subject_id , p.resource_major_id ,p.resource_course_id ,
+        p.resource_format as resourceFormat, p.public_person_id as publicPersonId, p.public_dept_id as publicDeptId,
+        decode(p.public_person_id ,'','',
+        FUNC_GET_USERNAME(public_person_id)||'--'|| FUNC_GET_DEPTNAME(public_dept_id)) publicPersonIdShow ,
+        p.public_time as publicTime , p.remark , f.file_url as fileUrl,f.file_type as fileType,
+        f.file_size as fileSize , f.cover_url as coverUrl , f.cover_type as coverType
+        from ZYK_RESOURCE_PUBLIC p , ZYK_FILES f
+        where p.resource_id = f.business_id AND p.VALID_FLAG = '1'
+        <if test="resourceFormat != null and resourceFormat != '' and resourceFormat != 'null'">
+            AND p.resource_format = #{resourceFormat}
+        </if>
+        <if test="resourceType != null and resourceType != '' and resourceType != 'null'">
+            AND p.resource_type = #{resourceType}
+        </if>
+        <if test="rownum != null and rownum != '' and rownum != 'null'">
+            AND rownum &lt; = #{rownum}
+        </if>
+        order by PUBLIC_TIME DESC
+    </select>
+    <select id="toEditExcellect" parameterType="com.goisan.approval.bean.ResourcePublic"
+            resultType="com.goisan.approval.bean.ResourcePublic">
+        select
+        t.resource_id ,
+        t.resource_subject_id resourceSubjectId,
+        FUNC_GET_TABLEVALUE(resource_course_id,'ZYK_TYPE_COURSE','RESOURCE_COURSE_ID','RESOURCE_COURSE_NAME') resourceCourseShow,
+        t.resource_major_id resourceMajorId,
+        FUNC_GET_TABLEVALUE(resource_major_id, 'ZYK_TYPE_MAJOR', 'RESOURCE_MAJOR_ID', 'RESOURCE_MAJOR_NAME')  resourceMajorIdShow,
+        t.resource_course_id resourceCourseId,
+        FUNC_GET_TABLEVALUE(resource_course_id,'ZYK_TYPE_COURSE','RESOURCE_COURSE_ID','RESOURCE_COURSE_NAME') resourceCourseShow,
+        t.resource_name resourceName,
+        t.resource_type resourceType,
+        t.resource_format resourceFormat,
+        t.public_flag publicFlag,
+        t.public_person_id publicPersonId,
+        t.public_dept_id publicDeptId,
+        t.public_time publicTime
+        from ZYK_RESOURCE_PUBLIC t where resource_id = '${resourceId}'
+    </select>
+    <select id="getResourceTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+          RESOURCE_SUBJECT_ID    id,
+          RESOURCE_SUBJECT_NAME  name,
+          '0'                    pId,
+          RESOURCE_SUBJECT_ORDER sort
+        FROM ZYK_TYPE_SUBJECT
+        UNION SELECT
+                RESOURCE_MAJOR_ID    id,
+                RESOURCE_MAJOR_NAME  name,
+                RESOURCE_SUBJECT_ID  pId,
+                RESOURCE_MAJOR_ORDER sort
+              FROM ZYK_TYPE_MAJOR
+        UNION SELECT
+                RESOURCE_COURSE_ID    id,
+                RESOURCE_COURSE_NAME  name,
+                RESOURCE_MAJOR_ID     pId,
+                RESOURCE_COURSE_ORDER sort
+              FROM ZYK_TYPE_COURSE
+        ORDER BY sort
+    </select>
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.otherAchievements.dao.OtherAchievementsDetailsDao">
+<!--FUNC_GET_DICVALUE(t.general_comment, 'QTKSZT') AS  generalComment-->
+    <select id="getOtherAchievementsDetailsList" resultType="com.goisan.educational.otherAchievements.bean.OtherAchievementsDetails"
+            parameterType="com.goisan.educational.otherAchievements.bean.OtherAchievementsDetails">
+        select t.id,
+        t.student_id,
+        FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'STUDENT_NUMBER') studentNum,
+        t.student_name,
+        t.a scoreA,
+        t.b scoreB,
+        t.c scoreC,
+        t.d scoreD,
+        t.peacetime_total,
+        t.comment_states,
+        t.general_comment  generalComment,
+        t.open_flag,
+        t.valid_flag,
+        t.OTHER_ACHIEVEMENTS_ID
+        from T_JW_OTHER_ACHIEVEMENTSDATILS t
+        where 1=1
+        <if test="otherAchievementsId!= null and otherAchievementsId != '' ">
+            and other_achievements_id like '%'||#{otherAchievementsId}||'%'
+        </if>
+        <if test="studentName!= null and studentName != '' ">
+            and student_name like '%'||#{studentName}||'%'
+        </if>
+        <if test="studentId!= null and studentId != '' ">
+            and student_id like '%'||#{studentId}||'%'
+        </if>
+        <if test="studentNum!= null and studentNum != '' ">
+            and FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'STUDENT_NUMBER') like '%'||#{studentNum}||'%'
+        </if>
+
+
+    </select>
+
+    <insert id="saveOtherAchievementsDetails" parameterType="com.goisan.educational.otherAchievements.bean.OtherAchievementsDetails">
+        insert into T_JW_OTHER_ACHIEVEMENTSDATILS (id,student_id,student_name,a,b,c,d,peacetime_total,general_comment,open_flag,other_achievements_id,valid_flag,creator,create_time,create_dept)
+        values (FUNC_GET_UUID,#{studentId}, #{studentName}, #{scoreA},#{scoreB},#{scoreC},#{scoreD}, #{peacetimeTotal},#{generalComment},#{openFlag},#{otherAchievementsId},'1',#{creator}, sysdate,#{createDept})
+    </insert>
+
+    <update id="updateOtherAchievementsDetails" parameterType="com.goisan.educational.otherAchievements.bean.OtherAchievementsDetails">
+      update t_jw_other_achievementsdatils
+      set student_id=#{studentId},
+        student_name=#{studentName},
+        a=#{A},
+        b=#{B},
+        c=#{C},
+        d=#{D},
+        peacetime_total=#{peacetimeTotal},
+        general_comment=#{generalComment},
+        open_flag=#{openFlag},
+        other_achievements_id=#{otherAchievementsId},
+        changer=#{changer},
+        change_dept=#{changeDept},
+        change_time=sysdate
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOtherAchievementsDetails" parameterType="String">
+        delete
+        from T_JW_OTHER_ACHIEVEMENTS
+        where ID = #{id}
+    </delete>
+
+    <select id="getOtherAchievementsDetailsById" resultType="com.goisan.educational.otherAchievements.bean.OtherAchievementsDetails" parameterType="String">
+      select *  from T_JW_OTHER_ACHIEVEMENTSDATILS
+        where id = #{id}
+    </select>
+
+    <update  id="updateCommentStatesByIds" parameterType="java.lang.String">
+    UPDATE  T_JW_OTHER_ACHIEVEMENTSDATILS
+    SET COMMENT_STATES = '1'
+    WHERE ID IN (${ids})
+    </update>
+
+    <update  id="updateOpenFlagsByIds" parameterType="java.lang.String">
+    UPDATE  T_JW_OTHER_ACHIEVEMENTSDATILS
+    SET OPEN_FLAG = '1'
+    WHERE ID IN (${ids})
+    </update>
+
+
+    <delete  id="deleteOtherAchievemetnsDetailsByIds" parameterType="java.lang.String">
+    DELETE FROM T_JW_OTHER_ACHIEVEMENTSDATILS
+     WHERE ID IN(${ids})
+    </delete>
+
+
+
+
+</mapper>

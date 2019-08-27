@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.task.dao.TaskDao">
+
+    <insert id="saveSysTask" parameterType="com.goisan.task.bean.SysTask">
+        INSERT INTO  T_SYS_TASK
+        ( task_id,task_title,task_table,task_time,person_id,dept_id ,task_business_id,
+        task_url,task_flag,task_app_url,creator,create_time,create_dept,valid_flag,task_type)
+        VALUES
+        ('${taskId}','${taskTitle}','${taskTable}',to_date('${taskTime}','yyyy-mm-dd')
+        ,'${personId}','${deptId}','${taskBusinessId}','${taskUrl}','${taskFlag}','${taskAppUrl}',
+        '${creator}',sysdate,'${createDept}',1 ,'${taskType}')
+    </insert>
+    <select id="findTaskList" parameterType="java.lang.String"
+            resultType="com.goisan.task.bean.SysTask">
+        select
+        task_id taskId,
+        task_title taskTitle,
+        FUNC_GET_USERNAME(person_id) personShow,
+        FUNC_GET_DEPTNAME(dept_id) deptShow,
+        to_char(task_time,'yyyy-mm-dd')  taskTime,
+        task_url taskUrl,
+        person_id personId,
+        task_business_id  taskBusinessId
+        from T_SYS_TASK where person_id = #{personId}
+        and TASK_FLAG='0'
+    </select>
+    <select id="selectSysTaskById" parameterType="java.lang.String"
+            resultType="com.goisan.task.bean.SysTask">
+        select
+        f.id id,
+        t.task_id taskId,
+        t.task_title taskTitle,
+        FUNC_GET_USERNAME(t.person_id) personShow,
+        FUNC_GET_DEPTNAME(t.dept_id) deptShow,
+        to_char(t.task_time,'yyyy-mm-dd')  taskTime,
+        t.task_url taskUrl,
+        t.person_id personId,
+        t.task_business_id  taskBusinessId
+        from T_SYS_TASK t,  T_BG_FUNDS_WF f
+        where t.person_id=f.manager and
+        t.person_id = #{personId}
+        AND   to_char(f.request_date,'yyyy-mm-dd') =#{time}
+    </select>
+    <select id="getTaskTimeById" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select
+        to_char(task_time,'yyyy-mm-dd')  taskTime
+
+        from T_SYS_TASK where task_id = #{id}
+    </select>
+    <update id="updateTaskFlag" parameterType="com.goisan.task.bean.SysTask">
+        UPDATE T_SYS_TASK SET
+        task_flag=#{taskFlag}
+        WHERE task_id = #{taskId}
+    </update>
+
+</mapper>

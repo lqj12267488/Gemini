@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--协同办公-通讯录
+Created by wq on 2017/10/24.-->
+<mapper namespace="com.goisan.synergy.maillist.dao.MailListDao">
+    <select id="getMailList" resultType="com.goisan.synergy.maillist.bean.MailList" parameterType="com.goisan.synergy.maillist.bean.MailList">
+        SELECT
+        e.PERSON_ID personId,
+        e.NAME name,
+        ed.DEPT_ID deptId,
+        FUNC_GET_DEPTNAME(ed.DEPT_ID) deptName,
+        e.TEL tel
+        FROM
+        T_RS_EMPLOYEE e,T_RS_EMPLOYEE_DEPT ed
+        where e.PERSON_ID=ed.PERSON_ID AND e.NAME IS NOT NULL AND e.name!=' ' AND E.valid_flag = '1'
+        <if test="deptName != null and deptName != ''">
+            AND FUNC_GET_DEPTNAME(ed.DEPT_ID) LIKE #{deptName}
+        </if>
+        <if test="name != null and name != '' ">
+            AND e.NAME LIKE #{name}
+        </if>
+    </select>
+    <select id="getAutoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="getAutoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+</mapper>

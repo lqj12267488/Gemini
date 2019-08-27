@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.MenuDao">
+    <select id="getMenuListByParentId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Menu">
+        SELECT
+               resource_id        resourceid,
+               resource_name      resourcename,
+               parent_resource_id parentresourceid,
+               resource_url       resourceurl,
+               resource_type      resourcetype,
+               resource_order     resourceorder
+        FROM
+             t_sys_resource
+        WHERE
+            resource_type = '1'
+          AND
+            parent_resource_id = #{resourceid}
+        ORDER BY
+                 parent_resource_id,
+                 resource_order
+    </select>
+    <select id="getMenuListOrderByMenuId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Menu">
+        SELECT
+               resource_id        resourceid,
+               resource_name      resourcename,
+               parent_resource_id parentresourceid,
+               resource_url       resourceurl,
+               resource_type      resourcetype,
+               resource_order     resourceorder
+        FROM
+             t_sys_resource
+        WHERE
+            (resource_type = '1' OR RESOURCE_TYPE = '0')
+          AND parent_resource_id = #{pId}
+        ORDER BY
+                 resource_id
+    </select>
+    <select id="getMenuTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+               resource_id        id,
+               resource_name      name,
+               parent_resource_id pid
+        FROM
+             t_sys_resource
+        WHERE
+            resource_type = '1'
+           OR RESOURCE_TYPE = '0'
+        ORDER BY
+                 parent_resource_id,
+                 resource_order
+    </select>
+    <select id="getSystemMenuTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+               resource_id                                               id,
+               resource_name || decode(remark, '', '', '('||remark||')') name,
+               parent_resource_id                                        pid
+        FROM
+             t_sys_resource
+        WHERE
+            resource_type = '1'
+           OR RESOURCE_TYPE = '0'
+        ORDER BY
+                 parent_resource_id,
+                 resource_order
+    </select>
+    <select id="getMenuById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Menu">
+        SELECT
+               resource_id        resourceid,
+               resource_name      resourcename,
+               parent_resource_id parentresourceid,
+               resource_url       resourceurl,
+               resource_type      resourcetype,
+               resource_order     resourceorder,
+               SYSTEM,
+               remark
+        FROM
+             t_sys_resource
+        WHERE
+            resource_id = #{id}
+    </select>
+    <delete id="deleteMenuById" parameterType="java.lang.String">
+        DELETE
+        FROM t_sys_resource
+        WHERE resource_id = #{resourceid}
+    </delete>
+    <update id="updateMenu" parameterType="com.goisan.system.bean.Menu">
+        UPDATE t_sys_resource
+        SET
+            resource_name  = #{resourcename},
+            resource_url   = #{resourceurl},
+            resource_order = #{resourceorder},
+            change_time    = #{changeTime},
+            change_dept    = #{changeDept},
+            changer        = #{changer},
+            system         = #{system},
+            remark         = #{remark},
+            RESOURCE_TYPE  = #{resourcetype}
+        WHERE resource_id = #{resourceid}
+    </update>
+    <insert id="insertMenu" parameterType="com.goisan.system.bean.Menu">
+        insert into t_sys_resource
+            (resource_id, parent_resource_id, resource_type, creator, create_time, create_dept,
+             resource_name, resource_url, resource_order, valid_flag, SYSTEM, remark)
+        values
+               ('${resourceid}', '${parentresourceid}', '${resourcetype}', '${creator}', sysdate, '${createDept}',
+                '${resourcename}', '${resourceurl}', '${resourceorder}', '1', '${system}', '${remark}')
+    </insert>
+    <select id="getMenuListByRoles" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Menu">
+        SELECT
+        DISTINCT
+        r.resource_id resourceid,
+        r.resource_name resourcename,
+        r.parent_resource_id parentresourceid,
+        r.resource_url resourceurl,
+        r.resource_type resourcetype,
+        r.resource_order resourceorder
+        FROM t_sys_role_resource rr, t_sys_resource r
+        WHERE rr.role_id in (${roles})
+        AND r.resource_id = rr.resource_id
+        AND r.resource_type = '1'
+        AND SYSTEM = #{system}
+        <if test="parentId != null and parentId !='' ">
+            AND r.parent_resource_id = #{parentId}
+        </if>
+        ORDER BY r.resource_order
+    </select>
+
+    <select id="getMenuListSystem" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Menu">
+        SELECT
+               resource_id        resourceid,
+               resource_name      resourcename,
+               parent_resource_id parentresourceid,
+               resource_url       resourceurl,
+               resource_type      resourcetype,
+               resource_order     resourceorder
+        FROM
+             t_sys_resource
+        WHERE
+            resource_type = '1'
+          AND
+            parent_resource_id = (SELECT RESOURCE_ID
+                                  FROM T_SYS_RESOURCE
+                                  WHERE SYSTEM = #{system}
+                                    AND RESOURCE_TYPE = 0)
+        ORDER BY
+                 parent_resource_id,
+                 resource_order
+    </select>
+    <select id="getMenusByRoles" resultType="com.goisan.system.bean.Menu">
+        SELECT DISTINCT
+        r.resource_id resourceid,
+        r.resource_name resourcename,
+        r.parent_resource_id parentresourceid,
+        r.resource_url resourceurl,
+        r.resource_type resourcetype,
+        r.resource_order resourceorder
+        FROM t_sys_resource r
+        <if test="roleIds != ''">
+            ,t_sys_role_resource rr
+        </if>
+        WHERE 1 = 1
+        <if test="roleIds != ''">
+            and rr.role_id in (${roleIds})
+        </if>
+        <if test="roleIds != ''">
+            AND r.resource_id = rr.resource_id
+        </if>
+        AND r.resource_type = '1'
+        AND r.parent_resource_id = #{id}
+        ORDER BY r.resource_order
+
+    </select>
+</mapper>

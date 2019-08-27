@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.crawler.dao.SensiWordDao">
+    <select id="getSensiWordList"
+            parameterType="com.goisan.crawler.bean.SensiWord"
+            resultType="com.goisan.crawler.bean.SensiWord">
+        SELECT
+          id,
+          sensi_name,
+          FUNC_GET_TABLEVALUE(sensi_type,'YQ_SENSITYPE','id','type_name') sensi_type,
+          FUNC_GET_TABLEVALUE(sensi_level,'YQ_SENSILEVEL','store_value','show_value') sensi_level,
+          pid
+        FROM YQ_SENSIWORD
+    </select>
+    <insert id="saveSensiWord" parameterType="com.goisan.crawler.bean.SensiWord">
+        insert into YQ_SENSIWORD (id,sensi_name,sensi_type,sensi_level,pid) values (#{id},#{sensiName},#{sensiType},#{sensiLevel},#{pid})
+    </insert>
+    <select id="getSensiWordById" parameterType="java.lang.String"
+            resultType="com.goisan.crawler.bean.SensiWord">
+        select * from YQ_SENSIWORD where id = #{id}
+    </select>
+    <update id="updateSensiWord" parameterType="com.goisan.crawler.bean.SensiWord">
+        update YQ_SENSIWORD set sensi_name=#{sensiName},sensi_type=#{sensiType},sensi_level=#{sensiLevel},pid=#{pid} where id = #{id}
+    </update>
+    <delete id="delSensiWord" parameterType="java.lang.String">
+        delete from YQ_SENSIWORD where id = #{id}
+    </delete>
+</mapper>

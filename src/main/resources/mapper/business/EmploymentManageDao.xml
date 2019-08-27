@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.employments.dao.EmploymentManageDao">
+    <select id="EmploymentManageAction" parameterType="com.goisan.studentwork.employments.bean.EmploymentManage"
+            resultType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        SELECT
+        employment_id employmentId,
+        FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentIdShow ,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classIdShow ,
+        FUNC_GET_DICVALUE(sex, 'XB') sexShow,
+        idcard idcard,
+        sign_contract signContract,
+        employment_insurance_type employmentInsuranceType,
+        employment_satisfaction employmentSatisfaction,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow ,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCodeShow,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevelShow,
+        FUNC_GET_TABLEVALUE(employment_unit_id,'T_XG_EMPLOYMENT_UNIT','EMPLOYMENT_UNIT_ID','INTERNSHIP_UNIT_NAME') employmentUnitIdShow ,
+        employment_positions employmentPositions,
+        to_char(employment_year,'yyyy-mm-dd') as employmentYear,
+        area area,
+        FUNC_GET_DICVALUE(employment_insurance_type, 'JYBXXZ') employmentInsuranceTypeShow,
+        FUNC_GET_DICVALUE(sign_contract, 'SF') signContractShow,
+        FUNC_GET_DICVALUE(employment_satisfaction, 'JYMYD') employmentSatisfactionShow,
+        FUNC_GET_DICVALUE(employment_type, 'SXXS') employmentTypeShow,
+        FUNC_GET_DICVALUE(major_match_flag, 'SF') majorMatchFlagShow,
+        FUNC_GET_DICVALUE(salary, 'GZSRSP') salaryShow,
+        tel tel,
+        student_number studentNumber,
+        create_time createTime
+        FROM
+        T_XG_EMPLOYMENT_STUDENT
+        WHERE  1 = 1 AND valid_flag = 1 AND create_dept LIKE FUNC_GET_RANGE(#{departmentsId},#{level})
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE '%'||#{studentId}|| '%'
+        </if>
+        <if test="studentNumber != null and studentNumber != '' ">
+            AND student_number LIKE '%'||#{studentNumber} ||'%'
+        </if>
+        <if test="employmentUnitId != null and employmentUnitId != '' ">
+            AND employment_unit_id = #{employmentUnitId}
+        </if>
+        order by create_time desc
+    </select>
+    <select id="selectId" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        SELECT
+        employment_id employmentId
+        FROM T_XG_EMPLOYMENT_STUDENT
+        WHERE employment_id=#{employmentId}
+    </select>
+    <select id="getEmploymentManageById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        SELECT
+        employment_id employmentId,
+        student_id studentId,
+        class_id classId,
+        sex  sex,
+        idcard idcard,
+        tel tel,
+        major_code majorCode,
+        training_level trainingLevel,
+        departments_id departmentsId,
+        employment_unit_id employmentUnitId,
+        employment_positions employmentPositions,
+        to_char(employment_year,'yyyy-mm-dd') as employmentYear,
+        area area,
+        employment_type employmentType,
+        major_match_flag majorMatchFlag,
+        salary salary,
+        sign_contract signContract,
+        employment_satisfaction employmentSatisfaction,
+        employment_insurance_type employmentInsuranceType,
+        FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentIdShow,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classIdShow,
+        FUNC_GET_DICVALUE(sex, 'XB') sexShow,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow ,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCodeShow,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevelShow,
+        FUNC_GET_TABLEVALUE(employment_unit_id,'T_XG_EMPLOYMENT_UNIT','EMPLOYMENT_UNIT_ID','INTERNSHIP_UNIT_NAME') employmentUnitIdShow ,
+        FUNC_GET_DICVALUE(employment_type, 'SXXS') employmentTypeShow,
+        FUNC_GET_DICVALUE(major_match_flag, 'SF') majorMatchFlagShow,
+        FUNC_GET_DICVALUE(employment_insurance_type, 'JYBXXZ') employmentInsuranceTypeShow,
+        FUNC_GET_DICVALUE(sign_contract, 'SF') signContractShow,
+        FUNC_GET_DICVALUE(employment_satisfaction, 'JYMYD') employmentSatisfactionShow,
+        FUNC_GET_DICVALUE(salary, 'GZSRSP') salaryShow,
+        student_number studentNumber,
+        create_time createTime
+        FROM
+        T_XG_EMPLOYMENT_STUDENT
+        WHERE employment_id = #{employmentId}
+    </select>
+    <insert id="insertEmploymentManage" parameterType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        INSERT INTO  T_XG_EMPLOYMENT_STUDENT
+        (employment_id,
+        student_id,
+        class_id,
+        sex,
+        idcard,
+        departments_id,
+        major_code,
+        training_level,
+        employment_unit_id,
+        employment_positions,
+        employment_year,
+        area,
+        employment_type,
+        major_match_flag,
+        salary,
+        tel,
+        sign_contract,
+        employment_insurance_type,
+        employment_satisfaction,
+        student_number,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (func_get_uuid,
+        '${studentId}',
+        '${classId}',
+        '${sex}',
+        '${idcard}',
+        '${departmentsId}',
+        '${majorCode}',
+        '${trainingLevel}',
+        '${employmentUnitId}',
+        '${employmentPositions}',
+        to_date('${employmentYear}','yyyy-mm-dd'),
+        '${area}',
+        '${employmentType}',
+        '${majorMatchFlag}',
+        '${salary}',
+        '${tel}',
+        '${signContract}',
+        '${employmentInsuranceType}',
+        '${employmentSatisfaction}',
+        '${studentNumber}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        1 )
+    </insert>
+    <update id="updateEmploymentManageById" parameterType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        UPDATE T_XG_EMPLOYMENT_STUDENT SET
+        student_id = #{studentId},
+        class_id = #{classId},
+        sex = #{sex},
+        idcard = #{idcard},
+        departments_id = #{departmentsId},
+        major_code = #{majorCode},
+        training_level = #{trainingLevel},
+        employment_unit_id = #{employmentUnitId},
+        employment_positions = #{employmentPositions},
+        employment_year = to_date(#{employmentYear},'yyyy-mm-dd'),
+        area = #{area},
+        employment_type = #{employmentType},
+        major_match_flag = #{majorMatchFlag},
+        salary = #{salary},
+        tel = #{tel},
+        sign_contract = #{signContract},
+        employment_insurance_type = #{employmentInsuranceType},
+        employment_satisfaction = #{employmentSatisfaction},
+        student_number = #{studentNumber}
+        WHERE employment_id = #{employmentId}
+    </update>
+    <delete id="deleteEmploymentManageById" parameterType="java.lang.String">
+        DELETE FROM T_XG_EMPLOYMENT_STUDENT  WHERE employment_id = #{employmentId}
+    </delete>
+    <select id="selectEmploymentStatistics" parameterType="com.goisan.studentwork.employments.bean.EmploymentManage"
+            resultType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        SELECT
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCode,
+        cast(year as int) + cast(maxYear as int)||''  employmentYear,
+        employmentPropertyShow unitProperty,
+        employmentIndustryShow ,
+        employmentAreaShow,
+        employmentPlaceShow,
+        employmentChannelsShow enterpriseCategory,
+        count(major_code) registeredCapital,
+        sum(sumInternshipKeep) legalPerson,
+        sum(major_match_flag) personNumber
+        FROM (
+        SELECT
+        distinct es.major_code major_code,
+        FUNC_GET_TABLEVALUE(es.major_code,
+        't_xg_major',
+        'major_code',
+        'max_year') maxYear,
+        en.year year,
+        FUNC_GET_DICVALUE(eu.unit_property, 'JYDWXZ') employmentPropertyShow,
+        FUNC_GET_DICVALUE(eu.employment_industry, 'JYCYLB') employmentIndustryShow,
+        FUNC_GET_DICVALUE(eu.employment_area, 'JYDYLB') employmentAreaShow,
+        FUNC_GET_DICVALUE(eu.employment_place, 'JYDD') employmentPlaceShow,
+        FUNC_GET_DICVALUE(eu.employment_channels, 'JYQD') employmentChannelsShow,
+        decode(es.employment_unit_id,'','0','1') sumInternshipKeep,
+        es.major_match_flag
+        FROM T_XG_EMPLOYMENT_STUDENT  es,
+        T_XG_EMPLOYMENT_UNIT     eu,
+        T_XG_CLASS               en,
+        T_XG_STUDENT_CLASS       ec,
+        T_XG_INTERNSHIP_STUDENT  ei
+        WHERE eu.employment_unit_id = es.employment_unit_id
+        AND es.student_id = ec.student_id
+        AND es.class_id = ec.class_id
+        AND ec.class_id = en.class_id
+        AND en.VALID_FLAG='1'
+        AND es.employment_unit_id = ei.internship_unit_id (+)
+        AND es.student_id = ei.student_id(+)
+        )
+        WHERE 1=1
+        <if test="majorCode != null and majorCode != '' ">
+            AND major_code = #{majorCode}
+        </if>
+        GROUP BY  major_code,
+        year,
+        maxYear,
+        employmentPropertyShow,
+        employmentIndustryShow,
+        employmentAreaShow,
+        employmentPlaceShow,
+        employmentChannelsShow
+
+    </select>
+    <select id="selectEmploymentArea" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT area FROM T_XG_EMPLOYMENT_UNIT  WHERE employment_unit_id = #{employmentUnitId}
+    </select>
+    <select id="selectEmploymentType" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT employment_type employmentType FROM T_XG_EMPLOYMENT_STUDENT WHERE employment_id = #{employmentId}
+    </select>
+    <select id="employmentSelectStatistics" parameterType="com.goisan.studentwork.employments.bean.EmploymentManage"
+            resultType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        select departmentsIdShow3 departmentsId,
+        sum3               departmentsIdPersonNumber,
+        majorCodeShow2     majorCode,
+        sum2               majorCodePersonNumber,
+        employmentType4    employmentType,
+        sum4               employmentPersonNumber,
+        salaryShow4        salaryShow,
+        sum5               salaryPersonNumber,
+        majorCodeShow
+        from (select departmentsIdShow departmentsIdShow3, sum(count1) sum3
+        from (select departmentsId,
+        departmentsIdShow,
+        majorCodeShow,
+        count(majorCodeShow) count1
+        from (select distinct t.class_id classId,
+        t.major_code majorCode,
+        FUNC_GET_TABLEVALUE(t.major_code,
+        't_xg_major',
+        'major_code',
+        'major_name') majorCodeShow,
+        t.departments_id departmentsId,
+        FUNC_GET_TABLEVALUE(t.departments_id,
+        'T_SYS_DEPT',
+        'DEPT_ID',
+        'DEPT_NAME') departmentsIdShow,
+        c.student_id studentId
+        from t_xg_class t, t_xg_student_class c
+        where t.class_id = c.class_id)
+        group by majorCodeShow, departmentsIdShow, departmentsId)
+        group by departmentsIdShow) a,
+        (select departmentsIdShow departmentsIdShow2,
+        sum(count1) sum2,
+        majorCodeShow majorCodeShow2,
+        majorCode majorCode2
+        from (select departmentsId,
+        departmentsIdShow,
+        majorCodeShow,
+        count(majorCodeShow) count1,
+        majorCode
+        from (select distinct t.class_id classId,
+        t.major_code majorCode,
+        FUNC_GET_TABLEVALUE(t.major_code,
+        't_xg_major',
+        'major_code',
+        'major_name') majorCodeShow,
+        t.departments_id departmentsId,
+        FUNC_GET_TABLEVALUE(t.departments_id,
+        'T_SYS_DEPT',
+        'DEPT_ID',
+        'DEPT_NAME') departmentsIdShow,
+        c.student_id studentId
+        from t_xg_class t, t_xg_student_class c
+        where t.class_id = c.class_id)
+        group by majorCodeShow,
+        departmentsIdShow,
+        departmentsId,
+        majorCode)
+        group by departmentsIdShow, majorCodeShow, majorCode) b,
+        (select FUNC_GET_DICVALUE(internship_type, 'SXXS') employmentType4,
+        major_code majorCodeShow,
+        count(major_code) sum4,
+        FUNC_GET_DICVALUE(salary, 'GZSRSP') salaryShow4,
+        count(salary) sum5
+        from T_XG_INTERNSHIP_STUDENT
+        group by major_code, internship_type, salary) c
+        where a.departmentsIdShow3 = b.departmentsIdShow2
+        and b.majorCode2 = c.majorCodeShow
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND departmentsIdShow3 = FUNC_GET_TABLEVALUE(#{departmentsId},'T_SYS_DEPT','DEPT_ID','DEPT_NAME')
+        </if>
+    </select>
+</mapper>
+
+

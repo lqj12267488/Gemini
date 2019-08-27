@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.LoginLogDao">
+    <select id="getLoginLog" resultType="com.goisan.system.bean.LoginLog">
+        SELECT
+          id,user_Id userId,user_account,login_Time loginTime,ip,mac,valid_Flag validFlag
+        FROM
+            T_SYS_USER_LOGINLOG t
+    </select>
+    <select id="getLoginLogByPersonId" parameterType="com.goisan.system.bean.LoginLog"
+            resultType="com.goisan.system.bean.LoginLog">
+        SELECT
+          id,user_Id userId,user_account,login_Time loginTime,ip,mac,valid_Flag validFlag
+        FROM
+            T_SYS_USER_LOGINLOG t
+        WHERE 1=1
+    </select>
+    <delete id="delectLoginLog" parameterType="java.lang.String">
+        DELETE FROM T_SYS_USER_LOGINLOG WHERE 1=1
+    </delete>
+    <insert id="insertLoginLog" parameterType="com.goisan.system.bean.LoginLog">
+        INSERT INTO T_SYS_USER_LOGINLOG
+        (ID ,USER_ID,USER_ACCOUNT,LOGIN_TIME,IP,MAC,VALID_FLAG)
+        VALUES
+        (func_get_uuid,'${userId}','${userAccount}',sysdate,'${ip}','${mac}',1)
+    </insert>
+    <select id="getLoginLogOrderEmp" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.LoginLog">
+        SELECT
+            rownumber AS id,
+            t2.user_id userId,
+            t1.name useraccount,
+            t2.count num
+        FROM
+            T_RS_EMPLOYEE t1,
+            (
+              SELECT row_number() over(ORDER BY count(t.user_id) desc) AS rownumber,
+                   t.user_id,
+                   COUNT (t.user_id) AS count
+              FROM T_SYS_USER_LOGINLOG t , T_SYS_USER u WHERE t.user_id = u.user_id AND u.user_type ='0'
+              group by t.user_id
+            ) t2
+        WHERE t1.person_id = t2.user_id AND (rownumber &lt; 4 OR t2.user_id = #{PersonId}  )
+          order by num desc
+    </select>
+    <select id="getLoginLogOrderStudent" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.LoginLog">
+        SELECT
+            rownumber AS id,
+            t2.user_id userId,
+            t1.name useraccount,
+            t2.count num
+        FROM
+            T_XG_STUDENT t1,
+            (
+            SELECT row_number() over(ORDER BY count(t.user_id) desc) AS rownumber,
+            t.user_id,
+            COUNT (t.user_id) AS count
+            FROM T_SYS_USER_LOGINLOG t,T_SYS_USER u WHERE t.user_id = u.user_id AND u.user_type ='1'
+            GROUP BY t.user_id
+            ) t2
+        WHERE t1.student_id = t2.user_id AND (rownumber &lt; 4 OR t2.user_id = #{PersonId})
+        ORDER BY num DESC
+    </select>
+    <select id="getLoginLogOrderParent" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.LoginLog">
+
+
+    </select>
+    <select id="getLoginLogByAccountTime" parameterType="com.goisan.system.bean.LoginLog"
+            resultType="com.goisan.system.bean.LoginLog">
+        SELECT
+        id id,
+        user_id userId,
+        user_account userAccount,
+        to_char(login_time,'yyyy-mm-dd') || ' ' || to_char(login_time,'hh24:mi') as loginTimeShow,
+        login_time loginTime,
+        ip ip,
+        mac mac,
+        valid_Flag validFlag
+        FROM T_SYS_USER_LOGINLOG
+        WHERE 1 = 1
+        <if test="userAccount != null and userAccount != ''">
+            AND user_account LIKE '%'||#{userAccount}||'%'
+        </if>
+        <if test="loginTime != null">
+            AND to_char(login_time,'yyyy-mm-dd') LIKE '%'||to_char(#{loginTime},'yyyy-mm-dd')||'%'
+        </if>
+        ORDER BY login_time DESC
+    </select>
+
+    <select id="getLoginParameter" resultType="com.goisan.system.bean.LoginParameter">
+        SELECT * FROM T_SYS_LOGIN_PARAMETER WHERE MAIN_ENTRY_FLAG = '1'
+    </select>
+
+</mapper>

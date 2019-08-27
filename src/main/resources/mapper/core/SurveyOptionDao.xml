@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.survey.dao.SurveyOptionDao">
+    <select id="getSurveyOptionList"
+            parameterType="com.goisan.survey.bean.SurveyOption"
+            resultType="com.goisan.survey.bean.SurveyOption">
+        select option_id,survey_id,question_id,
+        option_code,option_value,option_order
+        from T_DC_INDEXOPTION
+        WHERE 1 = 1
+        <if test="surveyId != null and surveyId != '' ">
+            AND survey_id = #{surveyId}
+        </if>
+        <if test="questionId != null and questionId != '' ">
+            AND question_id = #{questionId}
+        </if>
+        ORDER BY option_order
+    </select>
+    <insert id="saveSurveyOption" parameterType="com.goisan.survey.bean.SurveyOption">
+        insert into t_dc_indexoption
+        (option_id,survey_id,option_code,option_value,option_order,question_id,
+        creator,create_time,create_dept) values
+        (#{optionId},#{surveyId},#{optionCode},#{optionValue},#{optionOrder},#{questionId},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getSurveyOptionById" parameterType="java.lang.String"
+            resultType="com.goisan.survey.bean.SurveyOption">
+        select * from T_DC_INDEXOPTION where option_id = #{id}
+    </select>
+    <update id="updateSurveyOption" parameterType="com.goisan.survey.bean.SurveyOption">
+        update t_dc_indexoption
+        set
+            option_code=#{optionCode},
+            option_value=#{optionValue},
+            option_order=#{optionOrder},
+            changer=#{changer},
+            change_time=sysdate,
+            change_dept=#{changeDept}
+        where option_id = #{optionId}
+    </update>
+    <delete id="delSurveyOption" parameterType="java.lang.String">
+        delete from T_DC_INDEXOPTION where option_id = #{id}
+    </delete>
+    <select id="checkOptionBySurveyid" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(OPTION_ID) from T_DC_INDEXOPTION where survey_id = #{id}
+    </select>
+</mapper>

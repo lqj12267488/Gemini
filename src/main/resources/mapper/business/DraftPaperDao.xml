@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.DraftPaperDao">
+    <select id="getDraftPaperList" resultType="com.goisan.synergy.workflow.bean.DraftPaper" parameterType="com.goisan.synergy.workflow.bean.DraftPaper">
+        SELECT
+        t.id,
+        to_char(t.draft_date,'yyyy-mm-dd')  draftDate,
+        FUNC_GET_TABLEVALUE(drafter,'T_RS_EMPLOYEE','person_id','name') drafter,
+        FUNC_GET_TABLEVALUE(draft_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') draftDept,
+        FUNC_GET_TABLEVALUE(checker,'T_RS_EMPLOYEE','person_id','name')
+        ||DECODE(check_dept, '', '' ,' ---- ')
+        ||FUNC_GET_TABLEVALUE(check_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') checkerShow,
+        t.paper_number paperNumber,
+        t.title,
+        t.content,
+        t.secret_level secretLevel,
+        t.copies,
+        t.send_dept_id sendDeptId,
+        t.copy_dept_id copyDepId,
+        t.submit_dept_id submitDeptId,
+        t.create_time
+        FROM
+        T_BG_DRAFTPAPER_WF t
+        where 1 = 1  AND t.request_flag = '0'
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="draftDate != null and draftDate != '' ">
+            AND  to_char(t.draft_date,'yyyy-mm-dd') LIKE #{draftDate}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <insert id="insertDraftPaper" parameterType="com.goisan.synergy.workflow.bean.DraftPaper">
+        INSERT INTO
+        t_bg_draftpaper_wf
+        (id,drafter,draft_dept,draft_date,checker,check_dept,paper_number,title,copies,secret_level,content,send_dept_id,copy_dept_id,submit_dept_id,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${drafter}','${draftDept}',to_date('${draftDate}','yyyy-mm-dd'),'${checker}','${checkDept}','${paperNumber}','${title}','${copies}','${secretLevel}','${content}','${sendDeptId}','${copyDeptId}','${submitDeptId}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getDraftPaperById" resultType="com.goisan.synergy.workflow.bean.DraftPaper" parameterType="com.goisan.synergy.workflow.bean.DraftPaper">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.draft_dept) draftDept,
+        FUNC_GET_USERNAME(t.drafter) drafter,
+        FUNC_GET_TABLEVALUE(checker,'T_RS_EMPLOYEE','person_id','name')
+        ||DECODE(check_dept, '', '' ,' ---- ')
+        ||FUNC_GET_TABLEVALUE(check_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') checkerShow,
+        to_char(t.draft_date,'yyyy-mm-dd')  draftDate,
+        t.paper_number paperNumber,
+        t.send_dept_id sendDeptId,
+        t.copy_dept_id copyDeptId,
+        t.submit_dept_id submitDeptId,
+        FUNC_GET_DEPTNAME(t.send_dept_id)  sendDeptIdShow,
+        FUNC_GET_DEPTNAME(t.copy_dept_id)  copyDeptIdShow,
+        FUNC_GET_DEPTNAME(t.submit_dept_id)  submitDeptIdShow,
+        t.title,
+        t.content,
+        t.secret_level secretLevel,
+        t.copies
+        FROM
+        t_bg_draftpaper_wf t
+        WHERE id = #{id}
+    </select>
+
+
+    <delete id="deleteDraftPaperById"  parameterType="java.lang.String">
+        DELETE FROM t_bg_draftpaper_wf WHERE id = #{id}
+    </delete>
+    <update id="updateDraftPaperById" parameterType="com.goisan.synergy.workflow.bean.DraftPaper">
+        update
+        t_bg_draftpaper_wf
+        SET
+        id = #{id},
+        paper_number = #{paperNumber},
+        title = #{title},
+        drafter = #{drafter},
+        draft_dept = #{draftDept},
+        checker = #{checker},
+        check_dept = #{checkDept},
+        draft_date = to_date(#{draftDate},'yyyy-mm-dd'),
+        content= #{content},
+        secret_level= #{secretLevel},
+        copies= #{copies},
+        send_dept_id= #{sendDeptId},
+        copy_dept_id= #{copyDeptId},
+        submit_dept_id= #{submitDeptId},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+
+        WHERE
+        id = #{id}
+    </update>
+
+    <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.DraftPaper" parameterType="com.goisan.synergy.workflow.bean.DraftPaper">
+        SELECT
+        t.id,
+        to_char(t.draft_date,'yyyy-mm-dd')  draftDate,
+        FUNC_GET_TABLEVALUE(drafter,'T_RS_EMPLOYEE','person_id','name') drafter,
+        FUNC_GET_TABLEVALUE(draft_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') draftDept,
+        FUNC_GET_TABLEVALUE(checker,'T_RS_EMPLOYEE','person_id','name')
+        ||DECODE(check_dept, '', '' ,' ---- ')
+        ||FUNC_GET_TABLEVALUE(check_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') checkerShow,
+        t.paper_number paperNumber,
+        t.title,
+        t.content,
+        t.secret_level secretLevel,
+        t.copies,
+        t.send_dept_id sendDeptId,
+        t.copy_dept_id copyDepId,
+        t.submit_dept_id submitDeptId,
+        t.create_time
+        FROM
+        t_bg_draftpaper_wf t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="draftDate != null and draftDate != '' ">
+            AND to_char(t.draft_date,'yyyy-mm-dd') LIKE #{draftDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="drafter != null and drafter != '' ">
+            AND FUNC_GET_USERNAME(t.drafter) LIKE '%'||#{drafter}||'%'
+        </if>
+        <if test="draftDept != null and draftDept != '' ">
+            AND FUNC_GET_DEPTNAME(t.draft_dept) LIKE  '%'||#{draftDept}||'%'
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.synergy.workflow.bean.DraftPaper" parameterType="com.goisan.synergy.workflow.bean.DraftPaper">
+
+        SELECT
+        DISTINCT
+        t.id,
+        to_char(t.draft_date,'yyyy-mm-dd')  draftDate,
+        FUNC_GET_TABLEVALUE(drafter,'T_RS_EMPLOYEE','person_id','name') drafter,
+        FUNC_GET_TABLEVALUE(draft_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') draftDept,
+        FUNC_GET_TABLEVALUE(checker,'T_RS_EMPLOYEE','person_id','name')
+        ||DECODE(check_dept, '', '' ,' ---- ')
+        ||FUNC_GET_TABLEVALUE(check_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') checkerShow,
+        t.paper_number paperNumber,
+        t.title,
+        t.content,
+        t.secret_level secretLevel,
+        t.copies,
+        t.send_dept_id sendDeptId,
+        t.copy_dept_id copyDepId,
+        t.submit_dept_id submitDeptId,
+        t.create_time,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback
+        FROM
+        t_bg_draftpaper_wf t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        AND (r.state='2') AND  t.id = s.business_id AND s.start_id = r.start_id
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="draftDate != null and draftDate != '' ">
+            AND to_char(t.draft_date,'yyyy-mm-dd') LIKE #{draftDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="drafter != null and drafter != '' ">
+            AND FUNC_GET_USERNAME(t.drafter) LIKE '%'||#{drafter}||'%'
+        </if>
+        <if test="draftDept != null and draftDept != '' ">
+            AND FUNC_GET_DEPTNAME(t.draft_dept) LIKE  '%'||#{draftDept}||'%'
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+</mapper>

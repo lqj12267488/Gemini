@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--协同办公-学校商友酒店住宿管理
+    Created and modify by wq on 2017/6/20.
+-->
+<mapper namespace="com.goisan.synergy.workflow.dao.SchoolCarDao">
+    <!--申请页列表显示和查询-->
+    <select id="getSchoolCarList" resultType="com.goisan.synergy.workflow.bean.SchoolCar"
+            parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        t.start_place startPlace,
+        t.end_place endPlace,
+        func_get_userdicvalue(t.car_type,'XXCLLX') carType,
+        t.reason reason,
+        t.people_num peopleNum,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.creator,
+        t.create_dept,
+        t.create_time
+        FROM
+        T_BG_SCHOOLCAR_WF t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <!--申请添加-->
+    <insert id="insertSchoolCar" parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        insert into
+        T_BG_SCHOOLCAR_WF t
+        (id,request_dept,requester,request_date,
+        start_time,end_time,
+        start_place,end_place,
+        car_type,reason,people_num,remark,
+        creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${requestDept}','${requester}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+        to_date('${startTime}','yyyy-mm-dd hh24:mi'),to_date('${endTime}','yyyy-mm-dd hh24:mi'),
+        '${startPlace}','${endPlace}',
+        '${carType}', '${reason}','${peopleNum}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--申请删除-->
+    <delete id="deleteSchoolCarById" parameterType="java.lang.String">
+        DELETE FROM T_BG_SCHOOLCAR_WF WHERE id = #{id}
+    </delete>
+    <!--申请修改-->
+    <update id="updateSchoolCarById" parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        update
+        T_BG_SCHOOLCAR_WF
+        SET
+        id=#{id},
+        requester =#{requester},
+        request_dept =#{requestDept},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        START_TIME=to_date(#{startTime},'yyyy-mm-dd hh24:mi'),
+        END_TIME=to_date(#{endTime},'yyyy-mm-dd hh24:mi'),
+        START_PLACE=#{startPlace},
+        END_PLACE=#{endPlace},
+        CAR_TYPE=#{carType},
+        REASON=#{reason},
+        PEOPLE_NUM=#{peopleNum},
+        REMARK=#{remark},
+        changer = #{changer},
+        change_time = sysdate,
+        change_dept = #{changeDept},
+        USE_TYPE=#{useType},
+        DRIVEN_MILEAGE=#{drivenMileage},
+        CAR_LOSS=#{carLoss},
+        CAR_MANAGER=#{carManager},
+        CHECK_TIME=to_date(#{checkTime},'yyyy-mm-dd hh24:mi'),
+        CAR_MANAGER_DEPT=#{carManagerDept},
+        CHECK_FLAG=#{checkFlag},
+        REQUESTER_CONFIRM_FLAG=#{requesterConfirmFlag}
+        WHERE
+        id = #{id}
+    </update>
+    <!--通过id查询申请-->
+    <select id="getSchoolCarById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.SchoolCar">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi') requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  as requestTime,
+        to_char(t.start_time,'yyyy-mm-dd') || 'T' || to_char(t.start_time,'hh24:mi') startTime,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi')  as startDate,
+        to_char(t.end_time,'yyyy-mm-dd') || 'T' || to_char(t.end_time,'hh24:mi') endTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi')  as endDate,
+        t.start_place startPlace,
+        t.end_place endPlace,
+        t.car_type carType,
+        t.reason reason,
+        t.people_num peopleNum,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.feedback feedback,
+        t.feedback_flag feedbackFlag,
+        func_get_userdicvalue(t.car_type,'XXCLLX') carTypeShow,
+        t.creator,
+        t.create_dept,
+        t.create_time,
+        t.request_flag,
+        t.USE_TYPE useType,
+        t.DRIVEN_MILEAGE drivenMileage,
+        t.CAR_LOSS carLoss,
+        FUNC_GET_USERNAME(t.CAR_MANAGER) carManager,
+        func_get_deptname(t.CAR_MANAGER_DEPT) carManagerDept,
+        to_char(t.CHECK_TIME,'yyyy-mm-dd') || 'T' || to_char(t.CHECK_TIME,'hh24:mi') checkTime,
+        t.CHECK_FLAG checkFlag,
+        t.REQUESTER_CONFIRM_FLAG requesterConfirmFlag
+        FROM
+        T_BG_SCHOOLCAR_WF t
+        WHERE id = #{id} ORDER BY t.create_time DESC
+    </select>
+    <!--待办页列表显示和查询-->
+    <select id="getSchoolCarListProcess" resultType="com.goisan.synergy.workflow.bean.SchoolCar"
+            parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        t.start_place startPlace,
+        t.end_place endPlace,
+        func_get_userdicvalue(t.car_type,'XXCLLX') carType,
+        t.reason reason,
+        t.people_num peopleNum,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.feedback feedback,
+        t.creator,
+        t.create_time
+        FROM
+        T_BG_SCHOOLCAR_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <!--已办页列表显示和查询-->
+    <select id="getSchoolCarListComplete" resultType="com.goisan.synergy.workflow.bean.SchoolCar"
+            parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        SELECT
+        DISTINCT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        t.start_place startPlace,
+        t.end_place endPlace,
+        func_get_userdicvalue(t.car_type,'XXCLLX') carType,
+        t.reason reason,
+        t.people_num peopleNum,
+        t.remark remark,
+        t.feedback feedback,
+        t.creator,
+        t.create_dept,
+        t.create_time,
+        func_get_dicvalue(t.request_flag,'GZLLZZT') requestFlag,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackFlag
+        FROM
+        T_BG_SCHOOLCAR_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--查询所有人员id和名称-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <!--查询所有部门id和名称-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--通过人员id查询人员姓名-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <!--通过部门id查询部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <!--车辆管理员登记列表-->
+    <select id="getSchoolCarRegisterList" resultType="com.goisan.synergy.workflow.bean.SchoolCar"
+            parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        SELECT DISTINCT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        t.start_place startPlace,
+        t.end_place endPlace,
+        func_get_userdicvalue(t.car_type,'XXCLLX') carType,
+        t.reason reason,
+        t.people_num peopleNum,
+        t.remark remark,
+        t.feedback feedback,
+        t.creator,
+        t.create_dept,
+        t.create_time,
+        func_get_dicvalue(t.request_flag,'GZLLZZT') requestFlag,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.USE_TYPE useType,
+        t.DRIVEN_MILEAGE drivenMileage,
+        t.CAR_LOSS carLoss,
+        FUNC_GET_USERNAME(t.CAR_MANAGER) carManager,
+        func_get_deptname(t.CAR_MANAGER_DEPT) carManagerDept,
+        to_char(t.check_time,'yyyy-mm-dd hh24:mi') as checkTime,
+        func_get_dicvalue(t.CHECK_FLAG,'CLJCZT') checkFlag,
+        func_get_dicvalue(t.REQUESTER_CONFIRM_FLAG,'CLJCQRZT') requesterConfirmFlag
+        FROM
+        T_BG_SCHOOLCAR_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND t.request_flag='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--申请人确认登记信息列表-->
+    <select id="getSchoolCarConfirmList" resultType="com.goisan.synergy.workflow.bean.SchoolCar"
+            parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        SELECT DISTINCT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        t.start_place startPlace,
+        t.end_place endPlace,
+        func_get_userdicvalue(t.car_type,'XXCLLX') carType,
+        t.reason reason,
+        t.people_num peopleNum,
+        t.remark remark,
+        t.feedback feedback,
+        t.creator,
+        t.create_dept,
+        t.create_time,
+        func_get_dicvalue(t.request_flag,'GZLLZZT') requestFlag,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.USE_TYPE useType,
+        t.DRIVEN_MILEAGE drivenMileage,
+        t.CAR_LOSS carLoss,
+        FUNC_GET_USERNAME(t.CAR_MANAGER) carManager,
+        func_get_deptname(t.CAR_MANAGER_DEPT) carManagerDept,
+        to_char(t.check_time,'yyyy-mm-dd hh24:mi') as checkTime,
+        func_get_dicvalue(t.CHECK_FLAG,'CLJCZT') checkFlag,
+        func_get_dicvalue(t.REQUESTER_CONFIRM_FLAG,'CLJCQRZT') requesterConfirmFlag
+        FROM
+        T_BG_SCHOOLCAR_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND t.request_flag='2' AND t.CHECK_FLAG='1' AND t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--登记信息-->
+    <update id="updateSchoolCarRegister" parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        update
+        T_BG_SCHOOLCAR_WF
+        SET
+        id=#{id},
+        USE_TYPE=#{useType},
+        DRIVEN_MILEAGE=#{drivenMileage},
+        CAR_LOSS=#{carLoss},
+        CAR_MANAGER=#{carManager},
+        CHECK_TIME=to_date(#{checkTime},'yyyy-mm-dd hh24:mi'),
+        CAR_MANAGER_DEPT=#{carManagerDept},
+        CHECK_FLAG=#{checkFlag},
+        REQUESTER_CONFIRM_FLAG=#{requesterConfirmFlag}
+        WHERE
+        id = #{id}
+    </update>
+    <!--登记信息确认-->
+    <update id="updateSchoolCarConfirm" parameterType="com.goisan.synergy.workflow.bean.SchoolCar">
+        update
+        T_BG_SCHOOLCAR_WF
+        SET
+        id=#{id},
+        CHECK_FLAG=#{checkFlag},
+        REQUESTER_CONFIRM_FLAG=#{requesterConfirmFlag}
+        WHERE
+        id = #{id}
+    </update>
+</mapper>

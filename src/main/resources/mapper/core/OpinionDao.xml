@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.workflow.dao.OpinionDao">
+    <select id="getOpinionList"
+            parameterType="com.goisan.workflow.bean.Opinion"
+            resultType="com.goisan.workflow.bean.Opinion">
+        select opinion_id,opinion_type,opinion_content from T_SYS_WORKFLOW_OPINION WHERE CREATOR = #{creator}
+    </select>
+    <insert id="saveOpinion" parameterType="com.goisan.workflow.bean.Opinion">
+        insert into t_sys_workflow_opinion (opinion_id,opinion_content,creator,create_time,create_dept) values (#{opinionId},#{opinionContent},#{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getOpinionById" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Opinion">
+        select * from T_SYS_WORKFLOW_OPINION where opinion_id = #{id}
+    </select>
+    <update id="updateOpinion" parameterType="com.goisan.workflow.bean.Opinion">
+        update t_sys_workflow_opinion set opinion_type=#{opinionType},opinion_content=#{opinionContent},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept} where opinion_id = #{opinionId}
+    </update>
+    <delete id="delOpinion" parameterType="java.lang.String">
+        delete from T_SYS_WORKFLOW_OPINION where opinion_id = #{id}
+    </delete>
+</mapper>

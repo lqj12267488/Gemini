@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.system.dao.ParentDao">
+    <select id="getParentList"
+            parameterType="com.goisan.system.bean.Parent"
+            resultType="com.goisan.system.bean.Parent">
+        select parent_id,parent_name,idcard,parent_tel from T_XG_PARENT
+        WHERE 1 = 1
+        <if test="parentName != null and parentName != '' ">
+            AND parent_name LIKE '%${parentName}%'
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND idcard LIKE '%${idcard}%'
+        </if>
+
+    </select>
+    <insert id="saveParent" parameterType="com.goisan.system.bean.Parent">
+        insert into t_xg_parent
+        (parent_id,parent_name,idcard,parent_tel,creator,create_time,create_dept)
+         values
+         (#{parentId},#{parentName},#{idcard},#{parentTel},#{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getParentById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Parent">
+        select * from T_XG_PARENT where parent_id = #{id}
+    </select>
+    <update id="updateParent" parameterType="com.goisan.system.bean.Parent">
+        update t_xg_parent set
+            parent_tel=#{parentTel},
+            changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+        where parent_id = #{parentId}
+    </update>
+    <delete id="delParent" parameterType="java.lang.String">
+        delete from T_XG_PARENT where parent_id = #{id}
+    </delete>
+    <select id="checkParentIdcard" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(USER_ID) as count from T_SYS_USER t where USER_ID = #{idcard}
+    </select>
+    <select id="getParsonStudentTree" parameterType="java.lang.String" resultType="com.goisan.system.bean.Tree">
+        SELECT  id,name,pid,checked1 as checked FROM
+        (
+            SELECT t.dept_id id , t.dept_name name,t.parent_dept_id pId,0 checked1
+                FROM T_SYS_DEPT t
+                WHERE t.dept_type &lt; 9
+            UNION ALL
+            SELECT d.major_code id, d.major_name || ' -- '|| FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name ,d.departments_id pId,0 checked1
+                FROM T_XG_MAJOR d
+                WHERE d.valid_flag =1
+            UNION ALL
+            SELECT e.class_id id,e.class_name name ,e.major_code pId,0 checked1
+                FROM T_XG_CLASS e
+                WHERE e.valid_flag =1
+            UNION ALL(
+                  select s.id , s.name , s.pId , nvl2(rol.id,1,0) as checked1 from
+                  (select s.student_id, s.name||' 家长' name ,
+                          rela.class_id pId, re.parent_id||','||s.student_id as id ,re.parent_id parentId
+                          from   t_xg_parent_student re , t_xg_student s ,T_XG_STUDENT_CLASS rela
+                          where s.student_id = re.student_id and s.student_id = rela.student_id
+                  ) s
+                  Left JOIN T_XG_PARENT_STUDENT_ROLE rol
+                      on  rol.student_id = s.student_id and rol.parent_id = s.parentId
+                      and rol.role_id = #{roleId}
+            )
+        )
+    </select>
+    <select id="getCourseTeacherList" parameterType="java.lang.String" resultType="com.goisan.system.bean.TeacherBean">
+        SELECT array.array_id,array.arrayclass_id,  array.class_id,
+            FUNC_GET_TABLEVALUE(array.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') as className,  array.course_id,
+            FUNC_GET_TABLEVALUE(array.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow ,
+            array.teacher_person_id teacherPersonId,array.teacher_dept_id teacherDeptId,
+            FUNC_GET_USERNAME(array.teacher_person_id) teacherPersonName ,
+            arrClass.arrayclass_name arrayClassName,
+            FUNC_GET_DICVALUE(arrClass.term, 'XQ') termShow, term
+        FROM T_JW_ARRAYCLASS_ARRAY array , t_jw_arrayclass arrClass
+        WHERE 1 = 1  and array.arrayclass_id = arrClass.Arrayclass_Id
+        AND array.class_id in
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            ''||'${item}'||''
+        </foreach>
+          and arrClass.ARRAYCLASS_FLAG= '1'
+    </select>
+    <select id="getCourseListByTeacher" parameterType="java.lang.String" resultType="com.goisan.system.bean.TeacherBean">
+        SELECT array.array_id,array.arrayclass_id,  array.class_id,
+        FUNC_GET_TABLEVALUE(array.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') as className,  array.course_id,
+        FUNC_GET_TABLEVALUE(array.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow ,
+        array.teacher_person_id teacherPersonId,
+        FUNC_GET_USERNAME(array.teacher_person_id) teacherPersonName ,
+        arrClass.arrayclass_name arrayClassName,
+        FUNC_GET_DICVALUE(arrClass.term, 'XQ') termShow, term
+        FROM T_JW_ARRAYCLASS_ARRAY array , t_jw_arrayclass arrClass
+        WHERE 1 = 1  and array.teacher_person_id = #{teacherId}
+        and array.arrayclass_id = arrClass.Arrayclass_Id
+        and arrClass.ARRAYCLASS_FLAG= '1'
+    </select>
+    <select id="getSurveyParsonTree" parameterType="java.lang.String" resultType="com.goisan.system.bean.Tree">
+        SELECT t.dept_id id , t.dept_name name,t.parent_dept_id pid,0 checked
+            FROM T_SYS_DEPT t WHERE t.dept_type &lt; 9
+        UNION ALL
+        SELECT d.major_code id, d.major_name || ' -- '|| FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name ,d.departments_id pid,0 checked
+            FROM T_XG_MAJOR d WHERE d.valid_flag =1
+        UNION ALL
+        SELECT e.class_id id,e.class_name name ,e.major_code pid,0 checked
+            FROM T_XG_CLASS e WHERE e.valid_flag =1
+        UNION ALL(
+            select s.id, s.name, s.pid, nvl2(p.id, 1, 0) as checked
+              from (select s.student_id,
+                           s.name || ' 家长' name,
+                           rela.class_id pid,
+                           re.parent_id || ',' || s.student_id as id,
+                           re.parent_id parentId
+                      from t_xg_parent_student re,
+                           t_xg_student        s,
+                           T_XG_STUDENT_CLASS  rela
+                     where s.student_id = re.student_id
+                       and s.student_id = rela.student_id) s
+              Left JOIN T_DC_PERSON p
+                on p.PERSON_DEPT = s.student_id and p.PERSON_TYPE = '3'
+               and p.PERSON_ID = s.parentId
+               and p.SURVEY_ID = #{surveyId}
+        )
+    </select>
+
+</mapper>

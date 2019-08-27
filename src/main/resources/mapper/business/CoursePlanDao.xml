@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.courseplan.dao.CoursePlanDao">
+    <select id="selectList" parameterType="com.goisan.educational.courseplan.bean.CoursePlan"
+            resultType="com.goisan.educational.courseplan.bean.CoursePlan">
+        SELECT t1.create_time createTime,
+        t1.PLAN_ID,
+        t1.PLAN_NAME,
+        FUNC_GET_DICVALUE(t1.semester,'XQ') semester,
+        FUNC_GET_USERNAME(t1.teacher_person_id) teacherPersonId,
+        FUNC_GET_DICVALUE("YEAR", 'ND') "YEAR",
+        FUNC_GET_DEPTNAME(t1.DEPARTMENTS_ID) DEPARTMENTS_ID,
+        t2.MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(t2.TRAINING_LEVEL, 'ZXZYPYCC') || ' -- ' ||
+        FUNC_GET_DICVALUE(t2.MAJOR_DIRECTION, 'ZXZYFX') majorShow ,
+        t2.MAJOR_Code as majorCode ,t2.TRAINING_LEVEL
+        FROM T_JW_COURSEPLAN t1, T_XG_MAJOR t2
+        WHERE 1 = 1 AND t1.TRAINING_LEVEL = t2.TRAINING_LEVEL AND t1.MAJOR_CODE = t2.MAJOR_CODE AND
+        t1.MAJOR_DIRECTION = t2.MAJOR_DIRECTION
+        <if test="planName != null and planName != ''">
+            AND t1.PLAN_NAME LIKE '%${planName}%'
+        </if>
+        <if test="departmentsId != null and departmentsId != ''">
+            AND t1.DEPARTMENTS_ID = #{departmentsId}
+        </if>
+        <if test="majorId != null and majorId != ''">
+            AND t1.MAJOR_ID = #{majorId}
+        </if>
+        <if test="year != null and year != ''">
+            AND t1.YEAR = #{year}
+        </if>
+        <if test="creator != null and creator != ''">
+            AND t1.PLAN_ID IN ( SELECT distinct PLAN_ID FROM T_JW_COURSEPLAN_DETAILS where VALID_FLAG = 1)
+        </if>
+        order by  t1.create_time desc
+    </select>
+    <select id="getTextBookList" resultType="com.goisan.educational.textbook.bean.TextBook">
+          select * from T_JW_TEXTBOOK t
+    </select>
+    <insert id="save" parameterType="com.goisan.educational.courseplan.bean.CoursePlan">
+        INSERT INTO T_JW_COURSEPLAN (PLAN_ID, semester, teacher_person_id, PLAN_NAME, DEPARTMENTS_ID, MAJOR_CODE,
+                                     MAJOR_DIRECTION, TRAINING_LEVEL, "YEAR", CREATOR, CREATE_TIME, CREATE_DEPT)
+        VALUES (#{planId}, #{semester}, #{teacherPersonId}, #{planName}, #{departmentsId}, #{majorCode},
+                #{majorDirection}, #{trainingLevel}, #{year}, #{creator}, #{createTime}, #{createDept})
+    </insert>
+    <select id="selectById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.courseplan.bean.CoursePlan">
+        SELECT
+               PLAN_ID,
+               PLAN_NAME                            planName,
+               year,
+               DEPARTMENTS_ID                       departmentsId,
+               MAJOR_CODE                           majorCode,
+               TRAINING_LEVEL                       trainingLevel,
+               semester,
+               FUNC_GET_USERNAME(teacher_person_id) personIdShow,
+               teacher_person_id                    teacherPersonId,
+               MAJOR_DIRECTION                      majorDirection
+        FROM T_JW_COURSEPLAN
+        WHERE PLAN_ID = #{id}
+    </select>
+    <update id="update" parameterType="com.goisan.educational.courseplan.bean.CoursePlan">
+        UPDATE T_JW_COURSEPLAN
+        SET PLAN_NAME         = #{planName},
+            "YEAR"            = #{year},
+            DEPARTMENTS_ID    = #{departmentsId},
+            MAJOR_CODE        = #{majorCode},
+            TRAINING_LEVEL    = #{trainingLevel},
+            CHANGER           = #{changer},
+            CHANGE_TIME       = #{changeTime},
+            CHANGE_DEPT       = #{changeDept},
+            semester          = #{semester},
+            teacher_person_id = #{teacherPersonId},
+            MAJOR_DIRECTION   = #{majorDirection}
+        WHERE PLAN_ID = #{planId}
+    </update>
+    <delete id="del" parameterType="java.lang.String">
+        DELETE
+        FROM T_JW_COURSEPLAN
+        WHERE PLAN_ID = #{id}
+    </delete>
+    <select id="getPlanDetails"
+            parameterType="com.goisan.educational.courseplan.bean.CoursePlanDetail"
+            resultType="com.goisan.educational.courseplan.bean.CoursePlanDetail">
+        SELECT
+        ID,
+        PLAN_ID,
+        COURSE_ID,
+        COURSE_NAME,
+        TEXTBOOK_ID,
+        TEXTBOOK_NAME,
+        THEORETICAL_HOURS,
+        PRACTICE_HOURS,
+        TOTAL_HOURS,
+        THEORYPRACTICE_HOURS,
+        FUNC_GET_DICVALUE(EXAM_TYPE, 'KHFS') exam_type,
+        CREDIT,
+        PRACTICE_PLACE
+        FROM T_JW_COURSEPLAN_DETAILS
+        WHERE PLAN_ID = #{planId}
+        <if test="courseName != null and courseName != ''">
+            AND courseName LIKE '%${courseName}%'
+        </if>
+    </select>
+    <select id="getPlanDetail" parameterType="String"
+            resultType="com.goisan.educational.courseplan.bean.CoursePlanDetail">
+        SELECT t.*,t1.textbook_name textbookName FROM T_JW_COURSEPLAN_DETAILS t
+        left join t_jw_textbook t1 on t1.textbook_id=t.textbook_id
+        WHERE ID = #{id}
+    </select>
+    <insert id="savePlanDetail"
+            parameterType="com.goisan.educational.courseplan.bean.CoursePlanDetail">
+        INSERT INTO T_JW_COURSEPLAN_DETAILS (ID, COURSE_TYPE, PLAN_ID, COURSE_ID, COURSE_NAME, TEXTBOOK_ID,
+                                             TEXTBOOK_NAME, THEORETICAL_HOURS, PRACTICE_HOURS, TOTAL_HOURS, EXAM_TYPE,
+                                             CREDIT, CREATOR, CREATE_TIME, CREATE_DEPT, THEORYPRACTICE_HOURS,
+                                             PRACTICE_PLACE)
+        VALUES (#{id}, #{courseType}, #{planId}, #{courseId}, #{courseName}, #{textbookId}, #{textbookName},
+                #{theoreticalHours}, #{practiceHours}, #{totalHours}, #{examType}, #{credit}, #{creator}, #{createTime},
+                #{createDept}, #{theoryPracticeHours}, #{practicePlace})
+    </insert>
+    <update id="updatePlanDetail"
+            parameterType="com.goisan.educational.courseplan.bean.CoursePlanDetail">
+        UPDATE T_JW_COURSEPLAN_DETAILS
+        SET PLAN_ID              = #{planId},
+            COURSE_TYPE          = #{courseType},
+            COURSE_ID            = #{courseId},
+            COURSE_NAME          = #{courseName},
+            TEXTBOOK_ID          = #{textbookId},
+            TEXTBOOK_NAME        = #{textbookName},
+            THEORETICAL_HOURS    = #{theoreticalHours},
+            PRACTICE_HOURS       = #{practiceHours},
+            TOTAL_HOURS          = #{totalHours},
+            EXAM_TYPE            = #{examType},
+            CREDIT               = #{credit},
+            CHANGER              = #{changer},
+            CHANGE_TIME          = #{changeTime},
+            CHANGE_DEPT          = #{changeDept},
+            THEORYPRACTICE_HOURS = #{theoryPracticeHours},
+            PRACTICE_PLACE       = #{practicePlace}
+        WHERE ID = #{id}
+    </update>
+    <delete id="delPlanDetail"
+            parameterType="String">
+        DELETE
+        FROM T_JW_COURSEPLAN_DETAILS
+        WHERE ID = #{id}
+    </delete>
+    <select id="getTextbook" resultType="com.goisan.system.bean.Select2">
+        SELECT TEXTBOOK_ID id,TEXTBOOK_NAME text
+        FROM T_JW_TEXTBOOK
+    </select>
+    <select id="getCourse" resultType="com.goisan.system.bean.Select2">
+        SELECT COURSE_ID id,COURSE_NAME text
+        FROM T_JW_COURSE
+        WHERE COURSE_TYPE = #{courseType}
+    </select>
+    <select id="getPlanTerms" parameterType="com.goisan.educational.courseplan.bean.CourseplanTerm"
+            resultType="com.goisan.educational.courseplan.bean.CourseplanTerm">
+        SELECT
+               t.ID,
+               t.DETAILS_ID                                                              detailsId,
+               t.PLAN_ID,
+               t.COURSE_ID,
+               t.COURSE_NAME,
+               FUNC_GET_DICVALUE(t.SCHOOL_YEAR, 'KKJHXN')                                SCHOOL_YEAR,
+               FUNC_GET_DICVALUE(t.TERM, 'KKJHXQ')                                       termShow,
+               t.term,
+               FUNC_GET_DICVALUE(t.WEEK_TYPE, 'XZLX')                                    week_type,
+               t.END_WEEK,
+               t.START_WEEK,
+               t.PRACTICE_HOURS,
+               t.THEORYPRACTICE_HOURS,
+               t.THEORETICAL_HOURS,
+               t.WEEKS_NUMBER                                                            weeksNumber,
+               t.WEEKS_HOURS,
+               t.TOTLE_HOURS,
+               (SELECT count(sign_id) FROM T_JW_COURSEPLAN_SIGN WHERE t.id = term_id) AS personId
+        FROM T_JW_COURSEPLAN_TERM t
+        WHERE t.DETAILS_ID = #{detailsId}
+    </select>
+    <insert id="savePlanTerm" parameterType="com.goisan.educational.courseplan.bean.CourseplanTerm">
+        INSERT INTO t_jw_courseplan_term (id, details_id, WEEK_TYPE, START_WEEK, END_WEEK, plan_id, course_id,
+                                          course_name, school_year, term, WEEKS_NUMBER, weeks_hours, totle_hours,
+                                          creator, create_time, create_dept, THEORETICAL_HOURS, PRACTICE_HOURS,
+                                          THEORYPRACTICE_HOURS)
+        VALUES
+               (#{id}, #{detailsId}, #{weekType}, #{startWeek}, #{endWeek}, #{planId}, #{courseId}, #{courseName},
+                #{schoolYear}, #{term}, #{weeksNumber},
+                #{weeksHours}, #{totleHours}, #{creator}, #{createTime}, #{createDept}, #{theoreticalHours},
+                #{practiceHours}, #{theorypracticeHours})
+    </insert>
+    <select id="getPlanTerm" parameterType="String"
+            resultType="com.goisan.educational.courseplan.bean.CourseplanTerm">
+        SELECT *
+        FROM T_JW_COURSEPLAN_TERM
+        WHERE ID = #{id}
+    </select>
+    <update id="updatePlanTerm"
+            parameterType="com.goisan.educational.courseplan.bean.CourseplanTerm">
+        UPDATE t_jw_courseplan_term
+        SET details_id   = #{detailsId},
+            plan_id      = #{planId},
+            course_id    = #{courseId},
+            START_WEEK   = #{startWeek},
+            END_WEEK=#{endWeek},
+            course_name  = #{courseName},
+            school_year  = #{schoolYear},
+            term         = #{term},
+            WEEKS_NUMBER = #{weeksNumber},
+            weeks_hours  = #{weeksHours},
+            totle_hours  = #{totleHours},
+            changer      = #{changer},
+            change_time  = #{changeTime},
+            change_dept  = #{changeDept},
+            valid_flag   = #{validFlag},
+            theoretical_hours = #{theoreticalHours},
+            practice_hours = #{practiceHours},
+            theorypractice_hours = #{theorypracticeHours}
+        WHERE id = #{id}
+    </update>
+    <delete id="delPlanTerm" parameterType="String">
+        DELETE
+        FROM T_JW_COURSEPLAN_TERM
+        WHERE ID = #{id}
+    </delete>
+    <select id="getArrayClassCourseIdsPlanByCouesePlanId" parameterType="String" resultType="String">
+        SELECT id
+        FROM T_JW_ARRAYCLASS_COURSEPLAN
+        WHERE PLAN_ID = #{id}
+    </select>
+    <select id="checkPlanName" parameterType="com.goisan.educational.courseplan.bean.CoursePlan"
+            resultType="java.lang.Integer">
+        SELECT count(PLAN_ID) FROM T_JW_COURSEPLAN WHERE
+        PLAN_NAME = #{planName}
+        <if test="planId != null and planId != ''">
+            AND PLAN_ID &lt;&gt; #{planId}
+        </if>
+    </select>
+    <!--导出课程计划表-->
+    <select id="getCoursePlanExcelList" resultType="com.goisan.educational.courseplan.bean.CoursePlanExcel"
+            parameterType="com.goisan.educational.courseplan.bean.CoursePlanExcel">
+        SELECT distinct d.COURSE_NAME as courseName,
+
+                        (select sum(case when COURSE_TYPE= '1' then 1 else 0 end) || ',' ||
+        sum(case when COURSE_TYPE = '2' then 1 else 0 end) || ',' ||
+        sum(case when COURSE_TYPE = '3' then 1 else 0 end) || ',' ||
+        sum(case when COURSE_TYPE = '4' then 1 else 0 end) || ',' ||
+        sum(case when COURSE_TYPE = '5' then 1 else 0 end) as COURSE_TYPE from T_JW_COURSEPLAN_DETAILS s where  t.PLAN_ID = s.PLAN_ID and  t.PLAN_NAME = #{planName}) courseTypeSplit,
+                (select DIC_NAME
+                   from T_SYS_DIC
+                  where PARENT_ID =
+                        (select id from T_SYS_DIC where DIC_CODE = 'KCLX')
+                    and DIC_CODE = d.COURSE_TYPE) as courseType,
+                (select c.course_code from T_JW_COURSE c where d.course_id = c.course_id) as courseCode,
+                d.TOTAL_HOURS as totalHours,
+                d.THEORETICAL_HOURS as theoreticalHours,
+                d.PRACTICE_HOURS as practiceHours,
+                d.THEORYPRACTICE_HOURS as theorypracticeHours,
+                d.PRACTICE_PLACE as practicePlace,
+                (SELECT t.THEORETICAL_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 1
+                    and TERM = 1
+                    and ROWNUM = 1) as s1theoretical,
+                (SELECT t.PRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 1
+                    and TERM = 1
+                    and ROWNUM = 1) as s1practice,
+                (SELECT t.THEORYPRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 1
+                    and TERM = 1
+                    and ROWNUM = 1) as s1theorypractice,
+                (SELECT t.THEORETICAL_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 1
+                    and TERM = 2
+                    and ROWNUM = 1) as s2theoretical,
+                (SELECT t.PRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 1
+                    and TERM = 2
+                    and ROWNUM = 1) as s2practice,
+                (SELECT t.THEORYPRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 1
+                    and TERM = 2
+                    and ROWNUM = 1) as s2theorypractice,
+                (SELECT t.THEORETICAL_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 2
+                    and TERM = 1
+                    and ROWNUM = 1) as s3theoretical,
+                (SELECT t.PRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 2
+                    and TERM = 1
+                    and ROWNUM = 1) as s3practice,
+                (SELECT t.THEORYPRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 2
+                    and TERM = 1
+                    and ROWNUM = 1) as s3theorypractice,
+                (SELECT t.THEORETICAL_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 2
+                    and TERM = 2
+                    and ROWNUM = 1) as s4theoretical,
+                (SELECT t.PRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 2
+                    and TERM = 2
+                    and ROWNUM = 1) as s4practice,
+                (SELECT t.THEORYPRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 2
+                    and TERM = 2
+                    and ROWNUM = 1) as s4theorypractice,
+                (SELECT t.THEORETICAL_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 3
+                    and TERM = 1
+                    and ROWNUM = 1) as s5theoretical,
+                (SELECT t.PRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 3
+                    and TERM = 1
+                    and ROWNUM = 1) as s5practice,
+                (SELECT t.THEORYPRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 3
+                    and TERM = 1
+                    and ROWNUM = 1) as s5theorypractice,
+                (SELECT t.THEORETICAL_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 3
+                    and TERM = 2
+                    and ROWNUM = 1) as s6theoretical,
+                (SELECT t.PRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 3
+                    and TERM = 2
+                    and ROWNUM = 1) as s6practice,
+                (SELECT t.THEORYPRACTICE_HOURS
+                   FROM T_JW_COURSEPLAN_TERM t
+                  WHERE t.DETAILS_ID = d.ID
+                    and SCHOOL_YEAR = 3
+                    and TERM = 2
+                    and ROWNUM = 1) as s6theorypractice,
+                  d.course_type as type
+  FROM T_JW_COURSEPLAN t, T_JW_COURSEPLAN_DETAILS d
+ where t.PLAN_ID = d.PLAN_ID
+   and PLAN_NAME = #{planName}
+  order by type
+    </select>
+
+</mapper>

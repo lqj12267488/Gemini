@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.practice.dao.MaterialDao">
+    <select id="materialAction" resultType="com.goisan.practice.bean.Material"
+            parameterType="com.goisan.practice.bean.Material">
+        select
+        id,
+        FUNC_GET_TABLEVALUE(department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentId,
+        FUNC_GET_TABLEVALUE(major_id,'t_xg_major','major_code','major_name')  majorId,
+        FUNC_GET_DICVALUE(semester ,'XQ') semester,
+        to_char(upload_time ,'yyyy-mm-dd')||' '|| to_char(upload_time ,'hh24:mi')  uploadTime,
+        upload_person uploadPerson,
+        create_time createTime
+        from T_JY_PRACTICE_MATERIAL
+        WHERE 1 = 1
+        <if test="departmentId != null and departmentId != '' ">
+            AND department_id = #{departmentId}
+        </if>
+        <if test="majorId != null and majorId != '' ">
+            AND major_id = #{majorId}
+        </if>
+        <if test="semester != null and semester != '' ">
+            AND semester = #{semester}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="insertMaterial" parameterType="com.goisan.practice.bean.Material">
+        INSERT INTO T_JY_PRACTICE_MATERIAL
+        (
+        id,
+        department_id,
+        major_id,
+        semester,
+        upload_time,
+        upload_person,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${departmentId}',
+        '${majorId}',
+        '${semester}',
+        to_date('${uploadTime}','yyyy-mm-dd hh24:mi'),
+        '${uploadPerson}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <select id="getMaterialById" parameterType="java.lang.String"
+            resultType="com.goisan.practice.bean.Material">
+        select
+        id,
+        department_id departmentId,
+        major_id  majorId,
+        semester,
+        to_char(upload_time ,'yyyy-mm-dd')||'T'|| to_char(upload_time ,'hh24:mi')  uploadTime,
+        upload_person uploadPerson
+        from T_JY_PRACTICE_MATERIAL
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateMaterialById" parameterType="com.goisan.practice.bean.Material">
+        UPDATE T_JY_PRACTICE_MATERIAL SET
+        department_id = #{departmentId},
+        major_id  = #{majorId},
+        semester = #{semester},
+        upload_time  = to_date(#{uploadTime},'yyyy-mm-dd hh24:mi'),
+        upload_person = #{uploadPerson},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteMaterialById" parameterType="java.lang.String">
+        DELETE  T_JY_PRACTICE_MATERIAL WHERE id = #{id}
+    </delete>
+</mapper>

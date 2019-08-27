@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.SysDicDao" >
+    <!--系统字典主页数据查询-->
+    <select id="sysDicInfo" resultType="com.goisan.system.bean.SysDic"  parameterType="com.goisan.system.bean.SysDic">
+        SELECT
+        id id,
+        dic_name AS dicname,
+        dic_code AS diccode,
+        dic_order as dicorder
+        FROM
+        T_SYS_DIC
+        where
+        1=1
+        AND
+        PARENT_ID IS NULL
+        <if test="dicname != null and dicname !='' ">
+            AND  dic_name LIKE '%'||'${dicname}'||'%'
+        </if>
+        <if test="diccode != null and diccode !='' ">
+            AND  dic_code LIKE '%'||'${diccode}'||'%'
+        </if>
+        ORDER BY dic_order DESC
+    </select>
+    <!--新增字典-->
+    <insert id="insertSysDic" parameterType="com.goisan.system.bean.SysDic">
+        INSERT INTO
+        T_SYS_DIC
+        (id,dic_name,dic_code,dic_order,selectable,leaf_flag,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${dicname}','${diccode}',(SELECT max(dic_order) from T_SYS_DIC where parent_id is null)+1,
+        '0','0','${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--修改查询-->
+    <select id="getSysDicID" parameterType="java.lang.String" resultType="com.goisan.system.bean.SysDic">
+         SELECT
+        id id,
+        dic_name AS dicname,
+        dic_code AS diccode,
+        dic_order AS dicorder,
+        parent_id AS parentid
+        FROM
+        T_SYS_DIC
+        where id =#{id}
+    </select>
+    <!--修改保存-->
+    <update id="updateSysDic" parameterType="com.goisan.system.bean.SysDic">
+        UPDATE T_SYS_DIC SET
+        dic_name = #{dicname},
+        dic_code = #{diccode},
+        dic_order=#{dicorder},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <!--删除字典-->
+    <delete id="deleteSysDic" parameterType="java.lang.String">
+        DELETE FROM T_SYS_DIC WHERE id = #{id}
+    </delete>
+    <!--系统字典子页数据查询-->
+    <select id="sysDicMappingInfo" resultType="com.goisan.system.bean.SysDic"  parameterType="com.goisan.system.bean.SysDic">
+        SELECT
+        id id,
+        dic_name AS dicname,
+        dic_order AS dicorder,
+        dic_code AS diccode
+        FROM
+        T_SYS_DIC
+        where
+        1=1
+        AND
+        PARENT_ID=#{id}
+        <if test="dicname != null and dicname !='' ">
+            AND  dic_name LIKE '%'||'${dicname}'||'%'
+        </if>
+        ORDER BY dic_order DESC
+    </select>
+    <!--子页新增保存-->
+    <insert id="insertSysDicMapping" parameterType="com.goisan.system.bean.SysDic">
+        INSERT INTO
+        T_SYS_DIC
+        (id,dic_name,dic_code,dic_order,parent_id,selectable,LEAF_FLAG,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${dicname}','${diccode}','${dicorder}','${parentid}','1','1','${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--查询是否有子页-->
+    <select id="checkDicMapping" parameterType="java.lang.String" resultType="com.goisan.system.bean.SysDic">
+        select * from t_sys_dic where parent_id = #{id}
+    </select>
+    <!--名称重复性校验-->
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.SysDic">
+        select * from t_sys_dic where dic_name = #{dicname} and parent_id is null
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+    <!--编码重复性校验-->
+    <select id="checkCode" parameterType="java.lang.String" resultType="com.goisan.system.bean.SysDic">
+        select * from t_sys_dic where dic_code = #{diccode} and parent_id is null
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+    <!--子页名称重复性校验-->
+    <select id="sysDicName" parameterType="java.lang.String" resultType="com.goisan.system.bean.SysDic">
+        select * from t_sys_dic where dic_name = #{dicname} and parent_id = #{parentid}
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+    <!--子页编码重复性校验-->
+    <select id="sysDicCode" parameterType="java.lang.String" resultType="com.goisan.system.bean.SysDic">
+        select * from t_sys_dic where dic_code = #{diccode} and parent_id = #{parentid}
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+    <!--查询学期-->
+    <select id="semesterList" resultType="com.goisan.system.bean.SysDic"  parameterType="com.goisan.system.bean.SysDic">
+        SELECT
+        id id,
+        dic_name AS dicname,
+        dic_code AS diccode,
+        '' AS name,
+        SUBSTR(dic_name,0,4) AS dictype
+        FROM
+        T_SYS_DIC
+        where
+        1=1
+        AND
+        parent_id = '3f07c1b6-53dd-47c6-8e86-474ab0103680'
+        <if test="dicname != null and dicname !='' ">
+            AND  dic_name LIKE '%'||'${dicname}'||'%'
+        </if>
+        ORDER BY dic_name DESC
+    </select>
+    <select id="getDicName" resultType="java.lang.String">
+        select dic_name from t_sys_dic where parent_id=(select id from T_SYS_DIC t where dic_code = #{diccode} )
+        AND dic_code=#{code}
+    </select>
+
+    <select id="getDicCode" resultType="java.lang.String">
+        select dic_code from t_sys_dic where parent_id=(select id from T_SYS_DIC t where dic_code = #{diccode} )
+        AND dic_name=#{dicName}
+    </select>
+</mapper>

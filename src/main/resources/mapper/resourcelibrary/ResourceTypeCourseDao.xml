@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.type.dao.ResourceTypeCourseDao">
+    <select id="getResourceTypeCourseList"
+            parameterType="com.goisan.type.bean.ResourceTypeCourse"
+            resultType="com.goisan.type.bean.ResourceTypeCourse">
+        select resource_course_id,resource_course_name,resource_course_order,resource_major_id,
+            FUNC_GET_TABLEVALUE(resource_major_id, 'ZYK_TYPE_MAJOR', 'RESOURCE_MAJOR_ID', 'RESOURCE_MAJOR_NAME')  resourceMajorIdShow,
+            resource_subject_id,
+            FUNC_GET_TABLEVALUE(resource_subject_id, 'ZYK_TYPE_SUBJECT', 'RESOURCE_SUBJECT_ID', 'RESOURCE_SUBJECT_NAME')  resourceSubjectIdShow,
+            remark
+        from ZYK_TYPE_COURSE
+        WHERE 1 = 1
+            <if test="resourceCourseName != null and resourceCourseName != ''">
+                AND resource_course_name LIKE  '%'||#{resourceCourseName}||'%'
+            </if>
+            <if test="resourceMajorId != null and resourceMajorId != '' and resourceMajorId != 'null'">
+                AND resource_major_id = #{resourceMajorId}
+            </if>
+            <if test="resourceSubjectId != null and resourceSubjectId != ''">
+                AND resource_subject_id = #{resourceSubjectId}
+            </if>
+        order by LPAD(resource_course_order,5,'0')
+    </select>
+    <insert id="saveResourceTypeCourse" parameterType="com.goisan.type.bean.ResourceTypeCourse">
+        insert into zyk_type_course
+        (resource_course_id,resource_course_name,resource_course_order,resource_major_id,resource_subject_id,remark,
+        creator,create_time,create_dept)
+        values
+        (#{resourceCourseId},#{resourceCourseName},#{resourceCourseOrder},#{resourceMajorId},#{resourceSubjectId},#{remark},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getResourceTypeCourseById" parameterType="java.lang.String"
+            resultType="com.goisan.type.bean.ResourceTypeCourse">
+        select * from ZYK_TYPE_COURSE where resource_course_id = #{id}
+    </select>
+    <update id="updateResourceTypeCourse" parameterType="com.goisan.type.bean.ResourceTypeCourse">
+        update zyk_type_course set
+            resource_course_name=#{resourceCourseName},
+            resource_course_order=#{resourceCourseOrder},
+            resource_major_id=#{resourceMajorId},
+            resource_subject_id=#{resourceSubjectId},
+            remark=#{remark},
+            changer=#{changer},
+            change_time=sysdate,
+            change_dept=#{changeDept}
+        where resource_course_id = #{resourceCourseId}
+    </update>
+    <delete id="delResourceTypeCourse" parameterType="java.lang.String">
+        delete from ZYK_TYPE_COURSE where resource_course_id = #{id}
+    </delete>
+    <select id="checkTypeCourse" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT SUM(remark) AS remark FROM (
+        SELECT COUNT(RESOURCE_ID) AS remark
+        FROM ZYK_RESOURCE_PUBLIC WHERE RESOURCE_COURSE_ID = #{id}
+        )
+    </select>
+</mapper>

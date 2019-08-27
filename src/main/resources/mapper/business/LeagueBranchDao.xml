@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.leaguebuilding.leaguebranch.dao.LeagueBranchDao">
+    <select id="getLeagueBranchTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        id AS id,
+        branch_name AS name,
+        parent_branch_id AS pid
+        FROM
+        T_DT_LEAGUEBRANCH
+        ORDER BY
+        id
+    </select>
+    <insert id="saveLeagueBranch" parameterType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch">
+        INSERT INTO T_DT_LEAGUEBRANCH
+        (id,branch_name,parent_branch_id,remark,creator,create_time,create_dept)
+        VALUES
+        (#{id},#{branchName},#{pId},#{remark},#{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getMaxId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT max(to_number(id)) FROM T_DT_LEAGUEBRANCH WHERE parent_branch_id = #{pId}
+    </select>
+    <select id="checkName" parameterType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch"
+            resultType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch">
+        SELECT
+        id,
+        branch_name as branchName
+        FROM
+        T_DT_LEAGUEBRANCH t
+        WHERE 1 = 1
+        AND t.branch_name = #{branchName}
+        <if test="id != null and id != '' ">
+            AND t.id != #{id}
+        </if>
+    </select>
+    <select id="getLeagueBranchById" parameterType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch"
+            resultType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch">
+        SELECT
+        id as id,
+        branch_name as branchName,
+        parent_branch_id as pId,
+        remark
+        FROM
+        T_DT_LEAGUEBRANCH
+        WHERE 1 = 1
+        AND id = #{id}
+    </select>
+    <update id="updateLeagueBranch" parameterType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch">
+       UPDATE
+        T_DT_LEAGUEBRANCH
+        SET
+        branch_name = #{branchName},
+        remark = #{remark},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteLeagueBranchById" parameterType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch" >
+        DELETE T_DT_LEAGUEBRANCH WHERE id = #{id}
+    </delete>
+    <select id="searchLeagueBranchList" parameterType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch"
+            resultType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch">
+        SELECT
+        id,
+        branch_name as branchName,
+        remark,
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.create_time as createTime
+        FROM
+        T_DT_LEAGUEBRANCH t
+        WHERE 1 = 1
+        <if test="branchName != null and branchName != '' ">
+            AND branch_name LIKE #{branchName}
+        </if>
+        ORDER BY createTime DESC
+    </select>
+    <select id="isExistInLeague" parameterType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch"
+            resultType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch">
+        SELECT
+        *
+        FROM
+        T_DT_LEAGUEMEMBERS t
+        WHERE 1 = 1 and valid_flag ='1'
+        AND branch_id = #{id}
+
+    </select>
+    <select id="checkLeagueBranchById" parameterType="String"
+            resultType="com.goisan.leaguebuilding.leaguebranch.bean.LeagueBranch">
+        SELECT id
+        FROM T_DT_LEAGUEMEMBERS t
+        WHERE 1 = 1 and valid_flag ='1'
+        and t.branch_id =#{id}
+    </select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.survey.dao.SurveyPersonDao">
+    <select id="getSurveyPersonList"
+            parameterType="com.goisan.survey.bean.SurveyPerson"
+            resultType="com.goisan.survey.bean.SurveyPerson">
+        select id,survey_id,person_id,person_dept,person_type,answer_flag,remark from T_DC_PERSON
+    </select>
+    <insert id="saveSurveyPerson" parameterType="com.goisan.survey.bean.SurveyPerson">
+        insert into t_dc_person
+        (id,survey_id,person_id,person_dept,person_type,answer_flag,remark,creator,create_time,create_dept)
+        values
+        (#{id},#{surveyId},#{personId},#{personDept},#{personType},#{answerFlag},#{remark},#{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getSurveyPersonById" parameterType="java.lang.String"
+            resultType="com.goisan.survey.bean.SurveyPerson">
+        select * from T_DC_PERSON where id = #{id}
+    </select>
+    <update id="updateSurveyPerson" parameterType="com.goisan.survey.bean.SurveyPerson">
+        update t_dc_person
+        set survey_id=#{surveyId},person_id=#{personId},
+        person_dept=#{personDept},person_type=#{personType},
+        answer_flag=#{answerFlag},remark=#{remark},changer=#{changer},
+        change_time=sysdate,change_dept=#{changeDept}
+         where id = #{id}
+    </update>
+    <update id="updateSurveyPersonFlag" parameterType="com.goisan.survey.bean.SurveyPerson">
+        update t_dc_person
+        set
+        answer_flag='1',
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+         where survey_id=#{surveyId} AND person_id=#{changer} AND person_dept=#{changeDept}
+    </update>
+    <delete id="delSurveyPerson" parameterType="java.lang.String">
+        delete from T_DC_PERSON where survey_id = #{id}
+    </delete>
+    <select id="checkPersonBySurveyid" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(ID) from  T_DC_PERSON where survey_id = #{id}
+    </select>
+</mapper>

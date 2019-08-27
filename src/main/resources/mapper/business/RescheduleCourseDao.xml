@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.course.dao.RescheduleCourseDao">
+
+
+
+    <select id="getRescheduleCourseList" parameterType="com.goisan.educational.course.bean.RescheduleCourse" resultType="com.goisan.educational.course.bean.RescheduleCourse">
+        select t.id,
+        func_get_dicvalue(t.major_school, 'XY') majorSchool,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE,
+        'T_XG_MAJOR',
+        'MAJOR_CODE',
+        'MAJOR_NAME') majorCode,
+        func_get_deptname(dept_id) deptId,
+        FUNC_GET_TABLEVALUE(t.class_id,
+        'T_XG_CLASS',
+        'CLASS_ID',
+        'CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID,
+        'T_JW_COURSE',
+        'COURSE_ID',
+        'COURSE_NAME') courseId,
+        to_char(t.oringal_date, 'yyyy-mm-dd') oringalDate,
+        t.oringal_classtime,
+        func_get_dicvalue(T.ORINGAL_WEEK, 'ZC') oringalWeek,
+        to_char(t.RESCHEDULE_DATE, 'yyyy-mm-dd') rescheduleDate,
+        func_get_dicvalue(t.reschedule_week, 'ZC') rescheduleWeek,
+        t.reschedule_classtime,
+        t.applicant_person_id,
+        to_char(t.applicant_date, 'yyyy-mm-dd') applicantDate,
+        t.approve_dpt_person_id,
+        to_char(t.APPROVE_DPT_DATE, 'yyyy-mm-dd') approveDptDate,
+        t.approve_office_person_id,
+        to_char(t.approve_office_date, 'yyyy-mm-dd') approveOfficeDate,
+        func_get_dicvalue(t.status, 'TTKZT') status,
+        t.APPLICANT_REASON,
+        t.APPROVE_REASON,
+        func_get_dicvalue(t.oringal_weekday, 'XQZ') oringalWeekday,
+        func_get_dicvalue(t.reschedule_weekday, 'XQZ') rescheduleWeekday,
+        t.creator,
+        t.create_dept,
+        t.overrule_status
+        from T_JW_RESCHEDULECOURSE t
+        where t.valid_flag = '1'
+        <if test="null!= requesterDept and ''!=requesterDept ">
+            and (t.creator = #{requester}
+            <if test="isDeptBoss">
+             or (t.status = '1' and t.create_dept = #{requesterDept})
+            </if>
+            <if test="requesterDept == tTKSPId">
+                or t.status = '2'
+            </if>
+            <if test="isDeptBoss">
+              or (t.status = '3' and t.create_dept = #{requesterDept}  and t.overrule_status = '2'))
+            </if>
+            <if test="isDeptBoss==false">
+                )
+            </if>
+        </if>
+        <if test="null != majorSchoolShow and ''!=majorSchoolShow  ">
+            and func_get_dicvalue(t.major_school,'XY')  like '%${majorSchoolShow}%'
+        </if>
+
+        <if test="null != deptId and ''!=deptId">
+            and func_get_deptname(dept_id) like '%${deptId}%'
+        </if>
+        <if test="null != majorShow and ''!=majorShow">
+            and FUNC_GET_TABLEVALUE(t.MAJOR_CODE,
+            'T_XG_MAJOR',
+            'MAJOR_CODE',
+            'MAJOR_NAME') like '%${majorShow}%'
+        </if>
+        <if test="null != courseId and ''!=courseId">
+            and FUNC_GET_TABLEVALUE(t.COURSE_ID,
+            'T_JW_COURSE',
+            'COURSE_ID',
+            'COURSE_NAME')  like '%${courseId}%'
+        </if>
+        <if test="null != courseId and ''!=classId">
+            and FUNC_GET_TABLEVALUE(t.class_id,
+            'T_XG_CLASS',
+            'CLASS_ID',
+            'CLASS_NAME') like '%${classId}%'
+        </if>
+
+        <if test="null != applicantPersonId and ''!=applicantPersonId">
+            and t.applicant_person_id like '%${applicantPersonId}%'
+        </if>
+
+        <if test="null !=applicantDate and ''!=applicantDate">
+            and to_char(t.applicant_date, 'yyyy-mm-dd') LIKE '%${applicantDate}%'
+        </if>
+
+        <if test="null !=status and ''!=status">
+            and t.status = #{status}
+        </if>
+    </select>
+
+    <insert id="insertRescheduleCourse" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+        insert into T_JW_RESCHEDULECOURSE t
+         (t.id,t.major_school,t.dept_id,t.major_code,t.class_id,t.course_id,t.oringal_date,t.oringal_classtime,
+          t.oringal_week,t.oringal_weekday,t.reschedule_date,t.reschedule_week,
+          t.reschedule_classtime,t.reschedule_weekday,t.applicant_person_id,
+          t.applicant_date,t.approve_dpt_person_id,t.approve_dpt_date,approve_office_person_id,approve_office_date,
+          t.status,t.APPLICANT_REASON,creator,create_time,create_dept,changer,change_time,
+          t.change_dept,valid_flag,t.APPROVE_REASON,t.OVERRULE_STATUS)
+        values(
+        FUNC_GET_UUID,#{majorSchool},#{deptId},#{majorCode},#{classId},#{courseId},to_date('${oringalDate}', 'yyyy-mm-dd'),#{oringalClassTime},
+        #{oringalWeek},#{oringalWeekday},to_date('${rescheduleDate}', 'yyyy-mm-dd'),#{rescheduleWeek},
+        #{rescheduleClassTime},#{rescheduleWeekday},#{applicantPersonId},
+        to_date('${applicantDate}', 'yyyy-mm-dd'),#{approveDptPersonId},to_date('${approveDptDate}', 'yyyy-mm-dd'),#{approveOfficePersonId},to_date('${approveOfficeDate}', 'yyyy-mm-dd'),
+        '0',#{applicantReason},#{creator},sysdate,#{createDept},null ,null ,null ,'1',#{approveReason},'0'
+        )
+    </insert>
+
+    <select id="getRescheduleCourseById" parameterType="com.goisan.educational.course.bean.RescheduleCourse" resultType="com.goisan.educational.course.bean.RescheduleCourse">
+         select t.id,t.major_school,func_get_dicvalue(t.major_school,'XY') majorSchoolShow,
+         t.MAJOR_CODE,
+         DEPT_ID deptId,
+         t.class_id classId,
+         t.COURSE_ID courseId,
+         to_char(t.oringal_date, 'yyyy-mm-dd') oringalDate,
+         t.oringal_classtime,
+         T.ORINGAL_WEEK,
+         to_char(t.RESCHEDULE_DATE, 'yyyy-mm-dd') rescheduleDate,
+         t.reschedule_week,
+         t.reschedule_classtime,
+         t.applicant_person_id,t.applicant_date,t.applicant_person_id,
+         to_char(t.applicant_date, 'yyyy-mm-dd') applicantDate,
+         t.approve_dpt_person_id,t.approve_office_person_id,t.approve_office_date,
+         func_get_dicvalue(t.status,'TTKZT') status,
+         t.APPLICANT_REASON,
+         t.APPROVE_REASON,
+         t.oringal_weekday oringalWeekday,
+         t.reschedule_weekday rescheduleWeekday
+        from T_JW_RESCHEDULECOURSE t
+        where t.valid_flag = '1' and t.id = #{id}
+    </select>
+
+    <update id="updRescheduleCourseById" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+         update T_JW_RESCHEDULECOURSE t set t.major_school =#{majorSchool},t.dept_id=#{deptId},t.major_code=#{majorCode},t.class_id=#{classId},
+ t.course_id=#{courseId},t.oringal_date = to_date('${oringalDate}', 'yyyy-mm-dd'),t.oringal_classtime = #{oringalClassTime},
+ t.oringal_week=#{oringalWeek},t.oringal_weekday=#{oringalWeekday},t.reschedule_date=to_date('${rescheduleDate}', 'yyyy-mm-dd'),
+ t.reschedule_week=#{rescheduleWeek},t.reschedule_classtime=#{rescheduleClassTime},t.reschedule_weekday =#{rescheduleWeekday},
+ t.applicant_date=to_date('${applicantDate}', 'yyyy-mm-dd'),t.applicant_person_id=#{applicantPersonId},t.applicant_reason = #{applicantReason},t.changer=#{changer},
+ t.change_time = sysdate,t.change_dept = #{changeDept} where id = #{id}
+    </update>
+
+    <delete id="delRescheduleCourseById" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+       update T_JW_RESCHEDULECOURSE t set t.valid_flag = '0' ,t.changer=#{changer},t.change_dept=#{changeDept},t.change_time = sysdate where t.id = #{id}
+    </delete>
+
+    <!--提交时，重置驳回状态-->
+    <update id="updRCWithSubmit" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+        update  T_JW_RESCHEDULECOURSE t set t.status = '1' , t.overrule_status='0' where id=#{id}
+    </update>
+
+    <update id="updRCWithOfficeSubmit" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+        update  T_JW_RESCHEDULECOURSE t set t.status = '2' , t.overrule_status='0' where id=#{id}
+    </update>
+
+    <select id="getApproveRCById" parameterType="com.goisan.educational.course.bean.RescheduleCourse"
+            resultType="com.goisan.educational.course.bean.RescheduleCourse">
+     select t.id,
+       func_get_dicvalue(t.major_school, 'XY') majorSchoolShow,
+       FUNC_GET_TABLEVALUE(t.MAJOR_CODE,
+                           'T_XG_MAJOR',
+                           'MAJOR_CODE',
+                           'MAJOR_NAME') majorCode,
+       func_get_deptname(dept_id) deptId,
+       FUNC_GET_TABLEVALUE(t.class_id,
+                           'T_XG_CLASS',
+                           'CLASS_ID',
+                           'CLASS_NAME') classId,
+       FUNC_GET_TABLEVALUE(t.COURSE_ID,
+                           'T_JW_COURSE',
+                           'COURSE_ID',
+                           'COURSE_NAME') courseId,
+      to_char(t.oringal_date, 'yyyy-mm-dd') oringalDate,
+       t.oringal_classtime,
+       func_get_dicvalue(T.ORINGAL_WEEK, 'ZC') ORINGAL_WEEK,
+      to_char(t.RESCHEDULE_DATE, 'yyyy-mm-dd') rescheduleDate,
+       func_get_dicvalue(t.reschedule_week, 'ZC') reschedule_week,
+       t.reschedule_classtime,
+       t.applicant_person_id,
+       to_char(t.applicant_date, 'yyyy-mm-dd') applicantDate,
+       t.approve_office_person_id,
+       t.approve_office_date,
+       func_get_dicvalue(t.status, 'TTKZT') status,
+       t.APPLICANT_REASON,
+       t.APPROVE_REASON,
+       func_get_dicvalue(t.oringal_weekday, 'XQZ') oringalWeekday,
+       func_get_dicvalue(t.reschedule_weekday, 'XQZ') rescheduleWeekday,
+       t.creator,
+       t.create_dept,
+       t.overrule_status
+  from T_JW_RESCHEDULECOURSE t
+ where t.valid_flag = '1'
+   and t.id = #{id}
+    </select>
+
+    <!--获取父部 dic_order-->
+    <select id="getMajorSchoolByDeptId" parameterType="com.goisan.educational.course.bean.RescheduleCourse" resultType="com.goisan.educational.course.bean.RescheduleCourse">
+        SELECT dic.dic_order majorSchool,dic.dic_name majorSchoolShow
+           FROM t_sys_dic dic
+           WHERE dic.dic_name =(select t.dept_name from T_SYS_DEPT t
+           where t.dept_id = (select p.parent_dept_id from T_SYS_DEPT p
+                               where p.dept_id = #{requesterDept}))
+    </select>
+
+    <!--系部批准-->
+    <update id="updRCWithDeptApprove" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+        update  T_JW_RESCHEDULECOURSE t set t.status = '2',
+        t.approve_dpt_person_id=#{approveDptPersonId},
+        t.approve_dpt_date =sysdate,t.changer = #{changer},t.change_time = sysdate,
+        t.change_dept = #{changeDept}
+   where id=#{id}
+    </update>
+
+    <!--教务处批准,清空驳回原因-->
+    <update id="updRCWithOfficeApprove" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+      update  T_JW_RESCHEDULECOURSE t
+      set t.status = '3',t.approve_office_person_id=#{approveOfficePersonId},t.approve_office_date = sysdate,
+      t.changer = #{changer},t.change_time = sysdate,t.change_dept = #{changeDept},t.approve_reason =''
+     where id=#{id}
+    </update>
+
+    <!--系部驳回-->
+    <update id="updRCWithDeptOverrule" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+        update  T_JW_RESCHEDULECOURSE t set t.status = '3' , t.approve_reason=#{approveReason},
+          t.approve_dpt_person_id=#{approveDptPersonId},
+        t.approve_dpt_date =sysdate,t.changer = #{changer},t.change_time = sysdate,
+        t.change_dept = #{changeDept}, t.overrule_status = '1'
+        where id=#{id}
+    </update>
+    <!--教务处驳回2-->
+    <update id="updRCWithOfficeOverrule" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+        update T_JW_RESCHEDULECOURSE t
+       set t.status = '3',
+       t.approve_reason = #{approveReason},
+      t.approve_office_person_id = #{approveOfficePersonId},
+       t.approve_office_date  = sysdate,
+       t.changer  = #{changer},
+       t.change_time  = sysdate,
+       t.change_dept = #{changeDept},
+       t.overrule_status = '2'
+      where id = #{id}
+    </update>
+
+    <!--教务处驳回3-->
+    <update id="updRCWithOffOverNoDept" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+        update T_JW_RESCHEDULECOURSE t
+       set t.status = '3',
+       t.approve_reason = #{approveReason},
+      t.approve_office_person_id = #{approveOfficePersonId},
+       t.approve_office_date  = sysdate,
+       t.changer  = #{changer},
+       t.change_time  = sysdate,
+       t.change_dept = #{changeDept},
+       t.overrule_status = '3'
+      where id = #{id}
+    </update>
+
+    <update id="updRCWithOfficeAndDeptOverrule" parameterType="com.goisan.educational.course.bean.RescheduleCourse">
+        update  T_JW_RESCHEDULECOURSE t set
+          t.approve_dpt_person_id=#{approveDptPersonId},
+        t.approve_dpt_date =sysdate,t.changer = #{changer},t.change_time = sysdate,
+        t.change_dept = #{changeDept}, t.overrule_status = '3'
+        where id=#{id}
+    </update>
+
+    <select id="getRCQueryList" parameterType="com.goisan.educational.course.bean.RescheduleCourse" resultType="com.goisan.educational.course.bean.RescheduleCourse">
+        select t.id,
+        func_get_dicvalue(t.major_school, 'XY') majorSchool,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE,
+        'T_XG_MAJOR',
+        'MAJOR_CODE',
+        'MAJOR_NAME') majorCode,
+        func_get_deptname(dept_id) deptId,
+        FUNC_GET_TABLEVALUE(t.class_id,
+        'T_XG_CLASS',
+        'CLASS_ID',
+        'CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID,
+        'T_JW_COURSE',
+        'COURSE_ID',
+        'COURSE_NAME') courseId,
+        to_char(t.oringal_date, 'yyyy-mm-dd') oringalDate,
+        t.oringal_classtime,
+        func_get_dicvalue(T.ORINGAL_WEEK, 'ZC') oringalWeek,
+        to_char(t.RESCHEDULE_DATE, 'yyyy-mm-dd') rescheduleDate,
+        func_get_dicvalue(t.reschedule_week, 'ZC') rescheduleWeek,
+        t.reschedule_classtime,
+        t.applicant_person_id,
+        to_char(t.applicant_date, 'yyyy-mm-dd') applicantDate,
+        func_get_tablevalue(t.approve_dpt_person_id, 't_sys_user', 'USER_ID', 'name') approveDptPersonId,
+        to_char(t.APPROVE_DPT_DATE, 'yyyy-mm-dd') approveDptDate,
+        func_get_tablevalue(t.approve_office_person_id, 't_sys_user', 'USER_ID', 'name') approveOfficePersonId,
+        to_char(t.approve_office_date, 'yyyy-mm-dd') approveOfficeDate,
+        func_get_dicvalue(t.status, 'TTKZT') status,
+        t.APPLICANT_REASON,
+        t.APPROVE_REASON,
+        func_get_dicvalue(t.oringal_weekday, 'XQZ') oringalWeekday,
+        func_get_dicvalue(t.reschedule_weekday, 'XQZ') rescheduleWeekday,
+        t.creator,
+        t.create_dept,
+        t.overrule_status
+        from T_JW_RESCHEDULECOURSE t
+        where t.valid_flag = '1'
+        and t.status != '0'
+        <if test="null != majorSchoolShow and ''!=majorSchoolShow  ">
+            and func_get_dicvalue(t.major_school,'XY')  like '%${majorSchoolShow}%'
+        </if>
+
+        <if test="null != deptId and ''!=deptId">
+            and func_get_deptname(dept_id) like '%${deptId}%'
+        </if>
+        <if test="null != majorShow and ''!=majorShow">
+            and FUNC_GET_TABLEVALUE(t.MAJOR_CODE,
+            'T_XG_MAJOR',
+            'MAJOR_CODE',
+            'MAJOR_NAME') like '%${majorShow}%'
+        </if>
+        <if test="null != courseId and ''!=courseId">
+            and FUNC_GET_TABLEVALUE(t.COURSE_ID,
+            'T_JW_COURSE',
+            'COURSE_ID',
+            'COURSE_NAME')  like '%${courseId}%'
+        </if>
+        <if test="null != courseId and ''!=classId">
+            and FUNC_GET_TABLEVALUE(t.class_id,
+            'T_XG_CLASS',
+            'CLASS_ID',
+            'CLASS_NAME') like '%${classId}%'
+        </if>
+        <if test="null != applicantPersonId and ''!=applicantPersonId">
+            and t.applicant_person_id like '%${applicantPersonId}%'
+        </if>
+
+        <if test="null !=applicantDate and ''!=applicantDate">
+            and to_char(t.applicant_date, 'yyyy-mm-dd') LIKE '%${applicantDate}%'
+        </if>
+
+        <if test="null !=status and ''!=status">
+            and t.status = #{status}
+        </if>
+        <if test="null !=approveDptPersonId and ''!=approveDptPersonId">
+            and func_get_tablevalue(t.approve_dpt_person_id, 't_sys_user', 'USER_ID', 'name') like '%${approveDptPersonId}%'
+        </if>
+        <if test="null !=approveDptDate and ''!=approveDptDate">
+            and to_char(t.approve_dpt_date, 'yyyy-mm-dd') LIKE '%${approveDptDate}%'
+        </if>
+        <if test="null !=approveOfficePersonId and ''!=approveOfficePersonId">
+            and func_get_tablevalue(t.approve_office_person_id, 't_sys_user', 'USER_ID', 'name') like '%${approveOfficePersonId}%'
+        </if>
+        <if test="null !=approveOfficeDate and ''!=approveOfficePersonId">
+            and to_char(t.approve_office_date, 'yyyy-mm-dd') LIKE '%${approveOfficeDate}%'
+        </if>
+    </select>
+
+    <select id="toExcelRCById" parameterType="com.goisan.educational.course.bean.RescheduleCourse" resultType="com.goisan.educational.course.bean.RescheduleCourse">
+     select t.id,
+        func_get_dicvalue(t.major_school, 'XY') majorSchool,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE,
+        'T_XG_MAJOR',
+        'MAJOR_CODE',
+        'MAJOR_NAME') majorCode,
+        func_get_deptname(dept_id) deptId,
+        FUNC_GET_TABLEVALUE(t.class_id,
+        'T_XG_CLASS',
+        'CLASS_ID',
+        'CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID,
+        'T_JW_COURSE',
+        'COURSE_ID',
+        'COURSE_NAME') courseId,
+        to_char(t.oringal_date, 'mm-dd') oringalDate,
+        t.oringal_classtime,
+        func_get_dicvalue(T.ORINGAL_WEEK, 'ZC') oringalWeek,
+        to_char(t.RESCHEDULE_DATE, 'mm-dd') rescheduleDate,
+        func_get_dicvalue(t.reschedule_week, 'ZC') rescheduleWeek,
+        t.reschedule_classtime,
+        t.applicant_person_id,
+        to_char(t.applicant_date, 'yyyy-mm-dd') applicantDate,
+        func_get_tablevalue(t.approve_dpt_person_id, 't_sys_user', 'USER_ID', 'name') approveDptPersonId,
+        to_char(t.APPROVE_DPT_DATE, 'yyyy-mm-dd') approveDptDate,
+        func_get_tablevalue(t.approve_office_person_id, 't_sys_user', 'USER_ID', 'name') approveOfficePersonId,
+        to_char(t.approve_office_date, 'yyyy-mm-dd') approveOfficeDate,
+        func_get_dicvalue(t.status, 'TTKZT') status,
+        t.APPLICANT_REASON,
+        t.APPROVE_REASON,
+        func_get_dicvalue(t.oringal_weekday, 'XQZ') oringalWeekday,
+        func_get_dicvalue(t.reschedule_weekday, 'XQZ') rescheduleWeekday,
+        t.creator,
+        t.create_dept,
+        t.overrule_status
+        from T_JW_RESCHEDULECOURSE t
+        where t.valid_flag = '1'and t.id = #{id}
+    </select>
+
+    <select id="getTTKSPId" parameterType="java.lang.String" resultType="java.lang.String">
+          SELECT value
+              FROM T_SYS_PARAMETER t
+             where t.code = #{tTKcode}
+             ORDER BY create_time DESC
+    </select>
+</mapper>

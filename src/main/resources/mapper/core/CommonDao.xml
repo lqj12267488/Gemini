@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--suppress ALL -->
+<mapper namespace="com.goisan.system.dao.CommonDao">
+    <select id="getCouresByName" resultType="com.goisan.system.bean.AutoComplete" parameterType="String">
+        SELECT
+               (t.course_name || '  ----  ' || t.course_code) as "label",
+               t.course_id                                    as "value"
+        FROM T_JW_COURSE t
+        WHERE VALID_FLAG = '1' and t.course_name like '%'||#{name}||'%'
+    </select>
+    <select id="getUserDict"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT dic_code id,dic_name text
+        FROM t_sys_userdic
+        WHERE valid_flag = '1'
+          and dic_type = #{name}
+        ORDER BY dic_order
+    </select>
+    <select id="getRoleSelect"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT role_id id,role_name text
+        FROM t_sys_role
+    </select>
+    <select id="getTableDict" resultType="com.goisan.system.bean.Select2"
+            parameterType="com.goisan.system.bean.TableDict">
+        SELECT ${id} AS id ,
+        ${text} AS text
+        FROM ${tableName}
+        <if test="where != null and where != '' ">
+            ${where}
+        </if>
+        <if test="orderby != null and orderby != '' ">
+            ${orderby}
+        </if>
+    </select>
+
+    <select id="getDistinctTableDict" resultType="com.goisan.system.bean.Select2"
+            parameterType="com.goisan.system.bean.TableDict">
+        SELECT distinct ${id} AS id ,
+        ${text} AS text
+        FROM ${tableName}
+        <if test="where != null and where != '' ">
+            ${where}
+        </if>
+    </select>
+
+
+    <select id="getPersonByName" resultType="com.goisan.system.bean.AutoComplete" parameterType="java.lang.String">
+        SELECT
+        decode(DEPT_NAME, '', t.name, t.name || ' ---- ' || DEPT_NAME) as "label",
+        decode(DEPT_ID, '', t.person_id, DEPT_ID || ',' || t.person_id) as "value"
+        FROM T_RS_EMPLOYEE t
+        LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID
+        FROM T_RS_EMPLOYEE_DEPT R,
+        T_SYS_DEPT D
+        WHERE R.DEPT_ID = D.DEPT_ID) ON T.PERSON_ID = PERSON
+        WHERE VALID_FLAG = '1'
+        <if test="name != null and name != ''">
+            and t.name like '%${name}%'
+        </if>
+    </select>
+    <select id="getPersonDept" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        decode(DEPT_NAME, '', t.name, t.name || ' ---- ' || DEPT_NAME) as "label",
+        decode(DEPT_ID, '', t.person_id, DEPT_ID || ',' || t.person_id) as "value"
+        FROM T_RS_EMPLOYEE t
+        LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID
+        FROM T_RS_EMPLOYEE_DEPT R,
+        T_SYS_DEPT D
+        WHERE R.DEPT_ID = D.DEPT_ID) ON T.PERSON_ID = PERSON
+        WHERE VALID_FLAG = '1'
+        <if test="examId != null and examId != ''">
+            and t.PERSON_ID not in (select TEACHER_PERSON_ID as id from T_JW_EXAM_TEACHER where EXAM_ID = #{examId}
+            union select TEACHER_ID as id from T_JW_EXAM_EXAMINATION where EXAM_ID = #{examId})
+        </if>
+    </select>
+
+    <select id="getPersonDeptByPname" parameterType="String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        decode(DEPT_NAME, '', t.name, t.name || ' ---- ' || DEPT_NAME) as "label",
+        decode(DEPT_ID, '', t.person_id, DEPT_ID || ',' || t.person_id) as "value"
+        FROM T_RS_EMPLOYEE t
+        LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID
+        FROM T_RS_EMPLOYEE_DEPT R,
+        T_SYS_DEPT D
+        WHERE R.DEPT_ID = D.DEPT_ID) ON T.PERSON_ID = PERSON
+        WHERE VALID_FLAG = '1' AND decode(DEPT_NAME, '', t.name, t.name || ' ---- ' || DEPT_NAME)
+          like '%${name}%'
+    </select>
+
+    <select id="getCoures" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+               (t.course_name || '  ----  ' || t.course_code) as "label",
+               t.course_id                                    as "value"
+        FROM T_JW_COURSE t
+        WHERE VALID_FLAG = '1'
+    </select>
+    <select id="getClassBean" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+               t.class_name as "label",
+               t.class_id   as "value"
+        FROM T_XG_CLASS t
+        WHERE VALID_FLAG = '1'
+    </select>
+
+    <select id="getClassBeanByDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+               t.class_name  || '--' ||  FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') as "label",
+               t.class_id   as "value"
+        FROM T_XG_CLASS t
+        WHERE VALID_FLAG = '1' and t.departments_id = #{deptId}
+    </select>
+
+    <select id="getEmpTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+               dept_id                                               id,
+               dept_name                                             name,
+               parent_dept_id                                        pid,
+               case when length(DEPT_ID) &gt; 3 then 0 else 1 end as "open"
+        FROM t_sys_dept
+        UNION
+        SELECT
+               e.person_id || ',' || ed.dept_id id,
+               e.name,
+               ed.dept_id                       pid,
+               0 as                             "open"
+        FROM t_rs_employee e,
+             t_rs_employee_dept ed
+        WHERE e.person_id = ed.person_id
+          AND e.VALID_FLAG = '1'
+    </select>
+    <select id="getStuTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+               dept_id        id,
+               dept_name      name,
+               parent_dept_id pid
+        FROM t_sys_dept
+        WHERE dept_type &lt; 9
+          AND valid_flag = 1
+        UNION
+        SELECT
+               d.major_code     id,
+               d.major_name     name,
+               d.departments_id pId
+        FROM T_XG_MAJOR d
+        WHERE d.valid_flag = 1
+        UNION
+        SELECT
+               class_id   id,
+               class_name name,
+               major_code pid
+        FROM t_xg_class
+        WHERE valid_flag = 1
+        UNION
+        SELECT
+               s.student_id || ',' || sc.class_id id,
+               s.name,
+               sc.class_id                        pid
+        FROM T_XG_STUDENT s,
+             T_XG_STUDENT_CLASS sc
+        WHERE sc.student_id = s.student_id
+        and sc.class_id in (select tt.class_id from T_XG_CLASS tt where tt.VALID_FLAG = '1')
+          AND s.valid_flag = 1
+    </select>
+
+    <select id="getStuTreeNotClass" resultType="com.goisan.system.bean.Tree">
+        SELECT
+               dept_id        id,
+               dept_name      name,
+               parent_dept_id pid
+        FROM t_sys_dept
+        WHERE dept_type &lt; 9
+          AND valid_flag = 1
+        UNION
+        SELECT
+               d.major_code     id,
+               d.major_name     name,
+               d.departments_id pId
+        FROM T_XG_MAJOR d
+        WHERE d.valid_flag = 1
+        UNION
+        SELECT
+               class_id   id,
+               class_name name,
+               major_code pid
+        FROM t_xg_class
+        WHERE valid_flag = 1
+        UNION
+        SELECT
+               s.student_id id,
+               s.name,
+               sc.class_id                        pid
+        FROM T_XG_STUDENT s,
+             T_XG_STUDENT_CLASS sc
+        WHERE sc.student_id = s.student_id
+        and sc.class_id in (select tt.class_id from T_XG_CLASS tt where tt.VALID_FLAG = '1')
+          AND s.valid_flag = 1
+    </select>
+
+    <select id="getParentTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+               dept_id        id,
+               dept_name      name,
+               parent_dept_id pid
+        FROM t_sys_dept
+        WHERE dept_type &lt; 9
+          AND valid_flag = 1
+        UNION
+        SELECT
+               d.major_code     id,
+               d.major_name     name,
+               d.departments_id pId
+        FROM T_XG_MAJOR d
+        WHERE d.valid_flag = 1
+        UNION
+        SELECT
+               class_id   id,
+               class_name name,
+               major_code pid
+        FROM t_xg_class
+        WHERE valid_flag = 1
+        UNION
+        SELECT
+               re.parent_id || ',' || s.student_id || ',' || rela.class_id as id,
+               s.name || ' 家长'                                                name,
+               rela.class_id                                                  pId
+        FROM t_xg_parent_student re,
+             t_xg_student s,
+             T_XG_STUDENT_CLASS rela
+        WHERE s.student_id = re.student_id
+          AND s.student_id = rela.student_id
+    </select>
+
+
+    <select id="getStudentClass" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT decode(t2.CLASS_NAME, '', t.name, t.name || '  ----  ' || t2.class_name)   as "label",
+               decode(CLASS_ID, '', ',' || t.student_id, CLASS_ID || ',' || t.student_id) as "value"
+        FROM T_XG_STUDENT t
+                 , (SELECT R.STUDENT_ID STUDENT, D.CLASS_NAME, D.CLASS_ID
+                            FROM T_XG_STUDENT_CLASS R,
+                                 T_XG_CLASS D
+                            WHERE R.CLASS_ID = D.CLASS_ID AND D.VALID_FLAG = '1') t2 where T.student_id = t2.STUDENT
+    </select>
+
+    <select id="getStudentClassByName" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT decode(t2.CLASS_NAME, '', t.name, t.name || '  ----  ' || t2.class_name)   as "label",
+               decode(CLASS_ID, '', ',' || t.student_id, CLASS_ID || ',' || t.student_id) as "value"
+        FROM T_XG_STUDENT t
+                 , (SELECT R.STUDENT_ID STUDENT, D.CLASS_NAME, D.CLASS_ID
+                            FROM T_XG_STUDENT_CLASS R,
+                                 T_XG_CLASS D
+                            WHERE R.CLASS_ID = D.CLASS_ID AND D.VALID_FLAG = '1') t2 where T.student_id = t2.STUDENT
+                            AND decode(t2.CLASS_NAME, '', t.name, t.name || '  ----  ' || t2.class_name) like '%${name}%'
+    </select>
+
+    <select id="getStudentPerson" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT PARENT_NAME as "label",
+               PARENT_ID   as "value"
+        FROM T_XG_PARENT t
+    </select>
+    <select id="getDept" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT DEPT_ID "value",DEPT_NAME "label"
+        FROM T_SYS_DEPT
+    </select>
+
+    <select id="getDeptByName" resultType="com.goisan.system.bean.AutoComplete" parameterType="String">
+        SELECT DEPT_ID "value",DEPT_NAME "label"
+        FROM T_SYS_DEPT WHERE DEPT_NAME like '%${name}%'
+    </select>
+
+    <select id="getSysDictVal" resultType="java.lang.String">
+        SELECT FUNC_GET_DICVALUE(#{code}, #{dicName})
+        FROM dual
+    </select>
+    <select id="getSelectDept" resultType="com.goisan.system.bean.Select2">
+        SELECT DEPT_ID "id",DEPT_NAME "text" FROM T_SYS_DEPT
+        <if test="type != null and type != ''">
+            WHERE DEPT_TYPE = #{type}
+        </if>
+    </select>
+    <select id="getMajorByDeptId" resultType="com.goisan.system.bean.Select2">
+        SELECT MAJOR_ID "id",MAJOR_NAME "text" FROM T_XG_MAJOR
+        <if test="deptId != null and deptId != ''">
+            WHERE DEPARTMENTS_ID = #{deptId}  AND VALID_FLAG = 1
+        </if>
+    </select>
+    <select id="getMajorByDeptId2" resultType="com.goisan.system.bean.Select2">
+        SELECT MAJOR_ID "id",MAJOR_NAME "text" FROM T_XG_MAJOR t1
+        where (select count(CLASS_ID)
+        from T_XG_CLASS t2
+        where t2.MAJOR_CODE = t1.MAJOR_CODE
+        and t2.VALID_FLAG='1'
+        and t2.MAJOR_DIRECTION = t1.MAJOR_DIRECTION) > 0
+        <if test="deptId != null and deptId != ''">
+            and DEPARTMENTS_ID = #{deptId}
+        </if>
+    </select>
+    <select id="getMajorCodeByDeptId" resultType="com.goisan.system.bean.Select2">
+        SELECT DISTINCT
+                        MAJOR_CODE || ',' || TRAINING_LEVEL || ',' || MAJOR_DIRECTION id,
+                        MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') || ' -- ' ||
+                        FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX')                  text
+        FROM T_XG_MAJOR
+        WHERE DEPARTMENTS_ID = #{deptId}
+          AND VALID_FLAG = 1
+    </select>
+    <select id="getMajorCodeAndTrainingLeavelByDeptId" resultType="com.goisan.system.bean.Select2">
+        SELECT DISTINCT
+                        MAJOR_CODE || ',' || TRAINING_LEVEL                                   id,
+                        MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') text
+        FROM T_XG_MAJOR
+        WHERE DEPARTMENTS_ID = #{deptId}
+          AND VALID_FLAG = 1
+    </select>
+    <select id="getClassIdByMajor" resultType="com.goisan.system.bean.Select2">
+        SELECT CLASS_ID id,CLASS_NAME text FROM T_XG_CLASS WHERE MAJOR_CODE = #{majorCode}
+        AND TRAINING_LEVEL = #{trainingLevel}
+        <if test="majorDirection != null and majorDirection != ''">
+            AND MAJOR_DIRECTION = #{majorDirection}
+        </if>
+    </select>
+    <!--通过教学任务，专业 获取班级-->
+    <select id="getClassByPlan" resultType="com.goisan.system.bean.Select2">
+        SELECT distinct class.CLASS_ID id,class.CLASS_NAME text FROM T_XG_CLASS class,T_JW_TEACHINGTASK t WHERE MAJOR_CODE = #{majorCode}
+        AND TRAINING_LEVEL = #{trainingLevel}
+        and class.departments_id = t.department
+        and t.class_info = class.class_id
+        and t.semester=#{term}
+        <if test="majorDirection != null and majorDirection != ''">
+            AND MAJOR_DIRECTION = #{majorDirection}
+        </if>
+    </select>
+
+    <!--通过系部查询专业-方向-层次-->
+    <select id="getMajorShowByDeptId" resultType="com.goisan.system.bean.Select2">
+        SELECT DISTINCT
+                        MAJOR_CODE || ',' || MAJOR_DIRECTION || ',' || TRAINING_LEVEL id,
+                        MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') || ' -- ' ||
+                        FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC')                 text
+        FROM T_XG_MAJOR
+        WHERE DEPARTMENTS_ID = #{deptId}
+        AND VALID_FLAG = '1'
+    </select>
+    <!--通过专业-方向-层次下拉选择查询班级-->
+    <select id="getClassByMajorShow" resultType="com.goisan.system.bean.Select2">
+        SELECT CLASS_ID id,CLASS_NAME text
+        FROM T_XG_CLASS
+        WHERE MAJOR_CODE || ',' || MAJOR_DIRECTION || ',' || TRAINING_LEVEL = #{majorShow}
+        AND VALID_FLAG = '1'
+    </select>
+    <!--通过班级查询学生并升序排列-->
+    <select id="getStudentByClassId" resultType="com.goisan.system.bean.Select2">
+        SELECT t1.STUDENT_ID id,t1.NAME text
+        FROM t_xg_student t1,
+             t_xg_student_class t2
+        WHERE t2.CLASS_ID = #{classId}
+          and
+            t1.student_id = t2.student_id
+        ORDER BY FUNC_GET_TABLEVALUE(t1.STUDENT_ID, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')
+    </select>
+    <select id="getTextBook" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT t.TEXTBOOK_ID as "value", t.TEXTBOOK_NAME as "label"
+        FROM T_JW_TEXTBOOK t
+    </select>
+    <select id="getDepartments" resultType="com.goisan.system.bean.Select2">
+        select DEPT_ID id,DEPT_NAME text
+        from T_SYS_DEPT
+        where TEACHING_FLAG = '1'
+    </select>
+    <select id="getClassByDeptId" parameterType="String" resultType="com.goisan.system.bean.Select2">
+        select CLASS_ID id,CLASS_NAME text
+        from T_XG_CLASS
+        where DEPARTMENTS_ID = #{deptId}
+          AND VALID_FLAG = '1'
+    </select>
+
+    <select id="getClassByDeptId1" parameterType="String" resultType="com.goisan.system.bean.Select2">
+        select CLASS_ID id,CLASS_NAME text
+        from T_XG_CLASS
+        where DEPARTMENTS_ID = #{deptId} AND VALID_FLAG = '1'
+          and  MAJOR_CODE = (select MAJOR_CODE from T_XG_MAJOR where MAJOR_NAME = #{name})
+    </select>
+    <select id="getSelectUserByDeptId" resultType="com.goisan.system.bean.Select2">
+        select t1.USER_ID "id",t1.NAME text from T_SYS_USER t1,T_RS_EMPLOYEE_DEPT t2
+        where t1.USER_ID = t2.PERSON_ID and t2.DEPT_ID = #{deptId}
+    </select>
+    <select id="getClassIdByMajorIdAndClassName" resultType="string">
+        select t2.CLASS_ID from T_XG_MAJOR t1,T_XG_CLASS t2 where MAJOR_ID = #{majorId}
+        and t1.MAJOR_CODE = t2.MAJOR_CODE and t2.MAJOR_DIRECTION = t1.MAJOR_DIRECTION
+        and t2.CLASS_NAME = #{className}
+    </select>
+
+    <select id="getClassIdByStudentId" parameterType="java.lang.String" resultType="java.lang.String">
+        select class_id  from T_XG_STUDENT_CLASS t where t.student_id= #{studentId}
+    </select>
+    <select id="getStudentNameByIdCard" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.NAME from T_XG_STUDENT t where t.student_id =#{studentId}
+    </select>
+    <select id="getClassByClassId" parameterType="java.lang.String" resultType="com.goisan.system.bean.ClassBean">
+        select t.departments_id,t.major_code,t.class_id,t.CLASS_NAME from T_XG_CLASS t where t.class_id=#{classId}
+    </select>
+
+    <!--查询系统字典名称-->
+    <select id="getSysDictName"
+            resultType="java.lang.String">
+        SELECT dic_name
+        FROM t_sys_dic
+        WHERE valid_flag = '1' and parent_id = (SELECT id FROM t_sys_dic WHERE dic_code = #{name})
+        <if test="where != '' and where != null">
+            and ${where}
+        </if>
+        ORDER BY dic_order
+    </select>
+    <!--查询表选字典名称-->
+    <select id="getTableDictNameBy" parameterType="com.goisan.system.bean.TableDict" resultType="java.lang.String">
+        SELECT DISTINCT
+        ${text} AS text
+        FROM ${tableName}
+        <if test="where != null and where != '' ">
+            ${where}
+        </if>
+    </select>
+    <select id="getUserDictName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dic_name
+        FROM t_sys_userdic
+        WHERE valid_flag = '1' and dic_type = #{name}
+        ORDER BY dic_order
+    </select>
+    <select id="getDeptIdByPersonId" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.dept_id from T_RS_EMPLOYEE_DEPT t where t.person_id=#{personId} AND rownum=1
+    </select>
+</mapper>

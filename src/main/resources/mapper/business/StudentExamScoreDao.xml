@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--* Created by wq on 2017/10/18.-->
+<mapper namespace="com.goisan.educational.score.dao.StudentExamScoreDao">
+    <select id="getStudentExamList" parameterType="com.goisan.educational.score.bean.ScoreImport"
+            resultType="com.goisan.educational.score.bean.ScoreImport">
+        SELECT DISTINCT
+        SCORE_EXAM_ID scoreExamId,
+        SCORE_EXAM_NAME scoreExamName,
+        FUNC_GET_DICVALUE(TERM,'XQ') termId,
+        CREATE_TIME createTime
+        FROM T_JW_SCORE_EXAM
+        WHERE SCORE_EXAM_ID in (SELECT DISTINCT SCORE_EXAM_ID
+                              FROM T_JW_SCORE_CLASS
+                              WHERE CLASS_ID=(SELECT CLASS_ID FROM T_XG_STUDENT_CLASS WHERE STUDENT_ID=#{studentId}))
+        and term=#{term}
+        <if test="scoreExamName != null and scoreExamName != '' ">
+            AND FUNC_GET_TABLEVALUE(SCORE_EXAM_ID, 'T_JW_SCORE_EXAM', 'SCORE_EXAM_ID', 'SCORE_EXAM_NAME') LIKE #{scoreExamName}
+        </if>
+    </select>
+    <select id="getStudentExamClassList" parameterType="com.goisan.educational.score.bean.ScoreImport"
+                     resultType="com.goisan.educational.score.bean.ScoreImport">
+        SELECT DISTINCT
+        FUNC_GET_TABLEVALUE(CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DEPTNAME(DEPARTMENTS_ID) departmentsId,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL,'ZXZYPYCC') trainingLevel
+        FROM T_XG_CLASS
+        WHERE CLASS_ID=(SELECT CLASS_ID FROM T_XG_STUDENT_CLASS WHERE STUDENT_ID=#{studentId})
+</select>
+    <select id="getStudentExamScoreList" parameterType="com.goisan.educational.score.bean.ScoreImport"
+            resultType="com.goisan.educational.score.bean.ScoreImport">
+        SELECT DISTINCT
+        t.STUDENT_ID  studentId,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME')  studentName,
+        t.SUBJECT_ID  subjectId,
+        t.CLASS_ID   classId,
+        FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID)  departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.PLAN_ID planId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+        FUNC_GET_USERNAME(t.PERSON_ID)  personId,
+        t.SCORE_EXAM_ID  scoreExamId,
+        t.SCORE_EXAM_NAME scoreExamName,
+        t.TERM_ID  termId,
+        t.SCORE   score,
+        t.MAKEUP_SCORE   makeupScore,
+        t.GRADUATE_MAKEUP_SCORE  graduateMakeupScore,
+        FUNC_GET_DICVALUE(t.EXAMINATION_STATUS, 'KSZT')  examinationStatus,
+        FUNC_GET_DICVALUE(t.MAKEUP_STATUS, 'KSZT')    makeupStatus,
+        FUNC_GET_DICVALUE(t.GRADUATE_MAKEUP_STATUS, 'KSZT')    graduateMakeupStatus,
+        s.TOTAL_SCORE totalScore,
+        s.PASS_SCORE passScore,
+        t.create_time
+        FROM T_JW_SCORE_IMPORT t,T_JW_SCORE_SUBJECT s
+        WHERE t.SUBJECT_ID=s.SUBJECT_ID
+        AND t.STUDENT_ID=#{studentId} AND t.SCORE_EXAM_ID=#{scoreExamId}
+    </select>
+    <select id="getExamRole" parameterType="java.lang.String"
+            resultType="com.goisan.educational.score.bean.ScoreImport">
+        SELECT
+          *
+        FROM
+          t_kh_evaluation_emps_members m
+        WHERE EVALUATION_FLAG='0' AND m.member_person_id = #{loginid}
+    </select>
+</mapper>

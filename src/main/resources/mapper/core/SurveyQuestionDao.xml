@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.survey.dao.SurveyQuestionDao">
+    <select id="getSurveyQuestionList"
+            parameterType="com.goisan.survey.bean.SurveyQuestion"
+            resultType="com.goisan.survey.bean.SurveyQuestion">
+        select
+        question_id,survey_id,parent_question_id,question_name,
+        question_type,FUNC_GET_DICVALUE(question_type, 'DTFS') questionTypeShow,
+        question_order,remark
+        from T_DC_QUESTION
+        WHERE 1 = 1
+        <if test="surveyId != null and surveyId != '' ">
+            AND survey_id = #{surveyId}
+        </if>
+        ORDER BY question_order
+    </select>
+    <insert id="saveSurveyQuestion" parameterType="com.goisan.survey.bean.SurveyQuestion">
+        insert into t_dc_question
+        (question_id,survey_id,parent_question_id,question_name,question_type,question_order,remark,
+        creator,create_time,create_dept)
+        values
+        (#{questionId},#{surveyId},#{parentQuestionId},#{questionName},#{questionType},#{questionOrder},#{remark},
+        #{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getSurveyQuestionById" parameterType="java.lang.String"
+            resultType="com.goisan.survey.bean.SurveyQuestion">
+        select
+            question_id,survey_id,parent_question_id,question_name,
+            question_type,FUNC_GET_DICVALUE(question_type, 'DTFS') questionTypeShow,
+            question_order,remark
+        from T_DC_QUESTION where question_id = #{id}
+    </select>
+    <update id="updateSurveyQuestion" parameterType="com.goisan.survey.bean.SurveyQuestion">
+        update t_dc_question
+        set
+            question_name=#{questionName},
+            question_type=#{questionType},
+            question_order=#{questionOrder},
+            remark=#{remark},
+            changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept}
+        where question_id = #{questionId}
+    </update>
+    <delete id="delSurveyQuestion" parameterType="java.lang.String">
+        delete from T_DC_QUESTION where question_id = #{id}
+    </delete>
+    <select id="checkQuestionBySurveyid" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(QUESTION_ID) from T_DC_QUESTION where survey_id = #{id}
+    </select>
+</mapper>

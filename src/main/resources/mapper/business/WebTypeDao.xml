@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.crawler.dao.WebTypeDao">
+    <select id="getWebTypeList"
+            parameterType="com.goisan.crawler.bean.WebType"
+            resultType="com.goisan.crawler.bean.WebType">
+        select id,type_name from YQ_WEBTYPE
+    </select>
+    <insert id="saveWebType" parameterType="com.goisan.crawler.bean.WebType">
+        insert into YQ_WEBTYPE (id,type_name) values (#{id},#{typeName})
+    </insert>
+    <select id="getWebTypeById" parameterType="java.lang.String"
+            resultType="com.goisan.crawler.bean.WebType">
+        select * from YQ_WEBTYPE where id = #{id}
+    </select>
+    <update id="updateWebType" parameterType="com.goisan.crawler.bean.WebType">
+        update YQ_WEBTYPE set type_name=#{typeName} where id = #{id}
+    </update>
+    <delete id="delWebType" parameterType="java.lang.String">
+        delete from YQ_WEBTYPE where id = #{id}
+    </delete>
+</mapper>

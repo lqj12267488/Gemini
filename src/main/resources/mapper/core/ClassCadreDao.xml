@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.system.dao.ClassCadreDao">
+    <select id="getClassCadreList"
+            parameterType="com.goisan.system.bean.ClassCadre"
+            resultType="com.goisan.system.bean.ClassCadre">
+        SELECT
+            id,class_id,
+            FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') className,
+            student_id,
+            FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentName,
+            cadrecoad,
+            FUNC_GET_DICVALUE(cadrecoad, 'BGB') cadrecoadShow,
+            course_id,course_name
+        FROM T_XG_CLASSCADRE
+        WHERE 1 = 1
+        <if test="classId != '' and classId != null">
+            AND class_id = #{classId}
+        </if>
+        <if test="studentId != '' and studentId != null">
+            AND student_id = #{studentId}
+        </if>
+        <if test="cadrecoad != '' and cadrecoad != null">
+            AND cadrecoad = #{cadrecoad}
+        </if>
+
+    </select>
+    <insert id="saveClassCadre" parameterType="com.goisan.system.bean.ClassCadre">
+        insert into t_xg_classcadre
+        (id,class_id,student_id,cadrecoad,creator,create_time,create_dept)
+        values
+        (#{id},#{classId},#{studentId},#{cadrecoad},#{creator},sysdate,'${createDept}')
+    </insert>
+    <select id="getClassCadreById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.ClassCadre">
+        select * FROM T_XG_CLASSCADRE where id = #{id}
+    </select>
+    <update id="updateClassCadre" parameterType="com.goisan.system.bean.ClassCadre">
+        update t_xg_classcadre set
+        class_id=#{classId},student_id=#{studentId},cadrecoad=#{cadrecoad},
+        course_id=#{courseId},course_name=#{courseName},changer=#{changer},
+        change_time=sysdate,change_dept=#{changeDept}
+        where id = #{id}
+    </update>
+    <delete id="delClassCadre" parameterType="java.lang.String">
+        delete FROM T_XG_CLASSCADRE where id = #{id}
+    </delete>
+</mapper>

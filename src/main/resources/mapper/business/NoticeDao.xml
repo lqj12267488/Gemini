@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.notice.dao.NoticeDao">
+    <select id="getNoticeById" resultType="com.goisan.synergy.notice.bean.Notice" parameterType="java.lang.String">
+      SELECT
+     id,
+      title,
+      content,
+      type,
+      to_char(t.create_time, 'yyyy-mm-dd hh24:mi') publicTime,
+      FUNC_GET_USERNAME(t.creator) creator,
+      func_get_deptname(create_dept) createDept,
+      FUNC_GET_DICVALUE(t.type,'GGLX') typeShow,
+      dept_id deptId,
+      FUNC_GET_DICVALUE(publish_flag,'TGFBZT') publishFlag
+      FROM   T_SYS_NOTICE t
+      WHERE id =#{id}
+    </select>
+    <!--公告管理-->
+    <select id="getNoticeList" resultType="com.goisan.synergy.notice.bean.Notice"
+            parameterType="com.goisan.synergy.notice.bean.Notice">
+        SELECT
+        id,
+        title,
+        content,
+        t.type,
+        t.creator loginID,
+        FUNC_GET_DICVALUE(type,'GGLX') typeShow,
+        func_get_username(creator) creator,
+        func_get_deptname(create_dept) createDept,
+        to_char(t.create_time,'yyyy-mm-dd') publicTime,
+        FUNC_GET_DICVALUE(publish_flag,'TGFBZT') publishFlag,
+        t.request_flag requestFlag,
+        dept_id deptId
+        FROM T_SYS_NOTICE t
+        WHERE 1 = 1 AND valid_flag ='1' AND request_flag='2' AND t.title is not null
+        <if test="title != null and title != '' ">
+            AND title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND type LIKE #{type}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+    <!--公告查看-->
+    <select id="getNoticeListes" resultType="com.goisan.synergy.notice.bean.Notice"
+            parameterType="com.goisan.synergy.notice.bean.Notice">
+        SELECT
+        id,
+        title,
+        content,
+        t.type,
+        t.creator loginID,
+        FUNC_GET_DICVALUE(type,'GGLX') typeShow,
+        func_get_username(creator) creator,
+        func_get_deptname(create_dept) createDept,
+        to_char(t.create_time,'yyyy-mm-dd') publicTime,
+        FUNC_GET_DICVALUE(publish_flag,'TGFBZT') publishFlag,
+        dept_id deptId
+        FROM T_SYS_NOTICE t
+        WHERE 1 = 1 AND valid_flag ='1' AND publish_flag='1' AND t.title is not null
+        <if test="title != null and title != '' ">
+            AND title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND type LIKE #{type}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+
+    <select id="getNoticeListApp" resultType="com.goisan.synergy.notice.bean.Notice" parameterType="String">
+        SELECT
+        id,
+        title,content,
+        type,
+        public_time publicTime ,
+        FUNC_GET_DICVALUE(t.type,'GGLX') typeShow,create_time createTime,dept_id deptId
+        FROM T_SYS_NOTICE t
+        WHERE 1 = 1 AND valid_flag ='1' and request_flag='2' and DEPT_ID LIKE FUNC_GET_RANGE(#{defaultDeptId},#{level})
+        <if test="title != null and title != '' ">
+            AND t.title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND t.type LIKE #{type}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+
+    <select id="getNoticeListPerson" resultType="com.goisan.synergy.notice.bean.Notice">
+      select r.* ,
+              (case when mod(ROWNUM, 2)=0 then 'inbox' else
+                case  when mod(ROWNUM, 2) &lt;> 0 then '' end end  ) AS messagesClass
+       from (
+        select a.*, decode(u.photo_url||'.'||u.photo_type,'.','dmitry_b.jpg' , u.photo_url ) AS photoUrl
+            from (
+        SELECT '1' abc,
+            t.id,
+            t.title,
+            t.isdean,
+            to_char(t.content) content,
+            t.type,
+            t.public_time publicTime,
+            FUNC_GET_DICVALUE(t.type, 'GGLX') typeShow,
+            t.create_time createTime,
+            t.dept_id deptId,
+            FUNC_GET_USERNAME(t.creator) requester ,t.creator
+            FROM T_SYS_NOTICE t
+            WHERE 1 = 1 AND valid_flag = '1' and t.publish_flag = '1'
+            and t.DEPT_ID LIKE FUNC_GET_SCHOOL_RANGE('${deptId}','${level}')
+            and t.title is not null
+            and t.ID NOT IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${loginID}')
+        UNION
+        SELECT '2' abc,
+            tt.id,
+            tt.title,
+            tt.isdean,
+            tt.content,
+            tt.type,
+            tt.public_time publicTime,
+            FUNC_GET_DICVALUE(tt.type, 'TZLX') typeShow,
+            tt.create_time createTime,
+            tt.dept_id deptId,
+            FUNC_GET_USERNAME(tt.creator) requester , tt.creator
+            FROM T_SYS_MESSAGE tt
+            WHERE 1 = 1
+            --and tt.request_flag = '2'
+            and tt.publish_flag = '1'
+            and (tt.emp_id LIKE '%'||'${loginID}'||'%' OR tt.creator = '${loginID}' OR tt.dept_id LIKE '%'||'${deptId}'||'%')
+            and tt.id not in (select message_id from T_SYS_MESSAGE_LOG l where l.creator ='${loginID}')
+            and tt.title is not null
+            and tt.valid_flag = '1'
+        ) a  , t_sys_user u where a.creator = u.user_id ORDER BY createTime DESC
+      ) r WHERE ROWNUM &lt; 7
+    </select>
+
+    <select id="getNoticeListPar" resultType="com.goisan.synergy.notice.bean.Notice">
+        SELECT mm.* ,
+        (case when mod(ROWNUM, 2)=0 then 'inbox' else
+        case when mod(ROWNUM, 2) &lt;> 0 then '' end end ) AS messagesClass
+        FROM (
+        SELECT a.* ,
+        decode(u.photo_url||'.'||u.photo_type,'.','dmitry_b.jpg' , u.photo_url  ) AS photoUrl
+        FROM (
+        SELECT
+        '1' abc,
+        t.id,
+        t.title,
+        t.content,
+        t.type,
+        t.public_time publicTime,
+        FUNC_GET_DICVALUE(t.type, 'GGLX') typeShow,
+        t.create_time createTime,
+        t.dept_id deptId ,
+        t.creator
+        FROM T_SYS_NOTICE t
+        WHERE 1 = 1
+        AND valid_flag = '1' and t.request_flag='2' and t.publish_flag='1' AND t.title is not null
+        AND t.ID NOT IN (
+        SELECT ll.notice_id
+        FROM
+        T_SYS_NOTICE_LOG ll
+        WHERE
+        ll.CREATOR = #{loginID}
+        )
+        UNION
+        SELECT
+        '2' abc,
+        tt.id,
+        tt.title,
+        tt.content,
+        tt.type,
+        tt.public_time publicTime,
+        FUNC_GET_DICVALUE(tt.type, 'TZLX') typeShow,
+        tt.create_time createTime,
+        tt.dept_id deptId,
+        tt.creator
+        FROM T_SYS_MESSAGE tt
+        WHERE 1 = 1
+        AND tt.type is not null AND tt.request_flag='2' AND tt.publish_flag='1'
+        AND tt.PARENT_ID is not null
+        AND (  <foreach collection="classlist" item="item" open=" " separator="  or " close="  ">
+        tt.PARENT_ID like ''||'%${item}%'||''
+    </foreach> )
+        and tt.id not in (select message_id from T_SYS_MESSAGE_LOG l where l.creator=#{loginID})
+        AND tt.valid_flag ='1'
+        ) a ,t_sys_user u
+        WHERE ROWNUM &lt; 7 AND a.CREATOR = u.user_id
+        ORDER BY createTime DESC
+        ) mm
+        ORDER BY createTime DESC
+    </select>
+    <insert id="insertNotice" parameterType="com.goisan.synergy.notice.bean.Notice">
+        INSERT INTO
+          T_SYS_NOTICE
+        (id,title,content,type,public_time,valid_flag,request_flag,
+        creator,create_time,create_dept,dept_id,WORKFLOW_FLAG,isDean) values
+        ('${id}','${title}','${content}','${type}',
+        sysdate,'1','${requestFlag}',
+        '${creator}',sysdate,'${createDept}','${deptId}','${workFlowFlag}','${isDean}')
+    </insert>
+    <delete id="deleteNoticeDaoById" parameterType="java.lang.String">
+        UPDATE T_SYS_NOTICE SET valid_flag ='0',publish_flag='2' WHERE id = #{id}
+    </delete>
+    <update id="updateNotice" parameterType="com.goisan.synergy.notice.bean.Notice">
+        UPDATE T_SYS_NOTICE SET
+          title =  #{title},
+          content = #{content},
+          type = #{type},
+          changer = #{changer},
+          change_time = sysdate,
+          change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <select id="selectNoticeLog" resultType="com.goisan.synergy.notice.bean.Notice">
+        SELECT id
+        FROM   T_SYS_NOTICE t
+        WHERE  1 = 1 AND  valid_flag ='1' and t.request_flag='2' and rownum &lt; 10
+        AND
+        id IN (
+
+        SELECT
+        notice_id
+        FROM
+        T_SYS_NOTICE_LOG
+        WHERE
+        CREATOR=#{loginID}
+        )
+    </select>
+
+    <insert id="insertNoticeLog" parameterType="com.goisan.synergy.notice.bean.Notice">
+        INSERT INTO
+        T_SYS_NOTICE_LOG
+        (id,NOTICE_ID,type,
+        creator,create_time,create_dept) values
+        (func_get_uuid,'${id}','${type}',
+        '${requester}',sysdate,'${requestDept}')
+    </insert>
+    <!--手机端查通知-->
+    <select id="getNoticeAppList" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT *
+        FROM (
+        SELECT t.id id,
+       0 flag,
+       t.title,
+       t.content content,
+       t.type type,
+       sysdate publicTime,
+       '' typeShow,
+       CREATE_TIME createTime,
+       DEPT_ID deptId
+       FROM t_sys_message t
+       where t.type is not null
+        and t.request_flag = '2'
+        and t.publish_flag = '1'
+        AND (t.emp_id LIKE '%'||'${personId}'||'%' OR
+        t.creator = #{personId} OR
+        t.dept_id LIKE '%'||'${deptId}'||'%')
+        and t.id not in
+        (select message_id
+        from T_SYS_MESSAGE_LOG l
+        where l.creator =#{personId})
+        AND t.valid_flag = '1'
+        UNION
+        SELECT t.id id,
+       1 flag,
+       '【已读】'|| t.title,
+       t.content content,
+       t.type type,
+       sysdate publicTime,
+       '' typeShow,
+       CREATE_TIME createTime,
+       DEPT_ID deptId
+       FROM t_sys_message t
+       where t.type is not null
+        and t.request_flag = '2'
+        and t.publish_flag = '1'
+        AND (t.emp_id LIKE '%'||'${personId}'||'%' OR
+        t.creator = #{personId} OR
+        t.dept_id LIKE '%'||'${deptId}'||'%')
+        and t.id in
+        (select message_id
+        from T_SYS_MESSAGE_LOG l
+        where l.creator =#{personId})
+        AND t.valid_flag = '1'
+        )
+        ORDER BY flag
+    </select>
+    <!--手机端查公告-->
+    <select id="getBulletinAppList" resultType="com.goisan.synergy.notice.bean.Notice">
+        SELECT *
+  FROM (SELECT id,
+               0 flag,
+               title,
+               TO_CHAR(content),
+               type,
+               public_time publicTime,
+               '' typeShow,
+               create_time createTime,
+               dept_id deptId
+          FROM T_SYS_NOTICE t
+         WHERE 1 = 1
+           AND valid_flag = '1'
+           AND t.title is not null
+           and t.request_flag = '2'
+           and publish_flag = '1'
+           AND ID NOT IN
+               (SELECT notice_id
+                  FROM T_SYS_NOTICE_LOG
+                 WHERE CREATOR = #{persinId})
+          UNION
+          SELECT id,
+               1 flag,
+               '【已读】'|| title,
+               TO_CHAR(content),
+               type,
+               public_time publicTime,
+               '' typeShow,
+               create_time createTime,
+               dept_id deptId
+          FROM T_SYS_NOTICE t
+         WHERE 1 = 1
+           AND valid_flag = '1'
+           AND t.title is not null
+           and t.request_flag = '2'
+           and publish_flag = '1'
+           AND ID IN
+               (SELECT notice_id
+                  FROM T_SYS_NOTICE_LOG
+                 WHERE CREATOR = #{persinId})
+        )
+        ORDER BY flag
+    </select>
+    <!--通知count查询-->
+    <select id="getNoticeCountApp" resultType="com.goisan.synergy.message.bean.Message">
+       SELECT t.id id,
+       0 flag,
+       t.title,
+       t.content content,
+       t.type type,
+       sysdate publicTime,
+       '' typeShow,
+       CREATE_TIME createTime,
+       DEPT_ID deptId
+       FROM t_sys_message t
+       where t.type is not null
+        and t.request_flag = '2'
+        and t.publish_flag = '1'
+        AND (t.emp_id LIKE '%'||'${personId}'||'%' OR
+        t.creator = #{personId} OR
+        t.dept_id LIKE '%'||'${deptId}'||'%')
+        and t.id not in
+        (select message_id
+        from T_SYS_MESSAGE_LOG l
+        where l.creator =#{personId})
+        AND t.valid_flag = '1'
+
+    </select>
+    <!--公告count查询-->
+    <select id="getBulletinCountApp" resultType="com.goisan.synergy.notice.bean.Notice">
+        SELECT id,
+               0 flag,
+               title,
+               TO_CHAR(content),
+               type,
+               public_time publicTime,
+               '' typeShow,
+               create_time createTime,
+               dept_id deptId
+          FROM T_SYS_NOTICE t
+         WHERE 1 = 1
+           AND valid_flag = '1'
+           AND t.title is not null
+           and t.request_flag = '2'
+           and publish_flag = '1'
+           AND ID NOT IN
+               (SELECT notice_id
+                  FROM T_SYS_NOTICE_LOG
+                 WHERE CREATOR = #{persinId})
+    </select>
+    <!--APP新增日志-->
+    <insert id="inserApptNoticeLog" parameterType="com.goisan.synergy.notice.bean.Notice">
+        INSERT INTO
+        T_SYS_NOTICE_LOG
+        (id,NOTICE_ID,type,
+        creator,create_time,create_dept) values
+        (func_get_uuid,'${id}','${type}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTask" resultType="com.goisan.task.bean.SysTask" parameterType="String">
+        SELECT * FROM T_SYS_TASK WHERE TASK_ID = #{id}
+    </select>
+    <!--查询公告接收人员和部门-->
+    <select id="getReceiptPerson" parameterType="com.goisan.synergy.notice.bean.Notice"
+            resultType="com.goisan.synergy.notice.bean.Notice">
+        SELECT PERSON_ID persinId,FUNC_GET_USERNAME(PERSON_ID) persinIdShow,DEPT_ID deptId,FUNC_GET_DEPTNAME(DEPT_ID) deptIdShow
+        FROM T_RS_EMPLOYEE_DEPT
+        WHERE FUNC_GET_USERNAME(PERSON_ID) IS NOT NULL
+        <if test="deptId!=null and deptId!=''">
+            AND DEPT_ID=#{deptId}
+        </if>
+    </select>
+    <!--通过公告id获取已读人员-->
+    <select id="getReadPersonByNoticeId" parameterType="java.lang.String" resultType="com.goisan.synergy.notice.bean.Notice">
+        SELECT CREATOR persinId,CREATE_DEPT deptId,CREATE_TIME createTime
+        FROM T_SYS_NOTICE_LOG WHERE NOTICE_ID = #{id}
+    </select>
+    <!--首页通知公告更多(未读)-->
+    <select id="getNoticeMoreList" resultType="com.goisan.synergy.notice.bean.Notice">
+        select * from (
+         SELECT '1' abc,
+            t.id,
+            t.title,
+            NVL(t.isdean,' ') isDean,
+            to_char(t.content) content,
+            t.type,
+            t.public_time publicTime,
+            FUNC_GET_DICVALUE(t.type, 'GGLX') typeShow,
+            t.create_time createTime,
+            t.dept_id deptId,
+            FUNC_GET_USERNAME(t.creator) requester ,t.creator
+            FROM T_SYS_NOTICE t
+            WHERE 1 = 1 AND valid_flag = '1' and t.publish_flag = '1'
+            and t.DEPT_ID LIKE FUNC_GET_SCHOOL_RANGE('${deptId}','${level}')
+            and t.title is not null
+            and t.ID NOT IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${loginID}')
+        UNION
+        SELECT '2' abc,
+            tt.id,
+            tt.title,
+            NVL(tt.isdean,' ') isDean,
+            tt.content,
+            tt.type,
+            tt.public_time publicTime,
+            FUNC_GET_DICVALUE(tt.type, 'TZLX') typeShow,
+            tt.create_time createTime,
+            tt.dept_id deptId,
+            FUNC_GET_USERNAME(tt.creator) requester , tt.creator
+            FROM T_SYS_MESSAGE tt
+            WHERE 1 = 1
+            --and tt.request_flag = '2'
+            and tt.publish_flag = '1'
+            and (tt.emp_id LIKE '%'||'${loginID}'||'%' OR tt.creator = '${loginID}' OR tt.dept_id LIKE '%'||'${deptId}'||'%')
+            and tt.id not in (select message_id from T_SYS_MESSAGE_LOG l where l.creator ='${loginID}')
+            and tt.title is not null
+            and tt.valid_flag = '1'
+        ) a  ORDER BY createTime DESC
+    </select>
+    <!--首页通知公告更多(已读)-->
+    <select id="getNoticeMoreReaded" resultType="com.goisan.synergy.notice.bean.Notice">
+       select * from (
+      SELECT '1' abc,
+            t.id,
+            t.title,
+            NVL(t.isdean,' ') isDean,
+            to_char(t.content) content,
+            t.type,
+            t.public_time publicTime,
+            FUNC_GET_DICVALUE(t.type, 'GGLX') typeShow,
+            t.create_time createTime,
+            t.dept_id deptId,
+            FUNC_GET_USERNAME(t.creator) requester ,t.creator
+            FROM T_SYS_NOTICE t
+            WHERE 1 = 1 AND valid_flag = '1' and t.publish_flag = '1'
+            and t.DEPT_ID LIKE FUNC_GET_SCHOOL_RANGE('${deptId}','${level}')
+            and t.title is not null
+            and t.ID IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${loginID}')
+        UNION
+        SELECT '2' abc,
+            tt.id,
+            tt.title,
+            NVL(tt.isdean,' ') isDean,
+            tt.content,
+            tt.type,
+            tt.public_time publicTime,
+            FUNC_GET_DICVALUE(tt.type, 'TZLX') typeShow,
+            tt.create_time createTime,
+            tt.dept_id deptId,
+            FUNC_GET_USERNAME(tt.creator) requester , tt.creator
+            FROM T_SYS_MESSAGE tt
+            WHERE 1 = 1
+            --and tt.request_flag = '2'
+            and tt.publish_flag = '1'
+            and (tt.emp_id LIKE '%'||'${loginID}'||'%' OR tt.creator = '${loginID}' OR tt.dept_id LIKE '%'||'${deptId}'||'%')
+            and tt.id in (select message_id from T_SYS_MESSAGE_LOG l where l.creator ='${loginID}')
+            and tt.title is not null
+            and tt.valid_flag = '1'
+        ) a  ORDER BY createTime DESC
+    </select>
+    <select id="getProcessList" resultType="com.goisan.synergy.notice.bean.Notice"
+            parameterType="com.goisan.synergy.notice.bean.Notice">
+        SELECT
+        t.id,
+        t.title,
+        t.content,
+        t.type,
+        FUNC_GET_DICVALUE(t.type,'GGLX') typeShow,
+        func_get_username(t.creator) creator,
+        func_get_deptname(t.create_dept) createDept,
+        to_char(t.create_time,'yyyy-mm-dd') publicTime,
+        FUNC_GET_DICVALUE(t.publish_flag,'TGFBZT') publishFlag,
+        t.dept_id deptId
+        FROM T_SYS_NOTICE t,t_sys_workflow_start s,t_sys_workflow_handle r
+        WHERE 1 = 1 AND t.valid_flag ='1'
+        <if test="title != null and title != '' ">
+            AND t.title LIKE '%' || #{title} || '%'
+        </if>
+        <if test="type != null and type != '' ">
+            AND t.type LIKE '%'|| #{type} || '%'
+        </if>
+        <if test="requester != 'sa' and requester != null and requester != '' ">
+            AND r.handle_user= #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND r.handle_dept= #{requestDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY
+        t.create_time DESC
+    </select>
+    <!--申请查询-->
+    <select id="getNoticeRequest" resultType="com.goisan.synergy.notice.bean.Notice"
+            parameterType="com.goisan.synergy.notice.bean.Notice">
+        SELECT
+        id,
+        title,
+        content,
+        t.type,
+        FUNC_GET_DICVALUE(type,'GGLX') typeShow,
+        func_get_username(creator) creator,
+        func_get_deptname(create_dept) createDept,
+        to_char(t.create_time,'yyyy-mm-dd') publicTime,
+        FUNC_GET_DICVALUE(publish_flag,'TGFBZT') publishFlag,
+        dept_id deptId
+        FROM T_SYS_NOTICE t
+        WHERE 1 = 1 AND valid_flag ='1' and request_flag='0' and publish_flag='2' and workflow_flag='1'
+        <if test="requester != 'sa'  and requester != null and requester != '' ">
+            AND t.creator= #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND t.create_dept= #{requestDept}
+        </if>
+        <if test="title != null and title != '' ">
+            AND title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND type LIKE #{type}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+    <update id="updatePublishFlag" parameterType="com.goisan.synergy.notice.bean.Notice">
+        UPDATE T_SYS_NOTICE SET
+        publish_flag='2'
+        WHERE id = #{id}
+    </update>
+
+    <select id="getNoticeConcentById" parameterType="String" resultType="String">
+        select CONTENT from T_SYS_NOTICE where ID = #{id}
+    </select>
+
+    <!--已办查询-->
+    <select id="getNoticeComplete" resultType="com.goisan.synergy.notice.bean.Notice"
+            parameterType="com.goisan.synergy.notice.bean.Notice">
+        SELECT DISTINCT
+        t.id,
+        t.title,
+        to_char(t.content)content,
+        t.type,
+        FUNC_GET_DICVALUE(t.type,'GGLX') typeShow,
+        func_get_username(t.creator) creator,
+        func_get_deptname(t.create_dept) createDept,
+        to_char(t.create_time,'yyyy-mm-dd') publicTime,
+        FUNC_GET_DICVALUE(t.publish_flag,'TGFBZT') publishFlag,
+        t.dept_id deptId,
+        t.create_time
+        FROM
+        T_SYS_NOTICE t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE
+        1 = 1
+        <if test="title != null and title != '' ">
+            AND t.title LIKE '%' || #{title} || '%'
+        </if>
+        <if test="type != null and type != '' ">
+            AND t.type LIKE '%' || #{type} || '%'
+        </if>
+        <if test="creator != null and creator != '' ">
+            AND FUNC_GET_USERNAME(t.creator) LIKE #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND func_get_deptname(t.create_dept) LIKE #{createDept}
+        </if>
+        <if test="requester != 'sa'  and requester != null and requester != '' ">
+            AND r.handle_user= #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND r.handle_dept= #{requestDept}
+        </if>
+        AND r.state='2' AND t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <update id="updateNoticeAPP" parameterType="com.goisan.synergy.notice.bean.Notice">
+        update
+        T_SYS_NOTICE
+        SET
+        id = #{id},
+        CREATE_DEPT = #{requestDept},
+        title=#{title},
+        CREATOR = #{requester},
+        dept_id=#{requestDept},
+        create_time = to_date(#{publicTime},'yyyy-mm-dd hh24:mi'),
+        public_time= to_date(#{publicTime},'yyyy-mm-dd hh24:mi'),
+        type = #{type},
+        content = #{content},
+        changer = #{creator},
+        change_time= sysdate,
+        change_dept= #{createDept}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="getEmpByDeptIds" resultType="com.goisan.system.bean.Emp">
+        SELECT t.person_id, e.name
+  FROM T_RS_EMPLOYEE_DEPT t, t_rs_employee e
+ where t.person_id = e.person_id
+   and t.dept_id in ('${id}')
+    </select>
+    <delete id="deleteNoticeLog" parameterType="java.lang.String">
+        DELETE FROM T_SYS_NOTICE_LOG WHERE notice_id = #{id}
+    </delete>
+    <!--发布-->
+    <update id="noticePublish" parameterType="com.goisan.synergy.notice.bean.Notice">
+        UPDATE T_SYS_NOTICE SET
+        publish_flag='1'
+        WHERE id = #{id}
+    </update>
+</mapper>

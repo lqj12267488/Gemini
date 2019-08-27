@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.survey.dao.SurveyAnswerDao">
+    <select id="getSurveyAnswerList1"
+            parameterType="com.goisan.survey.bean.SurveyAnswer"
+            resultType="com.goisan.survey.bean.SurveyAnswer">
+        select answer_id,question_id,survey_id,person_id,person_dept,answer_type,answer_result from T_DC_ANSWER
+    </select>
+    <insert id="saveSurveyAnswer" parameterType="com.goisan.survey.bean.SurveyAnswer">
+        insert into t_dc_answer
+        (answer_id,question_id,survey_id,person_id,person_dept,answer_type,answer_result,
+        creator,create_time,create_dept) values
+        (#{answerId},#{questionId},#{surveyId},#{personId},#{personDept},#{answerType},#{answerResult},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getSurveyAnswerById" parameterType="java.lang.String"
+            resultType="com.goisan.survey.bean.SurveyAnswer">
+        select * from T_DC_ANSWER where answer_id = #{id}
+    </select>
+    <update id="updateSurveyAnswer" parameterType="com.goisan.survey.bean.SurveyAnswer">
+        update t_dc_answer set question_id=#{questionId},survey_id=#{surveyId},person_id=#{personId},person_dept=#{personDept},answer_type=#{answerType},answer_result=#{answerResult},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept} where answer_id = #{answer_id}
+    </update>
+    <delete id="delSurveyAnswer" parameterType="java.lang.String">
+        delete from T_DC_ANSWER where answer_id = #{id}
+    </delete>
+
+    <select id="getSurveyAnswerList"
+            parameterType="com.goisan.survey.bean.SurveyAnswer"
+            resultType="com.goisan.survey.bean.SurveyAnswer">
+        select question_id,answer_result,checkNum ,sumNum, (checkNum/sumNum*100)||'%' percentage from
+        (
+            select t.question_id, t.answer_result, count(t.answer_id) as checkNum
+              from T_DC_ANSWER t
+             where t.survey_id = #{surveyId}
+             group by t.question_id, t.answer_result
+        ) a ,
+        (select count(PERSON_ID) as sumNum from T_DC_PERSON
+         where  ANSWER_FLAG='1' and survey_id = #{surveyId} ) p
+    </select>
+
+</mapper>

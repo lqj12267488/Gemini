@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.workflow.dao.WorkflowDao">
+
+    <select id="getWorkflowList" resultType="com.goisan.workflow.bean.Workflow">
+        SELECT workflow_id, workflow_name,workflow_code,workflow_remark, FUNC_GET_DICVALUE(open_flag,'SF') open_flag,
+        creator,
+        create_time createTime,create_dept FROM t_sys_workflow
+        WHERE
+        1 = 1
+        <if test="workflowName!='' and workflowName!=null">
+            AND workflow_name like '%'||'${workflowName}'||'%'
+        </if>
+        <if test="workflowCode!='' and workflowCode!=null">
+            AND workflow_code LIKE '%'||'${workflowCode}'||'%'
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="saveWorkflow" parameterType="com.goisan.workflow.bean.Workflow">
+        INSERT INTO t_sys_workflow
+          (workflow_id, workflow_name,workflow_code, open_flag, creator, create_time, create_dept,workflow_remark)
+        VALUES
+          (#{workflowId}, #{workflowName},#{workflowCode}, #{openFlag}, #{creator}, #{createTime},
+          #{createDept},#{workflowRemark})
+    </insert>
+    <delete id="delWorkflow" parameterType="java.lang.String">
+        DELETE FROM t_sys_workflow WHERE workflow_id = #{workflowId}
+    </delete>
+    <select id="getWorkflowById" resultType="com.goisan.workflow.bean.Workflow">
+        SELECT workflow_id, workflow_name,workflow_code,workflow_remark, open_flag, creator,create_time,
+        create_dept FROM t_sys_workflow WHERE WORKFLOW_ID = #{workflowId}
+    </select>
+    <update id="updateWorkflow" parameterType="com.goisan.workflow.bean.Workflow">
+        UPDATE T_SYS_WORKFLOW SET workflow_name = #{workflowName},workflow_code = #{workflowCode},open_flag = #{openFlag},
+        WORKFLOW_REMARK = #{workflowRemark}
+        WHERE workflow_id = #{workflowId}
+    </update>
+    <select id="getNodeListByWorkflowId" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Node">
+        SELECT workflow_id,
+               node_id,
+               FUNC_GET_DICVALUE(start_flag, 'SF') start_flag,
+               node_order,
+               node_name,
+               r.role_name as handle_role
+          FROM t_sys_workflow_node n left join t_sys_role r on n.handle_role = r.role_id
+         WHERE workflow_id = #{workflowId}
+         ORDER BY node_order
+    </select>
+    <select id="getWorkflowIdByTableName" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select workflow_id from t_sys_workflow_relation where table_name = #{tableName}
+    </select>
+    <insert id="start" parameterType="com.goisan.workflow.bean.Start">
+        insert into t_sys_workflow_start (start_id, business_id, table_name, workflow_id,
+        handle_user, handle_name, handle_time,CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (#{startId},#{businessId},#{tableName},#{workflowId},#{handleUser},#{handleName},SYSDATE,#{creator},#{createTime},#{createDept})
+    </insert>
+    <insert id="saveHandle" parameterType="com.goisan.workflow.bean.Handle">
+        INSERT INTO T_SYS_WORKFLOW_HANDLE (id, start_id, cuurent_workflow_id,
+        cuurent_node_id,handle_user,handle_role,handle_name,handle_time,create_time,
+        state,handle_dept,creator)
+        VALUES (#{id},#{startId},#{cuurentWorkflowId},#{cuurentNodeId},#{handleUser},#{handleRole},
+        #{handleName},sysdate,sysdate,#{state},#{handleDept},#{creator})
+    </insert>
+
+    <insert id="saveHandleAfter" parameterType="com.goisan.workflow.bean.Handle">
+        INSERT INTO T_SYS_WORKFLOW_HANDLE (id, start_id, cuurent_workflow_id,
+        cuurent_node_id,handle_user,handle_role,handle_name,handle_time,create_time,
+        state,handle_dept,creator)
+        VALUES (#{id},#{startId},#{cuurentWorkflowId},#{cuurentNodeId},#{handleUser},#{handleRole},
+        #{handleName},sysdate+1/24/60/60,sysdate,#{state},#{handleDept},#{creator})
+    </insert>
+
+    <select id="getStratNodeId" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Node">
+        SELECT * FROM T_SYS_WORKFLOW_NODE WHERE WORKFLOW_ID = #{workflowId} AND START_FLAG = '1'
+    </select>
+    <select id="getNextNodeId" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Definition">
+        select * from t_sys_workflow_definition d,t_sys_workflow_node n where d.workflow_id =
+        #{workflowId} and d.node_id = #{nodeId} and d.node_id = n.node_id
+        <choose>
+            <when test="term != null">
+                and term = #{term}
+            </when>
+            <otherwise>
+                and n.start_flag = '1'
+            </otherwise>
+        </choose>
+    </select>
+    <select id="getWorkflowStart" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Start">
+        select * from t_sys_workflow_start where table_name = #{tableName} and business_id =
+        #{businessId}
+    </select>
+    <select id="getWorkflowStartByWorkflowCode" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Start">
+        select t.*
+        from t_sys_workflow_start t,t_sys_workflow w
+        where
+        t.workflow_id = w.workflow_id AND t.table_name = #{tableName} and t.business_id =
+        #{businessId} and w.workflow_code = #{workflowCode}
+    </select>
+    <select id="getHandle" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Handle">
+        SELECT * FROM T_SYS_WORKFLOW_HANDLE WHERE START_ID = #{startId} and (STATE = '1' OR STATE =
+        '3')
+        <if test="personId != null">
+            AND HANDLE_USER = #{personId}
+        </if>
+    </select>
+    <select id="getUnAuditHandleList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Handle">
+        SELECT * FROM  T_SYS_WORKFLOW_HANDLE WHERE  START_ID = #{startId} and (STATE = '1' OR
+        STATE = '3')
+    </select>
+    <update id="updateStartState" parameterType="java.lang.String">
+        UPDATE T_SYS_WORKFLOW_START SET STATE = '2' WHERE START_ID = #{startId}
+    </update>
+    <update id="updateStartStateForStop" parameterType="java.lang.String">
+        UPDATE T_SYS_WORKFLOW_START SET STATE = '4' WHERE START_ID = #{startId}
+    </update>
+    <select id="getNextNodeList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Node">
+        select n.*
+        from
+          t_sys_workflow_node n, t_sys_workflow_definition d
+        where d.next_node_id = n.node_id and d.node_id = #{nodeId} and d.workflow_id = #{workflowId}
+    </select>
+    <update id="updateHandleState" parameterType="java.lang.String">
+        UPDATE T_SYS_WORKFLOW_HANDLE SET STATE = '2',HANDLE_TIME = sysdate,remark = #{remark} WHERE ID =
+        #{id}
+    </update>
+    <update id="updateHandleStateForStop" parameterType="java.lang.String">
+        UPDATE T_SYS_WORKFLOW_HANDLE SET STATE = '4',HANDLE_TIME = sysdate,remark = #{remark} WHERE ID =
+        #{id}
+    </update>
+
+    <update id="updateHandleStateByNodeIdAndStartId">
+        UPDATE T_SYS_WORKFLOW_HANDLE
+        SET STATE = '2', HANDLE_TIME = sysdate, remark = #{remark}
+        WHERE START_ID = #{startId} AND HANDLE_USER = #{personId} AND STATE != '2'
+    </update>
+
+    <select id="getHandleList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Handle">
+        SELECT
+          HANDLE_NAME,
+          HANDLE_TIME,
+          HANDLE_USER,
+          REMARK,
+          CHANGE_TIME,
+          FUNC_GET_TABLEVALUE(CUURENT_NODE_ID, 'T_SYS_WORKFLOW_NODE', 'node_id', 'node_name') CUURENT_NODE_ID
+        FROM T_SYS_WORKFLOW_HANDLE
+        WHERE START_ID = #{startId} AND STATE = '2'
+        ORDER BY HANDLE_TIME
+    </select>
+    <select id="getAuditer" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT
+          e.person_id || ':' || d.dept_id id,
+          e.name || '--' || d.dept_name   text
+        FROM
+          t_rs_employee e, t_sys_dept d, t_rs_employee_dept ed, t_rs_employee_dept_role re
+        WHERE ed.person_id = e.person_id AND d.dept_id = ed.dept_id AND e.person_id = re.person_id
+              AND ed.dept_id = ed.dept_id AND re.role_id = #{handleRole} AND e.VALID_FLAG = '1'
+    </select>
+    <select id="getStudentAuditer" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Select2">
+      SELECT s.student_id || ':' || d.dept_id id,
+       s.name || '--' || d.dept_name text
+      FROM t_xg_student       s,
+       t_sys_dept         d,
+       t_xg_student_class sc,
+       t_xg_class         c,
+       ${tableName}       b
+      WHERE s.student_id = sc.student_id
+       AND sc.class_id = c.class_id
+       AND c.departments_id = d.dept_id
+       AND d.DEPT_ID = b.create_dept
+       AND b.id = #{businessId}
+       AND s.student_id = b.creator
+    </select>
+    <select id="getAuditerByDept" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT
+          e.person_id || ':' || d.dept_id id,
+          e.name || '--' || d.dept_name   text
+        FROM
+          t_rs_employee e, t_rs_employee_dept_role edr, t_rs_employee_dept ed, t_sys_dept d,${tableName} b
+        WHERE e.person_id = edr.person_id AND ed.dept_id = d.dept_id AND
+              e.person_id = ed.person_id AND edr.dept_id = ed.dept_id AND
+               ed.DEPT_ID = b.CREATE_DEPT and b.ID = #{businessId} AND
+              edr.role_id = #{handleRole} AND
+              edr.dept_id = (SELECT create_dept  FROM ${tableName} WHERE id = #{businessId}) AND e.VALID_FLAG = '1'
+    </select>
+    <select id="getAuditerByRange" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT e.person_id || ':' || d.dept_id id, e.name || '--' || d.dept_name text
+          FROM t_rs_employee e, t_rs_employee_dept ed,t_sys_dept d
+         where e.person_id in
+               (SELECT er.person_id
+                  FROM ${tableName} b, t_rs_employee_range er
+                 WHERE b.id = #{businessId}
+                   and er.dept_id like '%' || b.create_dept || '%')
+           and ed.person_id = e.person_id and ed.dept_id = d.dept_id AND e.VALID_FLAG = '1'
+    </select>
+    <update id="updateBusiness" parameterType="java.lang.String">
+        UPDATE ${tableName} SET request_flag = #{state} WHERE id = #{businessId}
+    </update>
+
+    <select id="getBusinessStatus" parameterType="java.lang.String" resultType="java.lang.String">
+       select t.request_flag  requestFlag from ${tableName} t,T_SYS_WORKFLOW_START s WHERE t.id = #{businessId} and t.id= s.BUSINESS_ID AND t.creator=#{personId}
+    </select>
+    <select id="getRejectState" parameterType="java.lang.String" resultType="java.lang.String">
+      SELECT  DISTINCT s.state state
+      FROM T_SYS_WORKFLOW_START t, T_SYS_WORKFLOW_HANDLE s
+      WHERE t.business_id = #{businessId}
+       AND t.table_name = #{tableName}
+       AND t.start_id = s.start_id
+       AND s.handle_user = #{personId}
+       AND (s.state='1' OR  s.state='3')
+    </select>
+    <select id="getAuditerByPersonId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT
+          e.person_id || ':' || d.dept_id id,
+          e.name || '--' || d.dept_name   text
+        FROM
+          t_rs_employee e, t_sys_dept d, t_rs_employee_dept ed,${tableName} b
+        WHERE
+          ed.person_id = e.person_id AND d.dept_id = ed.dept_id AND e.person_id = b.creator
+        AND b.id = #{businessId} AND ed.dept_id = b.create_dept AND e.VALID_FLAG = '1'
+    </select>
+    <select id="getStartAuditerBydept" resultType="com.goisan.system.bean.Select2">
+        select  e.person_id || ',' || ed.dept_id id,
+          e.name || '--' || ed.dept_name  text
+          from t_sys_workflow_node n,
+          t_rs_employee_dept_role edr,
+          t_rs_employee e,
+          t_sys_dept ed,
+          t_rs_employee_dept d
+         where
+         n.handle_role = edr.role_id and e.person_id = edr.person_id and e.person_id = d.person_id and edr.person_id = d.person_id
+         and d.dept_id = #{deptId} and ed.dept_id = d.dept_id
+         and n.node_id = (select wd.next_node_id
+                            from t_sys_workflow_relation   r,
+                                 t_sys_workflow_definition wd,
+                                 t_sys_workflow_node       n
+                           where r.table_name = #{tableName}
+                             and n.workflow_id = r.workflow_id
+                             and n.start_flag = '1'
+                             and wd.node_id = n.node_id) AND e.VALID_FLAG = '1'
+
+    </select>
+    <select id="getStartAuditerByWorkflowCode" resultType="com.goisan.system.bean.Select2">
+        select  e.person_id || ':' || ed.dept_id id,
+        e.name || '--' || ed.dept_name  text
+        from t_sys_workflow_node n,
+        t_rs_employee_dept_role edr,
+        t_rs_employee e,
+        t_sys_dept ed,
+        t_rs_employee_dept d
+        where
+        n.handle_role = edr.role_id and e.person_id = edr.person_id and e.person_id = d.person_id and edr.person_id = d.person_id
+        and d.dept_id = #{deptId} and ed.dept_id = d.dept_id
+        and n.node_id = (select wd.next_node_id
+        from t_sys_workflow_relation   r,
+        t_sys_workflow            w,
+        t_sys_workflow_definition wd,
+        t_sys_workflow_node       n
+        where w.workflow_code = #{workflowCode}
+        and w.workflow_id = r.workflow_id
+        and n.workflow_id = r.workflow_id
+        and n.start_flag = '1'
+        and wd.node_id = n.node_id) AND e.VALID_FLAG = '1'
+    </select>
+    <select id="getFeedback" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Feedback">
+        select
+        id businessId,
+        feedback feedback,
+        feedback_flag  feedbackFlag
+        from ${tableName}
+        where id = #{businessId}
+    </select>
+    <update id="feedback" parameterType="java.lang.String">
+        UPDATE ${tableName}  SET feedback = #{feedback} , feedback_flag = #{feedbackFlag} WHERE id = #{businessId}
+    </update>
+    <select id="getRelationList" resultType="java.lang.String">
+        SELECT table_name FROM t_sys_workflow_relation
+    </select>
+    <select id="getIndexUnAudtiList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.IndexUnAudti">
+         SELECT *
+            FROM (
+              SELECT
+                c.*, decode(u.photo_url||'.'||u.photo_type,'.','dmitry_b.jpg' , u.photo_url ) AS photoUrl,
+                rownum rn
+              FROM (
+                     SELECT b.*
+                     FROM (SELECT
+                             '3' AS                                        abc,
+                             e.NAME                                        creator,
+                             w.WORKFLOW_NAME,
+                             wr.URL,
+                             to_char(ws.CREATE_TIME, 'yyyy-mm-dd') createTime,
+                             ws.TABLE_NAME,
+                             ws.BUSINESS_ID,
+                             wh.STATE,
+                             wr.edit_url,
+                             e.person_id                                   personId
+                           FROM
+                             T_SYS_WORKFLOW_HANDLE wh, T_SYS_WORKFLOW_START ws, T_SYS_WORKFLOW_RELATION wr, T_SYS_WORKFLOW w,
+                             T_RS_EMPLOYEE e
+                           WHERE
+                             wh.HANDLE_USER = #{id} AND (wh.STATE = '1' OR wh.STATE = '3') AND ws.START_ID = wh.START_ID
+                             AND ws.WORKFLOW_ID = wr.WORKFLOW_ID AND
+                             w.WORKFLOW_ID = ws.WORKFLOW_ID AND ws.CREATOR = e.PERSON_ID
+                              and ws.state != '4'
+                           UNION
+                           SELECT
+                             '1' AS                                     abc,
+                             FUNC_GET_USERNAME(t.person_id)             creator,
+                             '【通知】' || t.TASK_TITLE                     WORKFLOW_NAME,
+                             t.task_url                                 URL,
+                             to_char(t.task_time, 'yyyy-mm-dd') createTime,
+                             t.task_table                               TABLE_NAME,
+                             t.task_id                                  BUSINESS_ID,
+                             '0'                                        state,
+                             ''                                         edit_url,
+                             t.creator                                  personId
+                           FROM T_SYS_TASK t
+                           WHERE t.VALID_FLAG = '1'
+                                 AND t.person_id = #{id}
+
+
+                           UNION
+                           SELECT
+                             '2' AS                                             abc,
+                             FUNC_GET_USERNAME(m.person_id)                     creator,
+                             '参加' || FUNC_GET_DICVALUE(r.training_form, 'PXXS') WORKFLOW_NAME,
+                             t.task_url                                         URL,
+                             to_char(r.request_date, 'yyyy-mm-dd') createTime,
+                             t.task_table                                       TABLE_NAME,
+                             t.task_id                                          BUSINESS_ID,
+                             '0'                                                state,
+                             ''                                                 edit_url,
+                             t.creator                                          personId
+                           FROM T_SYS_TASK t, T_RS_TRAINING_WF r, T_RS_TRAINING_MEMBER m
+                           WHERE t.task_business_id = r.id
+                                 AND r.ID = m.TRAINING_ID
+                                 AND t.TASK_FLAG = '0'
+                                 AND m.person_id = #{id}
+                                 AND t.person_id = #{id}
+
+                           UNION
+                           SELECT '4' as abc,
+                              FUNC_GET_USERNAME(t.creator) creator,
+                              '【报修】' || FUNC_GET_USERDICVALUE(t.repair_type, 'BXLXGL')  WORKFLOW_NAME,
+                              ''  URL,
+                              to_char(t.create_time,'yyyy-mm-dd') createTime,
+                              'T_ZW_REPAIR'  TABLE_NAME,
+                              t.repair_id BUSINESS_ID,
+                              t.request_flag state,
+                              ''  edit_url,
+                              t.creator  personId
+                           from T_ZW_REPAIR t
+                           where (REPAIRMAN_PERSON_ID=#{id}
+                              or #{id}=(
+                              select r.person_id from t_zw_repairadmin r where person_id=#{id}))
+                              and t.repair_id not in (select l.repair_id from T_ZW_REPAIRSUPPLIES_LOG l where l.CREATOR=#{id})
+                              and t.request_flag!='0'
+                           union
+                           select '4' as abc,
+                              FUNC_GET_USERNAME(t.creator) creator,
+                              '【报修】' || FUNC_GET_USERDICVALUE(t.repair_type, 'BXLXGL') WORKFLOW_NAME,
+                              '' URL,
+                              to_char(t.create_time, 'yyyy-mm-dd') createTime,
+                              'T_ZW_REPAIR' TABLE_NAME,
+                              t.repair_id BUSINESS_ID,
+                              t.request_flag state,
+                              '' edit_url,
+                              t.creator personId
+                              from t_zw_repair t,t_zw_repair_execute e
+                           where t.repair_id=e.repair_id and  #{id} =e.person_id
+                              and e.repair_id not in (select l.repair_id
+                             from T_ZW_REPAIRSUPPLIES_LOG l
+                           where l.CREATOR =#{id})
+                           union
+                           select '5' as abc,
+                              FUNC_GET_USERNAME(t.creator) creator,
+                              '【回捡】' || FUNC_GET_USERDICVALUE(t.repair_type, 'BXLXGL') WORKFLOW_NAME,
+                              '' URL,
+                              to_char(t.create_time, 'yyyy-mm-dd') createTime,
+                              'T_ZW_REPAIR' TABLE_NAME,
+                              t.repair_id BUSINESS_ID,
+                              t.request_flag state,
+                              '' edit_url,
+                              t.creator personId
+                              from t_zw_repair t
+                           where #{id} =t.checker
+                              and t.repair_id not in (select l.repair_id
+                             from T_ZW_REPAIRSUPPLIES_LOG l
+                           where l.CREATOR =#{id} and l.status='3')
+                          ) b
+                     ORDER BY b.createTime DESC, b.abc
+                   ) c  , t_sys_user u where c.personId = u.user_id
+            )
+            WHERE rn BETWEEN 0 AND 5
+
+
+    </select>
+    <!--工作流已关联业务-->
+    <select id="getRelationListById" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.IndexUnAudti">
+       SELECT DISTINCT
+        e.NAME || ': ' || w.workflow_name text,
+        e.NAME creator,
+        w.WORKFLOW_NAME,
+        wr.URL,
+        wr.app_url,
+        to_char(ws.CREATE_TIME, 'yyyy-mm-dd hh24:mi') createTime,
+        ws.TABLE_NAME tableName,
+        ws.BUSINESS_ID
+        FROM
+        T_SYS_WORKFLOW_HANDLE wh, T_SYS_WORKFLOW_START ws, T_SYS_WORKFLOW_RELATION wr, T_SYS_WORKFLOW w,
+        T_RS_EMPLOYEE e
+        WHERE
+        ws.STATE = '2' and w.workflow_id!='aaa41788-bcd7-4d59-b551-e72da36e09a9' AND ws.START_ID = wh.START_ID
+        AND ws.WORKFLOW_ID = wr.WORKFLOW_ID AND
+        w.WORKFLOW_ID = ws.WORKFLOW_ID AND ws.CREATOR = e.PERSON_ID
+        and ws.business_id in (select business_id from t_bg_funds_relation_wf fr where funds_id = #{id})
+    </select>
+    <!--工作流未关联业务的-->
+    <select id="getUnRelationList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.IndexUnAudti">
+       SELECT DISTINCT
+        e.NAME || ': ' || w.workflow_name text,
+        e.NAME creator,
+        w.WORKFLOW_NAME,
+        wr.URL,
+        wr.app_url,
+        to_char(ws.CREATE_TIME, 'yyyy-mm-dd hh24:mi') createTime,
+        ws.TABLE_NAME tableName,
+        ws.BUSINESS_ID
+        FROM
+        T_SYS_WORKFLOW_HANDLE wh, T_SYS_WORKFLOW_START ws, T_SYS_WORKFLOW_RELATION wr, T_SYS_WORKFLOW w,
+        T_RS_EMPLOYEE e
+        WHERE
+        wh.HANDLE_USER =#{personId}  AND ws.STATE = '2' and w.workflow_id!='aaa41788-bcd7-4d59-b551-e72da36e09a9' AND w.workflow_id LIKE #{workflowId} AND ws.START_ID = wh.START_ID
+        AND ws.WORKFLOW_ID = wr.WORKFLOW_ID AND
+        w.WORKFLOW_ID = ws.WORKFLOW_ID AND ws.CREATOR = e.PERSON_ID
+        and ws.business_id not in (select business_id from t_bg_funds_relation_wf fr where funds_id = #{id})
+    </select>
+    <select id="getNextNodeIdByStartNodeId" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Node">
+        SELECT n.* FROM t_sys_workflow_definition d,t_sys_workflow_node n WHERE d.id = #{nodeId}
+        AND n.node_id = d.next_node_id
+    </select>
+    <select id="getWorkflowIdByWorkflowCode" parameterType="String" resultType="String">
+        SELECT * FROM T_SYS_WORKFLOW WHERE WORKFLOW_CODE = #{workflow_code}
+    </select>
+    <select id="getlistWorkFlowNameApp" parameterType="String"
+            resultType="com.goisan.workflow.bean.Workflow">
+        select distinct w.workflow_name   from t_sys_workflow_handle h, t_sys_workflow_node n, t_sys_workflow w ,t_sys_workflow_relation r
+           where h.cuurent_node_id = n.node_id
+           and n.workflow_id = w.workflow_id
+           and (h.state = '2' or h.state = '3') and r.workflow_id=w.workflow_id and r.app_url is not null
+           and h.handle_user like #{personId}
+    </select>
+    <select id="getlistWorkFlowNameAppByType" resultType="com.goisan.workflow.bean.Start">
+        SELECT distinct s.business_id businessId,
+                s.CREATOR,
+                h.start_id,
+                w.WORKFLOW_ID,
+                s.create_time,
+                h.state
+          FROM t_sys_workflow_handle h, t_sys_workflow w, T_SYS_WORKFLOW_START s
+         WHERE (h.state = '2' )
+           AND s.START_ID = h.START_ID
+           and h.cuurent_workflow_id = w.workflow_id
+           AND w.workflow_name = #{workFlowName}
+           and h.handle_name = #{creator}
+         group by s.business_id,
+                  s.CREATOR,
+                  h.start_id,
+                  w.WORKFLOW_ID,
+                  s.create_time,
+                  h.state
+         ORDER BY s.CREATE_TIME DESC
+
+    </select>
+    <select id="getlistUnDoWorkFlowNameAppByType" resultType="com.goisan.workflow.bean.Start">
+     select *
+  from (SELECT '1' as abc,
+               h.ID businessId,
+               s.CREATOR,
+               h.start_id,
+               s.WORKFLOW_ID,
+               '' training_form,
+               s.table_name,
+               r.app_url,
+               w.workflow_name,
+               FUNC_GET_USERNAME(s.CREATOR) as handleName,
+               h.create_time,
+               '' taskId
+          FROM t_sys_workflow_handle   h,
+               t_sys_workflow_node     n,
+               t_sys_workflow          w,
+               T_SYS_WORKFLOW_START    s,
+               t_sys_workflow_relation r
+         WHERE h.cuurent_node_id = n.node_id
+           AND n.workflow_id = w.workflow_id
+           AND h.state = '1'
+           AND s.START_ID = h.START_ID
+           and r.workflow_id = w.workflow_id
+           and r.app_url is not null
+           and h.handle_user like #{personId}
+        union
+        SELECT '3' as abc,
+               tt.TASK_BUSINESS_ID,
+               tt.PERSON_ID,
+               ws.start_id,
+               ws.workflow_id,
+               '' training_form,
+               tt.task_table TABLE_NAME,
+               tt.task_app_url,
+               '【已审完】' || tt.TASK_TITLE WORKFLOW_NAME,
+               FUNC_GET_USERNAME(tt.PERSON_ID) as handleName,
+               tt.CREATE_TIME,
+               tt.task_id taskId
+          from T_SYS_TASK tt, t_sys_workflow_start ws
+         WHERE tt.TASK_FLAG = '1'
+           and tt.valid_flag = '1'
+           and tt.task_business_id = ws.business_id
+           and tt.task_app_url is not null
+           and tt.person_id like #{personId}
+        union
+        SELECT '2' as abc,
+               st.TASK_ID,
+               wt.requester,
+               st.task_id,
+               ws.workflow_id,
+               wt.training_form,
+               'T_RS_TRAINING_WF',
+               st.task_app_url,
+               st.task_title,
+               FUNC_GET_DICVALUE(wt.training_form, 'PXXS'),
+               st.CREATE_TIME,
+               st.TASK_ID
+          FROM T_SYS_TASK st, T_RS_TRAINING_WF wt, T_RS_TRAINING_MEMBER m, t_sys_workflow_start ws
+         WHERE st.task_business_id = wt.id
+           and wt.ID = m.TRAINING_ID
+           and st.task_business_id = ws.business_id
+           and st.TASK_FLAG = '0'
+           and m.person_id like #{personId}
+           and st.PERSON_ID like #{personId}
+           union
+        SELECT '4' as abc,
+               h.ID businessId,
+               s.CREATOR,
+               h.start_id,
+               s.WORKFLOW_ID,
+               '' training_form,
+               s.table_name,
+               r.app_url,
+               '【被驳回】' || w.workflow_name,
+               FUNC_GET_USERNAME(s.CREATOR) as handleName,
+               h.create_time,
+               '' taskId
+          FROM t_sys_workflow_handle   h,
+               t_sys_workflow_node     n,
+               t_sys_workflow          w,
+               T_SYS_WORKFLOW_START    s,
+               t_sys_workflow_relation r
+         WHERE h.cuurent_node_id = n.node_id
+           AND n.workflow_id = w.workflow_id
+           AND h.state = '3'
+           and r.edit_app_url is not null
+           AND s.START_ID = h.START_ID
+           and r.workflow_id = w.workflow_id
+           and r.app_url is not null
+           and h.handle_user like #{personId}
+         UNION
+          SELECT '5' as abc,
+               t.repair_id businessId,
+               t.creator,
+               '' start_id,
+               '' WORKFLOW_ID,
+               '' training_form,
+               'T_ZW_REPAIR'  table_name,
+               ''  URL,
+               FUNC_GET_USERDICVALUE(t.repair_type, 'BXLXGL')  workflow_name,
+               FUNC_GET_USERNAME(t.CREATOR) as handleName,
+               t.create_time,
+               '' taskId
+           from T_ZW_REPAIR t
+           where (REPAIRMAN_PERSON_ID LIKE #{personId}
+               or #{personId} like (
+                   select r.person_id from t_zw_repairadmin r where person_id like #{personId}))
+               and t.repair_id not in (select l.repair_id from T_ZW_REPAIRSUPPLIES_LOG l where l.CREATOR like #{personId})
+               and request_flag!='0'
+           )
+ ORDER BY abc DESC
+
+    </select>
+    <select id="getlistWorkFlowCountApp" parameterType="String" resultType="String">
+        select  count(1)   from t_sys_workflow_handle h, t_sys_workflow_node n, t_sys_workflow w
+        where h.cuurent_node_id = n.node_id
+        and n.workflow_id = w.workflow_id
+        and h.state = '1'
+        and h.handle_user like #{personId}
+    </select>
+    <select id="getStartByIdApp" resultType="com.goisan.workflow.bean.Start">
+        select  s.START_ID startId,s.BUSINESS_ID businessId,s.WORKFLOW_ID workFlowId,s.TABLE_NAME tableName,s.State state   from t_sys_workflow_start s
+        where START_ID = #{startId}
+    </select>
+    <select id="getRelationUrlByWorkFlowId" resultType="java.lang.String">
+        SELECT URL FROM t_sys_workflow_relation where WORKFLOW_ID = #{workFlowId}
+    </select>
+
+    <select id="getAppUrlByWorkFlowId" resultType="java.lang.String">
+        SELECT APP_URL FROM t_sys_workflow_relation where WORKFLOW_ID = #{workFlowId}
+    </select>
+    <select id="getEditAppUrlByWorkFlowId" resultType="java.lang.String">
+        SELECT edit_app_url FROM t_sys_workflow_relation where WORKFLOW_ID = #{workFlowId}
+    </select>
+    <select id="getAppRequestUrlByWorkFlowId" resultType="java.lang.String">
+        SELECT APP_REQUEST_URL FROM t_sys_workflow_relation where WORKFLOW_ID = #{workFlowId}
+    </select>
+    <select id="getHandleListByCreator" parameterType="com.goisan.workflow.bean.Handle"
+            resultType="com.goisan.workflow.bean.Handle">
+        SELECT * FROM  T_SYS_WORKFLOW_HANDLE WHERE  ID = #{id} and (STATE = '2' or state = '3')
+        ORDER BY HANDLE_TIME
+    </select>
+    <select id="getHandleListByStartId" parameterType="com.goisan.workflow.bean.Handle"
+            resultType="com.goisan.workflow.bean.Handle">
+        SELECT * FROM  T_SYS_WORKFLOW_HANDLE WHERE  ID = #{id} and (STATE = '2' or state = '3')
+        ORDER BY HANDLE_TIME
+    </select>
+    <select id="getlistWorkFlowDoneCountApp" parameterType="String" resultType="String">
+        select  count(1)   from t_sys_workflow_handle h, t_sys_workflow_node n, t_sys_workflow w
+        where h.cuurent_node_id = n.node_id
+        and n.workflow_id = w.workflow_id
+        and (h.state = '2' or h.state = '3')
+        and h.CREATOR = #{persinId}
+    </select>
+    <select id="getOpinion" parameterType="String" resultType="com.goisan.system.bean.Select2">
+        SELECT OPINION_ID id,OPINION_CONTENT text FROM T_SYS_WORKFLOW_OPINION WHERE OPINION_TYPE = '1' OR CREATOR = #{personId}
+    </select>
+    <select id="getAuditerByCreator" resultType="com.goisan.system.bean.Select2">
+        SELECT
+          e.person_id || ':' || d.dept_id id,
+          e.name || '--' || d.dept_name   text
+        FROM
+          t_rs_employee e, t_sys_dept d, t_rs_employee_dept ed,${tableName} b
+        WHERE ed.person_id = e.person_id AND d.dept_id = ed.dept_id AND ed.dept_id = ed.dept_id AND d.DEPT_ID =
+        b.create_dept
+        AND b.id = #{businessId} AND e.PERSON_ID = b.creator
+    </select>
+    <!--App工作流申请列表查询-->
+    <select id="getAppStartList" resultType="com.goisan.workflow.bean.Workflow">
+        select distinct w.workflow_name,r.TABLE_NAME,w.workflow_id,r.app_request_url url   from  t_sys_workflow w ,t_sys_workflow_relation r
+        where r.workflow_id=w.workflow_id AND APP_FLAG='1'
+    </select>
+    <select id="getBusinessById" resultType="com.goisan.system.bean.BaseBean">
+        SELECT creator,create_dept FROM ${tableName} WHERE id = #{businessId}
+    </select>
+    <select id="getRelation" resultType="com.goisan.workflow.bean.Relation">
+        SELECT * FROM T_SYS_WORKFLOW_RELATION WHERE WORKFLOW_ID = #{workflowId} AND TABLE_NAME = #{tableName}
+    </select>
+    <update id="updateTask" parameterType="String">
+        UPDATE T_SYS_TASK SET VALID_FLAG = '0' WHERE TASK_ID = #{id}
+    </update>
+    <!--APP数据列表查询-->
+    <select id="getAppRequestList" parameterType="java.lang.String" resultType="com.goisan.workflow.bean.Workflow">
+        SELECT create_time workflowName,id businessId from ${tableName} r
+        where
+        r.REQUEST_FLAG='0'
+    </select>
+    <!--App工作流新增查询-->
+    <select id="editAppInfoList" resultType="com.goisan.workflow.bean.Workflow">
+        select distinct w.workflow_name,r.TABLE_NAME,w.workflow_id,r.app_request_url url   from  t_sys_workflow w ,t_sys_workflow_relation r
+        where r.workflow_id=w.workflow_id AND APP_FLAG='1' and r.TABLE_NAME=#{tableName} and w.workflow_id=#{workflowId}
+    </select>
+    <insert id="insertBusiness" parameterType="java.lang.String">
+        INSERT INTO ${tableName}
+          (id,create_dept,create_time)
+        VALUES
+          (#{businessId},#{deptId},sysdate)
+    </insert>
+    <delete id="delNodeByWorkflowId" parameterType="String">
+        DELETE FROM T_SYS_WORKFLOW_NODE WHERE WORKFLOW_ID = #{workfloId}
+    </delete>
+    <delete id="delDefinitionByWorkflowId" parameterType="String">
+        DELETE FROM T_SYS_WORKFLOW_DEFINITION WHERE WORKFLOW_ID = #{workfloId}
+    </delete>
+    <delete id="delNullWorkflow" parameterType="String">
+        delete from ${tableName} where creator is null and (sysdate - create_time) > 1 and id != #{businessId}
+    </delete>
+    <select id="getWorkflowNameByWorkflowCode" parameterType="String" resultType="String">
+        SELECT workflow_name FROM T_SYS_WORKFLOW WHERE WORKFLOW_CODE = #{workflow_code}
+    </select>
+    <select id="getIndexUnAudtiMoreList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.IndexUnAudti">
+        SELECT b.*
+          FROM (SELECT '3' AS abc,
+                       e.NAME creator,
+                       case wh.state
+                 when '1' then
+                  e.NAME || ': ' || w.WORKFLOW_NAME
+                 when '3' then
+                  e.NAME || ': ' || '【驳回】' || w.WORKFLOW_NAME
+               end workflowName,
+                       wr.URL,
+                       to_char(ws.CREATE_TIME, 'yyyy-mm-dd') createTime,
+                       ws.TABLE_NAME,
+                       ws.BUSINESS_ID,
+                       wh.STATE,
+                       wr.edit_url
+                  FROM T_SYS_WORKFLOW_HANDLE   wh,
+                       T_SYS_WORKFLOW_START    ws,
+                       T_SYS_WORKFLOW_RELATION wr,
+                       T_SYS_WORKFLOW          w,
+                       T_RS_EMPLOYEE           e
+                 WHERE wh.HANDLE_USER =
+                       #{id}
+                   AND (wh.STATE = '1' OR wh.STATE = '3')
+                   AND ws.START_ID = wh.START_ID
+                   AND ws.WORKFLOW_ID = wr.WORKFLOW_ID
+                   AND w.WORKFLOW_ID = ws.WORKFLOW_ID
+                   AND ws.CREATOR = e.PERSON_ID
+                   and ws.state != '4'
+                UNION
+                SELECT '1' AS abc,
+                       FUNC_GET_USERNAME(t.person_id) creator,
+                       '【通知】' || t.TASK_TITLE WORKFLOW_NAME,
+                       t.task_url URL,
+                       to_char(t.task_time, 'yyyy-mm-dd') createTime,
+                       t.task_table TABLE_NAME,
+                       t.task_id BUSINESS_ID,
+                       '0' state,
+                       '' edit_url
+                  FROM T_SYS_TASK t
+                 WHERE t.VALID_FLAG = '1'
+                   AND t.person_id = #{id}
+                UNION
+                SELECT '2' AS abc,
+                       FUNC_GET_USERNAME(m.person_id) creator,
+                       FUNC_GET_USERNAME(m.person_id) || '参加' || FUNC_GET_DICVALUE(r.training_form, 'PXXS') WORKFLOW_NAME,
+                       t.task_url URL,
+                       to_char(r.request_date, 'yyyy-mm-dd') createTime,
+                       t.task_table TABLE_NAME,
+                       t.task_id BUSINESS_ID,
+                       '0' state,
+                       '' edit_url
+                  FROM T_SYS_TASK           t,
+                       T_RS_TRAINING_WF     r,
+                       T_RS_TRAINING_MEMBER m
+                 WHERE t.task_business_id = r.id
+                   AND r.ID = m.TRAINING_ID
+                   AND t.TASK_FLAG = '0'
+                   AND m.person_id = #{id}
+                   AND t.person_id = #{id}) b
+         ORDER BY b.createTime DESC, b.abc
+    </select>
+    <select id="getIndexAudtiMoreList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.IndexUnAudti">
+        SELECT b.*
+        FROM (SELECT '3' AS abc,
+        e.NAME creator,
+        e.NAME || ': ' || w.WORKFLOW_NAME workFlowName,
+        wr.URL,
+        to_char(ws.CREATE_TIME, 'yyyy-mm-dd') createTime,
+        ws.TABLE_NAME,
+        ws.BUSINESS_ID,
+        wh.STATE,
+        wr.edit_url
+        FROM T_SYS_WORKFLOW_HANDLE   wh,
+        T_SYS_WORKFLOW_START    ws,
+        T_SYS_WORKFLOW_RELATION wr,
+        T_SYS_WORKFLOW          w,
+        T_RS_EMPLOYEE           e,
+        t_sys_workflow_node     n
+        WHERE wh.HANDLE_USER =
+        #{id}
+        AND wh.STATE = '2'
+        AND ws.START_ID = wh.START_ID
+        AND ws.WORKFLOW_ID = wr.WORKFLOW_ID
+        AND w.WORKFLOW_ID = ws.WORKFLOW_ID
+        AND ws.CREATOR = e.PERSON_ID and n.workflow_id = w.workflow_id
+   and wh.cuurent_node_id in
+       (select n.node_id
+          from t_sys_workflow_node n, T_SYS_WORKFLOW_HANDLE wh
+         where n.workflow_id = wh.cuurent_workflow_id
+           and n.node_order != '1')
+        UNION
+        SELECT '2' AS abc,
+        FUNC_GET_USERNAME(m.person_id) creator,
+        '参加' || FUNC_GET_DICVALUE(r.training_form, 'PXXS') WORKFLOW_NAME,
+        t.task_url URL,
+        to_char(r.request_date, 'yyyy-mm-dd') createTime,
+        t.task_table TABLE_NAME,
+        t.task_id BUSINESS_ID,
+        '0' state,
+        '' edit_url
+        FROM T_SYS_TASK           t,
+        T_RS_TRAINING_WF     r,
+        T_RS_TRAINING_MEMBER m
+        WHERE t.task_business_id = r.id
+        AND r.ID = m.TRAINING_ID
+        AND t.TASK_FLAG = '1'
+        AND m.person_id = #{id}
+        AND t.person_id = #{id}) b
+        ORDER BY b.createTime DESC, b.abc
+    </select>
+    <select id="getCuurentNodeIdByStartIdAndHandleUserHandleRole" resultType="java.lang.String">
+        select CUURENT_NODE_ID
+        from T_SYS_WORKFLOW_HANDLE
+
+        WHERE START_ID = #{startId}
+          AND FUNC_GET_TABLEVALUE(handle_role,
+                                  'T_SYS_ROLE',
+                                  'ROLE_ID',
+                                  'ROLE_NAME') = '校级/副校级领导审核'
+          AND HANDLE_USER = #{personId} AND ROWNUM = 1
+    </select>
+    <update id="updateHandleStateByCuurentNodeId">
+        UPDATE T_SYS_WORKFLOW_HANDLE
+        SET STATE = '2',HANDLE_TIME = sysdate, remark = #{remark}
+        where CUURENT_NODE_ID = #{cuurentNodeId}
+          and START_ID = #{startId}
+          and state != 2 and state != 3
+    </update>
+    <update id="updateHandleStateByNodeIdAndStartIdRole">
+        UPDATE T_SYS_WORKFLOW_HANDLE
+        SET STATE = '2', HANDLE_TIME = sysdate, remark = #{remark}
+        WHERE START_ID = #{startId} AND HANDLE_USER = #{personId} AND STATE != '2' AND HANDLE_ROLE = #{handleRole}
+    </update>
+</mapper>

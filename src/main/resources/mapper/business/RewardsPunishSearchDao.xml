@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.rewardspunish.dao.RewardsPunishSearchDao">
+    <select id="rewardsAction"  resultType="com.goisan.educational.rewardspunish.bean.Rewards">
+        select t.id,
+        FUNC_GET_USERNAME(t.reword_person_id) as rewordPersonId,
+        FUNC_GET_DEPTNAME(t.reword_person_dept_id) as rewordPersonDeptId,
+        t.reword_name as rewordName,
+        to_char(t.reword_time,'yyyy-mm-dd') rewordTime,
+        t.reword_level as rewordLevel,
+        t.reword_style as rewordStyle,
+        t.reword_project as rewordProject,
+        t.reword_reason as rewordReason,
+        t.reword_content as rewordContent,
+        t.award_unit as awardUnit,
+        t.honorary_title as honoraryTitle,
+        t.remark as remark,
+        t.create_time as crcreateTime,
+        t.reword_type as rewordTtype,
+        t.reword_name_type as rewordNameType,
+        t.reword_grade as rewordGrade,
+        t.representative_flag as representativeFlag,
+        t.award_country as awardCountry,
+        t.personal_rankings  as personalRankings
+        from t_jw_teacherreword t
+        WHERE
+        1 = 1
+        <if test="creator != 'sa' and creator != null and creator != ''">
+            AND t.creator = #{creator}
+        </if>
+        <if test="rewordTime != null and rewordTime !=''">
+            AND t.reword_time = to_date('${rewordTime}','yyyy-mm-dd')
+        </if>
+        <if test="rewordPersonId !=null and rewordPersonId!=''">
+            AND t.reword_person_id = '${rewordPersonId}'
+        </if>
+        and t.valid_flag = '1'
+        ORDER BY
+        t.create_time DESC
+    </select>
+    <!--通过ById获取修改页面的id-->
+    <select id="getRewardsById" parameterType="java.lang.String" resultType="com.goisan.educational.rewardspunish.bean.Rewards">
+        select t.id,
+        (FUNC_GET_USERNAME(t.reword_person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.reword_person_dept_id))as rewordPersonId,
+        (t.reword_person_dept_id || ','|| t.reword_person_id) as rewordPersonDeptId,
+        t.reword_name as rewordName,
+        to_char(t.reword_time,'yyyy-mm-dd') rewordTime,
+        t.reword_level as rewordLevel,
+        t.reword_style as rewordStyle,
+        t.reword_project as rewordProject,
+        t.reword_reason as rewordReason,
+        t.reword_content as rewordContent,
+        t.award_unit as awardUnit,
+        t.honorary_title as honoraryTitle,
+        t.remark as remark,
+        t.create_time as crcreateTime,
+        t.reword_type as rewordTtype,
+        t.reword_name_type as rewordNameType,
+        t.reword_grade as rewordGrade,
+        t.representative_flag as representativeFlag,
+        t.award_country as awardCountry,
+        t.personal_rankings  as personalRankings
+        from t_jw_teacherreword t
+        WHERE
+        1 = 1
+        AND
+        id = #{id}
+        ORDER BY
+        t.create_time DESC
+    </select>
+
+
+    <select id="punishAction"  resultType="com.goisan.educational.rewardspunish.bean.Punish">
+        select
+        t.id,
+        FUNC_GET_USERNAME(t.punish_person_id) as punishPersonId,
+        FUNC_GET_DEPTNAME(t.punish_person_dept_id) as punishPersonDeptId,
+        t.punish_name as punishName,
+        to_char(t.punish_time,'yyyy-mm-dd') punishTime,
+        t.punish_level as punishLevel,
+        t.punish_reason as punishReason,
+        t.punish_content as punishContent,
+        t.punish_term as punishTerm,
+        t.cancel_reason as cancelReason,
+        t.cancel_document_number as cancelDocumentNumber,
+        t.punish_document_number as punishDocumentNumber,
+        to_char(t.cancel_time,'yyyy-mm-dd') cancelTime,
+        FUNC_GET_DICVALUE(t.punish_status,'JSCCZT') punishStatus,
+        t.remark as remark,
+        t.create_time as createTime
+        from T_JW_TEACHERPUNISHMENT t
+        WHERE
+        1 = 1
+        <if test="creator != 'sa' and creator != null and creator != ''">
+            AND t.creator = #{creator}
+        </if>
+        <if test="punishTime != null and punishTime !=''">
+            AND t.punish_time = to_date('${punishTime}','yyyy-mm-dd')
+        </if>
+        <if test="punishPersonId !=null and punishPersonId!=''">
+            AND t.punish_person_id = '${punishPersonId}'
+        </if>
+        and t.valid_flag = '1'
+        ORDER BY
+        t.create_time DESC
+    </select>
+
+    <select id="getPunishById"  resultType="com.goisan.educational.rewardspunish.bean.Punish">
+        select
+        t.id,
+        (FUNC_GET_USERNAME(t.punish_person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.punish_person_dept_id))as punishPersonId,
+        (t.punish_person_dept_id || ','|| t.punish_person_id) as punishPersonDeptId,
+        t.punish_name as punishName,
+        to_char(t.punish_time,'yyyy-mm-dd') punishTime,
+        t.punish_level as punishLevel,
+        t.punish_reason as punishReason,
+        t.punish_content as punishContent,
+        t.punish_term as punishTerm,
+        t.cancel_reason as cancelReason,
+        t.cancel_document_number as cancelDocumentNumber,
+        t.punish_document_number as punishDocumentNumber,
+        to_char(t.cancel_time,'yyyy-mm-dd') cancelTime,
+        t.punish_status as punishStatus,
+        t.remark as remark,
+        t.create_time as crcreateTime
+        from T_JW_TEACHERPUNISHMENT t
+        WHERE
+        1 = 1
+        AND
+        id=#{id}
+        and t.valid_flag = '1'
+        ORDER BY
+        t.create_time DESC
+    </select>
+
+
+    <select id="rewardsPunishAction" parameterType="com.goisan.educational.rewardspunish.bean.RewardsPunish" resultType="com.goisan.educational.rewardspunish.bean.RewardsPunish">
+        select
+        id,
+        FUNC_GET_USERNAME(rname) as rname,
+        FUNC_GET_DEPTNAME(rdept) as rdept,
+        rtime,
+        leixing,
+        remark,
+        rfname,
+        createTime
+        from
+        (select  t.id as id,t.reword_person_id as rname,
+        t.reword_person_dept_id as rdept,
+        to_char(t.reword_time,'yyyy-mm-dd') rtime,
+        t.reword_name as rewordName,t.create_time as createTime,'奖励' as leixing,t.remark as remark,t.reword_name as rfname
+        from t_jw_teacherreword t
+        union
+        select e.id as id, e.punish_person_id as rname,
+        e.punish_person_dept_id as rdept,
+        to_char(e.punish_time,'yyyy-mm-dd') rtime,
+        e.punish_name as punishName ,e.create_time as createTime,'惩处' as leixing,e.remark as remark,e.punish_name as rfname
+        from T_JW_TEACHERPUNISHMENT e)
+        where
+        1 = 1
+        <if test=" rtime != null and rtime != ''">
+            AND rtime = '${rtime}'
+        </if>
+        <if test="rname != null and rname !=''">
+            AND rname = '${rname}'
+        </if>
+
+
+    </select>
+</mapper>

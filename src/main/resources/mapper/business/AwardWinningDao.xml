@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.competition.dao.AwardWinningDao">
+    <select id="awardWinningAction" resultType="com.goisan.educational.competition.bean.AwardWinning"
+            parameterType="com.goisan.educational.competition.bean.AwardWinning">
+        select
+        id,
+        name,
+        FUNC_GET_TABLEVALUE(competition_name,'T_JW_COMPETITION_PROJECT','ID','COMPETITION_PROJECT')   competitionName,
+        prize,
+        to_char(award_time ,'yyyy-mm') awardTime,
+        create_time createTime
+        from T_JW_AWARD_WINNING
+        WHERE 1 = 1
+        <if test="name != null and name != '' ">
+            AND name LIKE #{name}
+        </if>
+        <if test="competitionName != null and competitionName != '' ">
+            AND competition_name = #{competitionName}
+        </if>
+        <if test="prize != null and prize != '' ">
+            AND prize LIKE '%'||#{prize}||'%'
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="insertAwardWinning" parameterType="com.goisan.educational.competition.bean.AwardWinning">
+        INSERT INTO T_JW_AWARD_WINNING
+        (
+        id,
+        name,
+        competition_name,
+        prize,
+        award_time,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${name}',
+        '${competitionName}',
+        '${prize}',
+        to_date('${awardTime}','yyyy-mm'),
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <select id="getAwardWinningById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.competition.bean.AwardWinning">
+        select
+        id,
+        name,
+        competition_name competitionName,
+        prize,
+        to_char(award_time ,'yyyy-mm') awardTime
+        from T_JW_AWARD_WINNING
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateAwardWinningById" parameterType="com.goisan.educational.competition.bean.AwardWinning">
+        UPDATE T_JW_AWARD_WINNING SET
+        name = #{name},
+        competition_name = #{competitionName},
+        prize = #{prize},
+        award_time = to_date(#{awardTime},'yyyy-mm'),
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteAwardWinningById" parameterType="java.lang.String">
+        DELETE  T_JW_AWARD_WINNING WHERE id = #{id}
+    </delete>
+</mapper>

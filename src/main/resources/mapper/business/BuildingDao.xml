@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.place.building.dao.BuildingDao">
+    <select id="buildingAction" resultType="com.goisan.educational.place.building.bean.Building" parameterType="com.goisan.educational.place.building.bean.Building">
+        select
+        t.id            id,
+        t.building_name buildingName,
+        FUNC_GET_DICVALUE(t.building_type,'LYLX')  buildingType,
+        t.area  area,
+        t.floor_number  floorNumber,
+        t.room_number  roomNumber,
+        t.address  address,
+        t.remark  remark,
+        t.creator       creator,
+        t.create_time   createTime,
+        t.create_dept   createDept,
+        t.changer       changer,
+        t.change_time   changeTime,
+        t.change_dept   changeDept,
+        t.valid_flag    validFlag
+        from t_jw_building t
+        WHERE 1 = 1
+        <if test="buildingType != '' and  buildingType != null">
+            AND t.building_type = #{buildingType}
+        </if>
+        <if test="buildingName != '' and buildingName != null">
+            AND t.building_name LIKE #{buildingName}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertBuilding" parameterType="com.goisan.educational.place.building.bean.Building">
+        INSERT INTO t_jw_building
+        (id,
+        building_name,
+        building_type,
+        area,
+        floor_number,
+        room_number,
+        address,
+        remark,
+        create_dept,
+        creator,
+        create_time
+        )
+        values
+        ('${id}',
+        '${buildingName}',
+        '${buildingType}',
+        '${area}',
+        '${floorNumber}',
+        '${roomNumber}',
+        '${address}',
+        '${remark}',
+        '${createDept}',
+        '${creator}',
+        sysdate
+        )
+    </insert>
+    <select id="selectAll1" parameterType="java.lang.String" resultType="com.goisan.educational.place.building.bean.Building">
+        select t.building_name buildingName from t_jw_classroom c,t_jw_building t where c.building_id=#{id}
+    </select>
+    <select id="selectAll2" parameterType="java.lang.String" resultType="com.goisan.educational.place.building.bean.Building">
+        select t.building_name buildingName from t_jw_meetingroom c,t_jw_building t where c.building_id=#{id}
+    </select>
+    <select id="selectAll3" parameterType="java.lang.String" resultType="com.goisan.educational.place.building.bean.Building">
+        select t.building_name buildingName from t_jw_dorm c,t_jw_building t where c.building_id=#{id}
+    </select>
+    <select id="getBuildingById" parameterType="java.lang.String" resultType="com.goisan.educational.place.building.bean.Building">
+        select
+        t.id            id,
+        t.building_name buildingName,
+        t.building_type  buildingType,
+        t.area  area,
+        t.floor_number  floorNumber,
+        t.room_number  roomNumber,
+        t.address  address,
+        t.remark  remark,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        from t_jw_building t
+        WHERE id =#{id} ORDER BY t.create_time DESC
+    </select>
+    <update id="updateBuildingById" parameterType="com.goisan.educational.place.building.bean.Building">
+        UPDATE t_jw_building SET
+        id=#{id},
+        building_name = #{buildingName},
+        building_type = #{buildingType},
+        area = #{area},
+        floor_number = #{floorNumber},
+        room_number = #{roomNumber},
+        address = #{address},
+        remark = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteBuildingById"  parameterType="java.lang.String">
+        DELETE  t_jw_building WHERE id = #{id}
+    </delete>
+    <select id="selectDept" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="selectPerson" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <!--名称去重-->
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_jw_building where building_name = #{buildingName}
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+    <!--通过楼宇Id查询楼层-->
+    <select id="getFloorByBuildingId" parameterType="java.lang.String" resultType="com.goisan.system.bean.Select2">
+        SELECT DIC_CODE id,DIC_NAME text
+        FROM T_SYS_DIC
+        WHERE PARENT_ID = (SELECT ID FROM T_SYS_DIC WHERE DIC_CODE='LC')
+        AND (DIC_CODE &lt; (SELECT FLOOR_NUMBER FROM T_JW_BUILDING WHERE ID=#{id}) OR
+        DIC_CODE=(SELECT FLOOR_NUMBER FROM T_JW_BUILDING WHERE ID=#{id}))
+    </select>
+</mapper>

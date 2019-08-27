@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.backboneTeacher.dao.BackboneTeacherDao">
+    <select id="backboneTeacherAction" parameterType="com.goisan.educational.backboneTeacher.bean.BackboneTeacher"
+            resultType="com.goisan.educational.backboneTeacher.bean.BackboneTeacher">
+        select t.id,
+        FUNC_GET_TABLEVALUE(t.department_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentId,
+        FUNC_GET_TABLEVALUE(t.major_code, 't_xg_major', 'major_code', 'major_name') majorCode,
+        FUNC_GET_USERNAME(t.teacher_id) teacherId,
+        FUNC_GET_DICVALUE(t.sex, 'XB') sex,
+        to_char(t.birthday, 'yyyy-mm-dd') birthday,
+        t.study_major studyMajor,
+        t.create_time,
+        wm_concat(FUNC_GET_TABLEVALUE(s.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')) courseId
+        FROM T_JW_BACKBONE_TEACHER t
+        left join (select distinct teacher_id,course_id from T_JW_TEACHINGTASK ) s on t.teacher_id = s.teacher_id
+        and t.valid_flag = '1'
+        <if test="teacherId != null and teacherId != ''">
+            where FUNC_GET_USERNAME(t.teacher_id) LIKE '%'||#{teacherId}||'%'
+        </if>
+        GROUP BY t.id, t.STUDY_MAJOR,t.birthday,t.sex,t.teacher_id,t.major_code,t.department_id,t.create_time
+        order by t.create_time desc
+    </select>
+    <!--通过ById获取修改页面的id-->
+    <select id="getBackboneTeacherById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.backboneTeacher.bean.BackboneTeacher">
+        SELECT
+        t.id,
+        t.department_id    departmentId,
+        FUNC_GET_USERNAME(t.teacher_id)    teacherIdShow,
+        t.major_code    majorCode,
+        t.teacher_id   teacherId,
+        t.sex    sex,
+        to_char(t.birthday,'yyyy-mm-dd')  birthday,
+        t.study_major    studyMajor
+        FROM T_JW_BACKBONE_TEACHER t
+        WHERE
+            1 = 1
+            AND
+            id = #{id}
+        ORDER BY
+            t.create_time DESC
+    </select>
+    <!--新增数据-->
+    <insert id="insertBackboneTeacher" parameterType="com.goisan.educational.backboneTeacher.bean.BackboneTeacher">
+        INSERT INTO
+            T_JW_BACKBONE_TEACHER
+            (id,
+             department_id,
+             major_code,
+             teacher_id,
+             sex,
+             birthday,
+             study_major,
+             creator,
+             create_time,
+             create_dept)
+        VALUES
+            (FUNC_GET_UUID,
+             '${departmentId}',
+             '${majorCode}',
+             '${teacherId}',
+             '${sex}',
+             to_date('${birthday}', 'yyyy-mm-dd'),
+             '${studyMajor}',
+             '${creator}',
+             sysdate,
+             '${createDept}')
+    </insert>
+    <update id="updateBackboneTeacherById" parameterType="com.goisan.educational.backboneTeacher.bean.BackboneTeacher">
+        UPDATE
+            T_JW_BACKBONE_TEACHER
+        SET
+            department_id    =#{departmentId},
+            major_code    =#{majorCode},
+            teacher_id   =#{teacherId},
+            sex    =#{sex},
+            study_major    =#{studyMajor},
+            birthday = to_date(#{birthday}, 'yyyy-mm-dd'),
+            change_time  = sysdate,
+            changer      = #{changer},
+            change_dept  = #{changeDept}
+        WHERE
+            id = #{id}
+    </update>
+    <delete id="deleteBackboneTeacherById" parameterType="java.lang.String">
+        DELETE
+            T_JW_BACKBONE_TEACHER
+        WHERE
+            id = #{id}
+    </delete>
+</mapper>

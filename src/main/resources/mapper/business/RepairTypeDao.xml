@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--总务管理-报修类型管理create by wq 170526-->
+<mapper namespace="com.goisan.logistics.repair.dao.RepairTypeDao">
+    <!--显示数据表,可通过报修编号和类型查询-->
+    <select id="repairTypeAction" resultType="com.goisan.system.bean.UserDic" parameterType="com.goisan.system.bean.UserDic">
+    SELECT
+    t.id id,
+	t.dic_code diccode,
+	t.dic_name dicname,
+	t.dic_order dicorder,
+	t.create_time
+	FROM
+	T_SYS_USERDIC t
+	WHERE
+	1 = 1 AND
+	t.dic_type='BXLX'
+	<if test="creator != 'sa'  and creator != null and creator != '' ">
+		AND t.creator= #{creator}
+	</if>
+		ORDER BY to_number(t.dic_order) DESC
+    </select>
+    <!--添加-->
+	<insert id="insertRepairType" parameterType="com.goisan.system.bean.UserDic">
+		INSERT INTO
+		T_SYS_USERDIC
+		(id,dic_code,dic_name,dic_type,dic_order,creator,create_time,create_dept) values
+		(FUNC_GET_UUID,'${diccode}','${dicname}','BXLX','${dicorder}','${creator}',sysdate,'${createDept}')
+	</insert>
+    <!--id查询-->
+	<select id="getRepairTypeById" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+		SELECT
+		t.id id,
+		t.dic_name dicname,
+		t.dic_code diccode,
+		t.dic_order dicorder,
+		t.create_time
+		FROM
+		T_SYS_USERDIC t
+		WHERE id =#{id}
+		ORDER BY to_number(t.dic_order) DESC
+	</select>
+    <!--修改-->
+	<update id="updateRepairType" parameterType="com.goisan.system.bean.UserDic">
+		UPDATE T_SYS_USERDIC SET
+		dic_name = #{dicname},
+		dic_code = #{diccode},
+		dic_order = #{dicorder},
+		change_time= sysdate,
+        changer = #{changer},
+		change_dept = #{changeDept}
+		WHERE id = #{id}
+	</update>
+    <!--删除-->
+	<delete id="deleteRepairTypeById"  parameterType="java.lang.String">
+		DELETE  T_SYS_USERDIC WHERE id = #{id}
+	</delete>
+
+	<select id="getRepairTypeList" resultType="com.goisan.system.bean.UserDic"
+			parameterType="com.goisan.system.bean.UserDic">
+		SELECT
+		t.id id,
+		t.dic_code diccode,
+		t.dic_name dicname,
+		t.dic_order dicorder,
+		t.creator creator,
+		t.create_time
+		FROM
+		T_SYS_USERDIC t
+		WHERE 1 = 1
+		AND
+		t.dic_type ='BXLX'
+		<if test="diccode != null and diccode !='' ">
+			AND  t.dic_code LIKE #{diccode}
+		</if>
+		<if test="dicname != null and dicname !='' ">
+			AND  t.dic_name LIKE #{dicname}
+		</if>
+		ORDER BY to_number(t.dic_order) DESC
+	</select>
+    <!--名称查重-->
+	<select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+		select * from t_sys_userdic where dic_type = 'BXLX' and dic_name = #{dicname}
+		AND  id != #{id}
+	</select>
+    <!--编号查重-->
+	<select id="checkCode" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+		select * from t_sys_userdic where dic_type = 'BXLX' and dic_code = #{diccode}
+		<if test="id != null and id != ''">
+			AND id != #{id}
+		</if>
+	</select>
+    <!--序号查重-->
+	<select id="checkOrder" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+		select * from t_sys_userdic where dic_type = 'BXLX' and dic_order = #{dicorder}
+		<if test="id != null and id != ''">
+			AND id != #{id}
+		</if>
+	</select>
+
+	<!--已有序号查询-->
+	<select id="getRepairTypeNoOrder" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+		SELECT
+		t.dic_order dicorder
+		FROM
+		T_SYS_USERDIC t
+		WHERE 1 = 1
+		AND t.dic_type ='BXLX'
+		ORDER BY to_number(t.dic_order)
+	</select>
+</mapper>

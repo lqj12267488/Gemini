@@ -1,0 +1,2203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.exam.dao.ExamDao">
+
+    <!--新增term-->
+    <select id="getExamList" parameterType="com.goisan.educational.exam.bean.Exam"
+            resultType="com.goisan.educational.exam.bean.Exam">
+        select exam_id examId,
+        exam_name examName,
+        term,
+        FUNC_GET_DICVALUE(term,'XQ') AS termShow,
+        FUNC_GET_DICVALUE(exam_Types,'KSXXLX') AS examTypes,
+        to_char(start_time,'yyyy-mm-dd') startTime,
+        to_char(end_time,'yyyy-mm-dd') endTime,
+        OPEN_FLAG openFlag,
+        EXAM_FLAG,
+        CREATE_TIME
+        from T_JW_EXAM
+        where 1 = 1
+        <if test="examTypes != null and examTypes != ''">
+            <if test="examTypes == 1">
+                and EXAM_TYPES = '1'
+            </if>
+            <if test="examTypes != 1">
+                and EXAM_TYPES != '1'
+            </if>
+        </if>
+        <if test="examName != null and examName != '' ">
+            AND exam_name like '%'|| #{examName} ||'%'
+        </if>
+    </select>
+    <select id="getExamListByTermType" parameterType="com.goisan.educational.exam.bean.Exam"
+            resultType="com.goisan.educational.exam.bean.Exam">
+        select * from  T_JW_EXAM  where  exam_Types = #{examTypes} and term = #{term}
+    </select>
+    <!--<select id="getExamList2" parameterType="com.goisan.educational.exam.bean.Exam"-->
+            <!--resultType="com.goisan.educational.exam.bean.Exam">-->
+        <!--select exam_id examId,-->
+        <!--exam_name examName,-->
+        <!--FUNC_GET_DICVALUE(term,'XQ') AS termShow,-->
+        <!--FUNC_GET_DICVALUE(exam_Types,'KSXXLX') AS examTypes,-->
+        <!--to_char(start_time,'yyyy-mm-dd') startTime,-->
+        <!--to_char(end_time,'yyyy-mm-dd') endTime,-->
+        <!--OPEN_FLAG openFlag,-->
+        <!--EXAM_FLAG,-->
+        <!--case-->
+        <!--when-->
+        <!--(select count(id) from T_JW_SCORE_IMPORT where SCORE_EXAM_ID = t.EXAM_ID and SUBMIT_FLAG = 1) = 0 then '0'-->
+        <!--when-->
+        <!--((select count(*)-->
+        <!--from T_JW_EXAM_STUDENT t1,-->
+        <!--T_JW_EXAM_COURSE_CLASS t2-->
+        <!--where t1.CLASS_ID = t2.CLASS_ID-->
+        <!--and t1.EXAM_ID = t.EXAM_ID-->
+        <!--and t2.EXAM_ID = t.EXAM_ID) =-->
+        <!--(select count(id) from T_JW_SCORE_IMPORT where SCORE_EXAM_ID = t.EXAM_ID and SUBMIT_FLAG = 1) and (select count(id) from T_JW_SCORE_IMPORT where SCORE_EXAM_ID = t.EXAM_ID and SUBMIT_FLAG = 1) !=0) then-->
+        <!--'1'-->
+        <!--else '2' end as status-->
+        <!--from T_JW_EXAM t-->
+        <!--where 1 = 1-->
+        <!--<if test="examTypes != null and examTypes != ''">-->
+            <!--and EXAM_TYPES = #{examTypes}-->
+        <!--</if>-->
+        <!--<if test="term != null and term != ''">-->
+            <!--and term = #{term}-->
+        <!--</if>-->
+        <!--<if test="scoreSelect != null and scoreSelect != ''">-->
+            <!--and t.exam_id in(select EXAM_ID from T_JW_SCORE_IMPORT where SCORE_EXAM_ID = t.EXAM_ID and SUBMIT_FLAG = 1)-->
+        <!--</if>-->
+        <!--<if test="examName != null and examName != '' ">-->
+            <!--AND exam_name like '%'|| #{examName} ||'%'-->
+        <!--</if>-->
+    <!--</select>-->
+
+    <select id="getExamList2" parameterType="com.goisan.educational.exam.bean.Exam"
+            resultType="com.goisan.educational.exam.bean.Exam">
+        select exam_id examId,
+        exam_name examName,
+        FUNC_GET_DICVALUE(term,'XQ') AS termShow,
+        FUNC_GET_DICVALUE(exam_Types,'KSXXLX') AS examTypes,
+        to_char(start_time,'yyyy-mm-dd') startTime,
+        to_char(end_time,'yyyy-mm-dd') endTime,
+        OPEN_FLAG openFlag,
+        EXAM_FLAG,
+        case
+        when
+        (select count(id) from T_JW_SCORE_IMPORT where SCORE_EXAM_ID = t.EXAM_ID and SUBMIT_FLAG = 1) = 0 then '0'
+        when
+        ((SELECT
+        min(sc.submit_flag)
+        FROM T_JW_SCORE_IMPORT sc
+        where  sc.score_exam_id =t.exam_id and t.term = sc.term_id ) = '1' ) then
+        '1'
+        else '2' end as status
+        from T_JW_EXAM t
+        where 1 = 1
+        <if test="examTypes != null and examTypes != ''">
+            and EXAM_TYPES = #{examTypes}
+        </if>
+        <if test="term != null and term != ''">
+            and term = #{term}
+        </if>
+        <if test="scoreSelect != null and scoreSelect != ''">
+            and t.exam_id in(select EXAM_ID from T_JW_SCORE_IMPORT where SCORE_EXAM_ID = t.EXAM_ID and SUBMIT_FLAG = 1)
+        </if>
+        <if test="examName != null and examName != '' ">
+            AND exam_name like '%'|| #{examName} ||'%'
+        </if>
+    </select>
+
+    <select id="getPersonalExamList" parameterType="com.goisan.educational.exam.bean.Exam"
+            resultType="com.goisan.educational.exam.bean.Exam">
+        select e.exam_id                           examId,
+               e.exam_name                         examName,
+               FUNC_GET_DICVALUE(e.term, 'XQ') AS  termShow,
+               to_char(e.start_time, 'yyyy-mm-dd') startTime,
+               to_char(e.end_time, 'yyyy-mm-dd')   endTime,
+               OPEN_FLAG                           openFlag
+        from T_JW_EXAM e
+        where
+            e.exam_id in (select t.exam_id from T_JW_EXAM_ARRAY_STUDENT t where t.student_id = #{studentId})
+    </select>
+
+    <insert id="insertExam" parameterType="com.goisan.educational.exam.bean.Exam">
+        insert into t_jw_exam (exam_id, exam_name, term, start_time, end_time, exam_types, creator, create_dept, create_time,SCORE_END_TIME,SCORE_START_TIME, NORMAL_SCORE_START_TIME,NORMAL_SCORE_END_TIME)
+        values (FUNC_GET_UUID, #{examName}, #{term}, to_date('${startTime}', 'yyyy-mm-dd'), to_date('${endTime}', 'yyyy-mm-dd'), #{examTypes}, #{creator}, #{createDept}, sysdate, #{scoreEndTime}, #{scoreStartTime},#{normalScoreStartTime},#{normalScoreEndTime})
+    </insert>
+    <select id="selectExamById" parameterType="java.lang.String" resultType="com.goisan.educational.exam.bean.Exam">
+        select exam_id                           examId,
+               exam_name                         examName,
+               term,
+               FUNC_GET_DICVALUE(term, 'XQ') AS  termShow,
+               exam_types                        examTypes,
+               to_char(start_time, 'yyyy-mm-dd') startTime,
+               to_char(end_time, 'yyyy-mm-dd')   endTime,
+               OPEN_FLAG                         openFlag,
+               SCORE_START_TIME,
+               SCORE_END_TIME,
+               NORMAL_SCORE_END_TIME,
+               NORMAL_SCORE_START_TIME
+        from T_JW_EXAM
+        where exam_id = #{exam_id}
+    </select>
+    <update id="updateExam" parameterType="com.goisan.educational.exam.bean.Exam">
+        update t_jw_exam
+        set exam_name=#{examName},
+            term=#{term},
+            exam_types=#{examTypes},
+            start_time = to_date(#{startTime}, 'yyyy-mm-dd'),
+            end_time = to_date(#{endTime}, 'yyyy-mm-dd'),
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate,
+            SCORE_START_TIME = #{scoreStartTime},
+            SCORE_END_TIME = #{scoreEndTime},
+            NORMAL_SCORE_START_TIME = #{normalScoreStartTime},
+            NORMAL_SCORE_END_TIME = #{normalScoreEndTime}
+        where exam_id = #{examId}
+    </update>
+
+    <delete id="delExamById" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM
+        where exam_id = #{examId}
+    </delete>
+    <select id="getExamCourseList" parameterType="com.goisan.educational.exam.bean.ExamCourse"
+            resultType="com.goisan.educational.exam.bean.ExamCourse">
+        select
+        exam_course_id examCourseId,
+        exam_id examId,
+        exam_room_id examRoomId,
+        FUNC_GET_DICVALUE(course_type,'KCLX') AS courseTypeShow,
+        FUNC_GET_DICVALUE(exam_type,'KSXS') AS examTypeShow,
+        FUNC_GET_DEPTNAME(departments_id) departmentShow,
+        decode(major_code,'','',FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')) majorShow,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        FUNC_GET_TABLEVALUE(exam_room_id ,'T_JW_EXAM_ROOM','exam_room_id','room_name') roomShow,
+        exam_type examType,
+        course_type courseType,
+        course_id courseId,
+        departments_id departmentsId,
+        exam_minute examMinute,
+        exam_type examType,
+        room_id roomId,
+        to_char(start_time,'yyyy-mm-dd hh24:mi') startTime,
+        to_char(end_time,'yyyy-mm-dd hh24:mi') endTime
+        from
+        T_JW_EXAM_COURSE
+        where 1 = 1 and room_id=#{roomId} and exam_id=#{examId}
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND departments_id= #{departmentsId}
+        </if>
+        <if test="courseId != null and courseId != '' ">
+            AND course_id= #{courseId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND major_code= #{majorCode}
+        </if>
+    </select>
+    <insert id="insertExamCourse" parameterType="com.goisan.educational.exam.bean.ExamCourse">
+        insert into T_JW_EXAM_COURSE (exam_course_id, exam_room_id, exam_id, room_id, course_type, departments_id, major_code, training_level, course_id, exam_minute, exam_type, start_time, end_time, creator, create_dept, create_time)
+        values (FUNC_GET_UUID, #{examRoomId}, #{examId}, #{roomId}, #{courseType}, #{departmentsId}, #{majorCode}, #{trainingLevel}, #{courseId}, #{examMinute}, #{examType}, to_date('${startTime}', 'yyyy-mm-dd hh24:mi'), to_date('${endTime}', 'yyyy-mm-dd hh24:mi'), #{creator}, #{createDept}, sysdate)
+    </insert>
+    <select id="selectExamCourseById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourse">
+        select exam_course_id                                                             examCourseId,
+               exam_id                                                                    examId,
+               course_type                                                                courseType,
+               exam_room_id                                                               examRoomId,
+               FUNC_GET_DICVALUE(exam_type, 'KSXS')   AS                                  examTypeShow,
+               FUNC_GET_DICVALUE(course_type, 'KCLX') AS                                  courseShow,
+               FUNC_GET_DEPTNAME(departments_id)                                          departmentShow,
+               FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')  majorShow,
+               FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')  courseShow,
+               FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME')    roomShow,
+               exam_minute                                                                examMinute,
+               exam_type                                                                  examType,
+               major_code                                                                 majorCode,
+               departments_id                                                             departmentsId,
+               course_id                                                                  courseId,
+               training_level                                                             trainingLevel,
+               room_id                                                                    roomId,
+               exam_type                                                                  examType,
+               to_char(start_time, 'yyyy-mm-dd') || 'T' || to_char(start_time, 'hh24:mi') startTime,
+               to_char(end_time, 'yyyy-mm-dd') || 'T' || to_char(end_time, 'hh24:mi')     endtime
+        from T_JW_EXAM_COURSE
+        where exam_course_id = #{examCourseId}
+    </select>
+    <delete id="delExamCourseById" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_COURSE
+        where exam_course_id = #{examCourseId}
+    </delete>
+    <select id="getExamCourseByExamId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourse">
+        select EXAM_COURSE_ID,
+               EXAM_ID,
+               COURSE_TYPE,
+               COURSE_ID,
+               DEPARTMENTS_ID,
+               MAJOR_CODE,
+               TRAINING_LEVEL,
+               to_char(start_time, 'yyyy-mm-dd hh24:mi') startTime,
+               to_char(end_time, 'yyyy-mm-dd hh24:mi')   endTime,
+               EXAM_MINUTE,
+               EXAM_TYPE,
+               ROOM_ID
+        from T_JW_EXAM_COURSE
+        where exam_id = #{examId}
+    </select>
+    <select id="getExamCourseClassByExamCourseId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select *
+        from T_JW_EXAM_COURSE_CLASS
+        where exam_course_id = #{id}
+    </select>
+    <select id="getExamCourseClassByExamIdAndClassId" parameterType="com.goisan.educational.exam.bean.ExamCourseClass"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select
+            *
+        from T_JW_EXAM_COURSE_CLASS
+        where exam_id = #{examId}
+          and class_id = #{classId}
+    </select>
+    <select id="getClassTreeByDepartmentId" resultType="com.goisan.system.bean.Tree">
+        SELECT d.dept_id        id,
+               d.dept_name      name,
+               d.parent_dept_id pid
+        FROM t_sys_dept d
+        WHERE d.DEPT_TYPE = 8
+          AND d.valid_flag = 1
+          and d.dept_id = #{departmentsId}
+        UNION
+        SELECT
+            m.major_code     id
+                ,
+            m.major_name     name
+                ,
+            m.departments_id pId
+        FROM T_XG_MAJOR m
+        WHERE m.valid_flag = 1
+          and m.departments_id = #{departmentsId}
+        UNION
+        SELECT
+            c.class_id   id
+                ,
+            c.class_name name
+                ,
+            c.major_code pid
+        FROM t_xg_class c
+        WHERE c.valid_flag = 1
+          and c.departments_id = #{departmentsId}
+    </select>
+    <select id="getALLClassTree" resultType="com.goisan.system.bean.Tree">
+        SELECT d.dept_id        id,
+               d.dept_name      name,
+               d.parent_dept_id pid
+        FROM t_sys_dept d
+        WHERE d.DEPT_TYPE = 8
+          AND d.valid_flag = 1
+        UNION
+        SELECT
+            m.major_code     id
+                ,
+            m.major_name     name
+                ,
+            m.departments_id pId
+        FROM T_XG_MAJOR m
+        WHERE m.valid_flag = 1
+        UNION
+        SELECT
+            c.class_id   id
+                ,
+            c.class_name name
+                ,
+            c.major_code pid
+        FROM t_xg_class c
+        WHERE c.valid_flag = 1
+    </select>
+    <select id="chooseDeptList" parameterType="java.lang.String" resultType="com.goisan.system.bean.Dept">
+        select *
+        from T_SYS_DEPT
+        where dept_id in (${ids})
+    </select>
+    <select id="chooseIdsList" parameterType="java.lang.String" resultType="com.goisan.system.bean.ClassBean">
+        select *
+        from T_XG_CLASS where
+        1 = 1
+        <if test="ids != null and ids != '' ">
+            AND departments_id in (${ids})
+        </if>
+        <if test="ids != null and ids != '' ">
+            AND major_code in (${ids})
+        </if>
+        <if test="ids != null and ids != '' ">
+            AND class_id in (${ids})
+        </if>
+    </select>
+    <select id="getClassBeanPropertyForBatchAddExamRoom" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.ClassBean">
+        select DISTINCT c.room_id,c.departments_id,c.major_code,c.training_level,c.class_id,cr.people_number,cr.class_room_name
+        from T_JW_EXAM_COURSE_CLASS cc,
+             T_XG_CLASS c,
+             t_jw_classroom cr
+        where exam_id = #{examId}
+        /* cc.departments_id=c.departments_id and c.class_id=cc.class_id
+         and cc.major_code=c.major_code and cc.training_level=c.training_level
+         and c.room_id=cr.id
+         and */
+    </select>
+    <insert id="insertExamCourseClass" parameterType="com.goisan.educational.exam.bean.ExamCourse">
+        insert into T_JW_EXAM_COURSE_CLASS (id, exam_id, class_id, room_id, exam_course_id, departments_id, major_code, training_level, course_id, exam_minute, exam_type, start_time, end_time, creator, create_dept, create_time, EXAM_METHOD)
+        values (FUNC_GET_UUID, #{examId}, #{classId}, #{roomId}, #{examCourseId}, #{departmentsId}, #{majorCode}, #{trainingLevel}, #{courseId}, #{examMinute}, #{examType}, to_date('${startTime}', 'yyyy-mm-dd hh24:mi'), to_date('${endTime}', 'yyyy-mm-dd hh24:mi'), #{creator}, #{createDept}, sysdate, #{examMethod})
+    </insert>
+    <select id="getSelectedClassById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select
+            *
+        from T_JW_EXAM_COURSE_CLASS
+        where
+            exam_course_id = #{examCourseId}
+
+    </select>
+    <select id="getAllEmpTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+            d.dept_id        id,
+            d.dept_name      name,
+            d.parent_dept_id pid
+        FROM t_sys_dept d
+        where d.parent_dept_id !=0
+        UNION
+        SELECT
+            e.person_id id,
+            e.name,
+            ed.dept_id  pid
+        FROM t_rs_employee e,
+             t_rs_employee_dept ed
+        WHERE e.person_id = ed.person_id
+    </select>
+    <select id="chooseEmpList" parameterType="java.lang.String" resultType="com.goisan.system.bean.Emp">
+        select e.person_id,t.dept_id
+        from T_RS_EMPLOYEE_DEPT t,
+             t_rs_employee e
+        where t.person_id = e.person_id
+          and
+            t.dept_id in (${dept_id})
+          and
+            t.person_id in (${ids})
+    </select>
+    <insert id="insertExamTeacher" parameterType="com.goisan.educational.exam.bean.ExamTeacher">
+        insert into T_JW_EXAM_TEACHER (id, exam_id, teacher_person_id, teacher_dept_id, creator, create_dept, create_time)
+        values (FUNC_GET_UUID, #{examId}, #{teacherPersonId}, #{teacherDeptId}, #{creator}, #{createDept}, sysdate)
+    </insert>
+    <select id="getSelectedEmpByExamId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamTeacher">
+        select *
+        from T_JW_EXAM_ROOM_TEACHER
+        where
+            exam_id = #{examId}
+    </select>
+    <delete id="deleteOriginalExamTeacher" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_TEACHER
+        where exam_id = #{examId}
+    </delete>
+    <delete id="deleteOriginalExamCourseClass" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_COURSE_CLASS
+        where exam_course_id = #{id}
+    </delete>
+    <delete id="deleteOriginalExamStudent" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_STUDENT
+        where exam_id = #{examId}
+    </delete>
+
+    <select id="getExamRoomList" parameterType="com.goisan.educational.exam.bean.ExamRoom"
+            resultType="com.goisan.educational.exam.bean.ExamRoom">
+        select
+        exam_room_id examRoomId,
+        room_id roomId,
+        FUNC_GET_DICVALUE(room_type,'JSLX') AS roomType,
+        exam_id examId,
+        FUNC_GET_DEPTNAME(departments_id) departmentShow,
+        decode(major_code,'','',FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') ) majorShow,
+        FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME') roomName,
+        FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classShow,
+        student_number studentNumber,
+        people_number peopleNumber,
+        teacher_number teacherNumber,
+        departments_id departmentsId
+        from
+        T_JW_EXAM_ROOM
+        where 1 = 1
+        <if test="createDept != null and createDept != '' ">
+            AND create_dept= #{createDept}
+        </if>
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+        <if test="roomName != null and roomName != '' ">
+            AND room_name like '%'|| #{roomName} ||'%'
+        </if>
+    </select>
+    <select id="selectPeopleNumberByRoomId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.place.classroom.bean.Classroom">
+        select people_number
+        from
+            T_JW_CLASSROOM
+        where 1 = 1
+          and valid_flag = 1
+          and id = #{roomId}
+    </select>
+    <insert id="insertExamRoom" parameterType="com.goisan.educational.exam.bean.ExamRoom">
+        insert into T_JW_EXAM_ROOM (exam_room_id, exam_id, room_type, room_id, room_name, departments_id, major_code, training_level, class_id, people_number, student_number, teacher_number, creator, create_dept, create_time)
+        values (#{examRoomId}, #{examId}, #{roomType}, #{roomId}, #{roomName}, #{departmentsId}, #{majorCode}, #{trainingLevel}, #{classId}, #{peopleNumber}, #{studentNumber}, #{teacherNumber}, #{creator}, #{createDept}, sysdate)
+    </insert>
+    <update id="updateExamRoom" parameterType="com.goisan.educational.exam.bean.ExamRoom">
+        update T_JW_EXAM_ROOM
+        set
+            room_type =#{roomType},
+            room_id=#{roomId},
+            room_name=#{roomName},
+            student_number=#{studentNumber},
+            teacher_number=#{teacherNumber},
+            departments_id=#{departmentsId},
+            major_code=#{majorCode},
+            training_level=#{trainingLevel},
+            class_id=#{classId},
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate
+        where exam_room_id = #{examRoomId}
+    </update>
+    <delete id="delExamRoomById" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_ROOM
+        where EXAM_ROOM_ID = #{id}
+    </delete>
+    <delete id="deleteOriginalExamRoom" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_ROOM
+        where EXAM_ID = #{examId}
+    </delete>
+    <select id="selectExamRoomById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamRoom">
+        select
+            exam_room_id   examRoomId,
+            room_type      roomType,
+            room_id        roomId,
+            room_name      roomName,
+            student_number studentNumber,
+            people_number  peopleNumber,
+            teacher_number teacherNumber,
+            departments_id departmentsId,
+            class_id       class_id,
+            major_code     majorCode,
+            training_level trainingLevel
+        from T_JW_EXAM_ROOM
+        where exam_room_id = #{id}
+    </select>
+    <select id="getExamRoomById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamRoom">
+        select
+        *
+        from T_JW_EXAM_ROOM
+        WHERE 1 = 1
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+        <if test="roomId != null and roomId != '' ">
+            AND room_id= #{roomId}
+        </if>
+    </select>
+
+    <select id="getExamCourseById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourse">
+        select
+        *
+        from T_JW_EXAM_COURSE
+        where 1 = 1
+        <if test="courseId != null and courseId != '' ">
+            AND course_id= #{courseId}
+        </if>
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+    </select>
+    <select id="checkExamCourseStartTimeById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourse">
+        select
+        *
+        from T_JW_EXAM_COURSE
+        where 1 = 1
+        <if test="startTime != null and startTime != '' ">
+            AND start_time = to_date(#{startTime},'yyyy-mm-dd HH24:mi')
+            and course_id=#{courseId}
+        </if>
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+    </select>
+    <select id="checkExamCourseEndTimeById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourse">
+        select
+        *
+        from T_JW_EXAM_COURSE
+        where 1 = 1
+        <if test="endTime != null and endTime != '' ">
+            AND end_time = to_date(#{endTime},'yyyy-mm-dd HH24:mi')
+
+        </if>
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+
+    </select>
+    <select id="getExamTeacherCountByExamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(teacher_person_id)
+        from T_JW_EXAM_TEACHER
+        where exam_id = #{examId}
+    </select>
+    <select id="getExamRoomTeacherSumByExamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(class_id)
+        from T_JW_EXAM_CLASS
+        where exam_id = #{examId}
+    </select>
+    <insert id="insertExamRoomTeacher" parameterType="com.goisan.educational.exam.bean.ExamRoom">
+        insert into T_JW_EXAM_ROOM_TEACHER (id, exam_id, room_id, teacher_person_id, teacher_dept_id, creator, create_dept, create_time, "DATE", START_TIME, END_TIME)
+        values (FUNC_GET_UUID, #{examId}, #{roomId}, #{teacherPersonId}, #{teacherDeptId}, #{creator}, #{createDept}, sysdate, #{date}, #{startTime}, #{endTime})
+    </insert>
+    <select id="getExamTeacherById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamTeacher">
+        select DISTINCT TEACHER_PERSON_ID,
+                        TEACHER_DEPT_ID
+        from T_JW_EXAM_TEACHER_COURSE
+        where 1 = 1
+          AND teacher_person_id not in (SELECT teacher_person_id FROM T_JW_EXAM_ROOM_TEACHER where exam_id = #{examId})
+        order by DBMS_RANDOM.value
+    </select>
+    <select id="getEmpTreeForHandWork" parameterType="java.lang.String" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        s.dept_id id,
+        s.dept_name name,
+        s.parent_dept_id pid
+        FROM t_sys_dept s
+        where s.dept_id in(
+        SELECT
+
+        d.parent_dept_id pid
+        FROM t_sys_dept d,
+        T_JW_EXAM_TEACHER_COURSE r
+        where d.dept_id=r.teacher_dept_id
+        and d.parent_dept_id !=0
+        UNION
+        SELECT
+        distinct
+
+        ed.dept_id pid
+        FROM t_rs_employee e,T_JW_EXAM_TEACHER_COURSE et,T_JW_EXAM_ROOM_TEACHER ert,t_rs_employee_dept ed
+        WHERE
+        et.teacher_dept_id=ed.dept_id
+        and et.teacher_person_id=e.person_id)
+        union
+        SELECT
+        d.dept_id id,
+        d.dept_name name,
+        d.parent_dept_id pid
+        FROM t_sys_dept d,
+        T_JW_EXAM_ROOM_TEACHER r
+        where d.dept_id=r.teacher_dept_id
+        and d.parent_dept_id !=0
+        UNION
+        SELECT
+        distinct
+        e.person_id id,
+        e.name,
+        ed.dept_id pid
+        FROM t_rs_employee e,T_JW_EXAM_TEACHER_COURSE et,T_JW_EXAM_ROOM_TEACHER ert,t_rs_employee_dept ed
+        WHERE
+        et.teacher_dept_id=ed.dept_id
+        and et.teacher_person_id=e.person_id
+        <if test="examId != null and examId != '' ">
+            AND ert.exam_id= #{examId}
+        </if>
+
+    </select>
+    <select id="getSelectedEmpTreeByExamIdAndRoomId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamRoomTeacher">
+        SELECT
+            *
+        FROM
+            T_JW_EXAM_ROOM_TEACHER
+        where exam_id = #{examId}
+          AND room_id = #{roomId}
+    </select>
+    <delete id="deleteOriginalExamRoomTeacher" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_ROOM_TEACHER
+        where exam_id = #{examId}
+    </delete>
+    <select id="getExamRoomTeacherByExamRoomId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamRoomTeacher">
+        select
+            *
+        from T_JW_EXAM_ROOM_TEACHER
+        where exam_id = #{id}
+    </select>
+    <select id="selectExamRoomTeacherByExamIdAndClassId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamRoomClass">
+        select
+            t.*,
+            s.teacher_person_id,
+            s.teacher_dept_id,
+            h.start_time,
+            h.end_time
+        from T_JW_EXAM_COURSE_CLASS t,
+             T_JW_EXAM_ROOM_TEACHER s,
+             T_JW_EXAM_COURSE h
+        where
+            t.exam_id = #{examId}
+          and t.CLASS_ID = #{classId}
+          and t.exam_room_id = s.exam_room_id
+          and t.exam_room_id = h.exam_room_id
+          and h.exam_room_id = s.exam_room_id
+          and rownum &lt; 2
+    </select>
+    <update id="updateExamCourse" parameterType="com.goisan.educational.exam.bean.ExamCourse">
+        update T_JW_EXAM_COURSE
+        set
+            course_type =#{courseType},
+            course_id =#{courseId},
+            departments_id =#{departmentsId},
+            major_code =#{majorCode},
+            training_level=#{trainingLevel},
+            exam_type=#{examType},
+            exam_room_id = #{examRoomId},
+            room_id = #{roomId},
+            start_time = to_date(#{startTime},'yyyy-mm-dd hh24:mi'),
+            end_time = to_date(#{endTime},'yyyy-mm-dd hh24:mi'),
+            exam_minute =#{examMinute},
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate
+        where exam_course_id = #{examCourseId}
+    </update>
+    <select id="getOriginalTeacherNum" parameterType="java.lang.String" resultType="java.lang.String">
+        select distinct teacher_number from T_JW_EXAM_ROOM
+        where 1 = 1
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+
+        <if test="roomId != null and roomId != '' ">
+            AND room_id=#{roomId}
+        </if>
+
+    </select>
+    <select id="getSelectedEmpSize" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(e.person_id)
+        from T_RS_EMPLOYEE_DEPT t,
+             t_rs_employee e
+        where t.person_id = e.person_id
+          and
+            t.person_id in (${ids})
+    </select>
+    <update id="updateExamRoomTeacherByRoomIdForHandWork"
+            parameterType="com.goisan.educational.exam.bean.ExamRoomTeacher">
+        update T_JW_EXAM_ROOM_TEACHER
+        set
+            teacher_person_id= #{teacherPersonId},
+            teacher_dept_id=#{teacherDeptId},
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate
+        where room_id = #{roomId}
+    </update>
+    <!--<select id="getExamStudentList" parameterType="com.goisan.educational.exam.bean.ExamStudent"-->
+            <!--resultType="com.goisan.educational.exam.bean.ExamStudent">-->
+        <!--select-->
+        <!--distinct-->
+        <!--t.id id,-->
+        <!--t.exam_id examId,-->
+        <!--FUNC_GET_DEPTNAME(t.departments_id) departmentShow,-->
+        <!--decode(t.major_code,'','',FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '&#45;&#45;' ||-->
+        <!--FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') ) majorShow,-->
+        <!--FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,-->
+        <!--FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classShow,-->
+        <!--FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'course_id', 'course_name') course_id,-->
+        <!--t.student_number studentNumber,-->
+        <!--t.departments_id departmentsId,-->
+        <!--t.major_code majorCode,-->
+        <!--t.training_level trainingLevel,-->
+        <!--t.CLASS_ID classId,-->
+        <!--t.student_id,-->
+        <!--t.exam_flag examFlag,-->
+        <!--t.STATUS,-->
+        <!--FUNC_GET_DICVALUE(t.TERM,'XQ') termShow-->
+        <!--from-->
+        <!--T_JW_EXAM_STUDENT t-->
+        <!--where 1 = 1-->
+
+        <!--<if test="examId != null and examId != '' ">-->
+            <!--AND t.exam_id= #{examId}-->
+        <!--</if>-->
+        <!--<if test="courseId != null and courseId != '' ">-->
+            <!--AND t.course_id= #{courseId}-->
+        <!--</if>-->
+        <!--<if test="departmentsId != null and departmentsId != '' ">-->
+            <!--AND t.departments_id= #{departmentsId}-->
+        <!--</if>-->
+        <!--<if test="majorCode != null and majorCode != '' ">-->
+            <!--AND t.major_code= #{majorCode}-->
+        <!--</if>-->
+        <!--<if test="trainingLevel != null and trainingLevel != '' ">-->
+            <!--AND t.training_level= #{trainingLevel}-->
+        <!--</if>-->
+        <!--<if test="classId != null and classId != '' ">-->
+            <!--AND t.class_id= #{classId}-->
+        <!--</if>-->
+        <!--<if test="studentName != null and studentName != '' ">-->
+            <!--AND t.student_name like '%'||#{studentName}||'%'-->
+        <!--</if>-->
+        <!--<if test="studentId != null and studentId != '' ">-->
+            <!--AND t.student_id= #{studentId}-->
+        <!--</if>-->
+        <!--<if test="term != null and term != '' ">-->
+            <!--AND t.term= #{term}-->
+        <!--</if>-->
+        <!--order by t.departments_id,t.major_code,t.training_level,t.class_id,t.student_number-->
+    <!--</select>-->
+<!--majorShow 去除training_level-->
+    <select id="getExamStudentList" parameterType="com.goisan.educational.exam.bean.ExamStudent"
+            resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select
+        distinct
+        t.id id,
+        t.exam_id examId,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentShow,
+        decode(t.major_code,'','',FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') ) majorShow,
+        FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
+        FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classShow,
+        FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'course_id', 'course_name') course_id,
+        t.student_number studentNumber,
+        t.departments_id departmentsId,
+        t.major_code majorCode,
+        t.training_level trainingLevel,
+        t.CLASS_ID classId,
+        t.student_id,
+        t.exam_flag examFlag,
+        t.STATUS,
+        FUNC_GET_DICVALUE(t.TERM,'XQ') termShow
+        from
+        T_JW_EXAM_STUDENT t
+        where 1 = 1
+
+        <if test="examId != null and examId != '' ">
+            AND t.exam_id= #{examId}
+        </if>
+        <if test="courseId != null and courseId != '' ">
+            AND t.course_id= #{courseId}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t.class_id= #{classId}
+        </if>
+        <if test="studentName != null and studentName != '' ">
+            AND t.student_name like '%'||#{studentName}||'%'
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND t.student_id= #{studentId}
+        </if>
+        <if test="term != null and term != '' ">
+            AND t.term= #{term}
+        </if>
+        order by t.departments_id,t.major_code,t.training_level,t.class_id,t.student_number
+    </select>
+    <select id="getExamClassByExamId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select distinct(c.class_id),
+                       c.departments_id,
+                       c.major_code
+        from T_JW_EXAM_COURSE_CLASS c
+        where c.exam_id = #{examId}
+    </select>
+    <select id="getExamCourseClassByExamId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select
+            c.*,
+            FUNC_GET_DICVALUE(c.TRAINING_LEVEL, 'ZXZYPYCC') AS                          trainingLevelShow,
+            FUNC_GET_TABLEVALUE(c.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+            FUNC_GET_TABLEVALUE(c.class_id, 'T_XG_CLASS', 'class_id', 'class_name')     classShow
+        from T_JW_EXAM_COURSE_CLASS c
+        where c.exam_id = #{examId}
+    </select>
+    <select id="findExamCourseListByExamId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select distinct(n.class_id),
+                       m.course_type,
+                       n.departments_id,
+                       n.major_code,
+                       n.training_level,
+                       h.room_type,
+                       j.teacher_person_id,
+                       j.teacher_dept_id,
+                       h.room_id,
+                       n.course_id,
+                       m.start_time,
+                       m.end_time,
+                       n.exam_type
+        from T_JW_EXAM_COURSE m,
+             T_JW_EXAM_COURSE_CLASS n,
+             T_JW_EXAM_ROOM h,
+             T_JW_EXAM_ROOM_TEACHER j
+        where m.exam_id = n.exam_id
+          and m.exam_room_id = h.exam_room_id
+          and h.exam_room_id = j.exam_room_id
+          and m.exam_id = #{examId}
+
+    </select>
+    <select id="findExamCourseListByClassId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select *
+        from T_JW_EXAM_COURSE_CLASS
+        where
+            CLASS_ID = #{classId}
+
+    </select>
+    <select id="getStudentListByClassId" parameterType="java.lang.String" resultType="com.goisan.system.bean.Student">
+        select c.class_id,t.student_id,t.name,t.student_number
+        from T_XG_STUDENT t,
+             t_xg_student_class c
+        where t.student_id = c.student_id
+          AND c.class_id = #{classId}
+
+    </select>
+    <insert id="insertExamStudent" parameterType="com.goisan.educational.exam.bean.ExamStudent">
+        insert into T_JW_EXAM_STUDENT (id, exam_id, student_id, student_name, student_number, departments_id, major_code, training_level, class_id, exam_flag, creator, create_dept, create_time)
+        values (FUNC_GET_UUID, #{examId}, #{studentId}, #{studentName}, #{studentNumber}, #{departmentsId}, #{majorCode}, #{trainingLevel}, #{classId}, 0, #{creator}, #{createDept}, sysdate)
+    </insert>
+    <delete id="delExamStduentById" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_STUDENT
+        where id = #{id}
+    </delete>
+    <select id="autoCompleteStudent" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+            t.name       as "label",
+            t.student_id as "value"
+        FROM T_XG_STUDENT t
+    </select>
+    <select id="getExamRoomStudentSumByExamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select sum(student_number),count(class_id)
+        from T_JW_EXAM_ROOM
+        where exam_id = #{examId}
+    </select>
+    <select id="getExamStudentCountByExamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(student_number),count(class_id)
+        from T_JW_EXAM_STUDENT
+        where exam_id = #{examId}
+    </select>
+    <select id="getExamRoomClassNumByExamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(DISTINCT CLASS_ID)
+        from T_JW_EXAM_ROOM
+        where exam_id = #{examId}
+    </select>
+    <select id="getExamStudentClassCountByExamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(DISTINCT CLASS_ID)
+        from T_JW_EXAM_STUDENT
+        where exam_id = #{examId}
+    </select>
+    <select id="getTeacherArrayList" parameterType="com.goisan.educational.exam.bean.ExamArray"
+            resultType="com.goisan.educational.exam.bean.ExamArray">
+        select *
+        from (select t.id,
+        t.exam_id examId,
+        wm_concat(FUNC_GET_USERNAME(t2.TEACHER_PERSON_ID)) teacherPersonShow,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentShow,
+        FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorShow,
+        FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        FUNC_GET_TABLEVALUE(t.ROOM_ID, 'T_JW_EXAM_ROOM', 'ROOM_ID', 'ROOM_NAME') roomShow,
+        FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') || '(' || (
+        select count(STUDENT_ID)
+        from T_JW_EXAM_ARRAY_STUDENT t3
+        where t3.EXAM_ID = t.EXAM_ID
+        and t3.COURSE_ID = t.COURSE_ID
+        and t3.CLASS_ID = t.CLASS_ID
+        and t3."DATE" = t."DATE"
+        and t3.START_TIME = t.START_TIME
+        and t3.END_TIME = t.END_TIME
+        and t3.ROOM_ID = t.ROOM_ID
+        ) || ')' classShow,
+        t.course_id courseId,
+        t.departments_id departmentsId,
+        t.room_id roomId,
+        t.start_time,
+        t.end_time,
+        t."DATE"
+        from T_JW_EXAM_ARRAY t,
+        T_JW_EXAM_ROOM_TEACHER t2
+        where t.ROOM_ID = t2.ROOM_ID
+        and t.EXAM_ID = t2.EXAM_ID
+        and t."DATE" = t2."DATE"
+        and t.START_TIME = t2.START_TIME
+        and t.END_TIME = t2.END_TIME
+        <if test="examId != null and examId != '' ">
+            AND t.exam_id = #{examId}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+        <if test="courseId != null and courseId != '' ">
+            AND t.course_id= #{courseId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t.class_id = #{classId}
+        </if>
+
+        <if test="date != null and date != '' ">
+            and t."DATE" = #{date}
+        </if>
+        group by t.ID, t.EXAM_ID, t.COURSE_ID, t.ROOM_ID, t.DEPARTMENTS_ID,t.major_code,t.class_id, t.START_TIME,
+        t.END_TIME, t."DATE")
+        where 1=1
+        <if test="teacherPersonShow != null and teacherPersonShow != '' ">
+            and teacherPersonShow like '%${teacherPersonShow}%'
+        </if>
+        <if test="roomShow != null and roomShow != '' ">
+            and roomShow like '%${roomShow}%'
+        </if>
+    </select>
+    <insert id="insertExamArray" parameterType="com.goisan.educational.exam.bean.ExamArray">
+        insert into T_JW_EXAM_ARRAY (id, exam_id, room_id, departments_id, major_code, training_level, class_id, exam_type, course_id, teacher_person_id, teacher_dept_id, start_time, end_time, creator, create_dept, create_time)
+        values (FUNC_GET_UUID, #{examId}, #{roomId}, #{departmentsId}, #{majorCode}, #{trainingLevel}, #{classId}, #{examType}, #{courseId}, #{teacherPersonId}, #{teacherDeptId}, to_date('${startTime}', 'yyyy-mm-dd HH24:mi:ss'), to_date('${endTime}', 'yyyy-mm-dd HH24:mi:ss'), #{creator}, #{createDept}, sysdate)
+    </insert>
+    <select id="getStudentArrayList" parameterType="com.goisan.educational.exam.bean.ExamArrayStudent"
+            resultType="com.goisan.educational.exam.bean.ExamArrayStudent">
+        select * from (select
+        id id,
+        exam_id examId,
+        STUDENT_ID,
+        FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
+        FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME') roomName,
+        FUNC_GET_DEPTNAME(departments_id) departmentShow,
+        decode(major_code,'','',FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') ) majorShow,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classShow,
+        start_time,
+        end_time,
+        FUNC_GET_DICVALUE(STUDENT_EXAM_FLAG,'PKZT') flagShow,
+        student_exam_flag studentExamFlag,
+        seat_number seatNumber,
+        ticket_number ticketNumber,
+        STUDENT_NUMBER studentNumber,
+        course_id,
+        departments_id,
+        major_code,
+        training_level,
+        class_id,
+        room_id,
+        "DATE"
+        from
+        T_JW_EXAM_ARRAY_STUDENT
+        where 1 = 1
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND departments_id= #{departmentsId}
+        </if>
+        <if test="courseId != null and courseId != '' ">
+            AND course_id= #{courseId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND major_code= #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != ''and classId != 'null' ">
+            AND class_id= #{classId}
+        </if>)
+        where 1=1
+        <if test="roomId != null and roomId != '' ">
+            AND FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME') like '%${roomId}%'
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') like '%${studentId}%'
+        </if>
+        ORDER BY "DATE",START_TIME,ROOM_ID desc
+    </select>
+    <select id="selectTeacherArrayById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamArray">
+        select
+            id                                                                         id,
+            exam_id                                                                    examId,
+            room_id                                                                    roomId,
+            FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME')    roomName,
+            to_char(start_time, 'yyyy-mm-dd') || 'T' || to_char(start_time, 'HH24:mi') startTime,
+            to_char(end_time, 'yyyy-mm-dd') || 'T' || to_char(end_time, 'HH24:mi')     endTime
+        from T_JW_EXAM_ARRAY
+        where id = #{id}
+    </select>
+    <select id="selectStudentArrayById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamArrayStudent">
+        select
+            id                                                                      id,
+            exam_id                                                                 examId,
+            FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME') roomName,
+            room_id                                                                 roomId
+        from T_JW_EXAM_ARRAY_STUDENTz
+        where id = #{id}
+    </select>
+    <update id="updateTeacherArray" parameterType="com.goisan.educational.exam.bean.ExamArray">
+        update T_JW_EXAM_ARRAY
+        set
+            room_id=#{roomId},
+            start_time = to_date(#{startTime}, 'yyyy-mm-dd HH24:mi:ss'),
+            end_time = to_date(#{endTime}, 'yyyy-mm-dd HH24:mi:ss'),
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate
+        where id = #{id}
+    </update>
+    <update id="updateStudentArray" parameterType="com.goisan.educational.exam.bean.ExamArrayStudent">
+        update T_JW_EXAM_ARRAY_STUDENT
+        set
+            ROOM_ID=#{roomId},
+            STUDENT_EXAM_FLAG='1',
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate
+        where id = #{id}
+    </update>
+    <delete id="deleteTeacherArray" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_ARRAY
+        where id = #{id}
+    </delete>
+    <select id="checkExamListAutoPossibility" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.Exam">
+        select
+        *
+        from T_JW_EXAM
+        where 1 =1
+        AND EXAM_FLAG='1'
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+    </select>
+    <update id="changeExamFlag" parameterType="com.goisan.educational.exam.bean.Exam">
+        update t_jw_exam
+        set
+            exam_flag=#{examFlag},
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate
+        where exam_id = #{examId}
+    </update>
+    <select id="checkExamArrayStudentListAutoPossibility" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamArrayStudent">
+        select
+        *
+        from T_JW_EXAM_ARRAY_STUDENT
+        where 1 =1
+        AND STUDENT_EXAM_FLAG='1'
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+    </select>
+
+    <select id="selectExamStudentInsideOfExamRoom" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select DEPARTMENTS_ID, MAJOR_CODE, TRAINING_LEVEL, CLASS_ID
+        from (select DISTINCT DEPARTMENTS_ID, MAJOR_CODE, TRAINING_LEVEL, CLASS_ID
+        from T_JW_EXAM_STUDENT
+        where 1 = 1
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>) a
+        where a.class_id in (select distinct class_id
+
+        from T_JW_EXAM_CLASS where 1 = 1
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+        )
+    </select>
+    <select id="selectExamStudentOutsideOfExamRoom" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select DEPARTMENTS_ID, MAJOR_CODE, TRAINING_LEVEL, CLASS_ID
+        from (select DISTINCT DEPARTMENTS_ID, MAJOR_CODE, TRAINING_LEVEL, CLASS_ID
+        from T_JW_EXAM_STUDENT
+        where 1 = 1
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+        ) a
+        where a.class_id not in (select distinct class_id
+
+        from T_JW_EXAM_CLASS where 1 = 1
+        <if test="examId != null and examId != '' ">
+            AND exam_id= #{examId}
+        </if>
+        )
+    </select>
+
+    <insert id="insertExamArrayStudent" parameterType="com.goisan.educational.exam.bean.ExamArrayStudent">
+        insert into T_JW_EXAM_ARRAY_STUDENT (id, exam_id, room_id, departments_id, major_code, training_level, class_id, course_id, student_id, student_number, ticket_number, seat_number, start_time, end_time, student_exam_flag, creator, create_dept, create_time, "DATE")
+        values (FUNC_GET_UUID, #{examId}, #{roomId}, #{departmentsId}, #{majorCode}, #{trainingLevel}, #{classId}, #{courseId}, #{studentId}, #{studentNumber}, #{ticketNumber}, #{seatNumber}, #{startTime}, #{endTime}, #{studentExamFlag}, #{creator}, #{createDept}, sysdate,#{date})
+    </insert>
+    <select id="getExamRoomByClassId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamRoom">
+        select t.student_number,t.room_id
+        from T_JW_EXAM_ROOM t,T_JW_EXAM_CLASS s
+        where 1= 1 AND t.exam_room_id = s.exam_room_id
+        <if test="examId != null and examId != '' ">
+            AND t.exam_id= #{examId}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND s.class_id= #{classId}
+        </if>
+        ORDER BY t.student_number
+    </select>
+    <select id="selectExamStudentByClassId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select t.student_number,t.student_id,t.class_id,t.departments_id,t.major_code,t.training_level
+        from T_JW_EXAM_STUDENT t
+        where 1= 1
+        <if test="examId != null and examId != '' ">
+            AND t.exam_id= #{examId}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t.class_id = #{classId}
+        </if>
+    </select>
+    <delete id="delExamArrayById" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_ARRAY
+        where id = #{id}
+    </delete>
+    <delete id="delExamArrayStudentById" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_ARRAY_STUDENT
+        where id = #{id}
+    </delete>
+    <select id="getExamStudentById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select *
+        from T_JW_EXAM_STUDENT t
+        where 1= 1
+        <if test="examId != null and examId != '' ">
+            AND t.exam_id= #{examId}
+        </if>
+    </select>
+    <select id="getClassRoomByClassId" parameterType="java.lang.String" resultType="java.lang.String">
+        select room_id
+        from T_XG_CLASS
+        where 1 = 1
+          AND CLASS_ID = #{classId}
+    </select>
+    <select id="selectClassRoomById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.place.classroom.bean.Classroom">
+        select *
+        from T_JW_CLASSROOM
+        where 1 = 1
+          AND id = #{roomId}
+    </select>
+    <select id="getAllExamCourseClassNumByExamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select COUNT(DISTINCT CLASS_ID)
+        FROM T_JW_EXAM_COURSE_CLASS
+        where exam_id = #{examId}
+    </select>
+    <select id="getAllExamRoomClassNumByExamId" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(CLASS_ID)
+        from T_JW_EXAM_COURSE_CLASS
+        where exam_id = #{examId}
+    </select>
+    <select id="getPeopleNumber" parameterType="java.lang.String"
+            resultType="com.goisan.educational.place.classroom.bean.Classroom">
+        SELECT people_number
+        FROM T_JW_CLASSROOM
+        WHERE id LIKE #{roomId}
+    </select>
+    <select id="getExamRoomClassTree" resultType="com.goisan.system.bean.Tree">
+        SELECT t.dept_id id, t.dept_name name, t.parent_dept_id pid
+        FROM t_sys_dept t,
+             t_xg_major b
+        where t.parent_dept_id != 0 and t.dept_id=b.departments_id
+        UNION
+        select f.MAJOR_CODE id,f.MAJOR_NAME name,f.departments_id pid
+        from t_xg_major f
+        UNION
+        select s.class_id id,s.class_name || ',班级人数' || d.a name,s.MAJOR_CODE pid
+        from t_xg_class s,
+             (select count(d.class_id) a,d.class_id
+              from t_xg_student_class f,
+                   t_xg_class d
+              where f.class_id = d.class_id
+              group by d.class_id) d
+        where s.class_id = d.class_id
+    </select>
+    <delete id="deleteOriginalExamClass" parameterType="com.goisan.educational.exam.bean.ExamClass">
+        delete
+        from T_JW_EXAM_CLASS
+        where exam_room_id = #{examRoomId}
+          AND room_id = #{roomId}
+          and exam_id = #{examId}
+    </delete>
+    <select id="chooseClassList" parameterType="java.lang.String" resultType="com.goisan.system.bean.ClassBean">
+        select distinct e.class_id, e.major_code majorCode
+        from t_xg_class e
+        where
+            e.major_code like '%' || #{majorCode} || '%'
+          and
+            e.class_id in (${ids})
+    </select>
+    <insert id="insertExamClass" parameterType="com.goisan.educational.exam.bean.ExamClass">
+        insert into T_JW_EXAM_CLASS (id, room_id, exam_id, exam_room_id, class_id, departments_id, major_code, creator, create_dept, create_time)
+        values (FUNC_GET_UUID, #{roomId}, #{examId}, #{examRoomId}, #{classId}, #{departmentsId}, #{majorCode}, #{creator}, #{createDept}, sysdate)
+    </insert>
+    <select id="getSelectedClassByExamRoomId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamClass">
+        SELECT *
+        FROM T_JW_EXAM_CLASS
+        WHERE
+            EXAM_ROOM_ID = #{examRoomId}
+          and room_id = #{roomId}
+    </select>
+    <select id="getStudentNumberByClassId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(CLASS_ID)
+        FROM T_XG_STUDENT_CLASS
+        WHERE CLASS_ID IN (${ids})
+    </select>
+    <select id="getPeopleNumberByExamId" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT people_number
+        FROM T_JW_EXAM_ROOM
+        WHERE EXAM_ROOM_ID = #{EXAMROOMID}
+    </select>
+    <select id="chooseMajorList" parameterType="java.lang.String" resultType="com.goisan.educational.major.bean.Major">
+        select DISTINCT
+            major_code majorCode
+        from T_XG_MAJOR
+        where departments_id = #{dept_id}
+          and major_code in (${ids})
+    </select>
+    <select id="getClassIdByRoom" parameterType="com.goisan.educational.exam.bean.ExamClass"
+            resultType="java.lang.String">
+        select distinct FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'class_id', 'class_name') classId
+        from T_JW_EXAM_CLASS t
+        where exam_id = #{examId}
+          and exam_room_id = #{examRoomId}
+    </select>
+    <select id="getRoomTypeByExamRoomId" parameterType="java.lang.String" resultType="java.lang.String">
+        select room_type
+        from T_JW_EXAM_ROOM
+        where exam_room_id = #{examRoomId}
+    </select>
+    <select id="getExamCourseClassTree" parameterType="com.goisan.educational.exam.bean.ExamCourse"
+            resultType="com.goisan.system.bean.Tree">
+        select a.dept_id id,a.dept_name name,a.parent_dept_id pid
+        from t_sys_dept a
+        where a.dept_id in (select distinct k.departments_id
+                            from T_XG_Class k
+                            where k.class_id in (select distinct h.class_id
+                                                 from T_JW_EXAM_CLASS h
+                                                 where h.exam_id = #{examId}
+                                                   and h.exam_room_id = #{examRoomId}))
+        union
+        select s.major_code     id
+                ,
+               s.major_name     name
+                ,
+               s.departments_id pid
+        from t_xg_major s
+        where s.major_code in
+              (select distinct j.major_code
+               from T_XG_Class j
+               where j.class_id in (select distinct n.class_id
+                                    from T_JW_EXAM_CLASS n
+                                    where n.exam_id = #{examId}
+                                      and n.exam_room_id = #{examRoomId}))
+        union
+        select m.course_id   id
+                ,
+               m.course_name name
+                ,
+               m.major_code  pid
+        from T_JW_COURSE m
+        where m.major_code in
+              (select distinct j.major_code
+               from T_XG_Class j
+               where j.class_id in (select distinct n.class_id
+                                    from T_JW_EXAM_CLASS n
+                                    where n.exam_id = #{examId}
+                                      and n.exam_room_id = #{examRoomId}))
+    </select>
+    <select id="getSelectedCourseByExamRoomId" parameterType="com.goisan.educational.exam.bean.ExamCourse"
+            resultType="com.goisan.educational.exam.bean.ExamClass">
+        SELECT
+            exam_course_id examCourseId,
+            exam_id        examId,
+            course_type    courseType,
+            course_id      courseId,
+            departments_id departmentsId,
+            major_code     majorCode
+        FROM T_JW_EXAM_COURSE
+        WHERE
+            exam_id = #{examId}
+          and room_id = #{roomId}
+          and exam_room_id = #{examRoomId}
+    </select>
+    <select id="getExamClassByExamRoom" parameterType="com.goisan.educational.exam.bean.ExamRoom"
+            resultType="com.goisan.educational.exam.bean.ExamClass">
+        SELECT *
+        FROM T_JW_EXAM_CLASS
+        WHERE exam_room_id = #{examRoomId}
+          AND exam_id = #{examId}
+    </select>
+    <select id="chooseCourseList" parameterType="java.lang.String"
+            resultType="com.goisan.educational.course.bean.Course">
+        select DISTINCT
+            course_id
+        from T_JW_COURSE
+        where major_code = #{majorCode}
+          and course_id in (${ids})
+    </select>
+    <delete id="deleteOriginalExamCourse" parameterType="com.goisan.educational.exam.bean.ExamCourse">
+        delete
+        from T_JW_EXAM_COURSE
+        where exam_course_id = #{examCourseId}
+          and exam_id = #{examId}
+    </delete>
+    <select id="getExamCourseExamClassTree" parameterType="com.goisan.educational.exam.bean.ExamCourseClass"
+            resultType="com.goisan.system.bean.Tree">
+        select a.dept_id id,a.dept_name name,a.parent_dept_id pid
+        from t_sys_dept a
+        where a.dept_id in (select distinct k.departments_id
+                            from T_XG_Class k
+                            where k.class_id in (select distinct h.class_id
+                                                 from T_JW_EXAM_CLASS h
+                                                 where h.exam_id = #{examId}
+                                                   and h.exam_room_id = #{examRoomId}))
+        union
+        select s.major_code     id
+                ,
+               s.major_name     name
+                ,
+               s.departments_id pid
+        from t_xg_major s
+        where s.major_code in
+              (select distinct j.major_code
+               from T_XG_Class j
+               where j.class_id in (select distinct n.class_id
+                                    from T_JW_EXAM_CLASS n
+                                    where n.exam_id = #{examId}
+                                      and n.exam_room_id = #{examRoomId}))
+        union
+        select m.class_id   id
+                ,
+               m.class_name name
+                ,
+               m.major_code pid
+        from T_XG_Class m
+        where m.class_id in
+              (select distinct n.class_id
+               from T_JW_EXAM_CLASS n
+               where n.exam_id = #{examId}
+                 and n.exam_room_id = #{examRoomId})
+    </select>
+    <delete id="deleteOriginalExamCourseExamClass" parameterType="com.goisan.educational.exam.bean.ExamCourseClass">
+        delete
+        from T_JW_EXAM_COURSE_CLASS
+        where exam_course_id = #{examCourseId}
+          and exam_id = #{examId}
+    </delete>
+    <select id="chooseCourseClassList" parameterType="java.lang.String" resultType="com.goisan.system.bean.ClassBean">
+        select distinct e.class_id, e.major_code majorCode
+        from t_xg_class e
+        where
+            e.major_code = '${majorCode}'
+          and
+            e.class_id in (${ids})
+    </select>
+    <insert id="insertExamCourseExamClass" parameterType="com.goisan.educational.exam.bean.ExamCourseClass">
+        insert into T_JW_EXAM_COURSE_CLASS (id, exam_course_id, exam_room_id, course_id, room_id, exam_id, class_id, departments_id, major_code, creator, create_dept, create_time)
+        values (FUNC_GET_UUID, #{examCourseId}, #{examRoomId}, #{courseId}, #{roomId}, #{examId}, #{classId}, #{departmentsId}, #{majorCode}, #{creator}, #{createDept}, sysdate)
+    </insert>
+    <select id="getSelectedClassByExamCourseClass" parameterType="com.goisan.educational.exam.bean.ExamCourseClass"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        SELECT *
+        FROM T_JW_EXAM_COURSE_CLASS
+        WHERE
+            EXAM_ID = #{examId}
+          and exam_course_id = #{examCourseId}
+          and room_id = #{roomId}
+    </select>
+    <select id="getExamCourseByIds" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamCourse">
+        SELECT *
+        FROM T_JW_EXAM_COURSE
+        WHERE EXAM_COURSE_ID IN (${ids})
+    </select>
+    <update id="saveExamCourseTime" parameterType="com.goisan.educational.exam.bean.ExamCourse">
+        update T_JW_EXAM_COURSE
+        SET
+            START_TIME = to_date('${startTime}', 'yyyy-mm-dd HH24:mi:ss'),
+            END_TIME = to_date('${endTime}', 'yyyy-mm-dd HH24:mi:ss'),
+            EXAM_MINUTE=#{examMinute}
+        WHERE EXAM_ID = #{examId}
+          AND EXAM_ROOM_ID = #{examRoomId}
+          AND EXAM_COURSE_ID = #{examCourseId}
+    </update>
+    <select id="getTeacherNumberByExamRoom" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select sum(teacher_number)
+        from T_JW_EXAM_ROOM
+        where exam_id = #{examId}
+    </select>
+    <select id="getTeacherNumberByExamTeacherCourse" resultType="java.lang.String">
+        select count(*)
+        from (select distinct teacher_person_id from T_JW_EXAM_TEACHER_COURSE)
+    </select>
+    <select id="getExamCourseRoomTeacherList" resultType="com.goisan.educational.exam.bean.ExamArray">
+        select t2.*,
+        FUNC_GET_TABLEVALUE(t2.ROOM_ID, 'T_JW_EXAM_ROOM', 'ROOM_ID', 'ROOM_NAME') roomShow,
+        FUNC_GET_DEPTNAME(t2.TEACHER_DEPT_ID) departmentShow,
+        FUNC_GET_USERNAME(t2.TEACHER_PERSON_ID) teacherPersonIdShow
+        from T_JW_EXAM_ROOM_TEACHER t2
+        where EXAM_ID = #{examId}
+        <if test="examRoomId != null and examRoomId != '' ">
+            AND FUNC_GET_TABLEVALUE(t2.ROOM_ID ,'T_JW_EXAM_ROOM','ROOM_ID','ROOM_NAME') like '%'||#{roomShow}||'%'
+        </if>
+        <if test="roomShow != null and roomShow != '' ">
+            AND FUNC_GET_TABLEVALUE(t2.ROOM_ID, 'T_JW_EXAM_ROOM', 'ROOM_ID', 'ROOM_NAME') like '%'|| #{roomShow} ||'%'
+        </if>
+    </select>
+    <select id="getExamCourseByExamRoom" parameterType="com.goisan.educational.exam.bean.ExamRoom"
+            resultType="com.goisan.educational.exam.bean.ExamCourse">
+        SELECT *
+        FROM T_JW_EXAM_COURSE
+        WHERE 1 = 1
+          AND room_id = #{roomId}
+          AND exam_room_id = #{examRoomId}
+          and exam_id = #{examId}
+    </select>
+    <select id="getTeacherPersonIdByExamRoomTeacher" parameterType="com.goisan.educational.exam.bean.ExamRoomTeacher"
+            resultType="java.lang.String">
+        select teacher_person_id
+        from t_jw_exam_room_teacher
+        where exam_id = #{examId}
+          and room_id = #{roomId}
+    </select>
+    <select id="getExamCourseNum" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(exam_course_id)
+        from T_JW_EXAM_COURSE
+        where exam_id = #{examId}
+    </select>
+    <select id="getExamCourseTime" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(start_time)
+        from T_JW_EXAM_COURSE
+        where exam_id = #{examId}
+    </select>
+    <select id="getExamClassByExamCourse" parameterType="java.lang.String" resultType="java.lang.String">
+        select count(class_id)
+        from T_JW_EXAM_COURSE_CLASS
+        where exam_id = #{examId}
+    </select>
+    <select id="getExamCourseClassById" parameterType="String"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        SELECT *
+        from T_JW_EXAM_COURSE_CLASS
+        where ID = #{id}
+    </select>
+    <delete id="delExamCourseClassById" parameterType="String">
+        delete
+        FROM T_JW_EXAM_COURSE_CLASS
+        where ID = #{id}
+    </delete>
+    <update id="updateExamCourseClass" parameterType="com.goisan.educational.exam.bean.ExamCourseClass">
+        UPDATE T_JW_EXAM_COURSE_CLASS
+        SET EXAM_ID = #{examId},
+            CLASS_ID = #{classId},
+            DEPARTMENTS_ID = #{departmentsId},
+            MAJOR_CODE = #{majorCode},
+            TRAINING_LEVEL = #{trainingLevel},
+            COURSE_ID = #{courseId},
+            EXAM_TYPE = #{examType},
+            EXAM_METHOD = #{examMethod}
+        WHERE ID = #{id}
+    </update>
+    <select id="getExamCourseClass" parameterType="com.goisan.educational.exam.bean.ExamCourseClass"
+            resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select ID,
+        FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID) departmentsId,
+        FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classId,
+        EXAM_TYPE,
+        FUNC_GET_DICVALUE(EXAM_METHOD, 'KCKSKHFF') examMethod
+        from
+        T_JW_EXAM_COURSE_CLASS t
+        where t.EXAM_ID = #{examId}
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.DEPARTMENTS_ID = #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code = #{majorCode}
+        </if>
+        <if test="courseId != null and courseId != '' ">
+            AND t.course_id = #{courseId}
+        </if>
+    </select>
+    <select id="getExamTime" parameterType="com.goisan.educational.exam.bean.ExamTime"
+            resultType="com.goisan.educational.exam.bean.ExamTime">
+        select *
+        from T_JW_EXAM_TIME
+        where EXAM_ID = #{examId}
+    </select>
+    <select id="getExamTimeById" parameterType="String" resultType="com.goisan.educational.exam.bean.ExamTime">
+        select *
+        from T_JW_EXAM_TIME
+        where id = #{id}
+    </select>
+    <delete id="delExamTimeById" parameterType="String">
+        delete
+        from T_JW_EXAM_TIME
+        where id = #{id}
+    </delete>
+    <update id="updateExamTime" parameterType="com.goisan.educational.exam.bean.ExamTime">
+        UPDATE T_JW_EXAM_TIME
+        SET EXAM_ID = #{examId},
+            START_TIME = #{startTime},
+            END_TIME = #{endTime}
+        WHERE ID = #{id}
+    </update>
+    <insert id="insertExamTime" parameterType="com.goisan.educational.exam.bean.ExamTime">
+        INSERT INTO T_JW_EXAM_TIME (ID, EXAM_ID, START_TIME, END_TIME)
+        VALUES (FUNC_GET_UUID(), #{examId}, #{startTime}, #{endTime})
+    </insert>
+    <insert id="autoAddStudent" parameterType="String">
+        insert into T_JW_EXAM_STUDENT (ID, EXAM_ID, STUDENT_ID, STUDENT_NAME, STUDENT_NUMBER, CLASS_ID, DEPARTMENTS_ID, MAJOR_CODE, TRAINING_LEVEL)
+        select FUNC_GET_UUID,
+               '${examId}',
+               t2.STUDENT_ID,
+               t3.NAME,
+               t3.STUDENT_NUMBER,
+               t2.CLASS_ID,
+               t5.DEPARTMENTS_ID,
+               t5.MAJOR_CODE,
+               t5.TRAINING_LEVEL
+        from T_XG_STUDENT_CLASS t2,
+             T_XG_STUDENT t3,
+             T_XG_CLASS t4,
+             T_XG_MAJOR t5
+        where t2.CLASS_ID in (select t1.CLASS_ID from T_JW_EXAM_COURSE_CLASS t1 where t1.EXAM_ID = #{examId})
+          and t2.STUDENT_ID = t3.STUDENT_ID
+          and t4.CLASS_ID = t2.CLASS_ID
+          and t5.MAJOR_CODE = t4.MAJOR_CODE
+          and t5.TRAINING_LEVEL = t4.TRAINING_LEVEL
+          and t3.STUDENT_ID not in (select t2.MANAGER
+                                    from T_JW_EXAM_COURSE_CLASS t1,
+                                         T_JW_SLOW_EXAMINATION t2,
+                                         T_JW_EXAM t3
+                                    where t1.EXAM_ID = #{examId}
+                                      and t1.CLASS_ID = t2.CLASS_ID
+                                      and t2.COURSE_ID like '%' || t1.COURSE_ID || '%'
+                                      and t3.TERM = t2.TERM_ID
+                                      and t1.EXAM_ID = t3.EXAM_ID)
+          and t3.STUDENT_STATUS = '1'
+    </insert>
+    <update id="saveStatus">
+        update T_JW_EXAM_STUDENT
+        set STATUS = #{status}
+        where ID = #{id}
+    </update>
+    <select id="getEmpsTree" parameterType="String" resultType="com.goisan.system.bean.Tree">
+        select TEACHER_PERSON_ID || ',' || TEACHER_DEPT_ID id
+        from T_JW_EXAM_TEACHER
+        where EXAM_ID = #{id}
+    </select>
+    <insert id="saveEmps" parameterType="com.goisan.educational.exam.bean.ExamTeacher">
+        INSERT INTO T_JW_EXAM_TEACHER (ID, EXAM_ID, TEACHER_PERSON_ID, TEACHER_DEPT_ID)
+        VALUES (FUNC_GET_UUID, #{examId}, #{teacherPersonId}, #{teacherDeptId})
+    </insert>
+    <delete id="deleteExamTeacherByExamId" parameterType="String">
+        delete
+        from T_JW_EXAM_TEACHER
+        where EXAM_ID = #{id}
+    </delete>
+    <select id="getExamTimeByExamId" parameterType="String" resultType="com.goisan.educational.exam.bean.ExamTime">
+        select *
+        from T_JW_EXAM_TIME
+        where EXAM_ID = #{examId}
+    </select>
+    <select id="getStudentsByExamId" parameterType="String" resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select *
+        from T_JW_EXAM_STUDENT
+        where EXAM_ID = #{examId}
+          and STATUS = '0'
+    </select>
+    <select id="getExamTeacherByEaxmId" parameterType="String"
+            resultType="com.goisan.educational.exam.bean.ExamTeacher">
+        select *
+        from T_JW_EXAM_TEACHER
+        where EXAM_ID = #{examId}
+    </select>
+    <select id="getExamRoomByExamId" parameterType="String" resultType="com.goisan.educational.exam.bean.ExamArray">
+        select *
+        from T_JW_EXAM_ARRAY
+        where EXAM_ID = #{examId}
+    </select>
+    <insert id="updateExamArray" parameterType="String">
+        insert into T_JW_EXAM_ARRAY (ID, EXAM_ID, COURSE_ID, ROOM_ID, DEPARTMENTS_ID, MAJOR_CODE, TRAINING_LEVEL, CLASS_ID, START_TIME, END_TIME, "DATE")
+        select FUNC_GET_UUID,a.*
+        from (select distinct EXAM_ID,
+                              COURSE_ID,
+                              ROOM_ID,
+                              DEPARTMENTS_ID,
+                              MAJOR_CODE,
+                              TRAINING_LEVEL,
+                              CLASS_ID,
+                              START_TIME,
+                              END_TIME,
+                              "DATE"
+              from T_JW_EXAM_ARRAY_STUDENT
+              where EXAM_ID = #{examId}) a
+    </insert>
+    <delete id="deleteExamArrayStudentByExamId" parameterType="String">
+        delete
+        from T_JW_EXAM_ARRAY_STUDENT
+        where EXAM_ID = #{examId}
+    </delete>
+    <select id="getExamArrayStudentsByCurrent" resultType="com.goisan.educational.exam.bean.ExamArrayStudent">
+        select distinct t1.ROOM_ID,t1.DEPARTMENTS_ID,t2.TEACHER_NUMBER remark
+        from T_JW_EXAM_ARRAY_STUDENT t1,
+             T_JW_EXAM_ROOM t2
+        where "DATE" = #{date}
+          and START_TIME = #{startTime}
+          and END_TIME = #{endTime}
+          and t1.EXAM_ID = t2.EXAM_ID
+          and t2.ROOM_ID = t1.ROOM_ID
+          and t1.EXAM_ID = #{examId}
+    </select>
+    <select id="getStudents" parameterType="com.goisan.educational.exam.bean.ExamStudent"
+            resultType="com.goisan.educational.exam.bean.ExamStudent">
+        /*select * from (*/
+        select t.id id,
+        t.exam_id examId,
+        t.COURSE_ID,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentsId,
+        decode(t.major_code, '', '', FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--'
+        || FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC')) majorCode,
+        FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentId,
+        FUNC_GET_TABLEVALUE(t2.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        EXAM_TYPE examTypes,
+        t.TERM,
+        FUNC_GET_DICVALUE(t.TERM,'XQ') termShow,
+        t.EXAM_METHOD
+        from T_JW_EXAM_STUDENT t,
+        T_JW_EXAM_COURSE_CLASS t2
+        where t.CLASS_ID = t2.CLASS_ID
+        and t.EXAM_ID = t2.EXAM_ID
+        and t.COURSE_ID= t2.COURSE_ID
+        <if test="examId != null and examId != '' ">
+            AND t.exam_id= #{examId}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t2.COURSE_ID= #{classId}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND t.student_id= #{studentId}
+        </if>
+        <if test="studentName != null and studentName != '' ">
+            AND FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') like '%'||#{studentName}||'%'
+        </if>
+    </select>
+    <select id="getStudentById" parameterType="String" resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select t.id,
+               t.exam_id,
+               t.departments_id,
+               t.major_code,
+               t.TRAINING_LEVEL,
+               t.class_id,
+               t.student_id,
+               t2.course_id,
+               EXAM_TYPE examTypes,
+               t2.EXAM_METHOD,
+               t.TERM
+        from T_JW_EXAM_STUDENT t,
+             T_JW_EXAM_COURSE_CLASS t2
+        where t.CLASS_ID = t2.CLASS_ID
+          and t.ID = #{id}
+          and t.EXAM_ID = t2.EXAM_ID
+          and t.EXAM_ID = #{examId}
+          and t2.COURSE_ID = #{courseId}
+    </select>
+    <delete id="delExamStudentById" parameterType="String">
+        delete
+        from T_JW_EXAM_STUDENT
+        where ID = #{id}
+    </delete>
+    <select id="getExamCourseClassByClassIdAndCourseId" resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select t2.*
+        from T_JW_EXAM t1,
+             T_JW_EXAM_COURSE_CLASS t2
+        where t2.CLASS_ID = #{classId}
+          and t2.COURSE_ID = #{courseId}
+          and t2.EXAM_ID = #{examId}
+          and t2.COURSE_ID in
+              (select t5.COURSE_ID
+               FROM T_JW_EXAM t4,
+                    T_JW_EXAM_COURSE_CLASS t5
+               where t2.CLASS_ID = t5.CLASS_ID
+                 and t4.TERM = t1.TERM
+                 and t5.EXAM_ID != #{examId}
+          and t4.EXAM_ID = t5.EXAM_ID
+        )
+    </select>
+    <select id="getExamCourseClassByCourseId" resultType="com.goisan.educational.exam.bean.ExamCourseClass">
+        select distinct *
+        from T_JW_EXAM_COURSE_CLASS
+        where COURSE_ID = #{courseId}
+        <if test="examId != '' and examId != null">
+            and EXAM_ID = #{examId}
+        </if>
+        <if test="classId != '' and classId != null">
+            and CLASS_ID = #{classId}
+        </if>
+    </select>
+    <insert id="insertExamCourseStudent" parameterType="com.goisan.educational.exam.bean.ExamStudent">
+        INSERT INTO T_JW_EXAM_STUDENT (ID, TERM, EXAM_ID, STUDENT_ID, STUDENT_NAME, CLASS_ID, DEPARTMENTS_ID, MAJOR_CODE, TRAINING_LEVEL, STATUS, COURSE_ID, EXAM_METHOD)
+        VALUES (FUNC_GET_UUID, #{term}, #{examId}, #{studentId}, #{studentName}, #{classId}, #{departmentsId}, #{majorCode}, #{trainingLevel}, '0', #{courseId}, #{examMethod})
+    </insert>
+    <update id="updateExamCourseStudent" parameterType="com.goisan.educational.exam.bean.ExamStudent">
+        UPDATE T_JW_EXAM_STUDENT
+        SET EXAM_ID = #{examId},
+            STUDENT_ID = #{studentId},
+            STUDENT_NAME = #{studentName},
+            CLASS_ID = #{classId},
+            DEPARTMENTS_ID = #{departmentsId},
+            MAJOR_CODE = #{majorCode},
+            TRAINING_LEVEL = #{trainingLevel},
+            TERM = #{term},
+            EXAM_METHOD = #{examMethod}
+        WHERE ID = #{id}
+    </update>
+    <select id="getResult" parameterType="String" resultType="com.goisan.educational.exam.bean.ExamArray">
+        select FUNC_GET_TABLEVALUE(t1.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorShow,
+               FUNC_GET_TABLEVALUE(t1.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+               FUNC_GET_TABLEVALUE(t1.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') || '(' || (
+                   select count(STUDENT_ID)
+                   from T_JW_EXAM_ARRAY_STUDENT t3
+                   where t3.EXAM_ID = t1.EXAM_ID
+                     and t3.COURSE_ID = t1.COURSE_ID
+                     and t3.CLASS_ID = t1.CLASS_ID
+                     and t3."DATE" = t1."DATE"
+                     and t3.START_TIME = t1.START_TIME
+                     and t3.END_TIME = t1.END_TIME
+                     and t3.ROOM_ID = t1.ROOM_ID
+               ) || ')'                                                                     classShow,
+               FUNC_GET_TABLEVALUE(t1.ROOM_ID, 'T_JW_EXAM_ROOM', 'ROOM_ID', 'ROOM_NAME')    roomShow,
+               (select wm_concat(FUNC_GET_USERNAME(t2.TEACHER_PERSON_ID))
+                from T_JW_EXAM_ROOM_TEACHER t2
+                where t2.EXAM_ID = t1.EXAM_ID
+                  and t2.START_TIME = t1.START_TIME
+                  and t1.ROOM_ID = t2.ROOM_ID
+                  and t1."DATE" = t2."DATE")                                                teacherPersonShow,
+               t1.START_TIME,
+               t1.END_TIME,
+               t1."DATE"
+        from T_JW_EXAM_ARRAY t1
+        where t1.exam_id = #{examId}
+        order by "DATE",START_TIME
+    </select>
+    <select id="getDate" parameterType="String" resultType="String">
+        select distinct "DATE"
+        from T_JW_EXAM_ARRAY
+        where EXAM_ID = #{examId}
+        order by "DATE"
+    </select>
+
+    <update id="changeOpenFlag" parameterType="com.goisan.educational.exam.bean.Exam">
+        UPDATE T_JW_EXAM
+        SET OPEN_FLAG = '0'
+        WHERE EXAM_ID = #{id}
+    </update>
+
+    <insert id="importClassData" parameterType="String">
+        insert into T_JW_EXAM_COURSE_CLASS (id, exam_id, class_id, departments_id, major_code, training_level, course_id, exam_type, EXAM_METHOD)
+        select FUNC_GET_UUID,
+               t1.EXAM_ID,
+               t2.CLASS_INFO,
+               t3.DEPARTMENTS_ID,
+               t3.MAJOR_CODE,
+               t3.TRAINING_LEVEL,
+               t2.COURSE_ID,
+               '1',
+               t2.EXAM_METHOD
+        from T_JW_EXAM t1,
+             T_JW_TEACHINGTASK t2,
+             T_XG_CLASS t3
+        where t1.TERM = t2.SEMESTER
+          and t2.CLASS_INFO = t3.CLASS_ID
+          and t1.EXAM_ID = #{examId}
+          and t2.COURSE_ID not in (select t5.COURSE_ID
+                                   FROM T_JW_EXAM t4,
+                                        T_JW_EXAM_COURSE_CLASS t5
+                                   where t3.CLASS_ID = t5.CLASS_ID
+                                     and t4.TERM = t1.TERM
+                                     and t5.EXAM_ID != #{examId}
+          and t4.EXAM_ID = t5.EXAM_ID
+          and t4.EXAM_TYPES = '1'
+        )
+    </insert>
+
+    <delete id="deleteExamCourseClassByExamId" parameterType="String">
+        delete
+        from T_JW_EXAM_COURSE_CLASS
+        where EXAM_ID = #{id}
+    </delete>
+
+    <select id="getExamStudentByStudentIdAndCourseIdAndTerm" resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select *
+        from T_JW_EXAM_STUDENT
+        where STUDENT_ID = #{studentId}
+        and COURSE_ID = #{courseId}
+        <if test="examTypes == 3 or examTypes == 4">
+            and TERM=#{term}
+        </if>
+        and EXAM_ID = #{examId}
+    </select>
+
+    <select id="getExamStudentByCalssIdAndCourseId" resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select *
+        from T_JW_EXAM_STUDENT
+        where CLASS_ID = #{classId}
+          and COURSE_ID = #{courseId}
+          and EXAM_METHOD = '1'
+          and EXAM_ID = #{examId}
+    </select>
+
+    <select id="getTeachers" parameterType="String" resultType="com.goisan.system.bean.Select2">
+        select t1.NAME || '---' || t3.DEPT_NAME  text,
+               t1.PERSON_ID || ',' || t3.DEPT_ID id
+        from T_RS_EMPLOYEE t1,
+             T_RS_EMPLOYEE_DEPT t2,
+             T_SYS_DEPT t3
+        where t1.PERSON_ID = t2.PERSON_ID
+          and t2.DEPT_ID = t3.DEPT_ID
+          and t1.PERSON_ID in (
+            select TEACHER_PERSON_ID
+            from T_JW_EXAM_TEACHER
+            where TEACHER_PERSON_ID not in (select t.TEACHER_PERSON_ID
+                                            from T_JW_EXAM_ROOM_TEACHER t,
+                                                 (select *
+                                                  from
+                                                      T_JW_EXAM_ROOM_TEACHER
+                                                  where ID = #{id}) a
+                                            where t."DATE" = a."DATE"
+                                              and t.START_TIME = a.START_TIME
+                                              and t.EXAM_ID = a.EXAM_ID)
+              and EXAM_ID = #{examId}
+        )
+    </select>
+    <update id="updateTeacher">
+        update T_JW_EXAM_ROOM_TEACHER
+        set TEACHER_PERSON_ID = #{teacherId},
+            TEACHER_DEPT_ID = #{teacherDept}
+        where ID = #{id}
+    </update>
+    <select id="getRooms" parameterType="String" resultType="com.goisan.system.bean.Select2">
+        SELECT t1.ROOM_ID                                                                 id,
+               FUNC_GET_TABLEVALUE(t1.room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME') text
+        from T_JW_EXAM_ROOM t1
+                 left join
+                 T_JW_EXAM_ARRAY t2
+                 on t1.EXAM_ID = t2.EXAM_ID
+                     and t1.ROOM_ID = t2.ROOM_ID
+        where t1.STUDENT_NUMBER > (select count(b.STUDENT_ID)
+                                   from T_JW_EXAM_ARRAY_STUDENT b,
+                                        (select *
+                                         from T_JW_EXAM_ARRAY_STUDENT a
+                                         where a.ID = #{id}) a
+                                   where b."DATE" = a."DATE"
+                                     and b.START_TIME = a.START_TIME
+                                     and b.EXAM_ID = a.EXAM_ID
+                                     and t1.ROOM_ID = b.ROOM_ID)
+          and t1.ROOM_ID != (select ROOM_ID
+        from T_JW_EXAM_ARRAY_STUDENT a
+        where a.ID = #{id})
+        and t1.EXAM_ID = (select a.EXAM_ID
+        from T_JW_EXAM_ARRAY_STUDENT a
+        where a.ID = #{id})
+    </select>
+
+    <select id="getRoomsByExamId" parameterType="java.lang.String"  resultType="com.goisan.system.bean.Select2">
+        select room.room_id id,room.room_name text from T_JW_EXAM_ROOM room
+         where room.exam_id= #{examId}
+    </select>
+
+    <update id="updateStudentRoom">
+        update T_JW_EXAM_ARRAY_STUDENT
+        set ROOM_ID = #{roomId}
+        where ID = #{id}
+    </update>
+
+    <insert id="T_JW_EXAM_EXAMINATIONtStudent">
+        insert into T_JW_EXAM_STUDENT (id, exam_id, class_id, departments_id, major_code, training_level, course_id, STUDENT_ID, TERM, EXAM_METHOD)
+        select FUNC_GET_UUID,
+               '${examId}',
+               CLASS_ID,
+               DEPARTMENTS_ID,
+               MAJOR_CODE,
+               TRAINING_LEVEL,
+               COURSE_ID,
+               t1.STUDENT_ID,
+               t1.TERM_ID,
+               EXAM_METHOD
+        from T_JW_SCORE_IMPORT t1
+        where t1.SCORE_EXAM_ID in ('${examIds}')
+          and t1.SCORE_TYPE != '1'
+          and t1.SCORE_TYPE != '3'
+          and t1.EXAMINATION_STATUS != '6'
+    </insert>
+    <select id="getExamTree" parameterType="String" resultType="com.goisan.system.bean.Tree">
+        select EXAM_ID id, EXAM_NAME name
+        FROM T_JW_EXAM
+        where EXAM_ID != #{examId}
+    </select>
+    <insert id="importClassDataByStudent" parameterType="String">
+        insert into T_JW_EXAM_COURSE_CLASS (id, exam_id, class_id, departments_id, major_code, training_level, course_id, exam_type, EXAM_METHOD)
+        select FUNC_GET_UUID(),a.*
+        from (select distinct EXAM_ID,
+                              CLASS_ID,
+                              DEPARTMENTS_ID,
+                              MAJOR_CODE,
+                              TRAINING_LEVEL,
+                              COURSE_ID,
+                              (select EXAM_TYPES from T_JW_EXAM t2 where t2.EXAM_ID = t1.EXAM_ID),
+                              EXAM_METHOD
+              from T_JW_EXAM_STUDENT t1
+              where EXAM_ID = #{examId}) a
+    </insert>
+
+    <select id="getScoreTime" resultType="Map">
+        select *
+        from T_JW_EXAM
+        where EXAM_ID = #{examId}
+          and to_date(#{now}, 'yyyy-mm-dd') between to_date(SCORE_START_TIME, 'yyyy-mm-dd') and to_date(SCORE_END_TIME, 'yyyy-mm-dd')
+    </select>
+    <!--巡考教师list-->
+    <select id="getExaminationList" parameterType="com.goisan.educational.exam.bean.ExamArray"
+            resultType="com.goisan.educational.exam.bean.ExamArray">
+        select
+        id id,
+        exam_id examId,
+        to_char(t.EXAM_DATE ,'yyyy-mm-dd') examDate,
+        FUNC_GET_USERNAME(t.TEACHER_ID) teacherPersonShow,
+        TEACHER_ID teacherPersonId,
+        start_time startTime,
+        end_time endTime,
+        CREATE_TIME
+        from T_JW_EXAM_EXAMINATION t
+        where 1 = 1
+        and exam_id=#{examId}
+        <if test="teacherPersonId != null and teacherPersonId != ''">
+            and FUNC_GET_USERNAME(t.TEACHER_ID) like '%'||#{teacherPersonId}||'%'
+        </if>
+    </select>
+    <select id="getExaminationById" parameterType="String" resultType="com.goisan.educational.exam.bean.ExamArray">
+        select exam_id                             examId,
+               FUNC_GET_USERNAME(t.TEACHER_ID)     teacherPersonShow,
+               FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID) departmentShow,
+               TEACHER_ID                          teacherPersonId,
+               t.DEPARTMENTS_ID                    departmentsId,
+               start_time                          startTime,
+               end_time                            endTime,
+               to_char(EXAM_DATE,'yyyy-mm-dd')     examDate,
+               PLACE                               roomShow,
+               CREATE_TIME
+        from T_JW_EXAM_EXAMINATION t
+        where 1 = 1
+          and id = #{id}
+    </select>
+    <select id="getEdate" parameterType="String" resultType="String">
+        select DISTINCT "DATE"
+        from T_JW_EXAM_ARRAY t
+        where t.exam_id = #{examId}
+    </select>
+    <insert id="insertExamination" parameterType="com.goisan.educational.exam.bean.ExamArray">
+        INSERT INTO T_JW_EXAM_EXAMINATION (ID, TEACHER_ID, EXAM_DATE, START_TIME, END_TIME, PLACE, EXAM_ID, DEPARTMENTS_ID, CREATOR, CREATE_TIME, CREATE_DEPT, VALID_FLAG)
+        VALUES (FUNC_GET_UUID, #{teacherPersonId}, to_date('${examDate}','yyyy-mm-dd'), #{startTime}, #{endTime}, #{roomShow}, #{examId}, #{departmentsId}, #{creator}, sysdate, #{createDept}, '1')
+    </insert>
+    <update id="updateExamination" parameterType="com.goisan.educational.exam.bean.ExamArray">
+        update T_JW_EXAM_EXAMINATION
+        set TEACHER_ID=#{teacherPersonId},
+            EXAM_DATE=to_date(#{examDate},'yyyy-mm-dd'),
+            start_time = #{startTime},
+            end_time = #{endTime},
+            PLACE= #{roomShow},
+            DEPARTMENTS_ID= #{departmentsId},
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate
+        where id = #{id}
+    </update>
+    <delete id="delExamination" parameterType="java.lang.String">
+        delete
+        from T_JW_EXAM_EXAMINATION
+        where id = #{id}
+    </delete>
+
+    <select id="getEaxmStudent" resultType="com.goisan.educational.exam.bean.ExamStudent">
+        select t2.*
+        from T_JW_EXAM_STUDENT t1,
+             T_JW_EXAM t2
+        where t1.EXAM_ID = t2.EXAM_ID
+          and t1.COURSE_ID = #{courstId}
+          and t1.CLASS_ID = #{classId}
+          and t1.STUDENT_ID = #{studentId}
+          and t2.TERM = #{term}
+    </select>
+    <delete id="deleteExamStudentByExamId" parameterType="String">
+        delete
+        FROM T_JW_EXAM_STUDENT
+        where EXAM_ID = #{examId}
+    </delete>
+    <!--<insert id="importStudent">-->
+        <!--insert into T_JW_EXAM_STUDENT (id, exam_id, class_id, departments_id, major_code, training_level, course_id, STUDENT_ID, TERM, EXAM_METHOD)-->
+        <!--select FUNC_GET_UUID,-->
+               <!--'${examId}',-->
+               <!--CLASS_ID,-->
+               <!--DEPARTMENTS_ID,-->
+               <!--MAJOR_CODE,-->
+               <!--TRAINING_LEVEL,-->
+               <!--COURSE_ID,-->
+               <!--t1.STUDENT_ID,-->
+               <!--t1.TERM_ID,-->
+               <!--EXAM_METHOD-->
+        <!--from (select SCORE_EXAM_ID,-->
+                     <!--CLASS_ID,-->
+                     <!--DEPARTMENTS_ID,-->
+                     <!--MAJOR_CODE,-->
+                     <!--TRAINING_LEVEL,-->
+                     <!--COURSE_ID,-->
+                     <!--t2.STUDENT_ID,-->
+                     <!--t2.TERM_ID,-->
+                     <!--EXAM_METHOD,-->
+                     <!--EXAMINATION_STATUS,-->
+                     <!--decode(t2.SCORE,-->
+                        <!--'违纪',-->
+                        <!--'0',-->
+                         <!--'超旷',-->
+                        <!--'0',-->
+                        <!--'缺考',-->
+                        <!--'0',-->
+                         <!--'缓考',-->
+                        <!--'0',-->
+                        <!--'补违纪',-->
+                        <!--'0',-->
+                        <!--'补缺考',-->
+                        <!--'0',-->
+                        <!--'补不及',-->
+                        <!--'0',-->
+                        <!--'补及',-->
+                        <!--'60',-->
+                        <!--SCORE) score-->
+            <!--from T_JW_SCORE_IMPORT t2 where t2.exam_method = '1') t1-->
+        <!--where t1.SCORE_EXAM_ID in ('${examIds}')-->
+           <!--and t1.score &lt; 60-->
+          <!--and t1.student_id not in (-->
+        <!--select t2.MANAGER-->
+        <!--from T_JW_SCORE_IMPORT-->
+             <!--t1,-->
+             <!--T_JW_SLOW_EXAMINATION-->
+             <!--t2-->
+        <!--where t1.CLASS_ID = t2.CLASS_ID-->
+            <!--and t2.COURSE_ID like '%' || t1.COURSE_ID || '%'-->
+            <!--and t1.TERM_ID = t2.TERM_ID-->
+            <!--and t1.SCORE_EXAM_ID in ('${examIds}'-->
+        <!--)-->
+        <!--)-->
+    <!--</insert>-->
+
+    <insert id="importStudent">
+        insert into T_JW_EXAM_STUDENT (id, exam_id, class_id, departments_id, major_code, training_level, course_id, STUDENT_ID, TERM, EXAM_METHOD)
+        select FUNC_GET_UUID,
+               '${examId}',
+               CLASS_ID,
+               DEPARTMENTS_ID,
+               MAJOR_CODE,
+               TRAINING_LEVEL,
+               COURSE_ID,
+               t1.STUDENT_ID,
+               t1.TERM_ID,
+               EXAM_METHOD
+        from (select SCORE_EXAM_ID,
+                     CLASS_ID,
+                     DEPARTMENTS_ID,
+                     MAJOR_CODE,
+                     TRAINING_LEVEL,
+                     COURSE_ID,
+                     t2.STUDENT_ID,
+                     t2.TERM_ID,
+                     EXAM_METHOD,
+                     EXAMINATION_STATUS,
+                     t2.SCORE
+            from T_JW_SCORE_IMPORT t2 where t2.exam_method = '1' and t2.score_type = '1'
+            and t2.submit_flag = '1'
+        <if test="examTypes != null and examTypes == '期末补考'">
+            and t2.examination_status != '2'
+        </if>
+        <if test='examTypesValue == "1" '>
+            and t2.examination_status = '2'
+        </if>
+            ) t1
+        where t1.SCORE_EXAM_ID in ('${examIds}')
+          and t1.student_id not in (
+        select t2.MANAGER
+        from T_JW_SCORE_IMPORT
+             t1,
+             T_JW_SLOW_EXAMINATION
+             t2
+        where t1.CLASS_ID = t2.CLASS_ID
+            and t2.COURSE_ID like '%' || t1.COURSE_ID || '%'
+            and t1.TERM_ID = t2.TERM_ID
+            and t1.SCORE_EXAM_ID in ('${examIds}'
+        )
+        )
+    </insert>
+
+    <!--根据科目id，查询考核方式-->
+    <select id="getExamMethod" resultType="java.lang.String">
+        select distinct  exam_method  from T_JW_TEACHINGTASK t where t.course_id = #{courseId} and t.semester = #{tremId}
+    </select>
+</mapper>

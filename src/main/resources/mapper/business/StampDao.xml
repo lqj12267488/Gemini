@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.StampDao">
+    <select id="getStampList" resultType="com.goisan.synergy.workflow.bean.Stamp" parameterType="com.goisan.synergy.workflow.bean.Stamp">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.manager) manager,
+        t.contract_details,
+        t.remark,
+        FUNC_GET_DICVALUE(t.stamp_flag,'YZLX') stampFlag,
+        t.stamp_flag stampFlagCode,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_bg_stamp_wf t
+        where 1 = 1  AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getStampById" resultType="com.goisan.synergy.workflow.bean.Stamp" parameterType="com.goisan.synergy.workflow.bean.Stamp">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.manager) manager,
+        t.contract_details,
+        t.remark,
+        t.stamp_flag stampFlag,
+        FUNC_GET_DICVALUE(t.stamp_flag,'YZLX') stampFlagShow,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_bg_stamp_wf t
+        WHERE id = #{id} ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertStamp" parameterType="com.goisan.synergy.workflow.bean.Stamp">
+        INSERT INTO
+        t_bg_stamp_wf
+        (id,request_dept,manager,request_date,contract_details,stamp_flag,remark,creator,create_time,create_dept,request_flag) values
+        (FUNC_GET_UUID,'${requestDept}','${manager}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),'${contractDetails}','${stampFlag}','${remark}','${creator}',sysdate,'${createDept}','0')
+    </insert>
+    <!--<insert id="updateStampAPP" parameterType="com.goisan.synergy.workflow.bean.Stamp">
+        INSERT INTO
+        t_bg_stamp_wf
+        (id,request_dept,manager,request_date,contract_details,stamp_flag,remark,creator,create_time,create_dept,request_flag) values
+        ('${id}','${requestDept}','${manager}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),'${contractDetails}','${stampFlag}','${remark}','${creator}',sysdate,'${createDept}','0')
+    </insert>-->
+    <delete id="deleteStampById"  parameterType="java.lang.String">
+        DELETE FROM t_bg_stamp_wf WHERE id = #{id}
+    </delete>
+    <update id="updateStampById" parameterType="com.goisan.synergy.workflow.bean.Stamp">
+        update
+        t_bg_stamp_wf
+        SET
+        id = #{id},
+        request_dept = #{requestDept},
+        manager = #{manager},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        contract_details = #{contractDetails},
+        stamp_flag = #{stampFlag},
+        remark = #{remark},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.Stamp" parameterType="com.goisan.synergy.workflow.bean.Stamp">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.manager) manager,
+        t.contract_details,
+        t.remark,
+        FUNC_GET_DICVALUE(t.stamp_flag,'YZLX') stampFlag,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_bg_stamp_wf t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND FUNC_GET_USERNAME(t.manager) LIKE #{manager}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.synergy.workflow.bean.Stamp" parameterType="com.goisan.synergy.workflow.bean.Stamp">
+        SELECT
+        DISTINCT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.manager) manager,
+        t.contract_details,
+        t.remark,
+        FUNC_GET_DICVALUE(t.stamp_flag,'YZLX') stampFlag,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_bg_stamp_wf t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND FUNC_GET_USERNAME(t.manager) LIKE #{manager}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+
+    <update id="updateStampAPP" parameterType="com.goisan.synergy.workflow.bean.Stamp">
+        update
+        t_bg_stamp_wf
+        SET
+        id = #{id},
+        request_dept = #{requestDept},
+        manager = #{manager},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        contract_details = #{contractDetails},
+        stamp_flag = #{stampFlag},
+        request_flag ='1',
+        remark = #{remark},
+        creator=#{creator},
+        changer= #{creator},
+        change_time= sysdate,
+        change_dept= #{createDept}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="getStateById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+        FUNC_GET_DICVALUE(state, 'GZLLZZT')
+        FROM T_SYS_WORKFLOW_START
+        WHERE business_id=#{id}
+    </select>
+    <select id="getHandlebyId" parameterType="java.lang.String" resultType="com.goisan.workflow.bean.Handle">
+        SELECT handle_name, to_char(handle_time,'yyyy-mm-dd hh24:mi') handleTime,remark,FUNC_GET_TABLEVALUE(HANDLE_ROLE,'T_SYS_ROLE','ROLE_ID','ROLE_NAME') handleRole
+        FROM T_SYS_WORKFLOW_HANDLE
+        WHERE start_id
+        IN (SELECT start_id
+        FROM T_SYS_WORKFLOW_START
+        WHERE business_id=#{id})
+        ORDER BY decode(handleRole,'申请人',1), handle_time
+    </select>
+
+</mapper>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.data.dao.DataDao">
+    <select id="getDataTypeTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+            type_id        id,
+            type_name      name,
+            parent_type_id pid
+        FROM
+            T_ZL_DATA_TYPE
+        ORDER BY
+            parent_type_id,dept_order
+    </select>
+    <select id="getDataTypeById" parameterType="java.lang.String"
+            resultType="com.goisan.data.bean.DataType">
+        SELECT *
+        FROM T_ZL_DATA_TYPE
+        WHERE type_id = #{typeId}
+    </select>
+    <select id="getMaxTypeid" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT max(to_number(type_id))
+        FROM T_ZL_DATA_TYPE
+        WHERE parent_type_id = #{pId}
+    </select>
+    <!--查重-->
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.data.bean.DataType">
+        select * from T_ZL_DATA_TYPE where type_name = #{typeName} and parent_type_id = #{parentTypeId} AND VALID_FLAG =
+        '1'
+        <if test="typeId != null and typeId !='' ">
+            AND type_id != #{typeId}
+        </if>
+    </select>
+    <!--排序-->
+    <select id="getMaxDeptOrder" resultType="java.lang.String">
+        select max(to_number(dept_order)) deptOrder
+        from T_ZL_DATA_TYPE t
+        where parent_type_id = #{parentTypeId}
+    </select>
+    <!--保存类型-->
+    <insert id="saveDataType" parameterType="com.goisan.data.bean.DataType">
+        INSERT INTO
+            T_ZL_DATA_TYPE
+            (TYPE_ID, TYPE_NAME, PARENT_TYPE_ID, CREATOR, CREATE_TIME, CREATE_DEPT)
+        VALUES
+            ('${typeId}', '${typeName}', #{parentTypeId}, '${creator}', sysdate, '${createDept}')
+    </insert>
+    <!--修改保存-->
+    <update id="updateDataType" parameterType="com.goisan.data.bean.DataType">
+        UPDATE T_ZL_DATA_TYPE
+        SET
+            type_name = #{typeName},
+            PARENT_TYPE_ID=#{parentTypeId},
+            change_time= sysdate,
+            changer = #{changer},
+            change_dept = #{changeDept}
+        WHERE type_id = #{typeId}
+    </update>
+    <delete id="deleteDataType" parameterType="java.lang.String">
+        DELETE
+        FROM T_ZL_DATA_TYPE
+        WHERE type_Id = #{id}
+    </delete>
+    <select id="getTypeName" resultType="java.lang.String">
+        select type_name
+        from T_ZL_DATA_TYPE
+        where type_Id = #{id}
+    </select>
+    <!--获取资料存放位置树-->
+    <select id="getDataLocationTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+            location_id        id,
+            location_name      name,
+            parent_location_id pid
+        FROM
+            T_ZL_DATA_LOCATION
+        ORDER BY
+            parent_location_id
+    </select>
+    <select id="getMaxLocationId" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT max(to_number(location_id))
+        FROM T_ZL_DATA_LOCATION
+        WHERE parent_location_id = #{pId}
+    </select>
+    <select id="checkLocationName" parameterType="java.lang.String" resultType="com.goisan.data.bean.DataLocation">
+        select * from T_ZL_DATA_LOCATION where location_name = #{locationName} and parent_location_id =
+        #{parentLocationId} AND VALID_FLAG = '1'
+        <if test="locationId != null and locationId !='' ">
+            AND location_id != #{locationId}
+        </if>
+    </select>
+    <insert id="saveDataLocation" parameterType="com.goisan.data.bean.DataLocation">
+        INSERT INTO
+            T_ZL_DATA_LOCATION
+            (location_id, location_name, parent_location_id, CREATOR, CREATE_TIME, CREATE_DEPT)
+        VALUES
+            ('${locationId}', '${locationName}', #{parentLocationId}, '${creator}', sysdate, '${createDept}')
+    </insert>
+    <update id="updateDataLocation" parameterType="com.goisan.data.bean.DataLocation">
+        UPDATE T_ZL_DATA_LOCATION
+        SET
+            location_name = #{locationName},
+            parent_location_id=#{parentLocationId},
+            change_time= sysdate,
+            changer = #{changer},
+            change_dept = #{changeDept}
+        WHERE location_id = #{locationId}
+    </update>
+    <select id="getDataLocationById" parameterType="java.lang.String"
+            resultType="com.goisan.data.bean.DataLocation">
+        SELECT *
+        FROM T_ZL_DATA_LOCATION
+        WHERE location_id = #{locationId}
+    </select>
+    <select id="getDataList" parameterType="java.lang.String"
+            resultType="com.goisan.data.bean.Data">
+        SELECT
+        data_id dataId,
+        data_name dataName,
+        FUNC_GET_TABLEVALUE(data_first_type, 'T_ZL_DATA_TYPE', 'TYPE_ID', 'TYPE_NAME') dataFirstType,
+        FUNC_GET_TABLEVALUE(data_second_type, 'T_ZL_DATA_TYPE', 'TYPE_ID', 'TYPE_NAME') dataSecondType,
+        FUNC_GET_TABLEVALUE(data_third_type, 'T_ZL_DATA_TYPE', 'TYPE_ID', 'TYPE_NAME') dataThirdType,
+        FUNC_GET_TABLEVALUE(bookshelf_name, 'T_ZL_DATA_LOCATION', 'LOCATION_ID', 'LOCATION_NAME')||FUNC_GET_TABLEVALUE(bookshelf_layer, 'T_ZL_DATA_LOCATION', 'LOCATION_ID', 'LOCATION_NAME')||FUNC_GET_TABLEVALUE(array_location, 'T_ZL_DATA_LOCATION', 'LOCATION_ID', 'LOCATION_NAME') dataLocation,
+        FUNC_GET_TABLEVALUE(bookshelf_name, 'T_ZL_DATA_LOCATION', 'LOCATION_ID', 'LOCATION_NAME') bookshelfName,
+        FUNC_GET_TABLEVALUE(bookshelf_layer, 'T_ZL_DATA_LOCATION', 'LOCATION_ID', 'LOCATION_NAME') bookshelfLayer,
+        FUNC_GET_TABLEVALUE(array_location, 'T_ZL_DATA_LOCATION', 'LOCATION_ID', 'LOCATION_NAME') arrayLocation,
+        submit_time submitTime,
+        bookshelf_name bookshelfName,
+        bookshelf_layer bookshelfLayer,
+        array_location arrayLocation,
+        creator creator,
+        create_time createTime,
+        create_dept createDept,
+        valid_flag validFlag
+        FROM
+        T_ZL_DATA
+        where 1=1
+        <if test="dataName != null and dataName != ''">
+            AND data_name LIKE '%'||#{dataName}||'%'
+        </if>
+        <if test="dataFirstType != null and dataFirstType != ''">
+            and DATA_FIRST_TYPE = #{dataFirstType}
+        </if>
+        <if test="dataSecondType != null and dataSecondType != ''">
+            and DATA_SECOND_TYPE = #{dataSecondType}
+        </if>
+    </select>
+    <insert id="insertData" parameterType="com.goisan.data.bean.Data">
+        INSERT INTO
+            T_ZL_DATA
+        (data_id,
+         data_name,
+         data_first_type,
+         data_second_type,
+         DATA_THIRD_TYPE,
+         SUBMIT_TIME,
+         bookshelf_name,
+         bookshelf_layer,
+         array_location,
+         creator,
+         create_time,
+         create_dept)
+        VALUES
+        ('${dataId}',
+         '${dataName}',
+         '${dataFirstType}',
+         '${dataSecondType}',
+         '${dataThirdType}',
+         '${submitTime}',
+         '${bookshelfName}',
+         '${bookshelfLayer}',
+         '${arrayLocation}',
+         '${creator}',
+         sysdate,
+         '${createDept}')
+    </insert>
+    <delete id="deleteData" parameterType="java.lang.String">
+        delete from t_zl_data t where t.data_id = #{dataId}
+    </delete>
+    <select id="getDataById" parameterType="java.lang.String" resultType="com.goisan.data.bean.Data">
+        select *
+        from T_ZL_DATA
+        where data_id = #{dataId}
+    </select>
+    <update id="updateData" parameterType="com.goisan.data.bean.Data">
+        UPDATE T_ZL_DATA
+        SET
+            data_name =#{dataName},
+            data_first_type=#{dataFirstType},
+            data_second_type=#{dataSecondType},
+            DATA_THIRD_type=#{dataThirdType},
+            SUBMIT_TIME=#{submitTime},
+            bookshelf_name=#{bookshelfName},
+            bookshelf_layer=#{bookshelfLayer},
+            array_location=#{arrayLocation},
+            change_time= sysdate,
+            changer = #{changer},
+            change_dept = #{changeDept}
+        WHERE data_id = #{dataId}
+    </update>
+</mapper>

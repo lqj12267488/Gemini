@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.DeviceUseSuppliesDao">
+    <select id="deviceUseSuppliesAction" resultType="com.goisan.system.bean.UserDic" parameterType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.dic_code diccode,
+        t.dic_name dicname,
+        t.dic_order dicorder,
+        t.creator creator
+        FROM
+        T_SYS_USERDIC t
+        WHERE
+        1 = 1 AND
+        t.dic_type='ITSB'
+        <!--	<if test="creator != 'sa'  and creator != null and creator != '' ">
+                AND t.creator= #{creator}
+            </if>-->
+        ORDER BY to_number(t.dic_order) DESC
+    </select>
+    <insert id="insertDeviceUseSupplies" parameterType="com.goisan.system.bean.UserDic">
+        INSERT INTO
+        T_SYS_USERDIC
+        (id,dic_code,dic_name,dic_order,name,dic_type,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${diccode}','${dicname}','${dicorder}','IT设备','ITSB','${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getDeviceUseSuppliesById" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.dic_name dicname,
+        t.dic_code diccode,
+        t.dic_order dicorder
+        FROM
+        T_SYS_USERDIC t
+        WHERE id =#{id}
+        AND
+        t.dic_type ='ITSB'
+    </select>
+    <update id="updateDeviceUseSupplies" parameterType="com.goisan.system.bean.UserDic">
+        UPDATE T_SYS_USERDIC SET
+        dic_name = #{dicname},
+        dic_code = #{diccode},
+        dic_order = #{dicorder},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteDeviceUseSuppliesById"  parameterType="java.lang.String">
+        DELETE  T_SYS_USERDIC WHERE id = #{id}
+    </delete>
+
+    <select id="getCompleteDeviceUseSuppliesList" resultType="com.goisan.system.bean.UserDic"
+            parameterType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.dic_code diccode,
+        t.dic_name dicname,
+        t.dic_order dicorder,
+        t.creator creator,
+        t.create_time
+        FROM
+        T_SYS_USERDIC t
+        WHERE 1 = 1
+        AND
+        t.dic_type ='ITSB'
+        <if test="diccode != null and diccode !='' ">
+            AND  t.dic_code LIKE #{diccode}
+        </if>
+        <if test="dicname != null and dicname !='' ">
+            AND  t.dic_name LIKE #{dicname}
+        </if>
+        ORDER BY to_number(t.dic_order) DESC
+    </select>
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic where dic_type = 'ITSB' and dic_name = #{dicname} AND id != #{id}
+    </select>
+    <select id="checkCode" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic where dic_type = 'ITSB' and dic_code = #{diccode} AND id != #{id}
+    </select>
+    <select id="checkOrder" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic where dic_type = 'ITSB' and dic_order = #{dicorder} AND id != #{id}
+    </select>
+</mapper>

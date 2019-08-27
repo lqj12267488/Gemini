@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--create by wq 2017/10/12-->
+<mapper namespace="com.goisan.educational.teacher.dao.TeacherInfoDao">
+    <select id="getTeacherInfoList" parameterType="com.goisan.educational.teacher.bean.TeacherCondition"
+            resultType="com.goisan.educational.teacher.bean.TeacherCondition">
+        SELECT
+        t.TEACHER_ID teacherId,
+        FUNC_GET_USERNAME(t.NAME) teacherName,
+        to_char(t.BIRTHDAY,'yyyy-mm-dd') birthday,
+        FUNC_GET_DICVALUE(t.FINAL_EDUCATION, 'XL') finalEducation,
+        FUNC_GET_DICVALUE(t.DEGEE,'XW') DEGEE,
+        t.MAJOR majorShow,
+        t.TITLE title,
+        t.TEACHER_CATEGORY teacherCategory,
+        FUNC_GET_DICVALUE(t.TEACHER_CATEGORY, 'JSLB') teacherCategoryShow,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_JW_TEACHER_CONDITION t
+        WHERE 1 = 1
+        <if test="teacherId != null and teacherId != '' ">
+            AND t.TEACHER_ID = #{teacherId}
+        </if>
+        <if test="departmentId != null and departmentId != '' ">
+            AND t.DEPARTMENT_ID LIKE #{departmentId}
+        </if>
+        <if test="major != null and major != '' ">
+            AND t.MAJOR= #{major}
+        </if>
+        <if test="teacherName != null and teacherName != '' ">
+            AND FUNC_GET_USERNAME(t.NAME) LIKE   '%'||#{teacherName}||'%'
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <insert id="insertTeacherInfo" parameterType="com.goisan.educational.teacher.bean.TeacherCondition">
+        insert into T_JW_TEACHER_CONDITION
+        (TEACHER_ID,DEPARTMENT_ID,NAME,BIRTHDAY,FINAL_EDUCATION,DEGEE,MAJOR,TITLE,TEACHER_CATEGORY,NATIVEPLACE,NATION,
+        POLITICALSTATUS,GETTIME,FIRSTEDUCATION,FIRSTEDUCATIONSTATUS,FIRSTEDUCATIONSCHOOL,FIRSTEDUCATIONMAJOR,LICENCE,
+        FINALEDUCATIONSCHOOL,TEACHER_NUM,XZ_POSITION,FIRS_ENDTIME,FINALE_ENDTIME,MAJOR_FIELD,MAJOR_SPECIALTY,
+        WORK_YEAR,MAJOR_YEAR,MAJOR_GRADE,MAJOR_NAME,MAJOR_DEPT,MAJOR_DATE,CAREER_GETTIME,CAREER_GRADE,CAREER_NAME,CAREER_DEPT,
+        SFZY_TEACHER,SFSS_TEACHER,SFMS_TEACHER,POLITICS_MAJORCODE,POLITICS_MAJORNAME,TEACHER_SEX,QIYE_YEAR,QIYE_DAY,
+        SFGG_TEACHER,EXPERT_DEPT,EXPERT_WORK,EXPERT_DATE,TRAINING_NAME,TRAINING_DAY,TRAINING_PLACE,WORK_DATE,
+        SRPOSITION,SIGNING,SEND_DEPT,CREATOR,CREATE_TIME,CREATE_DEPT,WORK_DEPT)
+        values
+        (FUNC_GET_UUID,#{departmentId},#{teacherName},to_date('${birthday}','yyyy-mm-dd'),#{finalEducation},#{degee},
+        #{major},#{title},#{teacherCategory},#{nativePlace},#{nation},#{politicalStatus},to_date('${getTime}','yyyy-mm'),
+        #{firstEducation},#{firstEducationStatus},#{firstEducationSchool},#{firstEducationMajor},#{licence},
+        #{finalEducationSchool},#{teacherNum},#{xzPosition},to_date('${firsEndtime}','yyyy-mm-dd'),
+        to_date('${finaleEndtime}','yyyy-mm-dd'),#{majorField},#{majorSpecialty},
+        #{workYear},#{majorYear},#{majorGrade},#{majorName},#{majorDept},to_date('${majorDate}','yyyy-mm'),
+        to_date('${careerGettime}','yyyy-mm'),#{careerGrade},#{careerName},
+        #{careerDept},#{sfzyTeacher},#{sfssTeacher},#{sfmsTeacher},#{politicsMajorCode},#{politicsMajorName},#{teacherSex},
+        #{qiyeYear},#{qiyeDate},#{sfggTeacher},#{expertDept},#{expertWork},to_date('${expertDate}','yyyy-mm'),#{trainingName},#{trainingDay},
+        #{trainingPlace},to_date('${workDate}','yyyy-mm'),#{srPosition},#{signing},#{sendDept},#{creator},sysdate,#{createDept},#{workDept})
+    </insert>
+    <select id="getTeacherInfoByTeacherName" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.TeacherCondition">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.NAME teacherName,
+        TEACHER_NUM teacherNum,
+        FUNC_GET_USERNAME(t.NAME) teacherNameShow,
+        to_char(t.BIRTHDAY,'yyyy-mm-dd') birthday,
+        to_char(t.FIRS_ENDTIME,'yyyy-mm-dd') firsEndtime,
+        to_char(t.FINALE_ENDTIME,'yyyy-mm-dd') finaleEndtime,
+        MAJOR major,
+        t.FINAL_EDUCATION finalEducation,
+        t.DEGEE degee,
+        MAJOR_GRADE majorGrade,
+        MAJOR_NAME majorName,
+        MAJOR_DEPT majorDept,
+        MAJOR_FIELD majorField,
+        MAJOR_SPECIALTY majorSpecialty,
+        to_char(MAJOR_DATE,'yyyy-mm') majorDate,
+        CAREER_GRADE careerGrade,
+        CAREER_NAME careerName,
+        CAREER_DEPT careerDept,
+        to_char(CAREER_GETTIME,'yyyy-mm') careerGettime,
+        EXPERT_DEPT expertDept,
+        EXPERT_WORK expertWork,
+        to_char(EXPERT_DATE,'yyyy-mm') expertDate,
+        TRAINING_NAME trainingName,
+        TRAINING_PLACE trainingPlace,
+        TRAINING_DAY trainingDay,
+        t.NATIVEPLACE nativePlace,
+        SIGNING signing,
+        to_char(WORK_DATE,'yyyy-mm') workDate,
+        POLITICS_MAJORCODE politicsMajorCode,
+        POLITICS_MAJORNAME politicsMajorName,
+        SEND_DEPT sendDept,
+        t.NATION nation,
+        FUNC_GET_DICVALUE(t.NATION, 'MZ') nationShow,
+        t.TEACHER_SEX teacherSex,
+        t.POLITICALSTATUS politicalStatus,
+        FUNC_GET_DICVALUE(t.POLITICALSTATUS, 'ZZMM') politicalStatusShow,
+        t.FIRSTEDUCATION firstEducation,
+        t.FIRSTEDUCATIONSTATUS firstEducationStatus,
+        t.FIRSTEDUCATIONSCHOOL firstEducationSchool,
+        t.FIRSTEDUCATIONMAJOR firstEducationMajor,
+        t.FINALEDUCATIONSCHOOL finalEducationSchool,
+        t.LICENCE licence,
+        to_char(t.GETTIME,'yyyy-mm') getTime,
+        XZ_POSITION xzPosition,
+        SFZY_TEACHER sfzyTeacher,
+        SFSS_TEACHER sfssTeacher,
+        SFMS_TEACHER sfmsTeacher,
+        SFGG_TEACHER sfggTeacher,
+        SRPOSITION srPosition,
+        QIYE_YEAR qiyeYear,
+        QIYE_DAY qiyeDate,
+        t.DEPARTMENT_ID departmentId,
+        FUNC_GET_TABLEVALUE(DEPARTMENT_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentIdShow,
+        FUNC_GET_TABLEVALUE(MAJOR, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorShow,
+        t.TITLE title,
+        t.TEACHER_CATEGORY teacherCategory,
+        FUNC_GET_DICVALUE(t.TEACHER_CATEGORY, 'JSLB') teacherCategoryShow,
+        work_dept workDept
+        FROM
+        T_JW_TEACHER_CONDITION t
+        WHERE t.NAME = #{teacherName}
+    </select>
+    <select id="getTeacherInfoById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.TeacherCondition">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.NAME teacherName,
+        TEACHER_NUM teacherNum,
+        FUNC_GET_USERNAME(t.NAME) teacherNameShow,
+        to_char(t.BIRTHDAY,'yyyy-mm-dd') birthday,
+        to_char(t.FIRS_ENDTIME,'yyyy-mm-dd') firsEndtime,
+        to_char(t.FINALE_ENDTIME,'yyyy-mm-dd') finaleEndtime,
+        MAJOR major,
+        t.FINAL_EDUCATION finalEducation,
+        t.DEGEE degee,
+        MAJOR_GRADE majorGrade,
+        MAJOR_NAME majorName,
+        MAJOR_DEPT majorDept,
+        MAJOR_FIELD majorField,
+        MAJOR_SPECIALTY majorSpecialty,
+        to_char(MAJOR_DATE,'yyyy-mm') majorDate,
+        CAREER_GRADE careerGrade,
+        CAREER_NAME careerName,
+        CAREER_DEPT careerDept,
+        to_char(CAREER_GETTIME,'yyyy-mm') careerGettime,
+        EXPERT_DEPT expertDept,
+        EXPERT_WORK expertWork,
+        to_char(EXPERT_DATE,'yyyy-mm') expertDate,
+        TRAINING_NAME trainingName,
+        TRAINING_PLACE trainingPlace,
+        TRAINING_DAY trainingDay,
+        t.NATIVEPLACE nativePlace,
+        SIGNING signing,
+        to_char(WORK_DATE,'yyyy-mm') workDate,
+        POLITICS_MAJORCODE politicsMajorCode,
+        POLITICS_MAJORNAME politicsMajorName,
+        SEND_DEPT sendDept,
+        t.NATION nation,
+        FUNC_GET_DICVALUE(t.NATION, 'MZ') nationShow,
+        t.TEACHER_SEX teacherSex,
+        t.POLITICALSTATUS politicalStatus,
+        FUNC_GET_DICVALUE(t.POLITICALSTATUS, 'ZZMM') politicalStatusShow,
+        t.FIRSTEDUCATION firstEducation,
+        t.FIRSTEDUCATIONSTATUS firstEducationStatus,
+        t.FIRSTEDUCATIONSCHOOL firstEducationSchool,
+        t.FIRSTEDUCATIONMAJOR firstEducationMajor,
+        t.FINALEDUCATIONSCHOOL finalEducationSchool,
+        t.LICENCE licence,
+        to_char(t.GETTIME,'yyyy-mm') getTime,
+        XZ_POSITION xzPosition,
+        SFZY_TEACHER sfzyTeacher,
+        SFSS_TEACHER sfssTeacher,
+        SFMS_TEACHER sfmsTeacher,
+        SFGG_TEACHER sfggTeacher,
+        SRPOSITION srPosition,
+        QIYE_YEAR qiyeYear,
+        QIYE_DAY qiyeDate,
+        t.DEPARTMENT_ID departmentId,
+        FUNC_GET_TABLEVALUE(DEPARTMENT_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentIdShow,
+        FUNC_GET_TABLEVALUE(MAJOR, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorShow,
+        t.TITLE title,
+        t.TEACHER_CATEGORY teacherCategory,
+        FUNC_GET_DICVALUE(t.TEACHER_CATEGORY, 'JSLB') teacherCategoryShow,
+        work_dept workDept
+        FROM
+        T_JW_TEACHER_CONDITION t
+        WHERE t.TEACHER_ID = #{teacherId}
+    </select>
+    <update id="updateTeacherInfoById" parameterType="com.goisan.educational.teacher.bean.TeacherCondition">
+        update
+        T_JW_TEACHER_CONDITION
+        SET
+        NAME=#{teacherName},
+        DEPARTMENT_ID=#{departmentId},
+        BIRTHDAY=to_date(#{birthday},'yyyy-mm-dd'),
+        FINAL_EDUCATION=#{finalEducation},
+        DEGEE=#{degee},
+        MAJOR=#{major},
+        TITLE=#{title},
+        TEACHER_CATEGORY=#{teacherCategory},
+        NATIVEPLACE=#{nativePlace},
+        NATION=#{nation},
+        POLITICALSTATUS=#{politicalStatus},
+        GETTIME=to_date('${getTime}','yyyy-mm'),
+        FIRSTEDUCATION=#{firstEducation},
+        FIRSTEDUCATIONSTATUS=#{firstEducationStatus},
+        FIRSTEDUCATIONSCHOOL=#{firstEducationSchool},
+        FIRSTEDUCATIONMAJOR=#{firstEducationMajor},
+        LICENCE=#{licence},
+        FINALEDUCATIONSCHOOL=#{finalEducationSchool},
+        TEACHER_NUM=#{teacherNum},
+        XZ_POSITION=#{xzPosition},
+        FIRS_ENDTIME=to_date(#{firsEndtime},'yyyy-mm-dd'),
+        FINALE_ENDTIME=to_date(#{finaleEndtime},'yyyy-mm-dd'),
+        MAJOR_FIELD=#{majorField},
+        MAJOR_SPECIALTY=#{majorSpecialty},
+        WORK_YEAR=#{workYear},
+        MAJOR_YEAR=#{majorYear},
+        MAJOR_GRADE=#{majorGrade},
+        MAJOR_NAME=#{majorName},
+        MAJOR_DEPT=#{majorDept},
+        MAJOR_DATE=to_date(#{majorDate},'yyyy-mm'),
+        CAREER_GETTIME=to_date(#{careerGettime},'yyyy-mm'),
+        CAREER_GRADE=#{careerGrade},
+        CAREER_NAME=#{careerName},
+        CAREER_DEPT=#{careerDept},
+        SFZY_TEACHER=#{sfzyTeacher},
+        SFSS_TEACHER=#{sfssTeacher},
+        SFMS_TEACHER=#{sfmsTeacher},
+        SFGG_TEACHER=#{sfggTeacher},
+        POLITICS_MAJORCODE=#{politicsMajorCode},
+        POLITICS_MAJORNAME=#{politicsMajorName},
+        TEACHER_SEX=#{teacherSex},
+        QIYE_YEAR=#{qiyeYear},
+        QIYE_DAY=#{qiyeDate},
+        EXPERT_DEPT=#{expertDept},
+        EXPERT_WORK=#{expertWork},
+        EXPERT_DATE=to_date(#{expertDate},'yyyy-mm'),
+        TRAINING_NAME=#{trainingName},
+        TRAINING_DAY=#{trainingDay},
+        TRAINING_PLACE=#{trainingPlace},
+        WORK_DATE=to_date(#{workDate},'yyyy-mm'),
+        SRPOSITION=#{srPosition},
+        SIGNING=#{signing},
+        SEND_DEPT=#{sendDept},
+        CHANGER=#{changer},
+        CHANGE_TIME=sysdate,
+        CHANGE_DEPT=#{changeDept},
+        WORK_DEPT=#{workDept}
+        WHERE TEACHER_ID = #{teacherId}
+    </update>
+    <delete id="deleteTeacherInfoById"  parameterType="java.lang.String">
+        DELETE FROM T_JW_TEACHER_CONDITION WHERE TEACHER_ID = #{teacherId}
+    </delete>
+    <!--自动获取教师姓名-->
+    <select id="selectTeacherName" parameterType="java.lang.String" resultType="com.goisan.educational.teacher.bean.TeacherCondition">
+        SELECT
+        t.TEACHER_ID as "value",
+        t.NAME as "label"
+        FROM
+        T_JW_TEACHER_CONDITION t
+    </select>
+    <select id="getDoubleDivisionList" parameterType="com.goisan.educational.teacher.bean.DoubleDivisionTeacher"
+            resultType="com.goisan.educational.teacher.bean.DoubleDivisionTeacher">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME personId,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherName,
+        DEPARTMENT_ID departmentId,
+        FUNC_GET_DEPTNAME(t.DEPARTMENT_ID)  departmentIdShow,
+        t.TEACHING_LEVEL teachingLevel,
+        FUNC_GET_DICVALUE(t.TEACHING_LEVEL, 'JSJLJB') teachingLevelShow,
+        t.SUBJECT subject,
+        FUNC_GET_TABLEVALUE(t.SUBJECT, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') subjectShow,
+        to_char(t.ISSUING_TIME,'yyyy-mm-dd')  issuingTime,
+        t.ISSUING_DEPT issuingDept,
+        t.VALIDITY_TERM validityTerm,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_JW_DOUBLE_DIVISION_TEACHER t
+        WHERE 1 = 1
+        <if test="teacherName != null and teacherName != '' ">
+            AND FUNC_GET_USERNAME(t.TEACHER_NAME) LIKE '%${teacherName}%'
+        </if>
+        <if test="teachingLevel != null and teachingLevel != '' ">
+            AND t.TEACHING_LEVEL= #{teachingLevel}
+        </if>
+        <if test="subject != null and subject != '' ">
+            AND t.SUBJECT= #{subject}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <insert id="insertDoubleDivision" parameterType="com.goisan.educational.teacher.bean.DoubleDivisionTeacher">
+        insert into T_JW_DOUBLE_DIVISION_TEACHER
+        (TEACHER_ID,TEACHER_NAME,DEPARTMENT_ID,TEACHING_LEVEL,SUBJECT,ISSUING_TIME,ISSUING_DEPT,VALIDITY_TERM,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values
+        (FUNC_GET_UUID,#{teacherName},#{departmentId},#{teachingLevel},#{subject},to_date('${issuingTime}','yyyy-mm-dd'),#{issuingDept},#{validityTerm},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getDoubleDivisionById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.DoubleDivisionTeacher">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME teacherName,
+        DEPARTMENT_ID departmentId,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherNameShow,
+        FUNC_GET_DEPTNAME(T.DEPARTMENT_ID) departmentIdShow,
+        t.TEACHING_LEVEL teachingLevel,
+        FUNC_GET_DICVALUE(t.TEACHING_LEVEL, 'JSJLJB') teachingLevelShow,
+        t.SUBJECT subject,
+        FUNC_GET_TABLEVALUE(t.SUBJECT, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') subjectShow,
+        to_char(t.ISSUING_TIME,'yyyy-mm-dd')  issuingTime,
+        t.ISSUING_DEPT issuingDept,
+        t.VALIDITY_TERM validityTerm
+        FROM
+        T_JW_DOUBLE_DIVISION_TEACHER t
+        WHERE t.TEACHER_ID = #{teacherId}
+    </select>
+    <update id="updateDoubleDivisionById" parameterType="com.goisan.educational.teacher.bean.TeacherCondition">
+        update
+        T_JW_DOUBLE_DIVISION_TEACHER
+        SET
+        TEACHER_NAME=#{teacherName},
+        TEACHING_LEVEL=#{teachingLevel},
+        DEPARTMENT_ID=#{departmentId},
+        SUBJECT=#{subject},
+        ISSUING_TIME=to_date(#{issuingTime},'yyyy-mm-dd'),
+        ISSUING_DEPT=#{issuingDept},
+        VALIDITY_TERM=#{validityTerm},
+        CHANGER=#{changer},
+        CHANGE_TIME=sysdate,
+        CHANGE_DEPT=#{changeDept}
+        WHERE TEACHER_ID = #{teacherId}
+    </update>
+    <delete id="deleteDoubleDivisionById"  parameterType="java.lang.String">
+        DELETE FROM T_JW_DOUBLE_DIVISION_TEACHER WHERE TEACHER_ID = #{teacherId}
+    </delete>
+    <select id="getTeacherTrainingList" parameterType="com.goisan.educational.teacher.bean.TeacherTraining"
+            resultType="com.goisan.educational.teacher.bean.TeacherTraining">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME personId,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherName,
+        t.TRAINING_LEVEL trainingLevel,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'PXJB') trainingLevelShow,
+        t.TRAINING_CONTENT trainingContent,
+        t.TRAINING_DATE trainingDate,
+        t.TRAINING_DAY trainingDay,
+        t.TRAINING_PLACE trainingPlace,
+        FUNC_GET_DICVALUE(t.TRAINING_CONCLUSION, 'PXJL') trainingConclusion,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_JW_TRAINING t
+        WHERE 1 = 1
+        <if test="teacherName != null and teacherName != '' ">
+            AND FUNC_GET_USERNAME(t.TEACHER_NAME) LIKE '%${teacherName}%'
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t.TRAINING_LEVEL= #{trainingLevel}
+        </if>
+        <if test="trainingContent != null and trainingContent != '' ">
+            AND t.TRAINING_CONTENT like '%'||#{trainingContent}||'%'
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <insert id="insertTeacherTraining" parameterType="com.goisan.educational.teacher.bean.TeacherTraining">
+        insert into T_JW_TRAINING
+        (TEACHER_ID,TEACHER_NAME,TRAINING_LEVEL,TRAINING_CONTENT,TRAINING_DATE,TRAINING_DAY,TRAINING_PLACE,
+        TRAINING_CONCLUSION,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values
+        (FUNC_GET_UUID,#{teacherName},#{trainingLevel},#{trainingContent},#{trainingDate},#{trainingDay},#{trainingPlace},
+        #{trainingConclusion},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getTeacherTrainingById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.TeacherTraining">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME teacherName,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherNameShow,
+        t.TRAINING_LEVEL trainingLevel,
+        t.TRAINING_CONTENT trainingContent,
+        t.TRAINING_DATE trainingDate,
+        t.TRAINING_DAY trainingDay,
+        t.TRAINING_PLACE trainingPlace,
+        t.TRAINING_CONCLUSION trainingConclusion
+        FROM
+        T_JW_TRAINING t
+        WHERE t.TEACHER_ID = #{teacherId}
+    </select>
+    <update id="updateTeacherTrainingById" parameterType="com.goisan.educational.teacher.bean.TeacherCondition">
+        update
+        T_JW_TRAINING
+        SET
+        TEACHER_NAME=#{teacherName},
+        TRAINING_LEVEL=#{trainingLevel},
+        TRAINING_CONTENT=#{trainingContent},
+        TRAINING_DATE=#{trainingDate},
+        TRAINING_DAY=#{trainingDay},
+        TRAINING_PLACE=#{trainingPlace},
+        TRAINING_CONCLUSION=#{trainingConclusion},
+        CHANGER=#{changer},
+        CHANGE_TIME=sysdate,
+        CHANGE_DEPT=#{changeDept}
+        WHERE TEACHER_ID = #{teacherId}
+    </update>
+    <delete id="deleteTeacherTrainingById"  parameterType="java.lang.String">
+        DELETE FROM T_JW_TRAINING WHERE TEACHER_ID = #{teacherId}
+    </delete>
+    <select id="getHonorList" parameterType="com.goisan.educational.teacher.bean.GetHonor"
+            resultType="com.goisan.educational.teacher.bean.GetHonor">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME personId,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherName,
+        t.HONOR_NAME honorName,
+        t.GET_TIME getTime,
+        t.HONOR_LEVEL honorLevel,
+        FUNC_GET_DICVALUE(t.HONOR_LEVEL, 'RYJB') honorLevelShow,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_JW_GETHONOR t
+        WHERE 1 = 1
+        <if test="teacherName != null and teacherName != '' ">
+            AND FUNC_GET_USERNAME(t.TEACHER_NAME) LIKE '%${teacherName}%'
+        </if>
+        <if test="honorName != null and honorName != '' ">
+            AND t.HONOR_NAME= #{honorName}
+        </if>
+        <if test="getTime != null and getTime != '' ">
+            AND t.GET_TIME= #{getTime}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <insert id="insertHonor" parameterType="com.goisan.educational.teacher.bean.GetHonor">
+        insert into T_JW_GETHONOR
+        (TEACHER_ID,TEACHER_NAME,HONOR_NAME,GET_TIME,HONOR_LEVEL,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values
+        (FUNC_GET_UUID,#{teacherName},#{honorName},#{getTime},#{honorLevel},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getHonorById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.GetHonor">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME teacherName,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherNameShow,
+        t.HONOR_NAME honorName,
+        t.GET_TIME getTime,
+        t.HONOR_LEVEL honorLevel,
+        FUNC_GET_DICVALUE(t.HONOR_LEVEL, 'RYJB') honorLevelShow
+        FROM
+        T_JW_GETHONOR t
+        WHERE t.TEACHER_ID = #{teacherId}
+    </select>
+    <update id="updateHonorById" parameterType="com.goisan.educational.teacher.bean.GetHonor">
+        update
+        T_JW_GETHONOR
+        SET
+        TEACHER_NAME=#{teacherName},
+        HONOR_NAME=#{honorName},
+        GET_TIME=#{getTime},
+        HONOR_LEVEL=#{honorLevel},
+        CHANGER=#{changer},
+        CHANGE_TIME=sysdate,
+        CHANGE_DEPT=#{changeDept}
+        WHERE TEACHER_ID = #{teacherId}
+    </update>
+    <delete id="deleteHonorById"  parameterType="java.lang.String">
+        DELETE FROM T_JW_GETHONOR WHERE TEACHER_ID = #{teacherId}
+    </delete>
+    <select id="getEducationImproveList" parameterType="com.goisan.educational.teacher.bean.EducationImprove"
+            resultType="com.goisan.educational.teacher.bean.EducationImprove">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME personId,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherName,
+        FUNC_GET_DICVALUE(t.EDUCATION, 'XL') education,
+        FUNC_GET_DICVALUE(t.DEGEE, 'XW') degee,
+        t.FINISH_SCHOOL finishSchool,
+        t.MAJOR major,
+        t.MAJOR majorShow,
+        t.GET_TIME getTime,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_JW_EDUCATION_IMPROVE t
+        WHERE 1 = 1
+        <if test="teacherName != null and teacherName != '' ">
+            AND FUNC_GET_USERNAME(t.TEACHER_NAME) LIKE '%${teacherName}%'
+        </if>
+        <if test="education != null and education != '' ">
+            AND t.EDUCATION= #{education}
+        </if>
+        <if test="degee != null and degee != '' ">
+            AND t.degee= #{degee}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <insert id="insertEducationImprove" parameterType="com.goisan.educational.teacher.bean.EducationImprove">
+        insert into T_JW_EDUCATION_IMPROVE
+        (TEACHER_ID,TEACHER_NAME,EDUCATION,DEGEE,FINISH_SCHOOL,MAJOR,GET_TIME,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values
+        (FUNC_GET_UUID,#{teacherName},#{education},#{degee},#{finishSchool},#{major},#{getTime},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getEducationById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.EducationImprove">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME teacherName,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherNameShow,
+        t.EDUCATION education,
+        t.degee degee,
+        t.FINISH_SCHOOL,
+        t.major majorShow,
+        t.GET_TIME
+        FROM
+        T_JW_EDUCATION_IMPROVE t
+        WHERE t.TEACHER_ID = #{teacherId}
+    </select>
+    <update id="updateEdcuationById" parameterType="com.goisan.educational.teacher.bean.EducationImprove">
+        update
+        T_JW_EDUCATION_IMPROVE
+        SET
+        TEACHER_NAME=#{teacherName},
+        EDUCATION=#{education},
+        DEGEE=#{degee},
+        FINISH_SCHOOL=#{finishSchool},
+        MAJOR=#{major},
+        GET_TIME=#{getTime},
+        CHANGER=#{changer},
+        CHANGE_TIME=sysdate,
+        CHANGE_DEPT=#{changeDept}
+        WHERE TEACHER_ID = #{teacherId}
+    </update>
+    <delete id="delEducationImprove" parameterType="java.lang.String">
+       DELETE FROM  T_JW_EDUCATION_IMPROVE WHERE TEACHER_ID = #{teacherId}
+    </delete>
+    <select id="getAssessmentList" parameterType="com.goisan.educational.teacher.bean.BusinessAssessment"
+            resultType="com.goisan.educational.teacher.bean.BusinessAssessment">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME personId,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherName,
+        t.ASSESSMENT_CONTENT,
+        t.ASSESSMENT_TIME,
+        t.ASSESSMENT_RESULT,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_JW_BUSINESS_ASSESSMENT t
+        WHERE 1 = 1
+        <if test="teacherName != null and teacherName != '' ">
+            AND FUNC_GET_USERNAME(t.TEACHER_NAME) LIKE '%${teacherName}%'
+        </if>
+        <if test="assessmentContent != null and assessmentContent != '' ">
+            AND t.ASSESSMENT_CONTENT like '%'||#{assessmentContent}||'%'
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <insert id="insertBusinessAssessment" parameterType="com.goisan.educational.teacher.bean.BusinessAssessment">
+        insert into T_JW_BUSINESS_ASSESSMENT
+        (TEACHER_ID,TEACHER_NAME,ASSESSMENT_CONTENT,ASSESSMENT_TIME,ASSESSMENT_RESULT,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values
+        (FUNC_GET_UUID,#{teacherName},#{assessmentContent},#{assessmentTime},#{assessmentResult},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getAssessmentById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.BusinessAssessment">
+        SELECT
+        t.TEACHER_ID teacherId,
+        t.TEACHER_NAME teacherName,
+        FUNC_GET_USERNAME(t.TEACHER_NAME) teacherNameShow,
+        t.ASSESSMENT_CONTENT,
+        t.ASSESSMENT_TIME,
+        t.ASSESSMENT_RESULT
+        FROM
+        T_JW_BUSINESS_ASSESSMENT t
+        WHERE t.TEACHER_ID = #{teacherId}
+    </select>
+    <update id="updateAssessmentById" parameterType="com.goisan.educational.teacher.bean.BusinessAssessment">
+        update
+        T_JW_BUSINESS_ASSESSMENT
+        SET
+        TEACHER_NAME=#{teacherName},
+        ASSESSMENT_CONTENT=#{assessmentContent},
+        ASSESSMENT_TIME=#{assessmentTime},
+        ASSESSMENT_RESULT=#{assessmentResult},
+        CHANGER=#{changer},
+        CHANGE_TIME=sysdate,
+        CHANGE_DEPT=#{changeDept}
+        WHERE TEACHER_ID = #{teacherId}
+    </update>
+    <delete id="delAssessmentById"  parameterType="java.lang.String">
+        DELETE FROM T_JW_BUSINESS_ASSESSMENT WHERE TEACHER_ID = #{teacherId}
+    </delete>
+
+
+
+    <select id="getCompetitionList" parameterType="com.goisan.educational.teacher.bean.Competition"
+            resultType="com.goisan.educational.teacher.bean.Competition">
+        SELECT
+        t.COMPETITION_ID                             competitionId,
+        FUNC_GET_DICVALUE(competition_level, 'JSJB') competitionLevel,
+        t.COMPETITION_GROUP                          competitionGroup,
+        t.COMPETITION_PROJECT                        competitionProject,
+        t.HOST_UNIT                                  hostUnit,
+        t.create_time,
+        t.score                                      score
+        FROM
+        T_JW_COMPETITION t
+        <if test="competitionProject != null and competitionProject != '' ">
+            where t.COMPETITION_PROJECT like '%'||#{competitionProject}||'%'
+        </if>
+    </select>
+    <select id="getCompetitionIdById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.Competition">
+        SELECT
+               t.COMPETITION_ID      competitionId,
+               t.COMPETITION_LEVEL   competitionLevel,
+               t.COMPETITION_PROJECT competitionProject,
+               t.COMPETITION_GROUP   competitionGroup,
+               t.HOST_UNIT           hostUnit,
+               t.score               score
+        FROM
+             T_JW_COMPETITION t
+        WHERE
+            COMPETITION_ID = #{competitionId}
+    </select>
+
+    <delete id="deleteCompetitionIdById" parameterType="java.lang.String">
+        DELETE
+        FROM T_JW_COMPETITION
+        WHERE COMPETITION_ID = #{competitionId}
+    </delete>
+
+
+    <insert id="insertCompetition" parameterType="com.goisan.educational.teacher.bean.Competition">
+        insert into T_JW_COMPETITION
+            (COMPETITION_ID, COMPETITION_GROUP, COMPETITION_LEVEL, COMPETITION_PROJECT, SCORE, HOST_UNIT,
+             CREATOR, CREATE_TIME, CREATE_DEPT)
+        values
+               (FUNC_GET_UUID, #{competitionGroup}, #{competitionLevel}, #{competitionProject}, #{score}, #{hostUnit},
+                #{creator}, sysdate, #{createDept})
+    </insert>
+
+
+    <update id="updateCompetitionById" parameterType="com.goisan.educational.teacher.bean.Competition">
+        update
+            T_JW_COMPETITION
+        SET
+            COMPETITION_GROUP=#{competitionGroup},
+            COMPETITION_LEVEL=#{competitionLevel},
+            COMPETITION_PROJECT=#{competitionProject},
+            SCORE=#{score},
+            HOST_UNIT=#{hostUnit},
+            CHANGER=#{changer},
+            CHANGE_TIME=sysdate,
+            CHANGE_DEPT=#{changeDept}
+        WHERE COMPETITION_ID = #{competitionId}
+    </update>
+
+    <select id="getRewardList" parameterType="com.goisan.educational.teacher.bean.RewardAndPunishment"
+            resultType="com.goisan.educational.teacher.bean.RewardAndPunishment">
+        SELECT
+        t.REWARD_ID                             rewardId,
+        FUNC_GET_DICVALUE(t.REWARD_NAME, 'JLCF') rewardName,
+        FUNC_GET_DICVALUE(t.REWARD_LEVEL, 'JSJB')                   rewardLevel,
+        t.COGNIZANCE_UNIT                        cognizanceUnit,
+        t.COGNIZANCE_PROCESS                                  cognizanceProcess,
+        t.COGNIZANCE_CONCLUSION                                      cognizanceConclusion,
+        to_char(t.COGNIZANCE_DATE,'yyyy-mm-dd') cognizanceDate,
+        t.TERM_VALIDITY                                      termValidity
+        FROM
+        T_JW_REWARDANDPUNISHMENT t
+        <if test="rewardName != null and rewardName != '' ">
+            where t.REWARD_NAME = #{rewardName}
+        </if>
+    </select>
+
+    <select id="getRewardById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.RewardAndPunishment">
+        SELECT
+        t.REWARD_ID                             rewardId,
+        t.REWARD_NAME rewardName,
+        t.REWARD_LEVEL                   rewardLevel,
+        t.COGNIZANCE_UNIT                        cognizanceUnit,
+        t.COGNIZANCE_PROCESS                                  cognizanceProcess,
+        t.COGNIZANCE_CONCLUSION                                      cognizanceConclusion,
+        to_char(t.COGNIZANCE_DATE,'yyyy-mm-dd') cognizanceDate,
+        t.TERM_VALIDITY                                      termValidity
+        FROM
+        T_JW_REWARDANDPUNISHMENT t
+        where
+            t.REWARD_ID= #{rewardId}
+    </select>
+
+    <delete id="deleteRewardById" parameterType="java.lang.String">
+        DELETE
+        FROM T_JW_REWARDANDPUNISHMENT
+        WHERE REWARD_ID = #{rewardId}
+    </delete>
+
+
+    <insert id="insertReward" parameterType="com.goisan.educational.teacher.bean.RewardAndPunishment">
+        insert into T_JW_REWARDANDPUNISHMENT
+            (REWARD_ID,REWARD_NAME, REWARD_LEVEL, COGNIZANCE_UNIT,COGNIZANCE_PROCESS,COGNIZANCE_CONCLUSION,COGNIZANCE_DATE,TERM_VALIDITY,
+             CREATOR, CREATE_TIME, CREATE_DEPT)
+        values
+               (FUNC_GET_UUID, #{rewardName}, #{rewardLevel}, #{cognizanceUnit}, #{cognizanceProcess}, #{cognizanceConclusion},to_date('${cognizanceDate}','yyyy-mm-dd'),#{termValidity},
+                #{creator}, sysdate, #{createDept})
+    </insert>
+
+
+    <update id="updateReward" parameterType="com.goisan.educational.teacher.bean.RewardAndPunishment">
+        update
+            T_JW_REWARDANDPUNISHMENT
+        SET
+            REWARD_NAME=#{rewardName},
+            REWARD_LEVEL=#{rewardLevel},
+            COGNIZANCE_UNIT=#{cognizanceUnit},
+            COGNIZANCE_PROCESS=#{cognizanceProcess},
+            COGNIZANCE_CONCLUSION=#{cognizanceConclusion},
+            COGNIZANCE_DATE=to_date('${cognizanceDate}','yyyy-mm-dd'),
+            TERM_VALIDITY=#{termValidity},
+            CHANGER=#{changer},
+            CHANGE_TIME=sysdate,
+            CHANGE_DEPT=#{changeDept}
+        WHERE REWARD_ID = #{rewardId}
+    </update>
+    <select id="getTeacherType" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.TeacherCondition">
+        SELECT
+        t.TEACHER_ID teacherId,
+        FUNC_GET_DEPTNAME(T.DEPARTMENT_ID) departmentId,
+        XZ_POSITION xzPosition,
+        FUNC_GET_USERNAME(t.NAME) teacherName,
+        TEACHER_NUM teacherNum,
+        FUNC_GET_DICVALUE(t.TEACHER_SEX, 'XB') teacherSex,
+        to_char(t.BIRTHDAY,'yyyy-mm-dd') birthday,
+        FUNC_GET_DICVALUE(t.NATION, 'MZ') nationShow,
+        t.NATIVEPLACE nativePlace,
+        FUNC_GET_DICVALUE(t.POLITICALSTATUS, 'ZZMM') politicalStatusShow,
+        t.FIRSTEDUCATION firstEducation,
+        t.FIRSTEDUCATIONSTATUS firstEducationStatus,
+        t.FIRSTEDUCATIONSCHOOL firstEducationSchool,
+        t.FIRSTEDUCATIONMAJOR firstEducationMajor,
+        to_char(t.FIRS_ENDTIME,'yyyy-mm-dd') firsEndtime,
+        t.FINAL_EDUCATION finalEducation,
+        t.DEGEE degee,
+        t.MAJOR major,
+        to_char(t.FINALE_ENDTIME,'yyyy-mm-dd') finaleEndtime,
+        FINALEDUCATIONSCHOOL finalEducationSchool,
+        MAJOR_FIELD majorField,
+        MAJOR_SPECIALTY majorSpecialty,
+        LICENCE licence,
+        to_char(t.GETTIME,'yyyy-mm') getTime,
+        QIYE_YEAR qiyeYear,
+        QIYE_DAY qiyeDate,
+        MAJOR_GRADE majorGrade,
+        MAJOR_NAME majorName,
+        MAJOR_DEPT majorDept,
+        to_char(t.MAJOR_DATE,'yyyy-mm') majorDate,
+        t.TITLE title,
+        CAREER_GRADE careerGrade,
+        CAREER_NAME careerName,
+        CAREER_DEPT careerDept,
+        to_char(t.CAREER_GETTIME,'yyyy-mm') careerGettime,
+        FUNC_GET_DICVALUE(t.SFZY_TEACHER, 'SF') sfzyTeacher,
+        FUNC_GET_DICVALUE(t.SFSS_TEACHER, 'SF') sfssTeacher,
+        FUNC_GET_DICVALUE(t.SFGG_TEACHER, 'SF') sfggTeacher,
+        FUNC_GET_DICVALUE(t.SFMS_TEACHER, 'SF') sfmsTeacher,
+        POLITICS_MAJORCODE politicsMajorCode,
+        POLITICS_MAJORNAME politicsMajorName,
+        to_char(t.WORK_DATE,'yyyy-mm') workDate,
+        SIGNING signing,
+        EXPERT_DEPT expertDept,
+        EXPERT_WORK expertWork,
+        to_char(t.EXPERT_DATE,'yyyy-mm') expertDate,
+        TRAINING_NAME trainingName,
+        TRAINING_DAY trainingDay,
+        TRAINING_PLACE trainingPlace,
+        SEND_DEPT sendDept,
+        SRPOSITION srPosition
+
+        FROM T_JW_TEACHER_CONDITION t
+        WHERE 1 = 1
+        and t.TEACHER_CATEGORY=#{teacherType}
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+
+    <select id="getTeacherTypeToExp" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teacher.bean.TeacherCondition">
+       SELECT t.TEACHER_ID teacherId,
+       FUNC_GET_DEPTNAME(T.DEPARTMENT_ID) departmentId,
+       XZ_POSITION xzPosition,
+       FUNC_GET_USERNAME(t.NAME) teacherName,
+       TEACHER_NUM teacherNum,
+       FUNC_GET_DICVALUE(t.TEACHER_SEX, 'XB') teacherSex,
+       to_char(t.BIRTHDAY, 'yyyy-mm-dd') birthday,
+       FUNC_GET_DICVALUE(t.NATION, 'MZ') nationShow,
+       t.NATIVEPLACE nativePlace,
+       FUNC_GET_DICVALUE(t.POLITICALSTATUS, 'ZZMM') politicalStatusShow,
+       FUNC_GET_DICVALUE(t.FIRSTEDUCATION, 'XL') firstEducation,
+       FUNC_GET_DICVALUE(t.FIRSTEDUCATIONSTATUS, 'XW') firstEducationStatus,
+       t.FIRSTEDUCATIONSCHOOL firstEducationSchool,
+       t.FIRSTEDUCATIONMAJOR firstEducationMajor,
+       to_char(t.FIRS_ENDTIME, 'yyyy-mm-dd') firsEndtime,
+        FUNC_GET_DICVALUE(t.FINAL_EDUCATION, 'XL') finalEducation,
+        FUNC_GET_DICVALUE(t.DEGEE, 'XW') degee,
+       t.MAJOR major,
+       to_char(t.FINALE_ENDTIME, 'yyyy-mm-dd') finaleEndtime,
+       FINALEDUCATIONSCHOOL finalEducationSchool,
+       MAJOR_FIELD majorField,
+       MAJOR_SPECIALTY majorSpecialty,
+       LICENCE licence,
+       to_char(t.GETTIME, 'yyyy-mm') getTime,
+       QIYE_YEAR qiyeYear,
+       QIYE_DAY qiyeDate,
+       MAJOR_GRADE majorGrade,
+       MAJOR_NAME majorName,
+       MAJOR_DEPT majorDept,
+       to_char(t.MAJOR_DATE, 'yyyy-mm') majorDate,
+       t.TITLE title,
+       CAREER_GRADE careerGrade,
+       CAREER_NAME careerName,
+       CAREER_DEPT careerDept,
+       to_char(t.CAREER_GETTIME, 'yyyy-mm') careerGettime,
+       FUNC_GET_DICVALUE(t.SFZY_TEACHER, 'SF') sfzyTeacher,
+       FUNC_GET_DICVALUE(t.SFSS_TEACHER, 'SF') sfssTeacher,
+       FUNC_GET_DICVALUE(t.SFGG_TEACHER, 'SF') sfggTeacher,
+       FUNC_GET_DICVALUE(t.SFMS_TEACHER, 'SF') sfmsTeacher,
+       POLITICS_MAJORCODE politicsMajorCode,
+       POLITICS_MAJORNAME politicsMajorName,
+       to_char(t.WORK_DATE, 'yyyy-mm') workDate,
+       SIGNING signing,
+       EXPERT_DEPT expertDept,
+       EXPERT_WORK expertWork,
+       to_char(t.EXPERT_DATE, 'yyyy-mm') expertDate,
+       TRAINING_NAME trainingName,
+       TRAINING_DAY trainingDay,
+       TRAINING_PLACE trainingPlace,
+       SEND_DEPT sendDept,
+       SRPOSITION srPosition
+        FROM T_JW_TEACHER_CONDITION t
+        WHERE 1 = 1
+        and t.TEACHER_CATEGORY=#{teacherType}
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+
+</mapper>

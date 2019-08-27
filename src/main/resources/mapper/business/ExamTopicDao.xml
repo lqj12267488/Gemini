@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.exam.dao.ExamTopicDao">
+    <select id="examTopicAction" resultType="com.goisan.educational.exam.bean.ExamTopic"
+            parameterType="com.goisan.educational.exam.bean.ExamTopic">
+        select
+        id,
+        FUNC_GET_DICVALUE(semester,'XQ') semester,
+        FUNC_GET_TABLEVALUE(exam_course,'T_JW_COURSE','COURSE_ID','COURSE_NAME')   examCourse,
+        FUNC_GET_TABLEVALUE(exam_id,'T_JW_EXAM','exam_id','exam_name')   examId,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentsId,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name')  majorCode,
+        create_time   createTime
+        from T_JW_EXAM_TOPIC
+        WHERE 1 = 1
+        <if test=" semester != null and semester != '' ">
+            AND semester  =  #{semester}
+        </if>
+        <if test="examCourse != null and examCourse != '' ">
+            AND exam_course =  #{examCourse}
+        </if>
+        <if test=" departmentsId != null and departmentsId != '' ">
+            AND departments_id  =  #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND major_code =  #{majorCode}
+        </if>
+        <if test=" examId != null and examId != '' ">
+            AND FUNC_GET_TABLEVALUE(exam_id,'T_JW_EXAM','exam_id','exam_name') LIKE '%'||#{examId}||'%'
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="insertExamTopic" parameterType="com.goisan.educational.exam.bean.ExamTopic">
+        INSERT INTO T_JW_EXAM_TOPIC
+        (
+        id,
+        semester,
+        exam_course,
+        exam_id,
+        departments_id,
+        major_code,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${semester}',
+        '${examCourse}',
+        '${examId}',
+        '${departmentsId}',
+        '${majorCode}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <select id="getExamTopicById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamTopic">
+        select
+        id,
+        semester,
+        exam_course   examCourse,
+        exam_id examId,
+        FUNC_GET_TABLEVALUE(exam_id,'T_JW_EXAM','exam_id','exam_name')   examShow,
+        departments_id  departmentsId,
+        major_code  majorCode
+        from T_JW_EXAM_TOPIC
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateExamTopicById" parameterType="com.goisan.educational.exam.bean.ExamTopic">
+        UPDATE T_JW_EXAM_TOPIC SET
+        semester = #{semester},
+        exam_course   = #{examCourse},
+        exam_id = #{examId},
+        departments_id  = #{departmentsId},
+        major_code  = #{majorCode},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteExamTopicById" parameterType="java.lang.String">
+        DELETE  T_JW_EXAM_TOPIC WHERE id = #{id}
+    </delete>
+    <select id="getExamName" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.exam_name as "label",
+        t.exam_id as "value"
+        FROM T_JW_EXAM t
+    </select>
+</mapper>

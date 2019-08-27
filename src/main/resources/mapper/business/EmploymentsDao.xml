@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.employments.dao.EmploymentsDao">
+    <select id="EmploymentsAction" parameterType="com.goisan.studentwork.employments.bean.Employments"
+            resultType="com.goisan.studentwork.employments.bean.Employments">
+        SELECT
+        employment_unit_id employmentUnitId,
+        internship_unit_name  internshipUnitName,
+        area area,
+        address address,
+        contact_person contactPerson,
+        contact_number contactNumber,
+        FUNC_GET_DICVALUE(internship_unit_flag,'SF')  internshipUnitFlag,
+        unit_encoding unitEncoding,
+        legal_person legalPerson,
+        registered_capital registeredCapital,
+        person_number personNumber,
+        enterprise_scale enterpriseScale,
+        FUNC_GET_DICVALUE(enterprise_scale,'QYGM')  enterpriseScaleShow,
+        FUNC_GET_DICVALUE(unit_property,'JYDWXZ') unitPropertyShow,
+        FUNC_GET_DICVALUE(employment_industry,'JYCYLB') employmentIndustryShow,
+        FUNC_GET_DICVALUE(employment_area,'JYDYLB') employmentAreaShow,
+        FUNC_GET_DICVALUE(employment_place,'JYDD') employmentPlaceShow,
+        FUNC_GET_DICVALUE(enterprise_category,'JYQYSSLB') enterpriseCategoryShow,
+        FUNC_GET_DICVALUE(employment_channels,'JYQD') employmentChannelsShow,
+        FUNC_GET_DICVALUE(counterpart_property,'ZYDKXZ') counterpartPropertyShow,
+        FUNC_GET_DICVALUE(employment_nature,'JYXZ')  employmentNatureShow,
+        create_time createTime
+        FROM
+        T_XG_EMPLOYMENT_UNIT
+        WHERE  1 = 1 AND valid_flag = 1
+        <if test="internshipUnitName != null and internshipUnitName != '' ">
+            AND internship_unit_name LIKE #{internshipUnitName}
+        </if>
+        order by create_time desc
+    </select>
+    <select id="employmentList" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.employments.bean.Employments">
+        SELECT
+        employment_unit_id employmentUnitId,
+        internship_unit_name  internshipUnitName,
+        area area,
+        address address,
+        contact_person contactPerson,
+        contact_number contactNumber,
+        internship_unit_flag internshipUnitFlag,
+        FUNC_GET_DICVALUE(internship_unit_flag,'SF')  internshipUnitFlagShow,
+        unit_encoding unitEncoding,
+        legal_person legalPerson,
+        registered_capital registeredCapital,
+        person_number personNumber,
+        unit_property  unitProperty,
+        employment_industry employmentIndustry,
+        employment_area employmentArea,
+        employment_place  employmentPlace,
+        enterprise_category  enterpriseCategory,
+        employment_channels  employmentChannels,
+        counterpart_property counterpartProperty,
+        employment_nature employmentNature,
+        enterprise_scale enterpriseScale,
+        FUNC_GET_DICVALUE(enterprise_scale,'QYGM')  enterpriseScaleShow,
+        FUNC_GET_DICVALUE(unit_property,'JYDWXZ') unitPropertyShow,
+        FUNC_GET_DICVALUE(employment_industry,'JYCYLB') employmentIndustryShow,
+        FUNC_GET_DICVALUE(employment_area,'JYDYLB') employmentAreaShow,
+        FUNC_GET_DICVALUE(employment_place,'JYDD') employmentPlaceShow,
+        FUNC_GET_DICVALUE(enterprise_category,'JYQYSSLB') enterpriseCategoryShow,
+        FUNC_GET_DICVALUE(employment_channels,'JYQD') employmentChannelsShow,
+        FUNC_GET_DICVALUE(counterpart_property,'ZYDKXZ') counterpartPropertyShow,
+        FUNC_GET_DICVALUE(employment_nature,'JYXZ')  employmentNatureShow,
+        create_time createTime
+        FROM
+        T_XG_EMPLOYMENT_UNIT
+        WHERE employment_unit_id = #{employmentUnitId}
+    </select>
+    <select id="getEmploymentsById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.employments.bean.Employments">
+        SELECT
+        employment_unit_id employmentUnitId,
+        internship_unit_name  internshipUnitName,
+        area area,
+        address address,
+        contact_person contactPerson,
+        contact_number contactNumber,
+        internship_unit_flag internshipUnitFlag,
+        FUNC_GET_DICVALUE(internship_unit_flag,'SF')  internshipUnitFlagShow,
+        unit_encoding unitEncoding,
+        legal_person legalPerson,
+        registered_capital registeredCapital,
+        person_number personNumber,
+        unit_property  unitProperty,
+        employment_industry employmentIndustry,
+        employment_area employmentArea,
+        employment_place  employmentPlace,
+        enterprise_category  enterpriseCategory,
+        employment_channels  employmentChannels,
+        counterpart_property counterpartProperty,
+        employment_nature employmentNature,
+        enterprise_scale enterpriseScale,
+        FUNC_GET_DICVALUE(enterprise_scale,'QYGM')  enterpriseScaleShow,
+        FUNC_GET_DICVALUE(unit_property,'JYDWXZ') unitPropertyShow,
+        FUNC_GET_DICVALUE(employment_industry,'JYCYLB') employmentIndustryShow,
+        FUNC_GET_DICVALUE(employment_area,'JYDYLB') employmentAreaShow,
+        FUNC_GET_DICVALUE(employment_place,'JYDD') employmentPlaceShow,
+        FUNC_GET_DICVALUE(enterprise_category,'JYQYSSLB') enterpriseCategoryShow,
+        FUNC_GET_DICVALUE(employment_channels,'JYQD') employmentChannelsShow,
+        FUNC_GET_DICVALUE(counterpart_property,'ZYDKXZ') counterpartPropertyShow,
+        FUNC_GET_DICVALUE(employment_nature,'JYXZ')  employmentNatureShow,
+        create_time createTime
+        FROM
+        T_XG_EMPLOYMENT_UNIT
+        WHERE employment_unit_id = #{employmentUnitId}
+    </select>
+    <insert id="insertEmployments" parameterType="com.goisan.studentwork.employments.bean.Employments">
+        INSERT INTO  T_XG_EMPLOYMENT_UNIT
+        (employment_unit_id,internship_unit_name,area,address,contact_person,contact_number
+        ,internship_unit_flag,unit_encoding,legal_person,registered_capital,person_number,
+        unit_property,employment_industry,employment_area,employment_place,enterprise_category,
+        employment_channels,counterpart_property,employment_nature,enterprise_scale,creator,create_time,create_dept,valid_flag)
+        VALUES
+        (func_get_uuid,'${internshipUnitName}','${area}','${address}','${contactPerson}','${contactNumber}'
+        ,'${internshipUnitFlag}','${unitEncoding}','${legalPerson}','${registeredCapital}','${personNumber}',
+        '${unitProperty}','${employmentIndustry}','${employmentArea}','${employmentPlace}','${enterpriseCategory}',
+        '${employmentChannels}','${counterpartProperty}','${employmentNature}','${enterpriseScale}','${creator}',sysdate,'${createDept}',1 )
+    </insert>
+    <insert id="insertEmployments1" parameterType="com.goisan.studentwork.employments.bean.Employments">
+        INSERT INTO  T_XG_EMPLOYMENT_UNIT
+        (employment_unit_id,internship_unit_name,area,address,contact_person,contact_number
+        ,internship_unit_flag,unit_encoding,legal_person,registered_capital,person_number,
+        unit_property,employment_industry,employment_area,employment_place,enterprise_category,
+        employment_channels,counterpart_property,employment_nature,enterprise_scale,creator,create_time,create_dept,valid_flag)
+        VALUES
+        ('${employmentUnitId}','${internshipUnitName}','${area}','${address}','${contactPerson}','${contactNumber}'
+        ,'${internshipUnitFlag}','${unitEncoding}','${legalPerson}','${registeredCapital}','${personNumber}',
+        '${unitProperty}','${employmentIndustry}','${employmentArea}','${employmentPlace}','${enterpriseCategory}',
+        '${employmentChannels}','${counterpartProperty}','${employmentNature}','${enterpriseScale}','${creator}',sysdate,'${createDept}',1 )
+    </insert>
+    <update id="updateEmploymentsById" parameterType="com.goisan.studentwork.employments.bean.Employments">
+        UPDATE T_XG_EMPLOYMENT_UNIT SET
+        internship_unit_name = #{internshipUnitName},
+        area  = #{area},
+        address = #{address},
+        contact_person = #{contactPerson},
+        contact_number= #{contactNumber},
+        internship_unit_flag = #{internshipUnitFlag},
+        unit_encoding = #{unitEncoding},
+        legal_person = #{legalPerson},
+        registered_capital = #{registeredCapital},
+        person_number = #{personNumber},
+        unit_property = #{unitProperty},
+        employment_industry = #{employmentIndustry},
+        employment_area = #{employmentArea},
+        employment_place = #{employmentPlace},
+        enterprise_category = #{enterpriseCategory},
+        employment_channels = #{employmentChannels},
+        counterpart_property = #{counterpartProperty},
+        employment_nature = #{employmentNature},
+        enterprise_scale = #{enterpriseScale}
+        WHERE employment_unit_id = #{employmentUnitId}
+    </update>
+    <delete id="deleteEmploymentsById" parameterType="java.lang.String">
+        DELETE FROM T_XG_EMPLOYMENT_UNIT  WHERE employment_unit_id = #{employmentUnitId}
+    </delete>
+    <select id="selectId" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.employments.bean.Employments">
+        SELECT employment_unit_id internshipUnitId FROM T_XG_EMPLOYMENT_UNIT WHERE employment_unit_id = #{employmentUnitId}
+    </select>
+    <select id="getEmploymentsByInternshipUnitName" parameterType="java.lang.String"
+        resultType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        SELECT
+        employment_id employmentId,
+        FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentIdShow ,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classIdShow ,
+        FUNC_GET_DICVALUE(sex, 'XB') sexShow,
+        idcard idcard,
+        sign_contract signContract,
+        employment_insurance_type employmentInsuranceType,
+        employment_satisfaction employmentSatisfaction,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow ,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCodeShow,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevelShow,
+        FUNC_GET_TABLEVALUE(employment_unit_id,'T_XG_EMPLOYMENT_UNIT','EMPLOYMENT_UNIT_ID','INTERNSHIP_UNIT_NAME') employmentUnitIdShow ,
+        employment_positions employmentPositions,
+        to_char(employment_year,'yyyy-mm-dd') as employmentYear,
+        area area,
+        FUNC_GET_DICVALUE(employment_insurance_type, 'JYBXXZ') employmentInsuranceTypeShow,
+        FUNC_GET_DICVALUE(sign_contract, 'SF') signContractShow,
+        FUNC_GET_DICVALUE(employment_satisfaction, 'JYMYD') employmentSatisfactionShow,
+        FUNC_GET_DICVALUE(employment_type, 'SXXS') employmentTypeShow,
+        FUNC_GET_DICVALUE(major_match_flag, 'SF') majorMatchFlagShow,
+        FUNC_GET_DICVALUE(salary, 'GZSRSP') salaryShow,
+        tel tel,
+        student_number studentNumber,
+        create_time createTime
+        FROM
+        T_XG_EMPLOYMENT_STUDENT
+        WHERE  1 = 1
+        AND FUNC_GET_TABLEVALUE(employment_unit_id,'T_XG_EMPLOYMENT_UNIT','EMPLOYMENT_UNIT_ID','INTERNSHIP_UNIT_NAME') = #{internshipUnitName}
+    </select>
+</mapper>
+
+

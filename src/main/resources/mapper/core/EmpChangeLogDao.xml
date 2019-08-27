@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.EmpChangeLogDao">
+    <select id="getEmpChangeLogList" parameterType="com.goisan.system.bean.EmpChangeLog"
+            resultType="com.goisan.system.bean.EmpChangeLog">
+        SELECT FUNC_GET_USERNAME(person_id) personShow,
+                FUNC_GET_DICVALUE(change_type,'JZGYDLX') changeTypeShow,
+                person_id personId,change_type changeType,old_code oldCode,
+                old_content oldContent,new_code newCode,new_content newContent,
+                to_char(create_time,'yyyy/mm/dd hh24:mi:ss') logTime
+              FROM T_RS_EMPLOYEE_CHANGE_LOG
+        WHERE 1 = 1
+        <if test="personId != null and personId != '' ">
+            AND person_id=#{personId}
+        </if>
+        <if test="changeType != null and changeType != '' ">
+            AND change_type=#{changeType}
+        </if>
+        AND create_dept like func_get_range('${createDept}', '${level}')
+        ORDER BY create_time DESC
+    </select>
+    <select id="getDeptNameByPersonId"  parameterType="java.lang.String" resultType="com.goisan.system.bean.Select2">
+        SELECT wm_concat(dept_id) id ,
+               FUNC_GET_DEPTNAME(wm_concat(dept_id) ) as text
+          FROM t_rs_employee_dept
+         WHERE person_id = #{personId}
+    </select>
+    <select id="getStatusByPersonId"  parameterType="java.lang.String" resultType="com.goisan.system.bean.Select2">
+        SELECT staff_status id,
+               FUNC_GET_DICVALUE(staff_status,'JZGZT') text
+          FROM t_rs_employee
+         WHERE person_id = #{personId}
+    </select>
+    <insert id="saveLog" parameterType="com.goisan.system.bean.EmpChangeLog">
+        INSERT INTO
+            T_RS_EMPLOYEE_CHANGE_LOG (
+                ID,creator,create_time,create_dept,valid_flag,
+                person_id,change_type,old_code,old_content,new_code,new_content
+            )
+        VALUES (
+                FUNC_GET_UUID,#{creator}, sysdate,#{createDept},1,
+                #{personId},#{changeType},#{oldCode},#{oldContent},#{newCode},#{newContent}
+            )
+    </insert>
+   <!--
+    <update id="deleteEmp" parameterType="java.lang.String">
+        UPDATE t_rs_employee SET valid_flag = '0' WHERE person_id = #{personId}
+    </update>
+    <delete id="deleteEmpDept" parameterType="java.lang.String">
+        DELETE FROM t_rs_employee_dept WHERE person_id = #{personId}
+    </delete>
+    <delete id="deleteRoleByPersonIdAndDeptId">
+        DELETE FROM t_rs_employee_dept_role WHERE person_id = #{personId} AND dept_id = #{deptId}
+    </delete>-->
+</mapper>

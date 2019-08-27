@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--suppress ALL -->
+<mapper namespace="com.goisan.educational.exam.dao.ExamTeacherCourseDao">
+    <select id="getExamTeacherCourseList" parameterType="com.goisan.educational.exam.bean.ExamTeacherCourse"
+            resultType="com.goisan.educational.exam.bean.ExamTeacherCourse">
+        SELECT
+        id id,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+        course_name courseName,
+        course_type courseType,
+        departments_id departmentsId,
+        major_code majorCode,
+        teacher_person_id teacherPersonId,
+        teacher_dept_id teacherDeptId,
+        FUNC_GET_USERNAME(teacher_person_id) teacherPersonIdShow,
+        FUNC_GET_DEPTNAME(teacher_dept_id) teacherDeptIdShow,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCodeShow,
+        create_time createTime,
+        create_dept createDept,
+        valid_flag
+        FROM
+        T_JW_EXAM_TEACHER_COURSE
+        WHERE 1 = 1 AND valid_flag = '1'
+        <if test="teacherPersonId != null and teacherPersonId != '' ">
+            AND  FUNC_GET_USERNAME(teacher_person_id) LIKE '%'||#{teacherPersonId}||'%'
+        </if>
+    </select>
+    <select id="getExamTeacherCourseById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.ExamTeacherCourse">
+        SELECT
+        id id,
+        course_id courseId,
+        course_name courseName,
+        course_type courseType,
+        departments_id departmentsId,
+        major_code majorCode,
+        teacher_person_id teacherPersonId,
+        teacher_dept_id teacherDeptId,
+        FUNC_GET_USERNAME(teacher_person_id)||'----'|| FUNC_GET_DEPTNAME(teacher_dept_id) teacherPersonIdShow,
+        FUNC_GET_DEPTNAME(teacher_dept_id) teacherDeptIdShow,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentsIdShow,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCodeShow,
+        creator creator,
+        create_time createTime,
+        create_dept createDept,
+        valid_flag
+        FROM T_JW_EXAM_TEACHER_COURSE
+        WHERE 1 = 1 AND VALID_FLAG = '1' AND id = #{id}
+    </select>
+    <insert id="insertExamTeacherCourse" parameterType="com.goisan.educational.exam.bean.ExamTeacherCourse">
+        INSERT INTO
+        T_JW_EXAM_TEACHER_COURSE
+        (id,
+        course_id,
+        course_name,
+        course_type,
+        departments_id,
+        major_code,
+        teacher_person_id,
+        teacher_dept_id,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag) values
+        (FUNC_GET_UUID,
+        '${courseId}',
+        '${courseName}',
+        '${courseType}',
+        '${departmentsId}',
+        '${majorCode}',
+        '${teacherPersonId}',
+        '${teacherDeptId}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <update id="updateExamTeacherCourse" parameterType="com.goisan.educational.exam.bean.ExamTeacherCourse">
+        UPDATE  T_JW_EXAM_TEACHER_COURSE  SET
+        course_id = #{courseId},
+        course_name = #{courseName},
+        course_type = #{courseType},
+        departments_id = #{departmentsId},
+        major_code = #{majorCode},
+        teacher_person_id = #{teacherPersonId},
+        teacher_dept_id = #{teacherDeptId}
+        WHERE  id = #{id}
+    </update>
+
+    <delete id="deleteExamTeacherCourse" parameterType="com.goisan.educational.exam.bean.ExamTeacherCourse">
+        DELETE FROM T_JW_EXAM_TEACHER_COURSE WHERE id = #{id}
+    </delete>
+    <select id="getPersonIdDeptId" parameterType="com.goisan.educational.exam.bean.ExamTeacherCourse"
+            resultType="com.goisan.educational.exam.bean.ExamTeacherCourse">
+        SELECT id id,
+        teacher_person_id teacherPersonId,
+        teacher_dept_id teacherDeptId,
+        FUNC_GET_USERNAME(teacher_person_id) teacherPersonIdShow,
+        FUNC_GET_DEPTNAME(teacher_dept_id) teacherDeptIdShow,
+        creator creator,
+        create_time createTime,
+        create_dept createDept,
+        valid_flag
+        FROM T_JW_EXAM_TEACHER_COURSE
+        WHERE 1 = 1 AND VALID_FLAG = '1' AND person_id = #{personId} AND dept_id = #{deptId}
+    </select>
+
+
+</mapper>

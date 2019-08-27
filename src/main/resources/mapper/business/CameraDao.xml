@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <!--摄像申请表-->
+<mapper namespace="com.goisan.synergy.workflow.dao.CameraDao">
+    <select id="getCameraList" resultType="com.goisan.synergy.workflow.bean.Camera" parameterType="com.goisan.synergy.workflow.bean.Camera">
+        SELECT
+        t.id,
+        func_get_username(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd')|| ' '|| to_char(t.request_date,'hh24:mi')  requestDate ,
+        to_char(t.shoot_date,'yyyy-mm-dd') || ' '|| to_char(t.shoot_date,'hh24:mi') as shootDate ,
+        t.shooting_method,
+        t.machine_number,
+        t.create_time,
+        t.shooting_location  shootingLocation,
+        t.valid_flag validFlag,
+        t.content
+        FROM
+        T_BG_CAMERA_WF t
+        WHERE 1=1
+--         查询列(模糊查询)
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE '%'||#{requestDate}||'%'
+        </if>
+--         本人看到自己数据
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+--         部门数据
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        AND t.request_flag = '0'
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="getCameraById" resultType="com.goisan.synergy.workflow.bean.Camera"
+            parameterType="com.goisan.synergy.workflow.bean.Camera">
+        SELECT
+        t.id,
+        func_get_username(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd')|| 'T'|| to_char(t.request_date,'hh24:mi')  requestDate ,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  as requestTime,
+        to_char(t.shoot_date,'yyyy-mm-dd') || 'T'|| to_char(t.shoot_date,'hh24:mi') as shootDate ,
+        to_char(t.shoot_date,'yyyy-mm-dd hh24:mi') as shootTime ,
+        t.shooting_method shootingMethod,
+        t.machine_number machineNumber,
+        t.shooting_location  shootingLocation,
+        t.content content
+        FROM
+        T_BG_CAMERA_WF t
+        WHERE id = #{id} ORDER BY t.request_date desc
+    </select>
+
+    <insert id="insertCamera" parameterType="java.lang.String">
+        INSERT INTO
+        T_BG_CAMERA_WF
+        (id,request_dept,requester,request_date,shoot_date,create_time,shooting_method,machine_number,shooting_location,content,creator,create_dept) values
+        (FUNC_GET_UUID,'${requestDept}','${requester}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),to_date('${shootDate}','yyyy-mm-dd hh24:mi'),sysdate,'${shootingMethod}','${machineNumber}','${shootingLocation}','${content}','${creator}','${createDept}')
+    </insert>
+    <delete id="deleteCameraById"  parameterType="java.lang.String">
+        DELETE FROM  T_BG_CAMERA_WF WHERE id = #{id}
+    </delete>
+    <update id="updateCameraById" parameterType="com.goisan.synergy.workflow.bean.Camera">
+        update
+        T_BG_CAMERA_WF
+        SET
+        request_date=to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        shoot_date=to_date(#{shootDate},'yyyy-mm-dd hh24:mi'),
+        shooting_method=#{shootingMethod},
+        machine_number=#{machineNumber},
+        content=#{content},
+        shooting_location = #{shootingLocation},
+         change_time= sysdate,
+        changer = #{changer},
+		change_dept = #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+
+
+    <!--待办页查表-->
+    <select id="getCameraListProcess" resultType="com.goisan.synergy.workflow.bean.Camera"
+            parameterType="com.goisan.synergy.workflow.bean.Camera">
+        SELECT
+        t.id,
+        func_get_username(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd')|| ' '|| to_char(t.request_date,'hh24:mi')  requestDate ,
+        to_char(t.shoot_date,'yyyy-mm-dd') || ' '|| to_char(t.shoot_date,'hh24:mi') as shootDate ,
+        t.shooting_method,
+        t.machine_number,
+        t.shooting_location  shootingLocation,
+        t.valid_flag validFlag,
+        t.content,
+        t.creator,
+        t.create_time,
+        t.create_dept
+        FROM
+        T_BG_CAMERA_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+
+
+    <!--已办页查表-->
+    <select id="getCameraListComplete" resultType="com.goisan.synergy.workflow.bean.Camera"
+            parameterType="com.goisan.synergy.workflow.bean.Camera">
+        SELECT
+        DISTINCT
+        t.id,
+        func_get_username(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd')|| ' '|| to_char(t.request_date,'hh24:mi')  requestDate ,
+        to_char(t.shoot_date,'yyyy-mm-dd') || ' '|| to_char(t.shoot_date,'hh24:mi') as shootDate ,
+        t.shooting_method,
+        t.machine_number,
+        t.content,
+        t.shooting_location  shootingLocation,
+        t.create_time,
+        t.feedback,
+        func_get_dicvalue(t.request_flag,'GZLLZZT') requestFlag,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackFlag
+        FROM
+        T_BG_CAMERA_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--公共表不需要改-->
+    <!--查询人员表-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <!--查询部门表-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--通过人员id查询人员姓名-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <!--通过部门id查询部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+
+    <!--新增去重-->
+    <!--<select id="checkCode" resultType="com.goisan.synergy.workflow.bean.AssetsScrap"-->
+    <!--parameterType="com.goisan.synergy.workflow.bean.AssetsScrap">-->
+    <!--select * from T_BG_ASSETSSCRAP_WF t where t.assets_id = #{diccode} AND id != #{id}-->
+    <!--</select>-->
+    <!--<select id="checkName" parameterType="com.goisan.system.bean.UserDic" resultType="com.goisan.system.bean.UserDic">-->
+    <!--select * from t_sys_userdic where dic_name = #{dicname} AND id != #{id}-->
+    <!--</select>-->
+
+</mapper>

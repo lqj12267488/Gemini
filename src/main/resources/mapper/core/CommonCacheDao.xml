@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="com.goisan.system.dao.CommonDao">
+    <cache readOnly="true"/>
+    <select id="getSysDict"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT dic_code id,dic_name text
+        FROM t_sys_dic
+        WHERE valid_flag = '1' and parent_id = (SELECT id FROM t_sys_dic WHERE dic_code = #{name})
+        <if test="where != '' and where != null">
+            and ${where}
+        </if>
+        ORDER BY dic_order
+    </select>
+
+    <!--返回的Select对象的属性id值为字典表的id-->
+    <select id="getSysDictSelect"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT id,dic_name text
+        FROM t_sys_dic
+        WHERE valid_flag = '1' and parent_id = (SELECT id FROM t_sys_dic WHERE dic_code = #{name})
+        <if test="where != '' and where != null">
+            and ${where}
+        </if>
+        ORDER BY dic_order
+    </select>
+</mapper>

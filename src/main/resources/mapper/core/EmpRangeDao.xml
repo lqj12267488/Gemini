@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.EmpRangeDao">
+    <select id="getEmpRangeList" resultType="com.goisan.system.bean.EmpRange"
+            parameterType="com.goisan.system.bean.EmpRange">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_rs_employee_range t
+        where 1 = 1
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE #{deptId}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id) LIKE #{personId}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getEmpRangeById" resultType="com.goisan.system.bean.EmpRange"
+            parameterType="com.goisan.system.bean.EmpRange">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.dept_id)  deptIdShow,
+        t.dept_id  deptId,
+        FUNC_GET_USERNAME(t.person_id) personIdShow,
+        t.person_id personId,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_rs_employee_range t
+        WHERE id = #{id} ORDER BY t.create_time desc
+    </select>
+    <select id="getEmpRangeByEmpId" parameterType="String" resultType="com.goisan.system.bean.EmpRange">
+        SELECT * FROM T_RS_EMPLOYEE_RANGE WHERE PERSON_ID = #{personId}
+    </select>
+    <insert id="insertEmpRange" parameterType="com.goisan.system.bean.EmpRange">
+        INSERT INTO
+        t_rs_employee_range
+        (id,dept_id,person_id,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${deptId}','${personId}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <delete id="deleteEmpRangeById" parameterType="java.lang.String">
+        DELETE FROM t_rs_employee_range WHERE id = #{id}
+    </delete>
+    <update id="updatEmpRangeById" parameterType="com.goisan.system.bean.EmpRange">
+        update
+        t_rs_employee_range
+        SET
+        id = #{id},
+        dept_id = #{deptId},
+        person_id = #{personId},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <!--<select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>-->
+
+</mapper>

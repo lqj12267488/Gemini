@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="com.goisan.system.dao.CommonGroupDao">
+    <select id="getGroupList" parameterType="com.goisan.system.bean.CommonGroup"
+            resultType="com.goisan.system.bean.CommonGroup">
+        SELECT t.group_id groupId ,t.group_name groupName , t.remarks , create_time createTime
+         FROM T_RS_COMMON_GROUP t
+         WHERE
+            1 = 1
+        <if test="groupName != null and groupName !='' ">
+            AND  t.group_name LIKE #{groupName}
+        </if>
+    </select>
+    <select id="getGroupById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.CommonGroup">
+        SELECT t.group_id groupId ,t.group_name groupName , t.remarks
+         FROM T_RS_COMMON_GROUP t
+         WHERE group_id = #{groupId}
+    </select>
+    <insert id="insertGroup" parameterType="com.goisan.system.bean.CommonGroup">
+      INSERT INTO
+        T_RS_COMMON_GROUP
+        (group_id,group_name,remarks,creator,create_time,create_dept,VALID_FLAG) values
+        (FUNC_GET_UUID,#{groupName},#{remarks},'${creator}',sysdate,'${createDept}','1')
+    </insert>
+    <update id="updateGroup" parameterType="com.goisan.system.bean.CommonGroup">
+        UPDATE T_RS_COMMON_GROUP SET
+              group_name = #{groupName},
+              remarks = #{remarks},
+              changer = #{changer},
+              change_time = sysdate,
+              change_dept = #{changeDept}
+          WHERE group_id = #{groupId}
+    </update>
+    <select id="getGroupEmpTree" parameterType="java.lang.String" resultType="com.goisan.system.bean.EmpDeptTree" >
+        SELECT id,name,pid,checked1 as checked FROM
+        (
+          SELECT dept_id id, dept_name||'(部门)' name, parent_dept_id pid ,'false' as checked1
+              FROM t_sys_dept
+          UNION ALL
+          (SELECT t.*,nvl2(t3.member_id,'true','false') as checked1 FROM
+            (SELECT t1.person_id id ,t1.name name ,t2.dept_id pid
+                FROM T_RS_EMPLOYEE t1,T_RS_EMPLOYEE_DEPT t2 WHERE t1.person_id = t2.person_id ORDER BY t2.person_order
+            ) t
+            Left JOIN T_RS_GROUP_MEMBERS t3 on  t.id = t3.person_id and t.pid = t3.dept_id
+                  AND  t3.group_id = #{groupId}
+          )
+        )
+    </select>
+    <delete id="delCommonGroupMember" parameterType="java.lang.String" >
+        DELETE T_RS_GROUP_MEMBERS WHERE group_id = #{groupId}
+    </delete>
+    <insert id="insertCommonGroupMember"  parameterType="com.goisan.system.bean.CommonGroupMember">
+      INSERT INTO
+        T_RS_GROUP_MEMBERS
+        (MEMBER_ID,GROUP_ID,PERSON_ID,DEPT_ID,NAME,
+        creator,create_time,create_dept,VALID_FLAG)
+        values
+        (FUNC_GET_UUID,#{groupId},#{personId},#{deptId},#{name},
+        '${creator}',sysdate,'${createDept}','1')
+    </insert>
+    <delete id="delCommonGroup" parameterType="java.lang.String" >
+        DELETE T_RS_COMMON_GROUP WHERE group_id = #{groupId}
+    </delete>
+    <select id="getGroupRole" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.CommonGroup">
+        SELECT t.group_id groupId ,t.role_id roleId
+        FROM T_RS_GROUP_ROLE t
+        WHERE
+            t.group_id LIKE #{groupId}
+    </select>
+    <insert id="insertGroupRole"  parameterType="com.goisan.system.bean.CommonGroup">
+        INSERT INTO
+        T_RS_GROUP_ROLE
+        (id,GROUP_ID,role_id,creator,create_time,create_dept)
+        values
+        (FUNC_GET_UUID,#{groupId},#{roleId},'${creator}',sysdate,'${createDept}')
+    </insert>
+    <delete id="delGroupRole" parameterType="java.lang.String" >
+        DELETE T_RS_GROUP_ROLE WHERE group_id = #{groupId}
+    </delete>
+    <select id="getGroupMenu" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Tree">
+        SELECT  distinct t.resource_id AS id
+        FROM T_SYS_ROLE_RESOURCE t
+        WHERE
+            T.ROLE_ID IN(SELECT role_id  FROM T_RS_GROUP_ROLE WHERE group_id = #{groupId})
+    </select>
+    <select id="getGroupIdByPersonId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT t.GROUP_ID FROM T_RS_GROUP_MEMBERS t where t.PERSON_ID = #{personId}
+    </select>
+    <select id="getRoleIdByGroupIds" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT t.ROLE_ID FROM T_RS_GROUP_ROLE t where t.GROUP_ID in (${ids})
+    </select>
+</mapper>

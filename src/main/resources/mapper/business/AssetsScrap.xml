@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--协同办公-资产报废管理modify by wq-->
+<mapper namespace="com.goisan.synergy.workflow.dao.AssetsScrapDao">
+    <!--申请页列表显示和查询-->
+    <select id="getAssetsList" resultType="com.goisan.synergy.workflow.bean.AssetsScrap"
+            parameterType="com.goisan.synergy.workflow.bean.AssetsScrap">
+        SELECT
+        DISTINCT
+        t.id,
+        t.create_time,
+        t.assets_id,
+        t.assets_name,
+        t.reason,
+        FUNC_GET_USERNAME(t.manager) manager,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        t.remark,
+        t.creator,
+        t.create_dept,
+        t.request_flag
+        FROM
+        T_BG_ASSETSSCRAP_WF t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <!--查询id-->
+    <select id="getAssetsById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.AssetsScrap">
+        SELECT
+        t.id id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  as requestTime,
+        FUNC_GET_USERNAME(t.manager) manager,
+        t.assets_name assetsName,
+        t.assets_id assetsId,
+        t.reason reason,
+        t.remark remark
+        FROM
+       T_BG_ASSETSSCRAP_WF t
+        WHERE id = #{id} ORDER BY t.create_time DESC
+    </select>
+    <!--添加-->
+    <insert id="insertAssets" parameterType="com.goisan.synergy.workflow.bean.AssetsScrap">
+        insert into
+        T_BG_ASSETSSCRAP_WF t
+        (id,request_dept,manager,assets_name,request_date,reason,creator,create_time,create_dept,remark)values
+        (FUNC_GET_UUID,'${requestDept}','${manager}','${assetsName}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),'${reason}','${creator}',sysdate,'${createDept}','${remark}')
+    </insert>
+    <!--删除-->
+    <delete id="deleteAssetsById" parameterType="java.lang.String">
+        DELETE FROM   T_BG_ASSETSSCRAP_WF WHERE id = #{id}
+    </delete>
+    <!--修改-->
+    <update id="updateAssetsById" parameterType="com.goisan.synergy.workflow.bean.AssetsScrap">
+        update
+        T_BG_ASSETSSCRAP_WF t
+        SET
+        t.id =#{id},
+        t.request_dept =#{requestDept},
+        t.manager =#{manager},
+        t.assets_name =#{assetsName},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        reason = #{reason},
+        changer = #{changer},
+        change_time = sysdate,
+        change_dept = #{changeDept},
+        t.remark = #{remark}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="getAssetsByDate" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.AssetsScrap">
+    SELECT
+    t.id,
+    FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+    to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+    FUNC_GET_USERNAME(t.manager) manager,
+    t.assets_name assetsName,
+    t.assets_id assetsId,
+    t.reason reason,
+    t.remark remark
+    FROM
+    T_BG_ASSETSSCRAP_WF t
+    WHERE id = #{DATE} ORDER BY t.create_time DESC
+    </select>
+    <!--待办页列表显示和查询-->
+    <select id="assetsProcessAction" resultType="com.goisan.synergy.workflow.bean.AssetsScrap"
+            parameterType="com.goisan.synergy.workflow.bean.AssetsScrap">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.manager) manager,
+        t.assets_name assetsName,
+        t.assets_id assetsId,
+        t.reason reason,
+        t.request_flag requestFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.remark remark
+        FROM
+        T_BG_ASSETSSCRAP_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND FUNC_GET_USERNAME(t.manager) LIKE #{manager}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <!--已办页列表显示和查询-->
+    <select id="assetsCompleteAction" resultType="com.goisan.synergy.workflow.bean.AssetsScrap"
+            parameterType="com.goisan.synergy.workflow.bean.AssetsScrap">
+        SELECT
+        DISTINCT
+        t.id,
+        t.create_time,
+        t.assets_id,
+        t.assets_name,
+        t.reason,
+        FUNC_GET_USERNAME(t.manager) manager,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestDate,
+        t.remark,
+        t.creator,
+        t.create_dept,
+        func_get_dicvalue(t.request_flag,'GZLLZZT') requestflag,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackflag,
+        t.feedback feedBack
+        FROM
+        T_BG_ASSETSSCRAP_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND FUNC_GET_USERNAME(t.manager) LIKE #{manager}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--查询所有部门id和名称-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--查询所有人员id和姓名-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <!--通过人员id查询人员姓名-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <!--通过部门id查询部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <!--新增查重-->
+    <select id="checkCode" resultType="com.goisan.synergy.workflow.bean.AssetsScrap"
+            parameterType="com.goisan.synergy.workflow.bean.AssetsScrap">
+        select * from T_BG_ASSETSSCRAP_WF t where t.assets_id = #{diccode}
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </select>
+    <select id="checkName" parameterType="com.goisan.system.bean.UserDic" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic where dic_name = #{dicname}
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </select>
+</mapper>

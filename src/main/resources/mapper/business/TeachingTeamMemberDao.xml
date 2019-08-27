@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.major.dao.TeachingTeamMemberDao">
+    <!-- 字段映射关系 start -->
+    <resultMap id="teachingTeamMemberMap"
+               type="com.goisan.educational.major.bean.TeachingTeamMember">
+        <id column="ID" property="id"/>
+        <result column="TEAM_ID" property="teamId"/>
+        <result column="PERSON_ID" property="personId"/>
+        <result column="MEMBER_TYPE" property="memberType"/>
+        <!-- 通用字段 -->
+        <result column="CREATOR" property="creator"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="CREATE_DEPT" property="createDept"/>
+        <result column="CHANGER" property="changer"/>
+        <result column="CHANGE_TIME" property="changeTime"/>
+        <result column="CHANGE_DEPT" property="changeDept"/>
+        <result column="VALID_FLAG" property="validFlag"/>
+    </resultMap>
+    <!-- 字段映射关系 end -->
+
+    <!-- 基本查询字段 start -->
+    <sql id="teachingTeamMemberColumns">
+        T1.ID,
+		T1.TEAM_ID,
+		T1.PERSON_ID,
+		T1.MEMBER_TYPE,
+		FUNC_GET_TABLEVALUE(T1.PERSON_ID, 'T_RS_EMPLOYEE', 'PERSON_ID', 'NAME') name,
+		FUNC_GET_DICVALUE(FUNC_GET_TABLEVALUE(T1.PERSON_ID, 'T_RS_EMPLOYEE', 'PERSON_ID', 'SEX'), 'XB') sex,
+		TO_CHAR((SELECT BIRTHDAY FROM T_RS_EMPLOYEE T2 WHERE T2.PERSON_ID = T1.PERSON_ID),'yyyy/mm/dd') birth,
+        FUNC_GET_DICVALUE(FUNC_GET_TABLEVALUE(T1.PERSON_ID, 'T_RS_EMPLOYEE', 'PERSON_ID', 'STAFF_BELONGS'), 'JZGSS') workUnit,
+        FUNC_GET_DICVALUE(FUNC_GET_TABLEVALUE(T1.PERSON_ID, 'T_RS_EMPLOYEE', 'PERSON_ID', 'STAFF_TYPE'), 'JZGLB') post,
+        FUNC_GET_TABLEVALUE(T1.PERSON_ID, 'T_JW_TEACHER_CONDITION', 'NAME', 'TITLE') title,
+        T1.CREATOR,
+        T1.CREATE_TIME,
+        T1.CREATE_DEPT,
+        T1.CHANGER,
+        T1.CHANGE_TIME,
+        T1.CHANGE_DEPT,
+        T1.VALID_FLAG
+	</sql>
+    <!-- 基本查询字段 end -->
+
+    <!-- 新增成员 start -->
+    <select id="insert"
+            parameterType="com.goisan.educational.major.bean.TeachingTeamMember">
+        INSERT INTO T_JW_TEACHING_TEAM_MEMBER(
+            ID,
+		    TEAM_ID,
+		    PERSON_ID,
+		    MEMBER_TYPE,
+            CREATOR,
+            CREATE_TIME,
+            CREATE_DEPT,
+            VALID_FLAG
+        ) VALUES (
+            FUNC_GET_UUID(),
+            #{teamId},
+            #{personId},
+            #{memberType},
+            #{creator},
+            SYSDATE,
+            #{createDept},
+            '0'
+        )
+    </select>
+    <!-- 新增成员 end -->
+
+    <!-- 删除成员 start -->
+    <delete id="delete"
+            parameterType="java.lang.String">
+        DELETE FROM T_JW_TEACHING_TEAM_MEMBER WHERE ID = #{id}
+    </delete>
+    <!-- 删除成员 end -->
+
+    <!-- 按条件查找成员表 start -->
+    <select id="getList"
+            parameterType="com.goisan.educational.major.bean.TeachingTeamMember"
+            resultMap="teachingTeamMemberMap">
+        SELECT
+        <include refid="teachingTeamMemberColumns"/>
+        FROM  T_JW_TEACHING_TEAM_MEMBER T1
+        WHERE T1.TEAM_ID = #{teamId}
+        <if test="memberType!=null and memberType!=''">
+            AND T1.MEMBER_TYPE = #{memberType}
+        </if>
+    </select>
+    <!-- 按条件查找成员表 end -->
+</mapper>

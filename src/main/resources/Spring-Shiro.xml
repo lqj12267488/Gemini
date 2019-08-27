@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+    <context:property-placeholder ignore-unresolvable="true" location="classpath:config.properties"/>
+    <mvc:default-servlet-handler/>
+    <!-- 会话管理器 -->
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- 设置全局会话超时时间 半小时 -->
+        <property name="globalSessionTimeout" value="#{30 * 60 * 1000}"/>
+        <!-- url上带sessionId 默认为true -->
+        <property name="sessionIdUrlRewritingEnabled" value="false"/>
+        <property name="sessionDAO" ref="sessionDAO"/>
+        <property name="sessionIdCookie.name" value="jsid"/>
+    </bean>
+    <!-- 会话DAO 用于会话的CRUD -->
+    <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+        <!-- Session缓存名字，默认就是shiro-activeSessionCache -->
+        <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>
+        <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+    </bean>
+    <!-- Session ID 生成器-->
+    <bean id="sessionIdGenerator"
+          class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+    <!--
+    配置 SecurityManager!
+    -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!--<property name="cacheManager" ref="cacheManager"/>-->
+        <property name="authenticator" ref="authenticator"/>
+        <property name="sessionManager" ref="sessionManager"/>
+        <property name="realms">
+            <list>
+                <ref bean="jdbcRealm"/>
+            </list>
+        </property>
+        <!--<property name="rememberMeManager" ref="rememberMeManager"/>-->
+    </bean>
+    <!--
+    配置 CacheManager.
+    需要加入 ehcache 的 jar 包及配置文件.
+    -->
+    <!--<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">-->
+    <!--<property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>-->
+    <!--</bean>-->
+
+    <bean id="authenticator"
+          class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
+        <property name="authenticationStrategy">
+            <bean class="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"/>
+        </property>
+    </bean>
+    <!--
+    	配置 Realm
+    	直接配置实现了 org.apache.shiro.realm.Realm reambean
+    -->
+    <bean id="jdbcRealm" class="com.goisan.system.realm.LoginUserRealm">
+        <!-- 启用身份验证缓存，即缓存AuthenticationInfo信息，默认false -->
+        <property name="authenticationCachingEnabled" value="true"/>
+        <!-- 缓存AuthenticationInfo信息的缓存名称 -->
+        <property name="authenticationCacheName" value="authenticationCache"/>
+        <!-- 缓存AuthorizationInfo信息的缓存名称 -->
+        <property name="authorizationCacheName" value="authorizationCache"/>
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="MD5"/>
+                <property name="hashIterations" value="1"/>
+            </bean>
+        </property>
+    </bean>
+    <!--
+    配置 LifecycleBeanPostProcessor. 可以自定的来调用配置在 Spring IOC 容器中 shreambean 的生命周期方法.
+    -->
+    <bean id="lifecycleBeanPostProcessor"
+          class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <!--
+    启用 IOC 容器中使用 shiro 的注解. 但必须在配置了 LifecycleBeanPostProcessor 之后才可以使用.
+    -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor">
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+    <!--
+    配置 ShiroFilter.
+    id 必须和 web.xml 文件中配置的 DelegatingFilterProxy 的 <filter-name> 一致.
+                      若不一致, 则会抛出: NoSuchBeanDefinitionException. 因为 Shiro 会来 IOC 容器中查找和
+                      <filter-name> 名字对应的 filreambean.
+    -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/"/>
+        <property name="successUrl" value="/index"/>
+        <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
+
+        <!--<property name="filterChainDefinitionMap" ref="filterChainDefinitionMap"></property>-->
+
+        <!--
+        	配置哪些页面需要受保护.
+        	以及访问这些页面需要的权限.
+        	1). anon 可以被匿名访问
+        	2). authc 必须认证(即登录)后才可能访问的页面.
+        	3). logout 登出.
+        	4). roles 角色过滤器
+        -->
+        <property name="filterChainDefinitions">
+            <value>
+                /enrollment/** = anon
+                / = anon
+                /pageoffice/** = anon
+                /login = anon
+                /loginApp/loginJsp = anon
+                /resourceLibrary/toIndex = anon
+                /loginApp/login = anon
+                /logout = logout
+                /resetPwd = anon
+                /resetPwdGetQuestion = anon
+                /resetPwdCheckQue = anon
+                /resetPwdDoChange = anon
+                /libs/** = anon
+                /** = authc
+            </value>
+        </property>
+    </bean>
+    <!--<bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">-->
+    <!--<constructor-arg value="rememberMe"/>-->
+    <!--<property name="httpOnly" value="true"/>-->
+    <!--<property name="maxAge" value="2592000"/>&lt;!&ndash; 30天&ndash;&gt;-->
+    <!--</bean>-->
+    <!-- 会话Cookie模板 -->
+    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="sid"/>
+        <property name="httpOnly" value="true"/>
+        <property name="maxAge" value="-1"/>
+    </bean>
+    <!-- rememberMe管理器-->
+    <!--<bean id="rememberMeManager"-->
+    <!--class="org.apache.shiro.web.mgt.CookieRememberMeManager">-->
+    <!--<property name="cipherKey" value="-->
+    <!--\#{T(org.apache.shiro.codec.Base64).decode('5aaC5qKm5oqA5pyvAAAAAA==')}"/>-->
+    <!--<property name="cookie" ref="rememberMeCookie"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="formAuthenticationFilter"-->
+    <!--class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">-->
+    <!--<property name="rememberMeParam" value="rememberMe"/>-->
+    <!--</bean>-->
+    <!-- 配reambeanreambean 实际上是一个 Map. 通过实例工厂方法的方式 -->
+    <!--<bean id="filterChainDefinitionMap"-->
+    <!--factory-bean="filterChainDefinitionMapBuilder"-->
+    <!--factory-method="buildFilterChainDefinitionMap"></bean>-->
+
+    <!--<bean id="filterChainDefinitionMapBuilder"-->
+    <!--class="com.atguigu.shiro.factory.FilterChainDefinitionMapBuilder"></bean>-->
+
+    <!--<bean id="shiroService"-->
+    <!--class="com.atguigu.shiro.services.ShiroService"></bean>-->
+
+</beans>

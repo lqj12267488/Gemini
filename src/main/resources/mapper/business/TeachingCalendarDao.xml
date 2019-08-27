@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.courseconstruction.dao.TeachingCalendarDao">
+
+    <select id="getTeachingCalendarList" resultType="com.goisan.educational.courseconstruction.bean.TeachingCalendar"
+            parameterType="com.goisan.educational.courseconstruction.bean.TeachingCalendar">
+        select ID,CREATOR,FUNC_GET_TABLEVALUE(DEPT_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') DEPT_ID,CREATE_DEPT,FUNC_GET_DICVALUE(TERM,'XQ') TERM,to_char(CREATE_TIME, 'yyyy-mm-dd') "TIME",
+        (select count(*) from T_SYS_FILES where BUSINESS_ID=ID) fileNumber
+        from T_JW_TEACHING_CALENDAR
+        <if test="term != null and term != ''">
+            where TERM = #{term}
+        </if>
+        order by CREATE_TIME desc
+    </select>
+
+    <insert id="saveTeachingCalendar" parameterType="com.goisan.educational.courseconstruction.bean.TeachingCalendar">
+        insert into T_JW_TEACHING_CALENDAR (ID, TERM, CREATOR, CREATE_TIME, CREATE_DEPT, DEPT_ID)
+        values (#{id}, #{term}, #{creator}, to_date('${time}', 'yyyy-mm-dd'), #{createDept}, #{deptId})
+    </insert>
+
+    <update id="updateTeachingCalendar" parameterType="com.goisan.educational.courseconstruction.bean.TeachingCalendar">
+        update T_JW_TEACHING_CALENDAR
+        set CREATOR = #{creator},
+            CREATE_DEPT = #{createDept},
+            CREATE_TIME = to_date('${time}', 'yyyy-mm-dd'),
+            TERM = #{term},
+            DEPT_ID = #{deptId}
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteTeachingCalendar" parameterType="String">
+        delete
+        from T_JW_TEACHING_CALENDAR
+        where ID = #{id}
+    </delete>
+
+    <select id="getTeachingCalendarById" resultType="com.goisan.educational.courseconstruction.bean.TeachingCalendar" parameterType="String">
+        select ID,CREATOR,CREATE_DEPT,TERM,to_char(CREATE_TIME, 'yyyy-mm-dd') "time",DEPT_ID,FUNC_GET_DEPTNAME(DEPT_ID) deptShow
+        from T_JW_TEACHING_CALENDAR
+        where ID = #{id}
+    </select>
+
+    <select id="getTeachingCalendarDetailsListByCalendarId" resultType="com.goisan.educational.courseconstruction.bean.TeachingCalendarDetails">
+        select t1.*,t2.CLASS_NAME,t3.MAJOR_NAME
+        from T_JW_TEACHING_CALENDAR_DETAILS t1,
+             T_XG_CLASS t2,
+             T_XG_MAJOR t3
+        where t1.CLASS_ID = t2.CLASS_ID
+          and t1.MAJOR_ID = t3.MAJOR_ID
+          and t1.CALENDAR_ID = #{id}
+          and t2.valid_flag = '1'
+          and t3.valid_flag = '1'
+        order by WEEK
+    </select>
+
+    <delete id="deleteTeachingCalendarDetails" parameterType="String">
+        delete
+        from T_JW_TEACHING_CALENDAR_DETAILS
+        where ID = #{id}
+    </delete>
+
+    <select id="getClass" parameterType="String" resultType="Map">
+        select CLASS_ID,CLASS_NAME,NUM,ROWNUM
+        from (select CLASS_ID,CLASS_NAME,(select count(STUDENT_ID) from T_XG_STUDENT_CLASS t4 where t2.CLASS_ID = t4.CLASS_ID) as NUM
+              from T_JW_TEACHING_CALENDAR t1,
+                   T_XG_CLASS t2,
+                   T_XG_MAJOR t3
+              where t2.DEPARTMENTS_ID = t1.DEPT_ID
+                and t2.MAJOR_CODE = t3.MAJOR_CODE
+                and t2.TRAINING_LEVEL = t3.TRAINING_LEVEL
+                and t1.ID = #{id}
+                and t3.valid_flag = '1'
+              order by MAJOR_NAME,CLASS_NAME)
+    </select>
+    <select id="getMajor" parameterType="String" resultType="Map">
+        select MAJOR_NAME,
+               (select count(CLASS_ID)
+                from T_XG_CLASS t2
+                where t2.MAJOR_CODE = t1.MAJOR_CODE
+                  and t2.MAJOR_DIRECTION = t1.MAJOR_DIRECTION) as NUM
+        from T_XG_MAJOR t1,
+             T_JW_TEACHING_CALENDAR t3
+        where t3.DEPT_ID = t1.DEPARTMENTS_ID
+        and t1.VALID_FLAG = '1'
+          and t3.id = #{id}
+          and (select count(CLASS_ID)
+               from T_XG_CLASS t2
+               where t2.MAJOR_CODE = t1.MAJOR_CODE
+                 and t2.MAJOR_DIRECTION = t1.MAJOR_DIRECTION and t2.VALID_FLAG = '1') > 0
+        order by MAJOR_NAME
+    </select>
+
+    <insert id="saveTeachingCalendarDetails" parameterType="com.goisan.educational.courseconstruction.bean.TeachingCalendarDetails">
+        insert into T_JW_TEACHING_CALENDAR_DETAILS(ID, MAJOR_ID, CLASS_ID, "MONTH", WEEK, TYPE, CALENDAR_ID, "DATE")
+        values (FUNC_GET_UUID, #{majorId}, #{classId}, #{month}, #{week}, #{type}, #{calendarId}, #{date})
+    </insert>
+
+    <select id="getMajorByCode" parameterType="String" resultType="com.goisan.educational.major.bean.Major">
+        select *
+        from T_XG_MAJOR
+        where MAJOR_CODE || ',' || TRAINING_LEVEL || ',' || MAJOR_DIRECTION = #{code}
+    </select>
+
+</mapper>

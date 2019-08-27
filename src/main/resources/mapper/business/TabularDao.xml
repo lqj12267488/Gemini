@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.tabular.dao.TabularDao">
+    <select id="checkTabular" parameterType="java.lang.String"
+            resultType="com.goisan.tabular.bean.Tabular">
+        SELECT
+        *
+        FROM
+        T_JW_TABULAR
+        where
+        tabular_type=#{tabularType}
+    </select>
+    <select id="getTabularList" parameterType="java.lang.String"
+            resultType="com.goisan.tabular.bean.Tabular">
+        SELECT
+        id id,
+        tabular_name tabularName,
+        FUNC_GET_USERDICVALUE(tabular_type, 'BGZL') tabularType,
+        to_char(upload_time,'yyyy-mm-dd hh24:mi') uploadTime,
+        creator creator,
+        create_time createTime,
+        serial_number serialNumber
+        FROM
+        T_JW_TABULAR
+        where 1=1
+         <if test="tabularName != null and tabularName != ''">
+             AND tabular_name LIKE '%'||#{tabularName}||'%'
+         </if>
+         <if test="tabularType != null and tabularType != ''">
+             AND tabular_type = #{tabularType}
+         </if>
+    </select>
+    <insert id="insertTabular" parameterType="com.goisan.tabular.bean.Tabular">
+        INSERT INTO
+        T_JW_TABULAR
+        (id,
+        tabular_name,
+        tabular_type,
+        upload_time,
+        creator,
+        create_time,
+        create_dept) VALUES
+        ('${id}',
+        '${tabularName}',
+        '${tabularType}',
+         sysdate,
+        '${creator}',
+         sysdate,
+        '${createDept}')
+    </insert>
+    <insert id="insertTabularFile" parameterType="com.goisan.tabular.bean.TabularFile">
+        INSERT INTO
+        T_JW_TABULAR_FILES
+        (FILE_ID,TABULAR_ID,FILE_NAME,FILE_URL,
+        FILE_SUFFIX,FILE_SIZE,FILE_STATE,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,#{tabularId},#{fileName},#{fileUrl},
+        #{fileSuffix},#{fileSize},#{fileState},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getTabularFileById" parameterType="java.lang.String"
+            resultType="com.goisan.tabular.bean.TabularFile">
+        SELECT
+        FILE_URL fileUrl,
+        FILE_NAME fileName,
+        FILE_SUFFIX fileSuffix
+        FROM T_JW_TABULAR_FILES
+        WHERE FILE_ID = #{fileId}
+    </select>
+    <select id="getFileIdByTabularId" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT
+        FILE_id fileId
+        FROM T_JW_TABULAR_FILES
+        WHERE TABULAR_ID = #{id}
+    </select>
+    <delete id="deleteTabular" parameterType="java.lang.String">
+        DELETE FROM T_JW_TABULAR WHERE id = #{id}
+    </delete>
+
+
+    <select id="getTabularById" parameterType="java.lang.String" resultType="com.goisan.tabular.bean.Tabular">
+        select t.*,f.file_name fileName from T_JW_TABULAR t, t_jw_tabular_files f where t. id=f.tabular_id and t. id  = #{id}
+    </select>
+
+    <update id="updateTabular" parameterType="com.goisan.tabular.bean.Tabular">
+        UPDATE T_JW_TABULAR SET
+        tabular_name =#{tabularName},
+        tabular_type=#{tabularType},
+        upload_time= sysdate,
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.tabular.bean.Tabular">
+        select * from T_JW_TABULAR where tabular_name = #{tabularName} AND VALID_FLAG = '1'
+    </select>
+</mapper>

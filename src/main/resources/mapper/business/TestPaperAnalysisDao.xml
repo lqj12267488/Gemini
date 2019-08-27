@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.exam.dao.TestPaperAnalysisDao">
+    <select id="getTestPaperAnalysisList"
+            parameterType="com.goisan.educational.exam.bean.TestPaperAnalysis"
+            resultType="com.goisan.educational.exam.bean.TestPaperAnalysis">
+        select id,
+        school_year,
+        exam_year,
+        exam_month,
+        exam_day,
+        term,
+        course_id,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseIdShow,
+        class_id,
+        FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classIdShow,
+        teacher_id,
+        FUNC_GET_USERNAME(TEACHER_ID) || '  ----  ' || FUNC_GET_DEPTNAME(teacher_dept_id) teacherIdShow,
+        exam_nature,
+        FUNC_GET_DICVALUE(EXAM_NATURE,'KHFS') examNatureShow,
+        exam_mode,
+        FUNC_GET_DICVALUE(EXAM_NATURE,'JBKSLX') examModeShow,
+        to_char(exam_time,'yyyy-mm-dd')  examTime,
+        exam_stunum,
+        miss_exam_stunum,
+        grdfl1,
+        grdfl2,
+        grdfl3,
+        grdfl4,
+        grdfl5,
+        grdfl6,
+        grdfl7,
+        surface_analysis,
+        learning_situation,
+        improvement_measures
+         from T_JW_TESTPAPERANALYSIS
+        order by CREATE_TIME desc
+    </select>
+    <insert id="saveTestPaperAnalysis" parameterType="com.goisan.educational.exam.bean.TestPaperAnalysis">
+        insert into
+        t_jw_testpaperanalysis (
+        id,school_year,exam_year,exam_month,exam_day,term,course_id,class_id,teacher_id,TEACHER_DEPT_ID,exam_nature,exam_mode,
+        exam_time,exam_stunum,miss_exam_stunum,grdfl1,grdfl2,grdfl3,grdfl4,grdfl5,grdfl6,grdfl7,
+        surface_analysis,learning_situation,improvement_measures,creator,create_time,create_dept,num90_100,
+        percent90_100,num80_89,percent80_89,num70_79,percent70_79,num60_69,percent60_69,num59,percent59,avg_num,avg_percent
+)
+        values (
+        #{id},#{schoolYear},#{examYear},#{examMonth},#{examDay},#{term},#{courseId},#{classId},
+        #{teacherId},#{teacherDeptId},#{examNature},#{examMode},to_date('${examTime}','yyyy-mm-dd hh24:mi'),#{examStunum},#{missExamStunum},#{grdfl1},
+        #{grdfl2},#{grdfl3},#{grdfl4},#{grdfl5},#{grdfl6},#{grdfl7},#{surfaceAnalysis},#{learningSituation},
+        #{improvementMeasures},#{creator},sysdate,#{createDept},#{num90100},#{percent90100},#{num8089},#{percent8089},#{num7079}
+        ,#{percent7079},#{num6069},#{percent6069},#{num59},#{percent59},#{avgNum},#{avgPercent})
+    </insert>
+    <select id="getTestPaperAnalysisById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.exam.bean.TestPaperAnalysis">
+        select
+        id,
+        school_year,
+        FUNC_GET_DICVALUE(SCHOOL_YEAR,'XQ') schoolYearShow,
+        exam_year,
+        exam_month,
+        exam_day,
+        term,
+        course_id,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseIdShow,
+        class_id,
+        FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classIdShow,
+        teacher_id,
+        FUNC_GET_USERNAME(TEACHER_ID) || '  ----  ' || FUNC_GET_DEPTNAME(teacher_dept_id) teacherIdShow,
+        exam_nature,
+        FUNC_GET_DICVALUE(EXAM_NATURE,'KHFS') examNatureShow,
+        exam_mode,
+        FUNC_GET_DICVALUE(EXAM_NATURE,'JBKSLX') examModeShow,
+        to_char(exam_time,'yyyy-mm-dd') examTime,
+        exam_stunum,
+        miss_exam_stunum,
+        grdfl1,
+        grdfl2,
+        grdfl3,
+        grdfl4,
+        grdfl5,
+        grdfl6,
+        grdfl7,
+        surface_analysis,
+        learning_situation,
+        improvement_measures,
+        creator,
+        create_time,
+        create_dept,
+        num90_100,
+        percent90_100,
+        num80_89,
+        percent80_89,
+        num70_79,
+        percent70_79,
+        num60_69,
+        percent60_69,
+        num59,
+        percent59,
+        avg_num,
+        avg_percent
+         from T_JW_TESTPAPERANALYSIS  where id = #{id}
+    </select>
+    <update id="updateTestPaperAnalysis" parameterType="com.goisan.educational.exam.bean.TestPaperAnalysis">
+        update
+        t_jw_testpaperanalysis
+        set
+        school_year=#{schoolYear},
+        exam_year=#{examYear},
+        exam_month=#{examMonth},
+        exam_day=#{examDay},
+        term=#{term},
+        course_id=#{courseId},
+        class_id=#{classId},
+        teacher_id=#{teacherId},
+        exam_nature=#{examNature},
+        exam_mode=#{examMode},
+        exam_time=to_date('${examTime}','yyyy-mm-dd hh24:mi'),
+        exam_stunum=#{examStunum},
+        miss_exam_stunum=#{missExamStunum},
+        grdfl1=#{grdfl1},
+        grdfl2=#{grdfl2},
+        grdfl3=#{grdfl3},
+        grdfl4=#{grdfl4},
+        grdfl5=#{grdfl5},
+        grdfl6=#{grdfl6},
+        grdfl7=#{grdfl7},
+        surface_analysis=#{surfaceAnalysis},
+        learning_situation=#{learningSituation},
+        improvement_measures=#{improvementMeasures},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept},
+        num90_100=#{num90100},
+        percent90_100=#{percent90100},
+        num80_89=#{num8089},
+        percent80_89=#{percent8089},
+        num70_79=#{num7079},
+        percent70_79=#{percent7079},
+        num60_69=#{num6069},
+        percent60_69=#{percent6069},
+        num59=#{num59},
+        percent59=#{percent59},
+        avg_num=#{avgNum},
+        avg_percent=#{avgPercent}
+        where id = #{id}
+    </update>
+    <delete id="delTestPaperAnalysis" parameterType="java.lang.String">
+        delete from T_JW_TESTPAPERANALYSIS where id = #{id}
+    </delete>
+</mapper>

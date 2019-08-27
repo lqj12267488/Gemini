@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.ParameterDao" >
+    <!--系统字典主页数据查询-->
+    <select id="parameterInfo" resultType="com.goisan.system.bean.Parameter"  parameterType="com.goisan.system.bean.Parameter">
+        SELECT
+        id id,
+        name AS parametername,
+        code AS parametercode,
+        type as parametertype,
+        value as parametervalue
+        FROM
+        T_SYS_PARAMETER
+        where
+        1=1
+        <if test="parametername != null and parametername !='' ">
+            AND  name LIKE '%'||'${parametername}'||'%'
+        </if>
+        <if test="parametercode != null and parametercode !='' ">
+            AND  code LIKE '%'||'${parametercode}'||'%'
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <!--新增字典-->
+    <insert id="insertParameter" parameterType="com.goisan.system.bean.Parameter">
+        INSERT INTO
+        T_SYS_PARAMETER
+        (id,name,code,type,value,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${parametername}','${parametercode}',
+        '${parametertype}','${parametervalue}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--修改查询-->
+    <select id="getParameterID" parameterType="java.lang.String" resultType="com.goisan.system.bean.Parameter">
+         SELECT
+        id id,
+        name AS parametername,
+        code AS parametercode,
+        type AS parametertype,
+        VALUE AS parametervalue
+        FROM
+        T_SYS_PARAMETER
+        where id =#{id}
+    </select>
+    <!--修改保存-->
+    <update id="updateParameter" parameterType="com.goisan.system.bean.Parameter">
+        UPDATE T_SYS_PARAMETER SET
+        name = #{parametername},
+        code = #{parametercode},
+        type=#{parametertype},
+        value=#{parametervalue},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <!--删除-->
+    <delete id="deleteParameter" parameterType="java.lang.String">
+        DELETE FROM T_SYS_PARAMETER WHERE id = #{id}
+    </delete>
+    <!--名称重复性校验-->
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.Parameter">
+        select * from t_sys_parameter where name = #{parametername}
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+    <!--代码重复性校验-->
+    <select id="checkCode" parameterType="java.lang.String" resultType="com.goisan.system.bean.Parameter">
+        select * from t_sys_parameter where code = #{parametercode}
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+    <!--保存当前学期-->
+    <update id="updateSemester" parameterType="com.goisan.system.bean.Parameter">
+        UPDATE T_SYS_PARAMETER SET
+        value=#{parametervalue},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE code='DQXQ'
+    </update>
+    <!--保存当前学年-->
+    <update id="updateSyear" parameterType="com.goisan.system.bean.Parameter">
+        UPDATE T_SYS_PARAMETER SET
+        value=#{parametername},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE code='DQXN'
+    </update>
+    <select id="getParameterValue" resultType="java.lang.String">
+        select t.value from T_SYS_PARAMETER t where code='DQXQ'
+    </select>
+    <select id="getParameterYearValue" resultType="java.lang.String">
+        select t.value from T_SYS_PARAMETER t where code='DQXN'
+    </select>
+</mapper>

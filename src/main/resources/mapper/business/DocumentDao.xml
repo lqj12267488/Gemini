@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.DocumentDao">
+    <select id="getDocumentList" resultType="com.goisan.synergy.workflow.bean.Document" parameterType="com.goisan.synergy.workflow.bean.Document">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        t.file_title fileTitle,
+        t.delivery_emp_id deliveryEmpId,
+        t.make_emp_id makeEmpId,
+        FUNC_GET_USERNAME(t.delivery_emp_id) deliveryEmpIdShow,
+        FUNC_GET_USERNAME(t.make_emp_id) makeEmpIdShow,
+        FUNC_GET_DICVALUE(t.secret_class,'MJ')  secretClass,
+        t.title  title,
+        t.printing_number   printingNumber,
+        t.symbol  symbol,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DOCUMENT_WF t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="symbol != null and symbol != '' ">
+            AND  t.symbol LIKE '%'||#{symbol}||'%'
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getDocumentById" resultType="com.goisan.synergy.workflow.bean.Document" parameterType="com.goisan.synergy.workflow.bean.Document">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        t.file_title fileTitle,
+        t.delivery_emp_id deliveryEmpId,
+        t.make_emp_id makeEmpId,
+        FUNC_GET_USERNAME(t.delivery_emp_id) deliveryEmpIdShow,
+        FUNC_GET_USERNAME(t.make_emp_id) makeEmpIdShow,
+        t.secret_class  secretClass,
+        FUNC_GET_DICVALUE(t.secret_class,'MJ')  secretClassShow,
+        t.title  title,
+        t.printing_number   printingNumber,
+        t.symbol  symbol,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DOCUMENT_WF t
+        WHERE id = #{id} ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertDocument" parameterType="com.goisan.synergy.workflow.bean.Document">
+        INSERT INTO
+        T_BG_DOCUMENT_WF
+        (id,request_dept,requester,request_date,
+         file_title,delivery_emp_id,make_emp_id,
+         secret_class,title,printing_number,
+         symbol,creator,create_time,create_dept,request_flag) values
+        ('${id}','${createDept}','${creator}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),'${fileTitle}',
+          '${deliveryEmpId}','${makeEmpId}','${secretClass}','${title}',
+         '${printingNumber}','${symbol}','${creator}',sysdate,'${createDept}','0')
+    </insert>
+    <delete id="deleteDocumentById"  parameterType="java.lang.String">
+        DELETE FROM T_BG_DOCUMENT_WF WHERE id = #{id}
+    </delete>
+    <update id="updateDocumentById" parameterType="com.goisan.synergy.workflow.bean.Document">
+        update
+        T_BG_DOCUMENT_WF
+        SET
+        id = #{id},
+        file_title = #{fileTitle},
+        delivery_emp_id = #{deliveryEmpId},
+        make_emp_id = #{makeEmpId},
+        secret_class  = #{secretClass},
+        title  = #{title},
+        printing_number   = #{printingNumber},
+        symbol  = #{symbol},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <update id="updateDocumentByBusinessId" parameterType="com.goisan.synergy.workflow.bean.Document">
+        update
+        T_BG_DOCUMENT_WF
+        SET
+        symbol  = #{symbol},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.Document" parameterType="com.goisan.synergy.workflow.bean.Document">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        t.file_title fileTitle,
+        t.delivery_emp_id deliveryEmpId,
+        t.make_emp_id makeEmpId,
+        FUNC_GET_USERNAME(t.delivery_emp_id) deliveryEmpIdShow,
+        FUNC_GET_USERNAME(t.make_emp_id) makeEmpIdShow,
+        FUNC_GET_DICVALUE(t.secret_class,'MJ')  secretClass,
+        t.title  title,
+        t.printing_number   printingNumber,
+        t.symbol  symbol,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DOCUMENT_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.synergy.workflow.bean.Document" parameterType="com.goisan.synergy.workflow.bean.Document">
+        SELECT
+        DISTINCT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        t.file_title fileTitle,
+        t.delivery_emp_id deliveryEmpId,
+        t.make_emp_id makeEmpId,
+        FUNC_GET_DICVALUE(t.secret_class,'MJ')  secretClass,
+        t.title  title,
+        FUNC_GET_USERNAME(t.delivery_emp_id) deliveryEmpIdShow,
+        FUNC_GET_USERNAME(t.make_emp_id) makeEmpIdShow,
+        t.printing_number   printingNumber,
+        t.symbol  symbol,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DOCUMENT_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+
+    <!--公文流程-->
+    <select id="getDocumentProcessList" resultType="com.goisan.synergy.workflow.bean.DocumentProcess" parameterType="com.goisan.synergy.workflow.bean.DocumentProcess">
+        SELECT
+        t.id,
+        t.document_id      documentId,
+        t.handle_id      handleId,
+        t.edition      edition,
+        t.file_name      fileName,
+        t.file_url      fileUrl,
+        t.file_suffix      fileSuffix,
+        t.file_size      fileSize,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DOCUMENT_PROCESS t
+        where 1 = 1
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getDocumentProcessById" resultType="com.goisan.synergy.workflow.bean.DocumentProcess" parameterType="com.goisan.synergy.workflow.bean.DocumentProcess">
+        SELECT
+        t.id,
+        t.document_id      documentId,
+        t.handle_id      handleId,
+        t.edition      edition,
+        t.file_name      fileName,
+        t.file_url      fileUrl,
+        t.file_suffix      fileSuffix,
+        t.file_size      fileSize,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DOCUMENT_PROCESS t
+        WHERE id = #{id} ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertDocumentProcess" parameterType="com.goisan.synergy.workflow.bean.DocumentProcess">
+        INSERT INTO
+        T_BG_DOCUMENT_PROCESS
+        (id,
+         document_id,
+         handle_id,
+         edition,
+         file_name,
+         file_url,
+         file_suffix,
+         file_size,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,
+         #{documentId},
+         #{handleId},
+         #{edition},
+         #{fileName},
+         #{fileUrl},
+         #{fileSuffix},
+         #{fileSize},
+         #{creator},
+         sysdate,
+         #{createDept})
+    </insert>
+    <delete id="deleteDocumentProcessById"  parameterType="java.lang.String">
+        DELETE FROM T_BG_DOCUMENT_PROCESS WHERE document_id = #{id}
+    </delete>
+    <update id="updateDocumentProcessById" parameterType="com.goisan.synergy.workflow.bean.DocumentProcess">
+        update
+        T_BG_DOCUMENT_PROCESS
+        SET
+        id = #{id},
+        document_id     = #{documentId},
+        handle_id     = #{handleId},
+        edition     = #{edition},
+        file_name     = #{fileName},
+        file_url     = #{fileUrl},
+        file_suffix     = #{fileSuffix},
+        file_size     = #{fileSize},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="getFileIdByDocumentId" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT
+            id
+        FROM T_BG_DOCUMENT_PROCESS
+        WHERE id= #{id}
+    </select>
+    <select id="getDocumentProcessByBusinessId" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.DocumentProcess">
+        select * from (
+            SELECT *
+            FROM T_BG_DOCUMENT_PROCESS
+            WHERE document_id = #{businessId}
+            ORDER BY create_time desc) where rownum = 1
+    </select>
+    <select id="getEditionByDocumentId" parameterType="java.lang.String" resultType="java.lang.String">
+        select edition from (SELECT *
+                             FROM T_BG_DOCUMENT_PROCESS
+                             WHERE document_id = #{id}
+                             ORDER BY create_time desc) where rownum = 1
+    </select>
+    <select id="getRemarkByRoleDeans" parameterType="com.goisan.workflow.bean.Start" resultType="java.lang.String">
+        select remark from (select t.handle_name||':'||t.remark remark
+                            from T_SYS_WORKFLOW_HANDLE t
+                            where t.cuurent_workflow_id = #{workflowId}
+                                  and FUNC_GET_TABLEVALUE(t.handle_role, 'T_SYS_ROLE', 'ROLE_ID', 'ROLE_NAME') = '院长'
+                                  and t.start_id = #{startId}
+                            order by t.create_time desc)  where rownum = 1
+    </select>
+    <select id="getDocumentHandleById" parameterType="java.lang.String" resultType="com.goisan.workflow.bean.Handle">
+        SELECT handle_name||':'||remark handleName
+        FROM T_SYS_WORKFLOW_HANDLE
+        WHERE start_id IN
+              (SELECT start_id FROM T_SYS_WORKFLOW_START WHERE business_id = #{id})
+              and
+              FUNC_GET_TABLEVALUE(HANDLE_ROLE,
+                                  'T_SYS_ROLE',
+                                  'ROLE_ID',
+                                  'ROLE_NAME') like '%校级/副校级领导审核%'
+        ORDER BY  handle_time
+    </select>
+    <select id="getStartByBusinessId" parameterType="java.lang.String"  resultType="com.goisan.workflow.bean.Start">
+        select * from t_sys_workflow_start where business_id =  #{id}
+    </select>
+    <select id="getHandleTime" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT to_char(handle_time,'yyyy')||'年'|| to_char(handle_time,'mm')||'月'||to_char(handle_time,'dd')||'日'  handleTime
+        FROM T_SYS_WORKFLOW_HANDLE
+        WHERE start_id
+        IN
+        (SELECT start_id
+        FROM T_SYS_WORKFLOW_START
+        WHERE business_id= #{id})
+        and
+        FUNC_GET_TABLEVALUE(HANDLE_ROLE,
+        'T_SYS_ROLE',
+        'ROLE_ID',
+        'ROLE_NAME') = '办公室主任'
+    </select>
+    <select id="getHandleUserByCuurentNodeId" resultType="java.lang.String" parameterType="java.lang.String">
+        select person_id||':'||dept_id
+        from T_RS_EMPLOYEE_DEPT_ROLE t
+        where t.role_id =
+              (select s.handle_role
+               from T_SYS_WORKFLOW_NODE s
+               where s.node_id = #{nodeId})
+    </select>
+    <select id="getHandleNameByCuurentNodeId" resultType="java.lang.String" parameterType="java.lang.String">
+        select FUNC_GET_USERNAME(person_id)  personId
+        from T_RS_EMPLOYEE_DEPT_ROLE t
+        where t.role_id =
+              (select s.handle_role
+               from T_SYS_WORKFLOW_NODE s
+               where s.node_id = #{nodeId})
+    </select>
+    <select id="getNameByPersonId" resultType="java.lang.String" parameterType="java.lang.String">
+        select FUNC_GET_USERNAME(person_id)  from T_RS_EMPLOYEE_DEPT t where t.person_id = #{personId} and ROWNUM=1
+    </select>
+    <select id="getRoleByNodeId" parameterType="java.lang.String"  resultType="java.lang.String">
+        select HANDLE_ROLE from T_SYS_WORKFLOW_NODE t  where t.workflow_id=#{workflowId} and t.node_id = #{nodeId}
+    </select>
+    <select id="getDeptByPersonId" parameterType="java.lang.String"  resultType="java.lang.String">
+        select t.dept_id from T_RS_EMPLOYEE_DEPT t where t.person_id = #{personId} and  rownum =1
+    </select>
+    <select id="getHandleRole" parameterType="java.lang.String" resultType="java.lang.String">
+        select person_id from T_RS_EMPLOYEE_DEPT_ROLE where  ROLE_ID = #{roleId} and  rownum =1
+    </select>
+    <select id="getDocumentHandleById2" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT distinct handle_name handleName
+        FROM T_SYS_WORKFLOW_HANDLE
+        WHERE start_id IN
+              (SELECT start_id FROM T_SYS_WORKFLOW_START WHERE business_id = #{id})
+              and
+              FUNC_GET_TABLEVALUE(HANDLE_ROLE,
+                                  'T_SYS_ROLE',
+                                  'ROLE_ID',
+                                  'ROLE_NAME') like '%'||#{roleName}||'%'
+    </select>
+    <select id="getRequestFlagById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.Document">
+        SELECT * FROM T_BG_DOCUMENT_WF WHERE  request_flag ='2' AND  id =#{id}
+    </select>
+    <select id="getSymbolById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.Document">
+        SELECT * FROM T_BG_DOCUMENT_WF WHERE symbol = #{symbol}
+    </select>
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.teachingplan.dao.TeachingPlanDetailDao">
+    <select id="selectList"
+            parameterType="com.goisan.educational.teachingplan.bean.TeachingPlanDetail"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingPlanDetail">
+        SELECT
+          id,
+          FUNC_GET_TABLEVALUE(plan_id, 'T_JW_TEACHINGPLAN', 'id', 'plan_name') plan_name,
+          plan_id,
+          week,
+          content,
+          theoretical_hours,
+          practice_hours,
+          total_hours,
+          practice_place,
+          focus,
+          difficulty,
+          homework,
+          theorypractice_hours theoryPracticeHours
+        FROM T_JW_TEACHINGPLAN_DETAIL
+        WHERE PLAN_ID = #{planId}
+    </select>
+    <insert id="save" parameterType="com.goisan.educational.teachingplan.bean.TeachingPlanDetail">
+        insert into t_jw_teachingplan_detail (id,plan_id,week,content,theoretical_hours,practice_hours,total_hours,practice_place,focus,difficulty,homework,creator,create_time,create_dept,theorypractice_hours)
+        values (#{id},#{planId},#{week},#{content},#{theoreticalHours},#{practiceHours},#{totalHours},#{practicePlace},#{focus},#{difficulty},#{homework},#{creator},#{createTime},#{createDept},#{theoryPracticeHours})
+    </insert>
+    <select id="selectById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingPlanDetail">
+        SELECT
+          id,
+          FUNC_GET_TABLEVALUE(plan_id, 'T_JW_TEACHINGPLAN', 'id', 'plan_name') plan_name,
+          plan_id,
+          week,
+          content,
+          theoretical_hours,
+          practice_hours,
+          total_hours,
+          practice_place,
+          focus,
+          difficulty,
+          homework,
+          theorypractice_hours theoryPracticeHours
+        FROM T_JW_TEACHINGPLAN_DETAIL
+        WHERE ID = #{id}
+    </select>
+    <update id="update" parameterType="com.goisan.educational.teachingplan.bean.TeachingPlanDetail">
+        update t_jw_teachingplan_detail set plan_id=#{planId},week=#{week},content=#{content},theoretical_hours=#{theoreticalHours},practice_hours=#{practiceHours},total_hours=#{totalHours},practice_place=#{practicePlace},focus=#{focus},difficulty=#{difficulty},homework=#{homework},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept},theorypractice_hours=#{theoryPracticeHours}  where id = #{id}
+    </update>
+    <delete id="del" parameterType="java.lang.String">
+        delete from T_JW_TEACHINGPLAN_DETAIL where id = #{id}
+    </delete>
+    <select id="getPlanName"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingPlanDetail">
+        SELECT id plan_id,PLAN_NAME FROM T_JW_TEACHINGPLAN WHERE id = #{planId}
+    </select>
+    <select id="getTeachingPlanDetail" parameterType="java.lang.String" resultType="com.goisan.educational.teachingplan.bean.TeachingPlanDetail">
+        SELECT
+          id,
+          FUNC_GET_TABLEVALUE(plan_id, 'T_JW_TEACHINGPLAN', 'id', 'plan_name') plan_name,
+          plan_id,
+          week,
+          content,
+          theoretical_hours,
+          practice_hours,
+          total_hours,
+          practice_place,
+          focus,
+          difficulty,
+          homework,
+          THEORYPRACTICE_HOURS theoryPacticeHours
+        FROM T_JW_TEACHINGPLAN_DETAIL
+        WHERE PLAN_ID = #{id}
+    </select>
+</mapper>

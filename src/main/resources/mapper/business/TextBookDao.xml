@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.textbook.dao.TextBookDao">
+    <select id="getTextBookAll" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        t1.TEXTBOOK_ID value,
+        t1.TEXTBOOK_NAME label
+        FROM T_JW_TEXTBOOK t1
+    </select>
+    <select id="getTextBookList" parameterType="com.goisan.educational.textbook.bean.TextBook"
+            resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT
+        t1.TEXTBOOK_ID,
+        t1.TEXTBOOK_NAME,
+        t1.TEXTBOOK_NUMBER,
+        t1.MAJOR_CODE majorCode,
+        FUNC_GET_DICVALUE(t1.TEXTBOOK_TYPE,'JCLX') textbookType,
+        FUNC_GET_DICVALUE(t1.TEXTBOOK_CATEGORY,'JCLB') TEXTBOOK_CATEGORY,
+        FUNC_GET_DICVALUE(t1.TEXTBOOK_NATURE,'JCXZ') textbook_nature,
+        t1.PUBLISHING_HOUSE,
+        t1.FIRST_EDITOR_COMPANY,
+        t1.EDITOR,
+        t1.EDITION,
+        t1.PRICE,
+        t1.TEXTBOOK_NUM_ALL,
+        t1.TEXTBOOK_NUM_IN,
+        t1.subscribe_code,
+        t1.REMARK,
+        to_char(t1.version_date,'yyyy-mm-dd') versionDate,
+        t1.create_time,
+        t1.DISCOUNT discount
+        FROM T_JW_TEXTBOOK t1
+        WHERE t1.TEXTBOOK_TYPE = #{textbookType}
+        <if test="textbookName != null and textbookName != ''">
+            AND t1.TEXTBOOK_NAME LIKE '%${textbookName}%'
+        </if>
+        <if test="textbookNumber != null and textbookNumber != ''">
+            AND t1.textbook_number LIKE '%'||#{textbookNumber}||'%'
+        </if>
+        <if test="editor != null and editor != ''">
+            AND t1.editor LIKE '%'||#{editor}||'%'
+        </if>
+        <if test="departmentsId != null and departmentsId != ''">
+            AND t1.DEPARTMENTS_ID = #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' and majorCode != 'undefined'">
+            AND t1.MAJOR_CODE = #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' and trainingLevel != 'undefined'">
+            AND t1.TRAINING_LEVEL = #{trainingLevel}
+        </if>
+        order by t1.create_time desc
+    </select>
+    <insert id="saveTextBook" parameterType="com.goisan.educational.textbook.bean.TextBook">
+        INSERT INTO T_JW_TEXTBOOK (TEXTBOOK_ID, DISCOUNT, version_date, grade_id, subscribe_code, TEXTBOOK_NAME, TEXTBOOK_NUMBER, TEXTBOOK_TYPE, TEXTBOOK_NATURE, TEXTBOOK_CATEGORY, FIRST_EDITOR_COMPANY, DEPARTMENTS_ID, MAJOR_CODE, TRAINING_LEVEL, PUBLISHING_HOUSE, EDITOR, EDITION, PRICE, TEXTBOOK_NUM_ALL, TEXTBOOK_NUM_IN, REMARK, CREATOR, CREATE_TIME, CREATE_DEPT)
+        VALUES
+            (#{textbookId}, '${discount}', to_date('${versionDate}', 'yyyy-mm-dd'), #{gradeId}, #{subscribeCode},
+                            #{textbookName}, #{textbookNumber}, #{textbookType}, #{textbookNature}, #{textbookCategory},
+                            #{firstEditorCompany},
+                #{departmentsId}, #{majorCode}, #{trainingLevel}, #{publishingHouse}, #{editor}, #{edition},
+                #{price}, to_number('0'), to_number('0'), #{remark}, #{creator}, #{createTime}, #{createDept})
+    </insert>
+    <select id="getTextBookById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT
+            t1.TEXTBOOK_ID,
+            t1.TEXTBOOK_NAME,
+            t1.TEXTBOOK_NUMBER,
+            t1.TEXTBOOK_TYPE                              TEXTBOOK_TYPE,
+            t1.TEXTBOOK_CATEGORY                          TEXTBOOK_CATEGORY,
+            t1.TEXTBOOK_NATURE                            textbookNature,
+            FUNC_GET_DICVALUE(t1.TEXTBOOK_NATURE, 'JCXZ') textbookNatureName,
+            t1.DEPARTMENTS_ID                             DEPARTMENTS_ID,
+            t1.MAJOR_CODE                                 MAJOR_CODE,
+            t1.TRAINING_LEVEL                             trainingLevel,
+            t1.PUBLISHING_HOUSE,
+            t1.FIRST_EDITOR_COMPANY,
+            t1.EDITOR,
+            t1.EDITION,
+            t1.PRICE,
+            t1.TEXTBOOK_NUM_ALL,
+            t1.TEXTBOOK_NUM_IN,
+            t1.subscribe_code,
+            t1.grade_id                                   gradeId,
+            t1.REMARK,
+            to_char(t1.version_date, 'yyyy-mm-dd')        versionDate,
+            t1.create_time,
+            t1.DISCOUNT                                   discount
+        FROM T_JW_TEXTBOOK t1
+        WHERE TEXTBOOK_ID = #{id}
+    </select>
+    <update id="updateTextBook" parameterType="com.goisan.educational.textbook.bean.TextBook">
+        UPDATE T_JW_TEXTBOOK
+        SET TEXTBOOK_NAME     = #{textbookName}, version_date = to_date(#{versionDate}, 'yyyy-mm-dd'),
+            subscribe_code    = #{subscribeCode}, TEXTBOOK_NUMBER = #{textbookNumber}, grade_id = #{gradeId},
+            TEXTBOOK_TYPE     = #{textbookType}, TEXTBOOK_NATURE = #{textbookNature},
+            TEXTBOOK_CATEGORY = #{textbookCategory}, FIRST_EDITOR_COMPANY = #{firstEditorCompany},
+            DEPARTMENTS_ID    = #{departmentsId}, PUBLISHING_HOUSE = #{publishingHouse},
+            EDITOR            = #{editor}, EDITION = #{edition}, PRICE = #{price}, REMARK = #{remark},
+            CHANGER           = #{changer},
+            CHANGE_TIME       = #{changeTime}, CHANGE_DEPT = #{changeDept}, MAJOR_CODE = #{majorCode},
+            TRAINING_LEVEL    = #{trainingLevel}, DISCOUNT = #{discount}
+        WHERE TEXTBOOK_ID = #{textbookId}
+    </update>
+    <select id="isExistInTextBook" parameterType="com.goisan.educational.textbook.bean.TextBook"
+            resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT *
+        FROM
+            T_JW_TEXTBOOK_LOG t
+        WHERE 1 = 1
+              AND TEXTBOOK_ID = #{id}
+    </select>
+    <select id="getTextBookReleaseStatisticsList" parameterType="com.goisan.educational.textbook.bean.TextBook"
+            resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT *
+        FROM
+            T_JW_TEXTBOOK_LOG t
+        WHERE 1 = 1
+              AND TEXTBOOK_ID = #{id}
+    </select>
+    <delete id="delTextBook" parameterType="java.lang.String">
+        DELETE FROM T_JW_TEXTBOOK
+        WHERE TEXTBOOK_ID = #{id}
+    </delete>
+    <select id="getMajorByDeptId" resultType="com.goisan.system.bean.Select2">
+        SELECT DISTINCT
+            MAJOR_CODE || ',' || TRAINING_LEVEL                                   id,
+            MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') text
+        FROM T_XG_MAJOR
+        WHERE DEPARTMENTS_ID = #{deptId}
+    </select>
+    <select id="textBookPlanList" parameterType="com.goisan.educational.textbook.bean.TextBookPlan"
+            resultType="com.goisan.educational.textbook.bean.TextBookPlan">
+        SELECT
+            t.ID                                id,
+            t.PLAN_NAME                         planName,
+            FUNC_GET_DICVALUE(term, 'XQ') AS    termShow,
+            to_char(t.start_time, 'yyyy-mm-dd') startTime,
+            to_char(t.end_time, 'yyyy-mm-dd')   endTime,
+            t.create_time                       createTime
+        FROM T_JW_TEXTBOOK_PLAN t
+    </select>
+    <insert id="insertTextBookPlan" parameterType="com.goisan.educational.textbook.bean.TextBookPlan">
+        INSERT INTO
+            T_JW_TEXTBOOK_PLAN t
+            (id, PLAN_NAME, TERM, START_TIME, END_TIME, creator, create_time, create_dept) VALUES
+            (FUNC_GET_UUID, '${planName}', '${term}', to_date('${startTime}', 'yyyy-mm-dd'),
+             to_date('${endTime}', 'yyyy-mm-dd'), '${creator}', sysdate, '${createDept}')
+    </insert>
+    <delete id="deleteTextBookPlanById" parameterType="com.goisan.educational.textbook.bean.TextBookPlan">
+        DELETE T_JW_TEXTBOOK_PLAN
+        WHERE id = #{id}
+    </delete>
+    <select id="isExistInTextBookPlan" parameterType="com.goisan.educational.textbook.bean.TextBookPlan"
+            resultType="com.goisan.educational.textbook.bean.TextBookPlan">
+        SELECT *
+        FROM
+            T_DT_PARTYMEMBERS t
+        WHERE 1 = 1
+              AND branch_id = #{id}
+    </select>
+    <update id="updateTextBookPlan" parameterType="com.goisan.educational.textbook.bean.TextBookPlan">
+        UPDATE
+            T_JW_TEXTBOOK_PLAN
+        SET
+            PLAN_NAME   = #{planName},
+            term        = #{term},
+            start_time  = to_date('${startTime}', 'yyyy-mm-dd'),
+            end_time    = to_date('${endTime}', 'yyyy-mm-dd'),
+            changer     = #{changer},
+            change_time = sysdate,
+            change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <select id="getTextBookPlanById" parameterType="com.goisan.educational.textbook.bean.TextBookPlan"
+            resultType="com.goisan.educational.textbook.bean.TextBookPlan">
+        SELECT
+            t.ID                                id,
+            t.PLAN_NAME                         planName,
+            term AS                             termShow,
+            to_char(t.start_time, 'yyyy-mm-dd') startTime,
+            to_char(t.end_time, 'yyyy-mm-dd')   endTime,
+            t.create_time                       createTime
+        FROM T_JW_TEXTBOOK_PLAN t
+        WHERE id = #{id}
+    </select>
+    <select id="textBookDeclareList" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare"
+            resultType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        SELECT
+        FUNC_GET_USERNAME(t.creator) as creator,
+        id id ,
+        t.MAJOR_ID majorId,
+        FUNC_GET_TABLEVALUE(t.major_id,'T_XG_MAJOR','MAJOR_CODE','MAJOR_NAME') majorIdShow,
+        t.CLASS_ID classId,
+        FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classIdShow,
+        FUNC_GET_TABLEVALUE(t.course_id,'T_JW_COURSE','course_id','course_name') courseId,
+        declare_num declareNum,
+        FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') textbookId,
+        create_time createTime,
+        create_dept createDept,
+        major_code majorCode,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_DICVALUE(t.submit_state,'TJZT') submitState,
+        remark remark,
+        COLLEGE college,
+        FUNC_GET_DICVALUE(t.COLLEGE,'XY') collegeShow,
+        GRADE_ID gradeId,
+        UNIT_PRICE unitPrice,
+        BOUND_PERSON boundPerson,
+        DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.departments_id, 'T_SYS_DEPT', 'DEPT_ID',
+        'DEPT_NAME') departmentsIdShow,
+        FUNC_GET_USERNAME(TEXTBOOK_USER) textbookUser
+        FROM T_JW_TEXTBOOK_DECLARE t
+        WHERE 1=1
+        <if test="submitState != null and submitState != '' ">
+            AND t.submit_state = #{submitState}
+        </if>
+        <if test="textbookName != null and textbookName != '' ">
+            AND FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') LIKE #{textbookName}
+        </if>
+        <if test="textbookId != null and textbookId != '' ">
+            AND t.TEXTBOOK_ID = #{textbookId}
+        </if>
+        <if test="personType != null and personType != '' ">
+            AND t.person_type = #{personType}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.DEPARTMENTS_ID = #{departmentsId}
+        </if>
+        <if test="majorId != null and majorId != '' ">
+            AND t.MAJOR_ID = #{majorId}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t.CLASS_ID = #{classId}
+        </if>
+        <if test="courseId != null and courseId != ''">
+            AND FUNC_GET_TABLEVALUE(t.course_id,'T_JW_COURSE','course_id','course_name') LIKE '%'||#{courseId}||'%'
+        </if>
+        <if test="boundPerson != null and boundPerson != '' ">
+            AND t.bound_person LIKE '%'||#{boundPerson}||'%'
+        </if>
+        order by CREATE_TIME desc
+    </select>
+    <select id="getTextBookReleaseList" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare"
+            resultType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        SELECT
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.id id ,
+        FUNC_GET_TABLEVALUE(t.major_id,'T_XG_MAJOR','MAJOR_CODE','MAJOR_NAME') majorId ,
+        FUNC_GET_DEPTNAME(t.class_id,'1') classId,
+        FUNC_GET_TABLEVALUE(t.course_id,'T_JW_COURSE','course_id','course_name') courseId,
+        t.declare_num declareNum,
+        t.TEXTBOOK_ID textbookIds,
+        FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') textbookId,
+        t.create_time createTime,
+        t.create_dept createDept,
+        t.major_code majorCode,
+        t.PERSON_TYPE personType,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_DICVALUE(t.submit_state,'TJZT') submitState,
+        FUNC_GET_DICVALUE(t.give_state,'JCFFZT') giveState,
+        t.remainder_num remainderNum,
+        t.remark remark,
+        t.RECEIVER receiver,
+        t.COLLEGE college,
+        s.ACTUAL_NUM actualNum
+        FROM T_JW_TEXTBOOK_DECLARE t,T_JW_TEXTBOOK_STATISTICS s
+        WHERE 1=1 and t.TEXTBOOK_ID = s.TEXTBOOK_ID and t.id = s.declare_id AND t.id= #{declareId}
+        <if test="submitState != null and submitState != '' ">
+            AND t.submit_state = #{submitState}
+        </if>
+        <if test="textbookName != null and textbookName != '' ">
+            AND FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') LIKE #{textbookName}
+        </if>
+        <if test="textbookId != null and textbookId != '' ">
+            AND t.TEXTBOOK_ID = #{textbookId}
+        </if>
+        <if test="declareId != null and declareId != '' ">
+            AND s.declare_id = #{declareId}
+        </if>
+        <if test="personType != null and personType != '' ">
+            AND t.person_type = #{personType}
+        </if>
+    </select>
+    <insert id="insertTextBookDeclare" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        INSERT INTO
+            T_JW_TEXTBOOK_DECLARE t
+            (id, major_id, course_id, class_id, declare_num, remainder_num, textbook_id,
+             college, departments_id, grade_id, bound_person, unit_price, TEXTBOOK_USER,
+             creator, create_time, create_dept, training_level, submit_state, give_state, remark, person_type,term) VALUES
+            (FUNC_GET_UUID, '${majorId}', '${courseId}', '${classId}', '${declareNum}', '${declareNum}',
+                            '${textbookId}',
+                            '${college}', '${departmentsId}', '${gradeId}', '${boundPerson}', '${unitPrice}',
+                                                                                              '${textbookUser}',
+                                                                                              '${creator}', sysdate,
+                                                                                              '${createDept}',
+                                                                                              '${trainingLevel}', '1',
+                                                                                              '1', '${remark}',
+                                                                                              '${personType}','${term}')
+    </insert>
+    <update id="updateTextBookDeclare" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        UPDATE
+            T_JW_TEXTBOOK_DECLARE t
+        SET textbook_id  = #{textbookId},
+            major_id     = #{majorId}, course_id = #{courseId}, class_id = #{classId}, declare_num = #{declareNum},
+            college      = #{college}, departments_Id = #{departmentsId}, grade_id = #{gradeId},remark = #{remark},
+            bound_person = #{boundPerson}, unit_price = #{unitPrice}, TEXTBOOK_USER = #{textbookUser},
+            CHANGE_TIME  = sysdate, CHANGE_DEPT = #{changeDept}, CHANGER = #{changer}, TRAINING_LEVEL = #{trainingLevel}
+        WHERE
+            t.ID = #{id}
+    </update>
+    <select id="getMajorByMajorPrincipal" resultType="com.goisan.system.bean.Select2">
+        SELECT DISTINCT
+            MAJOR_CODE || ',' || TRAINING_LEVEL                                   id,
+            MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') text
+        FROM T_XG_MAJOR
+        WHERE DEPARTMENTS_ID = #{departmentsId}
+    </select>
+    <delete id="deleteTextBookDeclareById" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        DELETE T_JW_TEXTBOOK_DECLARE
+        WHERE id = #{id}
+    </delete>
+    <update id="submitTextBookDeclareById" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        UPDATE
+            T_JW_TEXTBOOK_DECLARE t
+        SET
+            t.submit_state = '2'
+
+        WHERE
+            t.ID = #{id}
+    </update>
+    <update id="saveActualNum" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        UPDATE
+            T_JW_TEXTBOOK_STATISTICS
+        SET
+            ACTUAL_NUM = #{actualNum}
+        WHERE
+            ID = #{id}
+    </update>
+    <select id="getTextBookDeclareById" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare"
+            resultType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        SELECT
+            t.id                                                                                id,
+            FUNC_GET_DICVALUE(t.COLLEGE,'XY') collegeShow,
+            college college,
+            t.UNIT_PRICE,
+            t.DEPARTMENTS_ID,
+            t.GRADE_ID,
+            t.BOUND_PERSON,
+            t.major_id                                                                          majorId,
+            t.class_id                                                                          classId,
+            --         FUNC_GET_DEPTNAME(t.class_id,'1') className,
+            t.course_id                                                                         courseId,
+            t.declare_num                                                                       declareNum,
+            t.remainder_num                                                                     remainderNum,
+            FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbookName,
+            FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'price') unitPrice,
+            FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'editor') editor,
+            FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'edition') edition,
+            t.TEXTBOOK_ID                                                                       textbookId,
+            t.create_time                                                                       createTime,
+            t.create_dept                                                                       createDept,
+            t.major_code                                                                        majorCode,
+            t.TRAINING_LEVEL                                                                    trainingLevel,
+            t.submit_state                                                                      submitState,
+            t.remark                                                                            remark,
+            t.RECEIVER                                                                          receiver,
+            FUNC_GET_USERNAME(t.TEXTBOOK_USER)                                                                     textbookUserShow,
+            t.TEXTBOOK_USER  textbookUser
+        FROM T_JW_TEXTBOOK_DECLARE t
+        WHERE t.id = #{id}
+    </select>
+    <select id="getTextBookDeclare" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare"
+            resultType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        SELECT
+            t.id                                                                                id,
+            t.major_id                                                                          majorId,
+            t.class_id                                                                          classId,
+            FUNC_GET_DEPTNAME(t.class_id, '1')                                                  className,
+            t.course_id                                                                         courseId,
+            t.declare_num                                                                       declareNum,
+            t.remainder_num                                                                     remainderNum,
+            FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbookName,
+            t.TEXTBOOK_ID                                                                       textbookId,
+            t.create_time                                                                       createTime,
+            t.create_dept                                                                       createDept,
+            t.major_code                                                                        majorCode,
+            t.TRAINING_LEVEL                                                                    trainingLevel,
+            t.submit_state                                                                      submitState,
+            s.ACTUAL_NUM                                                                        actualNum,
+            s.ID                                                                                ids,
+            t.remark                                                                            remark
+        FROM T_JW_TEXTBOOK_DECLARE t, T_JW_TEXTBOOK_STATISTICS s
+        WHERE t.TEXTBOOK_ID = s.TEXTBOOK_ID AND t.ID = #{id} AND s.PERSON_TYPE = #{personType}
+    </select>
+    <select id="getTextBookNumInById" parameterType="com.goisan.educational.textbook.bean.TextBook"
+            resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT t.TEXTBOOK_NUM_IN textbookNumIn
+        FROM T_JW_TEXTBOOK t
+        WHERE TEXTBOOK_ID = #{textbookId}
+    </select>
+    <update id="updateTextBookNumIn" parameterType="com.goisan.educational.textbook.bean.TextBook">
+        UPDATE T_JW_TEXTBOOK
+        SET
+            TEXTBOOK_NUM_IN = TEXTBOOK_NUM_IN - #{releaseNum}, CHANGER = #{changer},
+            CHANGE_TIME     = sysdate, CHANGE_DEPT = #{changeDept}
+        WHERE TEXTBOOK_ID = #{textbookId}
+    </update>
+    <update id="updateTextBookRemainderNum" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        UPDATE T_JW_TEXTBOOK_DECLARE
+        SET remainder_num = remainder_num - #{remainderNum},
+            GIVE_STATE    = #{giveState}, CHANGER = #{changer},
+            CHANGE_TIME   = sysdate, CHANGE_DEPT = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <select id="checkTextbookPlanByTime" parameterType="com.goisan.educational.textbook.bean.TextBookPlan"
+            resultType="com.goisan.educational.textbook.bean.TextBookPlan">
+        SELECT
+            t.start_time startTime,
+            t.end_time   endTime
+        FROM T_JW_TEXTBOOK_PLAN t
+        WHERE id = #{textbookPlanId}
+    </select>
+    <select id="searchTextbookIsExist" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics"
+            resultType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        SELECT *
+        FROM
+            T_JW_TEXTBOOK_STATISTICS t
+        WHERE 1 = 1
+              AND textbook_id = #{textbookId} AND person_type = #{personType}
+    </select>
+    <insert id="insertTextBookStatistics" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        INSERT INTO
+            T_JW_TEXTBOOK_STATISTICS t
+            (id, textbook_id, textbook_plan_id, textbook_name, textbook_number, publishing_house, editor, price,
+             total, declare_num, actual_num, creator, create_time, create_dept, remark, subscribe_code, person_type, declare_id)
+        VALUES
+            (FUNC_GET_UUID, '${textbookId}', '${textbookPlanId}', '${textbookName}', '${textbookNumber}',
+                            '${publishingHouse}', '${editor}', '${price}',
+                            '${total}', '${declareNum}', '${actualNum}', '${creator}', sysdate, '${createDept}',
+             '${remark}', '${subscribeCode}', '${personType}', '${declareId}')
+    </insert>
+    <update id="statisticsTextbookByTextbookId" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        UPDATE T_JW_TEXTBOOK_STATISTICS
+        SET declare_num = declare_num + #{declareNum},
+            total       = (declare_num + #{declareNum}) * price,
+            actual_num  = declare_num + #{declareNum},
+            CHANGER     = #{changer},
+            CHANGE_TIME = sysdate, CHANGE_DEPT = #{changeDept}
+        WHERE textbook_id = #{textbookId}
+    </update>
+    <select id="textBookStatisticsList" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics"
+            resultType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        SELECT
+        t.ID id ,
+        t.declare_id declareId,
+        b.TEXTBOOK_NAME textbookName,
+        t.TEXTBOOK_ID textbookId,
+        b.TEXTBOOK_NUMBER textbookNumber,
+        b.PUBLISHING_HOUSE publishingHouse,
+        b.EDITOR editor,
+        b.PRICE price,
+        b.SUBSCRIBE_CODE subscribeCode,
+        (b.PRICE*t.ACTUAL_NUM*s.DISCOUNT) total,
+        d.DECLARE_NUM declareNum,
+        s.ACTUAL_NUM actualNum,
+        t.REMARK remark,
+        d.COLLEGE college,
+        FUNC_GET_DICVALUE(d.COLLEGE,'XY') collegeShow,
+        d.MAJOR_ID majorId,
+        FUNC_GET_TABLEVALUE(d.MAJOR_ID, 't_xg_major', 'major_code', 'major_name') majorIdShow,
+        d.GRADE_ID gradeId,
+        d.CLASS_ID classId,
+        FUNC_GET_TABLEVALUE(d.CLASS_ID, 'T_XG_CLASS','class_id','class_name') AS classIdShow,
+        FUNC_GET_TABLEVALUE(d.COURSE_ID, 'T_JW_COURSE','course_id','course_name') courseId,
+        b.TEXTBOOK_NUM_IN textbookNumIn,
+        s.DISCOUNT discount,
+        d.RECEIVER receiver,
+        d.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(d.departments_id, 'T_SYS_DEPT', 'DEPT_ID',
+        'DEPT_NAME') departmentsIdShow,
+        d.UNIT_PRICE unitPrice,
+        case
+        when t.ACTUAL_NUM = 0 then '0'
+        when t.ACTUAL_NUM>=t.DECLARE_NUM then '1'
+        else '2' end as status
+        FROM T_JW_TEXTBOOK_STATISTICS t,t_jw_textbook b,T_JW_TEXTBOOK_DECLARE d,T_JW_TEXTBOOK_ORDERLOG s
+        WHERE 1 = 1 and t.textbook_id=b.textbook_id and t.TEXTBOOK_ID = d.TEXTBOOK_ID and t.declare_id = d.id AND d.id = s.declare_id and t.TEXTBOOK_ID = #{textbookId}
+        <if test="textbookName != null and textbookName != ''">
+            AND b.TEXTBOOK_NAME LIKE #{textbookName}
+        </if>
+        <if test="personType != null and personType != '' ">
+            AND t.person_type = #{personType}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND d.DEPARTMENTS_ID = #{departmentsId}
+        </if>
+        <if test="majorId != null and majorId != '' ">
+            AND d.MAJOR_ID = #{majorId}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND d.CLASS_ID = #{classId}
+        </if>
+        <if test="term != null and term != '' ">
+            AND d.term = #{term}
+        </if>
+        order by d.CREATE_TIME desc
+    </select>
+    <select id="getTextbookPaymentList" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics"
+            resultType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        SELECT
+        distinct
+        t.SERIAL_NUMBER serialNumber,
+        (select count(*) from T_JW_TEXTBOOK_DECLARE where class_id = d.class_id group by class_id) countNumber,
+        b.TEXTBOOK_NAME textbookName,
+        b.PUBLISHING_HOUSE publishingHouse,
+        b.EDITOR editor,
+        (t.PRICE*t.ACTUAL_NUM*b.DISCOUNT) total,
+        t.REMARK remark,
+        FUNC_GET_DEPTNAME(b.DEPARTMENTS_ID) departmentsIdShow,
+        FUNC_GET_TABLEVALUE(d.CLASS_ID, 'T_XG_CLASS','class_id','class_name') AS classIdShow,
+        d.COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(d.COURSE_ID, 'T_JW_COURSE','course_id','course_name') courseIdShow,
+        b.DISCOUNT discount,
+        t.PRICE price
+        FROM T_JW_TEXTBOOK_STATISTICS t,t_jw_textbook b,T_JW_TEXTBOOK_DECLARE d
+        WHERE 1 = 1 and t.textbook_id=b.textbook_id and t.TEXTBOOK_ID = d.TEXTBOOK_ID
+        <if test="textbookName != null and textbookName != ''">
+            AND b.TEXTBOOK_NAME LIKE '%${textbookName}%'
+        </if>
+        <if test="publishingHouse != null and publishingHouse != '' ">
+            AND b.PUBLISHING_HOUSE LIKE '%${publishingHouse}%'
+        </if>
+        <if test="courseId != null and courseId != '' ">
+            AND d.COURSE_ID = #{courseId}
+        </if>
+        group by
+        d.CLASS_ID,b.TEXTBOOK_NAME,b.PUBLISHING_HOUSE,b.EDITOR,t.ACTUAL_NUM,t.REMARK,d.COURSE_ID,b.DISCOUNT,t.PRICE,t.SERIAL_NUMBER,b.DEPARTMENTS_ID
+    </select>
+
+
+    <select id="textBookPaymentList" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics"
+            resultType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        select textbookId,courseId,textbookName,editor,publishingHouse,studentCount,teacherCount,price,remark,discount
+        from (select
+        distinct
+        t.TEXTBOOK_ID  textbookId,
+        FUNC_GET_TABLEVALUE(d.course_id,'T_JW_COURSE','course_id','course_name') courseId,
+        FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') textbookName,
+        t.EDITOR editor,
+        t.PUBLISHING_HOUSE publishingHouse,
+        t.discount discount,
+        sum(case d.PERSON_TYPE
+        when '0' then
+        g.ACTUAL_NUM
+        end) studentCount,
+        sum(case d.PERSON_TYPE
+        when '1' then
+        g.ACTUAL_NUM
+        end) teacherCount,
+        t.price price,
+        t.remark remark
+        FROM t_jw_textbook t,T_JW_TEXTBOOK_DECLARE d,T_JW_TEXTBOOK_ORDERLOG g
+        WHERE 1 = 1 and t.TEXTBOOK_ID = d.TEXTBOOK_ID AND  g.declare_id = d.id
+        <if test="courseId != null and courseId != ''">
+            AND FUNC_GET_TABLEVALUE(d.course_id,'T_JW_COURSE','course_id','course_name') LIKE '%${courseId}%'
+        </if>
+        <if test="textbookName != null and textbookName != '' ">
+            AND FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') LIKE
+            '%${textbookName}%'
+        </if>
+        <if test="publishingHouse != null and publishingHouse != '' ">
+            AND t.publishing_house LIKE '%'||#{publishingHouse}||'%'
+        </if>
+        <if test="term != null and term != '' ">
+            AND g.term= #{term}
+        </if>
+        group by d.course_id,t.TEXTBOOK_ID,t.EDITOR,t.PUBLISHING_HOUSE,t.price,t.discount,t.remark,t.textbook_id)
+    </select>
+
+    <select id="getPaymentList" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics"
+            resultType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        SELECT
+        distinct
+        d.class_id  classId,
+        FUNC_GET_TABLEVALUE(d.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classIdShow,
+        FUNC_GET_TABLEVALUE(d.course_id, 'T_JW_COURSE', 'course_id', 'course_name')         courseId,
+        FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbookName,
+        t.editor                                                                            editor,
+        t.publishing_house                                                                  publishingHouse,
+        t.price                                                                             price,
+        g.discount                                                                          discount,
+        (g.ACTUAL_NUM * t.price * g.discount)                                                           total,
+        t.remark                                                                            remark
+        FROM T_JW_TEXTBOOK_STATISTICS s,
+        t_jw_textbook t,
+        T_JW_TEXTBOOK_DECLARE d,
+        T_JW_TEXTBOOK_ORDERLOG g
+        WHERE 1 = 1
+        AND s.textbook_id = t.textbook_id
+        AND t.TEXTBOOK_ID = d.TEXTBOOK_ID
+        AND d.id = g.declare_id
+        <if test="textbookName != null and textbookName != ''">
+            AND FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') LIKE
+            '%${textbookName}%'
+        </if>
+        <if test="personType != null and personType != '' ">
+            AND s.person_type = #{personType}
+        </if>
+        <if test="editor != null and editor != '' ">
+            AND t.EDITOR Like '%'||#{editor}||'%'
+        </if>
+        <if test="courseId != null and courseId != '' ">
+            AND FUNC_GET_TABLEVALUE(d.course_id,'T_JW_COURSE','course_id','course_name') like '%${courseId}%'
+        </if>
+        <if test="term != null and term != '' ">
+            AND g.term= #{term}
+        </if>
+    </select>
+
+
+    <update id="updateTextBookStatistics" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        UPDATE T_JW_TEXTBOOK_STATISTICS
+        SET
+            actual_num  = #{actualNum},
+            remark      = #{remark},
+            total       = #{total},
+            CHANGER     = #{changer},
+            CHANGE_TIME = sysdate, CHANGE_DEPT = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <select id="getUserTypeByPersonId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT t.USER_TYPE
+        FROM T_SYS_USER t
+        WHERE t.USER_ID = #{id}
+    </select>
+    <update id="updateDeclareNum" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        UPDATE
+            T_JW_TEXTBOOK_DECLARE
+        SET
+            REMAINDER_NUM = #{remainderNum}
+        WHERE
+            id = #{ids}
+    </update>
+    <select id="getSumDeclareNum" resultType="java.lang.Integer">
+        SELECT SUM(DECLARE_NUM)
+        FROM T_JW_TEXTBOOK_DECLARE t
+        WHERE t.GIVE_STATE != '1'
+    </select>
+    <insert id="insertTextbookDeclareLog" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        INSERT INTO
+            T_JW_TEXTBOOK_DECLARE_LOG t
+            (id, textbook_plan_id, major_id, course_id, class_id, give_num, textbook_id, creator, create_time, create_dept, person_type,receiver)
+        VALUES
+            (FUNC_GET_UUID, '${textbookPlanId}', '${majorId}', '${courseId}', '${classId}', '${declareNum}',
+                            '${textbookId}', '${creator}', sysdate, '${createDept}', '${personType}','${receiver}')
+    </insert>
+    <select id="getFaFang" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare"
+            resultType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        SELECT
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.id id,
+        FUNC_GET_TABLEVALUE(t.major_id,'T_XG_MAJOR','MAJOR_CODE','MAJOR_NAME') majorId ,
+        FUNC_GET_DEPTNAME(t.class_id,'1') classId,
+        FUNC_GET_TABLEVALUE(t.course_id,'T_JW_COURSE','course_id','course_name') courseId,
+        t.GIVE_NUM declareNum,
+        FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') textbookId,
+        to_char(t.create_time,'yyyy-mm-dd hh24:mi') remark,
+        t.create_dept createDept,
+        d.RECEIVER receiver
+        FROM T_JW_TEXTBOOK_DECLARE_LOG t,T_JW_TEXTBOOK_DECLARE d
+        WHERE 1=1 and t.TEXTBOOK_ID = d.TEXTBOOK_ID
+        <if test="textbookName != null and textbookName != '' ">
+            AND FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') LIKE #{textbookName}
+        </if>
+        <if test="textbookId != null and textbookId != '' ">
+            AND t.TEXTBOOK_ID = #{textbookId}
+        </if>
+        <if test="personType != null and personType != '' ">
+            AND t.person_type = #{personType}
+        </if>
+    </select>
+    <!--<update id="updateDeclareNum2" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">-->
+    <!--update-->
+    <!--T_JW_TEXTBOOK_DECLARE-->
+    <!--SET-->
+    <!--REMAINDER_NUM = #{remainderNum}-->
+    <!--WHERE-->
+    <!--id=#{id}-->
+    <!--</update>-->
+
+    <select id="getDeptList" parameterType="string" resultType="map">
+        SELECT DISTINCT
+            t2.DEPARTMENTS_ID                                                            "deptId",
+            FUNC_GET_TABLEVALUE(t2.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') "deptName"
+        FROM T_JW_TEXTBOOK_DECLARE t1, T_XG_CLASS t2
+        WHERE t1.CLASS_ID = t2.CLASS_ID
+    </select>
+
+    <select id="getClassesByDeptId" parameterType="string" resultType="map">
+        SELECT
+            CLASS_ID                                                  "classId",
+            CLASS_NAME                                                "className",
+            (SELECT count(*)
+             FROM T_XG_STUDENT_CLASS
+             WHERE T_XG_CLASS.CLASS_ID = T_XG_STUDENT_CLASS.CLASS_ID) "sum"
+        FROM T_XG_CLASS
+        WHERE DEPARTMENTS_ID = #{deptId}
+    </select>
+    <select id="getResult" parameterType="string" resultType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        SELECT
+            distinct
+            FUNC_GET_TABLEVALUE(d.course_id, 'T_JW_COURSE', 'course_id', 'course_name')         courseId,
+            FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbookName,
+            t.editor                                                                            editor,
+            t.publishing_house                                                                  publishingHouse,
+            t.price                                                                             price,
+            g.discount                                                                          discount,
+            (g.ACTUAL_NUM * t.price * g.discount)                                                           total,
+            t.remark                                                                            remark
+        FROM T_JW_TEXTBOOK_STATISTICS s,
+            t_jw_textbook t,
+            T_JW_TEXTBOOK_DECLARE d,
+            T_JW_TEXTBOOK_ORDERLOG g
+        WHERE 1 = 1
+              AND s.textbook_id = t.textbook_id
+              AND t.TEXTBOOK_ID = d.TEXTBOOK_ID
+              AND d.id = g.declare_id
+              AND d.CLASS_ID = #{classId}
+    </select>
+    <select id="getUnitPriceByTextbookId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT
+            price,
+            editor,
+            edition
+        FROM t_jw_textbook
+        WHERE textbook_id = #{textbookId}
+    </select>
+    <select id="updateTextBookDeclareDiscount" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        UPDATE t_jw_textbook
+        SET discount = #{discount}
+        WHERE textbook_id = #{textbookId}
+    </select>
+    <select id="updateTextBookDeclareActualNum" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        UPDATE T_JW_TEXTBOOK_STATISTICS
+        SET ACTUAL_NUM = #{actualNum}
+        WHERE id = #{id}
+    </select>
+    <insert id="insertTextbookOrderLog" parameterType="com.goisan.educational.textbook.bean.TextBookOrderLog">
+        INSERT INTO
+            T_JW_TEXTBOOK_ORDERLOG
+            (id,
+             person_type,
+              term,
+             textbook_id,
+             actual_num,
+             discount,
+             declare_id,
+             creator,
+             create_time,
+             create_dept)
+        VALUES
+            (FUNC_GET_UUID,
+             '${personType}',
+             '${term}',
+             '${textbookId}',
+             '${actualNum}',
+             '${discount}',
+             '${declareId}',
+             '${creator}',
+             sysdate,
+             '${createDept}')
+    </insert>
+    <update id="updateTextbookOrderLog" parameterType="com.goisan.educational.textbook.bean.TextBookOrderLog">
+        UPDATE T_JW_TEXTBOOK_ORDERLOG SET actual_num = #{actualNum},discount=#{discount},change_time = sysdate WHERE declare_id = #{declareId} and textbook_id = #{textbookId}
+    </update>
+    <select id="getGrantList" resultType="com.goisan.educational.textbook.bean.TextBookDeclare">
+
+        SELECT
+            FUNC_GET_USERNAME(t.creator) as creator,
+            t.id id ,
+            FUNC_GET_TABLEVALUE(t.major_id,'T_XG_MAJOR','MAJOR_CODE','MAJOR_NAME') majorId ,
+            FUNC_GET_DEPTNAME(t.class_id,'1') classId,
+            FUNC_GET_TABLEVALUE(t.course_id,'T_JW_COURSE','course_id','course_name') courseId,
+            t.declare_num declareNum,
+            t.TEXTBOOK_ID textbookIds,
+            FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') textbookId,
+            t.create_time createTime,
+            t.create_dept createDept,
+            t.major_code majorCode,
+            t.PERSON_TYPE personType,
+            FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+            FUNC_GET_DICVALUE(t.submit_state,'TJZT') submitState,
+            FUNC_GET_DICVALUE(t.give_state,'JCFFZT') giveState,
+            t.remainder_num remainderNum,
+            s.give_num giveNum,
+            t.remark remark,
+            s.RECEIVER receiver,
+            FUNC_GET_DICVALUE(t.COLLEGE,'XY') collegeShow,
+            t.COLLEGE college
+        FROM T_JW_TEXTBOOK_DECLARE t,T_JW_TEXTBOOK_DECLARE_LOG s
+        WHERE 1=1
+              and t.id = s.textbook_plan_id
+              AND s.textbook_plan_id= #{declareId}
+    </select>
+    <select id="textBookGrantStatisticsList" parameterType="com.goisan.educational.textbook.bean.TextBookStatistics" resultType="com.goisan.educational.textbook.bean.TextBookStatistics">
+        SELECT
+        textbookId,
+        textbookName,
+        textbookNumIn textbookNumIn,
+        actualNum  actualNum,
+        declareNum declareNum,
+        giveNum giveNum
+        FROM (SELECT
+        t.textbook_id                         textbookId,
+        t.textbook_name                       textbookName,
+        t.textbook_num_in                     textbookNumIn,
+        (SELECT sum(ACTUAL_NUM)
+        FROM T_JW_TEXTBOOK_ORDERLOG o
+        WHERE t.TEXTBOOK_ID = o.TEXTBOOK_ID
+        <if test="personType != null and personType != '' ">
+            AND o.person_type = #{personType}
+        </if>
+          ) actualNum,
+        (SELECT sum(DECLARE_NUM)
+        FROM T_JW_TEXTBOOK_DECLARE d
+        WHERE t.TEXTBOOK_ID = d.TEXTBOOK_ID
+        <if test="personType != null and personType != '' ">
+            AND d.person_type = #{personType}
+        </if>
+          ) declareNum,
+        case WHEN (SELECT sum(GIVE_NUM)
+        FROM
+        T_JW_TEXTBOOK_DECLARE_LOG j
+        WHERE j.TEXTBOOK_ID = t.TEXTBOOK_ID
+        <if test="personType != null and personType != '' ">
+            AND j.person_type = #{personType}
+        </if>
+          ) is NULL
+        THEN 0
+        ELSE (SELECT sum(GIVE_NUM)
+        FROM
+        T_JW_TEXTBOOK_DECLARE_LOG j
+        WHERE j.TEXTBOOK_ID = t.TEXTBOOK_ID
+        <if test="personType != null and personType != '' ">
+            AND j.person_type = #{personType}
+        </if>
+          ) END
+        giveNum
+        FROM
+        T_JW_TEXTBOOK t, T_JW_TEXTBOOK_STATISTICS s, T_JW_TEXTBOOK_DECLARE d
+        WHERE s.DECLARE_ID = d.id AND d.textbook_id = t.textbook_id
+        <if test="textbookName != null and textbookName != ''">
+            AND t.TEXTBOOK_NAME LIKE #{textbookName}
+        </if>
+        <if test="personType != null and personType != '' ">
+            AND s.person_type = #{personType}
+        </if>
+        <if test="term != null and term != '' ">
+            AND d.term= #{term}
+        </if>)
+        GROUP BY textbookId, textbookName,textbookNumIn,giveNum,actualNum,declareNum
+    </select>
+    <select id="getStudentByClassId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT count(*)
+        FROM T_XG_STUDENT_CLASS
+        WHERE  CLASS_ID =#{classId}
+    </select>
+    <!--AND
+    textbook_number =#{textbookNumber} AND
+    textbook_nature =#{textbookNature} AND
+    textbook_category =#{textbookCategory} AND
+    first_editor_company =#{firstEditorCompany} AND
+    publishing_house =#{publishingHouse} AND
+    editor =#{editor} AND
+    edition =#{edition} AND
+    price =#{price} AND
+    version_date =#{versionDate}-->
+    <select id="getTextBookByTextBook" parameterType="com.goisan.educational.textbook.bean.TextBook" resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT * FROM  T_JW_TEXTBOOK WHERE
+            textbook_name =#{textbookName}
+        <if test="textbookId != null and textbookId != ''">
+            AND textbook_id != #{textbookId}
+        </if>
+    </select>
+    <select id="getTextBookDeclareByDeclareId" parameterType="java.lang.String" resultType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        SELECT * FROM T_JW_TEXTBOOK_DECLARE WHERE id = #{id} AND SUBMIT_STATE = 2
+    </select>
+    <select id="updateTextBookDeclareRemainderNum" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare">
+        UPDATE T_JW_TEXTBOOK_DECLARE
+        SET REMAINDER_NUM = #{actualNum} -(select NVL(sum(s.GIVE_NUM),0) from T_JW_TEXTBOOK_DECLARE_LOG s where s.TEXTBOOK_PLAN_ID = #{declareId})
+        WHERE id = #{declareId}
+    </select>
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.competition.dao.CompetitionRequestDao">
+    <select id="competitionRequestAction" resultType="com.goisan.educational.competition.bean.CompetitionRequest"
+            parameterType="com.goisan.educational.competition.bean.CompetitionRequest">
+        select
+        id,
+        FUNC_GET_TABLEVALUE(competition_name, 'T_JW_COMPETITION_PROJECT', 'id', 'competition_project') competitionName,
+        branch_match branchMatch,
+        FUNC_GET_TABLEVALUE(department, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') department,
+        FUNC_GET_TABLEVALUE(MAJOR, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') major,
+        FUNC_GET_TABLEVALUE(STUDENT_ID, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
+        SEND_DEPT sendDept,
+        instructor instructor,
+        FUNC_GET_DICVALUE(competition_nature,'CSXZ') competitionNature,
+        to_char(time ,'yyyy-mm') time,
+        organization_unit organizationUnit,
+        score score,
+        FUNC_GET_DICVALUE(grade,'JSJB') grade,
+        create_time createTime,
+        (select count(*) from T_SYS_FILES where TABLENAME = 'T_JW_COMPETITION_REQUEST' and BUSINESS_ID = id) "count"
+        from T_JW_COMPETITION_REQUEST
+        WHERE 1 = 1
+        <if test="competitionName != null and competitionName != '' ">
+            AND FUNC_GET_TABLEVALUE(competition_name, 'T_JW_COMPETITION_PROJECT', 'id', 'competition_project') LIKE
+            #{competitionName}
+        </if>
+        <if test="instructor != null and instructor != '' ">
+            AND instructor LIKE '%'||#{instructor}||'%'
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="insertCompetitionRequest" parameterType="com.goisan.educational.competition.bean.CompetitionRequest">
+        INSERT INTO T_JW_COMPETITION_REQUEST
+        (
+        id,
+        competition_name,
+        branch_match,
+        department,
+        major,
+        instructor,
+        competition_nature,
+        time,
+        organization_unit,
+        score,
+        grade,
+        creator,
+        create_time,
+        create_dept,
+        STUDENT_ID,
+        send_dept,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${competitionName}',
+        '${branchMatch}',
+        '${department}',
+        '${major}',
+        '${instructor}',
+        '${competitionNature}',
+        to_date('${time}','yyyy-mm'),
+        '${organizationUnit}',
+        '${score}',
+        '${grade}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '${studentId}',
+        '${sendDept}',
+        '1')
+    </insert>
+    <select id="getCompetitionRequestById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.competition.bean.CompetitionRequest">
+        select
+        id,
+        competition_name        competitionName,
+        FUNC_GET_TABLEVALUE(competition_name, 'T_JW_COMPETITION_PROJECT', 'id', 'competition_project') competitionNameShow,
+        FUNC_GET_TABLEVALUE(STUDENT_ID, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')         studentName,
+        STUDENT_ID studentId,
+        SEND_DEPT sendDept,
+        branch_match         branchMatch,
+        department         department,
+        major         major,
+        instructor         instructor,
+        competition_nature        competitionNature,
+        to_char(time ,'yyyy-mm')         time,
+        organization_unit         organizationUnit,
+        score         score,
+        grade        grade
+        from T_JW_COMPETITION_REQUEST
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateCompetitionRequestById"
+            parameterType="com.goisan.educational.competition.bean.CompetitionRequest">
+        UPDATE T_JW_COMPETITION_REQUEST SET
+        competition_name        = #{competitionName},
+        branch_match         = #{branchMatch},
+        department         = #{department},
+        major         = #{major},
+        instructor         = #{instructor},
+        competition_nature        = #{competitionNature},
+        time         = to_date(#{time},'yyyy-mm'),
+        organization_unit         = #{organizationUnit},
+        score         = #{score},
+        grade        = #{grade},
+        student_id=#{studentId},
+        send_dept=#{sendDept},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteCompetitionRequestById" parameterType="java.lang.String">
+        DELETE  T_JW_COMPETITION_REQUEST WHERE id = #{id}
+    </delete>
+    <select id="autoCompleteCompetition" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.COMPETITION_PROJECT as "label",
+        t.id as "value"
+        FROM T_JW_COMPETITION_PROJECT t
+    </select>
+    <select id="getCompetitionProjectSelect" resultType="com.goisan.system.bean.Select2">
+        SELECT id "id", COMPETITION_PROJECT "text" FROM T_JW_COMPETITION_PROJECT
+    </select>
+</mapper>

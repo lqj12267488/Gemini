@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.crawler.dao.WebChannelDao">
+    <select id="getWebChannelList"
+            parameterType="com.goisan.crawler.bean.WebChannel"
+            resultType="com.goisan.crawler.bean.WebChannel">
+        SELECT
+          id,
+          channel_name,
+          domain,
+          FUNC_GET_TABLEVALUE(TYPE_ID, 'YQ_WEBTYPE', 'id', 'type_name') type_id,
+          datetime,
+          web_name,
+          web_url,
+          priority
+        FROM YQ_WEBCHANNEL
+    </select>
+    <insert id="saveWebChannel" parameterType="com.goisan.crawler.bean.WebChannel">
+        insert into YQ_WEBCHANNEL
+        (id,channel_name,domain,type_id,datetime,web_name,web_url,priority,pid)
+        values
+        (#{id},#{channelName},#{domain},#{typeId},#{datetime},#{webName},#{webUrl},#{priority},#{createDept})
+    </insert>
+    <select id="getWebChannelById" parameterType="java.lang.String"
+            resultType="com.goisan.crawler.bean.WebChannel">
+        select * from YQ_WEBCHANNEL where id = #{id}
+    </select>
+    <update id="updateWebChannel" parameterType="com.goisan.crawler.bean.WebChannel">
+        UPDATE YQ_WEBCHANNEL
+        SET channel_name = #{channelName}, domain = #{domain}, type_id = #{typeId}, datetime = #{datetime},
+          web_name       = #{webName}, web_url = #{webUrl}, priority = #{priority}, pid = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="delWebChannel" parameterType="java.lang.String">
+        delete from YQ_WEBCHANNEL where id = #{id}
+    </delete>
+</mapper>

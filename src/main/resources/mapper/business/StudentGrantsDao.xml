@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.studentwork.studentgrants.dao.StudentGrantsDao">
+    <select id="getStudentGrantsList" resultType="com.goisan.studentwork.studentgrants.bean.StudentGrants" parameterType="com.goisan.studentwork.studentgrants.bean.StudentGrants">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')departmentsId,
+        FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.training_level,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_DICVALUE(t.grant_type, 'ZXJLB') grantType,
+        t.money,
+        FUNC_GET_DICVALUE(t.term, 'XQ') term,
+        t.valid_flag validFlag,
+        t.creator,
+        t.create_time createTime
+        FROM T_XG_STUDENT_GRANTS t
+        WHERE 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.create_time,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id = #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code = #{majorCode}
+        </if>
+        <if test="grantType != null and grantType != '' ">
+            AND t.grant_type = #{grantType}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="getStudentGrantsById" resultType="com.goisan.studentwork.studentgrants.bean.StudentGrants"
+            parameterType="java.lang.String">
+        SELECT
+        t.id,
+        t.student_id studentId,
+        t.class_id classId,
+        t.departments_id departmentsId,
+        t.major_code majorCode,
+        FUNC_GET_DICVALUE(t.training_level,'ZXZYPYCC') trainingLevel,
+        t.grant_type grantTypeShow,
+        t.money,
+        t.term,
+        t.grant_type grantType,
+        FUNC_GET_USERNAME(t.creator) creator,
+        to_char(t.create_time,'yyyy-mm-dd hh24:mm:ss')  createTime,
+        t.valid_flag validFlag
+        FROM
+        T_XG_STUDENT_GRANTS t
+        WHERE id = #{id} ORDER BY t.create_time desc
+    </select>
+    <insert id="insertStudentGrants" parameterType="java.lang.String">
+        insert into t_xg_student_grants
+        (id,student_id,class_id,departments_id,major_code,training_level,grant_type,money,term,creator,create_time,create_dept)
+        values ('${id}','${studentId}','${classId}','${departmentsId}',
+        '${majorCode}','${trainingLevel}','${grantType}','${money}','${term}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <delete id="deleteStudentGrantsById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENT_GRANTS WHERE id = #{id}
+    </delete>
+
+    <update id="updateStudentGrantsById" parameterType="com.goisan.studentwork.studentgrants.bean.StudentGrants">
+        update
+        T_XG_STUDENT_GRANTS
+        SET
+        student_id='${studentId}',
+        class_id='${classId}',
+        departments_id='${departmentsId}',
+        major_code='${majorCode}',
+        training_level='${trainingLevel}',
+        money='${money}',
+        grant_type='${grantType}',
+        term= '${term}',
+        change_time=sysdate,
+        change_dept='${changeDept}',
+        changer='${changer}'
+        WHERE
+        id = '${id}'
+    </update>
+    <select id="getClassByMajorId" resultType="com.goisan.system.bean.Select2"
+            parameterType="java.lang.String">
+        SELECT
+        t.class_id id,
+        t.class_name text
+        FROM
+        T_XG_CLASS t
+        WHERE
+        MAJOR_ID=#{majorId}
+    </select>
+    <select id="getMajorCodeByDeptId" resultType="com.goisan.system.bean.Select2">
+        SELECT DISTINCT
+        MAJOR_CODE "id",MAJOR_NAME "text" FROM T_XG_MAJOR WHERE DEPARTMENTS_ID = #{deptId}
+    </select>
+    <select id="getStudentByClassId" resultType="com.goisan.system.bean.Select2">
+        SELECT t1.STUDENT_ID "id",t1.NAME "text"
+        FROM t_xg_student t1,t_xg_student_class t2
+        WHERE t2.CLASS_ID = #{classId} and
+        t1.student_id = t2.student_id
+    </select>
+    <select id="getTrainingLevelByClassId" resultType="String">
+        SELECT training_level || ','|| func_get_dicvalue(training_level,'ZXZYPYCC')
+        FROM t_xg_class WHERE class_id = #{classId}
+    </select>
+</mapper>
+

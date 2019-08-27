@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.partybuilding.party.dao.PartyBranchDao">
+    <select id="partyBranchAction" parameterType="com.goisan.partybuilding.party.bean.PartyBranch"
+            resultType="com.goisan.partybuilding.party.bean.PartyBranch">
+        SELECT
+        id,
+        branch_name as branchName,
+        remark,
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.create_time as createTime
+        FROM
+        T_DT_PARTYBRANCH t
+        WHERE 1 = 1
+        AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="branchName != null and branchName != '' ">
+            AND t.BRANCH_NAME LIKE #{branchName}
+        </if>
+        ORDER BY createTime DESC
+    </select>
+    <insert id="insertPartyBranch" parameterType="com.goisan.partybuilding.party.bean.PartyBranch">
+        INSERT INTO T_DT_PARTYBRANCH
+        (id,branch_name,remark,creator,create_time,create_dept,valid_flag)
+        VALUES
+        (FUNC_GET_UUID,#{branchName},#{remark},#{creator},sysdate,#{createDept},'1')
+    </insert>
+    <select id="checkName" parameterType="com.goisan.partybuilding.party.bean.PartyBranch"
+            resultType="com.goisan.partybuilding.party.bean.PartyBranch">
+        SELECT
+        id,
+        branch_name as branchName
+        FROM
+        T_DT_PARTYBRANCH t
+        WHERE 1 = 1 and valid_flag ='1'
+        AND t.branch_name = #{branchName}
+        <if test="id != null and id != '' ">
+            AND t.id != #{id}
+        </if>
+    </select>
+    <select id="getPartyBranchById" parameterType="com.goisan.partybuilding.party.bean.PartyBranch"
+            resultType="com.goisan.partybuilding.party.bean.PartyBranch">
+        SELECT
+        id,
+        branch_name as branchName,
+        remark
+        FROM
+        T_DT_PARTYBRANCH
+        WHERE 1 = 1 and valid_flag ='1'
+        AND id = #{id}
+    </select>
+    <update id="updatePartyBranch" parameterType="com.goisan.partybuilding.party.bean.PartyBranch">
+       UPDATE
+        T_DT_PARTYBRANCH
+        SET
+        branch_name = #{branchName},
+        remark = #{remark},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deletePartyBranchById" parameterType="com.goisan.partybuilding.party.bean.PartyBranch" >
+        DELETE T_DT_PARTYBRANCH WHERE id = #{id}
+    </delete>
+    <select id="searchPartyBranchList" parameterType="com.goisan.partybuilding.party.bean.PartyBranch"
+            resultType="com.goisan.partybuilding.party.bean.PartyBranch">
+        SELECT
+        id,
+        branch_name as branchName,
+        remark,
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.create_time as createTime
+        FROM
+        T_DT_PARTYBRANCH t
+        WHERE 1 = 1 and valid_flag ='1'
+        AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{LEVEL})
+        <if test="branchName != null and branchName != '' ">
+            AND branch_name LIKE #{branchName}
+        </if>
+        ORDER BY createTime DESC
+    </select>
+    <select id="isExistInParty" parameterType="com.goisan.partybuilding.party.bean.PartyBranch"
+            resultType="com.goisan.partybuilding.party.bean.PartyBranch">
+        SELECT
+        *
+        FROM
+        T_DT_PARTYMEMBERS t
+        WHERE 1 = 1
+        AND branch_id = #{id}
+
+    </select>
+</mapper>

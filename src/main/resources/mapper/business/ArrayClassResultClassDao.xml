@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.arrayclass.dao.ArrayClassResultClassDao">
+    <!--     hanyue start   -->
+    <select id="getArrayClassStudentClassList"
+            parameterType="com.goisan.educational.arrayclass.bean.ArrayClassStudent"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassStudent">
+        SELECT
+        t.student_id studentId,
+        FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
+        t1.class_id ,
+        t1.arrayclass_class_id,
+        t1.arrayclass_id,
+        FUNC_GET_TABLEVALUE(t1.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classIdShow,
+        FUNC_GET_DEPTNAME(t1.departments_id) departments_id,
+        FUNC_GET_TABLEVALUE(t1.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')|| ' -- ' || FUNC_GET_DICVALUE(t1.TRAINING_LEVEL, 'ZXZYPYCC')   majorCode,
+        FUNC_GET_TABLEVALUE(t1.room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME')  roomId,
+        t1.student_number
+        FROM t_xg_student_class t,T_JW_ARRAYCLASS_CLASS t1
+        WHERE t.class_id=t1.class_id and
+        t.class_id IN(select class_id
+        from T_JW_ARRAYCLASS_CLASS
+        WHERE arrayclass_id IS NOT NULL)
+        <if test="classId != null and classId != '' ">
+            AND t.class_id = #{classId}
+        </if>
+        <if test="studentId !=null and studentId != ''">
+            AND FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')=#{studentId}
+        </if>
+        <!-- <if test="studentId != null and studentId != '' ">
+             AND FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') = #{studentId}
+         </if>-->
+    </select >
+    <select id="selectArrayClassResultStudentList" parameterType="com.goisan.educational.arrayclass.bean.StudentArrayClassLook"
+            resultType="com.goisan.educational.arrayclass.bean.StudentArrayClassLook">
+        SELECT  ID, ARRAYCLASS_ID arrayclassId, ARRAY_ID arrayId,student_id studentId,
+        FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentIdShow,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
+        /*FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel,*/
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')|| ' -- ' || FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX')|| ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC')   majorCode,
+        CLASS_ID classId, COURSE_TYPE courseType,COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseIdShow,
+        ROOM_ID	 roomId,
+        FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomIdShow,
+        TEACHER_PERSON_ID teacherPerson_id,
+        FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonIdShow,
+        TEACHER_DEPT_ID teacherDeptId,
+        WEEK_TYPE weekType,FUNC_GET_DICVALUE(WEEK_TYPE, 'XZLX') weekTypeShow,
+        START_WEEK startWeek,END_WEEK endWeek,HOURS hours,CONNECT_HOURS connectHours,
+        MERGE_FLAG mergeFlag,WEEK week,HOURS_TYPE hoursType,HOURS_CODE hoursCode,
+        ARRAYCLASS_FLAG	arrayclassFlag
+        FROM T_JW_ARRAYCLASS_RESULT_STUDENT
+        where  1=1
+        <if test="classId != null and classId != '' ">
+            AND class_id = #{classId}
+        </if>
+        <if test="studentId !=null and studentId != ''">
+            AND FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')=#{studentId}
+        </if>
+    </select>
+    <select id="selectArrayClassResultStudentById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.arrayclass.bean.StudentArrayClassLook">
+        SELECT  ID, ARRAYCLASS_ID arrayclassId, ARRAY_ID arrayId,student_id studentId,
+        FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentIdShow,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel,
+        CLASS_ID classId, COURSE_TYPE courseType,COURSE_ID courseId,
+        FUNC_GET_DICVALUE(COURSE_TYPE,'KCLX') courseTypeShow,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseIdShow,
+        ROOM_ID	 roomId,
+        FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomIdShow,
+        TEACHER_PERSON_ID teacherPerson_id,
+        FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonIdShow,
+        TEACHER_DEPT_ID teacherDeptId,
+        WEEK_TYPE weekType,FUNC_GET_DICVALUE(WEEK_TYPE, 'XZLX') weekTypeShow,
+        START_WEEK startWeek,END_WEEK endWeek,HOURS hours,CONNECT_HOURS connectHours,
+        MERGE_FLAG mergeFlag,WEEK week,HOURS_TYPE hoursType,HOURS_CODE hoursCode,
+        ARRAYCLASS_FLAG	arrayclassFlag
+        FROM T_JW_ARRAYCLASS_RESULT_STUDENT
+        where id =  #{id}
+    </select>
+    <select id="getArrayClassStudentClassByClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassStudent"
+            resultType="com.goisan.educational.arrayclass.bean.StudentArrayClassLook">
+        SELECT  ID, ARRAYCLASS_ID arrayclassId, ARRAY_ID arrayId,student_id studentId,
+        FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel,
+        CLASS_ID classId, COURSE_TYPE courseType,COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseIdShow,
+        ROOM_ID	 roomId,
+        FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomIdShow,
+        TEACHER_PERSON_ID teacherPerson_id,
+        FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonIdShow,
+        TEACHER_DEPT_ID teacherDeptId,
+        WEEK_TYPE weekType,FUNC_GET_DICVALUE(WEEK_TYPE, 'XZLX') weekTypeShow,
+        START_WEEK startWeek,END_WEEK endWeek,HOURS hours,CONNECT_HOURS connectHours,
+        MERGE_FLAG mergeFlag,WEEK week,HOURS_TYPE hoursType,HOURS_CODE hoursCode,
+        ARRAYCLASS_FLAG	arrayclassFlag
+        FROM T_JW_ARRAYCLASS_RESULT_STUDENT
+        where class_id IN (select class_id from t_xg_student_class where student_id=#{studentId})  AND ARRAYCLASS_ID =  #{arrayclassId}
+    </select>
+    <select id="getArrayClassStudentClassByStudent" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassStudent"
+            resultType="com.goisan.educational.arrayclass.bean.StudentArrayClassLook">
+        SELECT  ID, ARRAYCLASS_ID arrayclassId, ARRAY_ID arrayId,student_id studentId,
+        FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel,
+        CLASS_ID classId, COURSE_TYPE courseType,COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseIdShow,
+        ROOM_ID	 roomId,
+        FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomIdShow,
+        TEACHER_PERSON_ID teacherPerson_id,
+        FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonIdShow,
+        TEACHER_DEPT_ID teacherDeptId,
+        WEEK_TYPE weekType,FUNC_GET_DICVALUE(WEEK_TYPE, 'XZLX') weekTypeShow,
+        START_WEEK startWeek,END_WEEK endWeek,HOURS hours,CONNECT_HOURS connectHours,
+        MERGE_FLAG mergeFlag,WEEK week,HOURS_TYPE hoursType,HOURS_CODE hoursCode,
+        ARRAYCLASS_FLAG	arrayclassFlag
+        FROM T_JW_ARRAYCLASS_RESULT_STUDENT
+        where student_id=#{studentId} AND ARRAYCLASS_ID =  #{arrayclassId}
+    </select>
+    <select id="selectStudentName" parameterType="java.lang.String" resultType="java.lang.String">
+        select FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName from t_xg_student_class where student_id= #{student_id}
+    </select>
+    <select id="getArrayClassTimeByStudent" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassStudent"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassTime">
+        SELECT * FROM T_JW_ARRAYCLASS_TIME t
+        WHERE  arrayclass_id = #{arrayclassId}
+        ORDER BY hours_code
+    </select>
+    <select id="selectResultStudentList" resultType="com.goisan.educational.arrayclass.bean.StudentArrayClassLook">
+        SELECT
+        t.student_id,
+        t1.ARRAYCLASS_ID arrayclassId,
+        t1.ARRAY_ID arrayId,
+        t1.DEPARTMENTS_ID departmentsId,
+        t1.MAJOR_CODE  majorCode,
+        t1.MAJOR_DIRECTION majorDirection,
+        t1.TRAINING_LEVEL trainingLevel,
+        t1.CLASS_ID classId,
+        t1.COURSE_TYPE courseType,
+        t1.COURSE_ID courseId,
+        t1.ROOM_ID roomId,
+        t1.TEACHER_PERSON_ID teacherPerson_id,
+        t1.TEACHER_DEPT_ID teacherDeptId,
+        t1.WEEK_TYPE weekType,
+        t1.START_WEEK startWeek,
+        t1.END_WEEK endWeek,
+        t1.HOURS hours,
+        t1.CONNECT_HOURS connectHours,
+        t1.MERGE_FLAG mergeFlag,
+        t1.WEEK week,
+        t1.HOURS_TYPE hoursType,
+        t1.HOURS_CODE hoursCode,
+        t1.ARRAYCLASS_FLAG arrayclassFlag
+        FROM T_JW_ARRAYCLASS_RESULT_CLASS t1,t_xg_student_class t
+        where t1.class_id = t.class_id
+    </select>
+    <insert id="insertStudentArrayClass" parameterType="com.goisan.educational.arrayclass.bean.StudentArrayClassLook">
+        INSERT INTO T_JW_ARRAYCLASS_RESULT_STUDENT
+        (id,
+         arrayclass_id,
+         array_id,
+         student_id,
+         departments_id,
+         major_code,
+         major_direction,
+         training_level,
+         class_id,
+         course_type,
+         course_id,
+         room_id,
+         teacher_person_id,
+         teacher_dept_id,
+         week_type,
+         start_week,
+         end_week,
+         hours,
+         connect_hours,
+         merge_flag,
+         week,
+         hours_type,
+         hours_code,
+         arrayclass_flag,
+         creator,
+         create_dept,
+         create_time)
+        VALUES
+        (FUNC_GET_UUID,
+         '${arrayclassId}',
+         '${arrayId}',
+         '${studentId}',
+         '${departmentsId}',
+         '${majorCode}',
+         '${majorDirection}',
+         '${trainingLevel}',
+         '${classId}',
+         '${courseType}',
+         '${courseId}',
+         '${roomId}',
+         '${teacherPersonId}',
+         '${teacherDeptId}',
+         '${weekType}',
+         '${startWeek}',
+         '${endWeek}',
+         '${hours}',
+         '${connectHours}',
+         '${mergeFlag}',
+         '${week}',
+         '${hoursType}',
+         '${hoursCode}',
+         '${arrayclassFlag}',
+         '${creator}',
+         '${createDept}',
+         sysdate
+        )
+    </insert>
+    <delete id="deleteStudentArrayClass">
+        DELETE FROM T_JW_ARRAYCLASS_RESULT_STUDENT
+    </delete>
+
+    <select id="getArrayClassRoomPlaceList" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassRoom"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassRoom">
+        select
+        t.id id,
+        t.ARRAYCLASS_ID   arrayClassId,
+        FUNC_GET_DICVALUE(t.ROOM_TYPE, 'JSLX') roomType,
+        FUNC_GET_TABLEVALUE(t.ROOM_ID,'T_JW_CLASSROOM','ID','CLASS_ROOM_NAME') roomId,
+        t.PEOPLE_NUMBER peopleNumber,
+        t.ROOM_NAME       roomName,
+        t.CLASS_ID        classId,
+        t.DEPARTMENTS_ID  departmentsId,
+        t.MAJOR_CODE      majorCode,
+        t.TRAINING_LEVEL  trainingLevel
+        from T_JW_ARRAYCLASS_ROOM t
+        WHERE 1=1 and arrayclass_id = #{arrayClassId}
+        <!--<if test="roomType != null and roomType != '' ">-->
+        <!--AND t.ROOM_TYPE= #{roomType}-->
+        <!--</if>-->
+        <!--<if test="roomId != null and roomId != '' ">-->
+        <!--AND t.ROOM_ID= #{roomId}-->
+        <!--</if>-->
+        <if test="roomName != null and roomName != '' ">
+            AND FUNC_GET_TABLEVALUE(t.ROOM_ID,'T_JW_CLASSROOM','ID','CLASS_ROOM_NAME') LIKE #{roomName}
+        </if>
+    </select>
+    <select id="getArrayclassResultClassByPlace" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassRoom"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        SELECT  ID, ARRAYCLASS_ID arrayclassId, ARRAY_ID arrayId,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId  ,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel,
+        CLASS_ID classId, COURSE_TYPE courseType,COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        ROOM_ID	 roomId,
+        FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomShow,
+        TEACHER_PERSON_ID teacherPerson_id,
+        FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonName,
+        TEACHER_DEPT_ID teacherDeptId,
+        WEEK_TYPE weekType,FUNC_GET_DICVALUE(WEEK_TYPE, 'XZLX') weekTypeShow,
+        START_WEEK startWeek,END_WEEK endWeek,HOURS hours,CONNECT_HOURS connectHours,
+        MERGE_FLAG mergeFlag,WEEK week,HOURS_TYPE hoursType,HOURS_CODE hoursCode,
+        ARRAYCLASS_FLAG	arrayclassFlag
+        FROM T_JW_ARRAYCLASS_RESULT_CLASS
+        where FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME')  =  #{roomId}  AND arrayclass_id =  #{arrayClassId}
+    </select>
+    <select id="getArrayClassTimeByPlace" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassRoom"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassTime">
+        SELECT * FROM T_JW_ARRAYCLASS_TIME t
+        WHERE  arrayclass_id = #{arrayClassId}
+        ORDER BY hours_code
+    </select>
+    <!--     hanyue end   -->
+    <!--     yangshuang start   -->
+    <select id="getArrayClassList"
+            parameterType="com.goisan.educational.arrayclass.bean.ArrayClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClass">
+        select t.arrayclass_id arrayClassId,
+        t.arrayclass_name arrayClassName,
+        FUNC_GET_DICVALUE(t.term, 'XQ') term,
+        FUNC_GET_DICVALUE(t.ARRAYCLASS_FLAG, 'PKZT') arrayClassFlagShow,
+        t.term  termValue,
+        t.remark remark
+        from t_jw_arrayclass t
+        WHERE 1 = 1
+        <if test="arrayClassName != null and arrayClassName != '' ">
+            AND t.arrayclass_name LIKE #{arrayClassName}
+        </if>
+        <if test="term != null and term != '' ">
+            AND t.term = #{term}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <delete id="delResultClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        DELETE  T_JW_ARRAYCLASS_RESULT_CLASS WHERE arrayclass_id = #{arrayClassId}
+        <if test="classId != null and classId != '' ">
+            AND  CLASS_ID = #{classId}
+        </if>
+    </delete>
+    <select id="getClassListByArrayClassId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassClass">
+        SELECT
+        t1.arrayclass_class_id ,
+        t1.arrayclass_id,
+        t1.class_id,
+        FUNC_GET_TABLEVALUE(t1.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') CLASS_NAME,
+        FUNC_GET_DEPTNAME(t1.departments_id)                                     departments_id,
+        t2.MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(t2.TRAINING_LEVEL, 'ZXZYPYCC') || ' -- ' ||
+        FUNC_GET_DICVALUE(t2.MAJOR_DIRECTION, 'ZXZYFX')                          major_code,
+        FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME')  room_id,
+        student_number
+        FROM T_JW_ARRAYCLASS_CLASS t1, T_XG_MAJOR t2
+        WHERE 1 = 1 AND t1.TRAINING_LEVEL = t2.TRAINING_LEVEL AND t1.MAJOR_CODE = t2.MAJOR_CODE AND t1.MAJOR_DIRECTION = t2.MAJOR_DIRECTION
+        AND ARRAYCLASS_ID = #{arrayclassId}
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t1.departments_id = #{departmentsId}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t1.TRAINING_LEVEL = #{trainingLevel}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND t1.MAJOR_CODE = #{majorCode}
+        </if>
+        <if test="majorDirection != null and majorDirection != '' ">
+            AND t1.MAJOR_DIRECTION = #{majorDirection}
+        </if>
+    </select>
+    <select id="getResultClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        SELECT
+                ID,
+                ARRAYCLASS_ID			arrayclassId,
+                ARRAY_ID			arrayId,
+                DEPARTMENTS_ID			departmentsId,
+                MAJOR_CODE			majorCode,
+                MAJOR_DIRECTION			majorDirection,
+                TRAINING_LEVEL			trainingLevel,
+                CLASS_ID			classId,
+                COURSE_TYPE			courseType,
+                COURSE_ID			courseId,
+                ROOM_ID			roomId,
+                TEACHER_PERSON_ID			teacherPersonId,
+                TEACHER_DEPT_ID			teacherDeptId,
+                WEEK_TYPE			weekType,
+                START_WEEK			startWeek,
+                END_WEEK			endWeek,
+                HOURS			hours,
+                CONNECT_HOURS			connectHours,
+                MERGE_FLAG			mergeFlag,
+                WEEK			week,
+                HOURS_TYPE			hoursType,
+                HOURS_CODE			hoursCode,
+                ARRAYCLASS_FLAG			arrayclassFlag
+        FROM T_JW_ARRAYCLASS_RESULT_CLASS
+        WHERE arrayclass_id = #{arrayclassId} AND class_id = #{classId}
+    </select>
+    <select id="getArrayclassArrayListByClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassArray">
+        SELECT array_id,arrayclass_id,departments_id,major_code,major_direction,training_level,
+            class_id,course_type,
+            course_id,
+            FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow ,
+            room_id,
+            FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomShow,
+            teacher_person_id teacherPersonId,
+            FUNC_GET_USERNAME(teacher_person_id) teacherPersonName,
+            teacher_dept_id teacherDeptId,
+            week_type,start_week,end_week,week_hours,connect_hours,merge_flag
+        FROM T_JW_ARRAYCLASS_ARRAY
+        WHERE 1 = 1 AND ARRAYCLASS_ID = #{arrayclassId}  AND class_id = #{classId}
+    </select>
+    <select id="getArrayClassConditionByClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassCondition">
+        SELECT *
+        FROM T_JW_ARRAYCLASS_CONDITION
+        WHERE 1 = 1 AND ARRAYCLASS_ID = #{arrayclassId}
+        AND (ELEMENTS_TYPE = 1 and ELEMENTS_ID = #{classId} )
+           or (ELEMENTS_TYPE = 2 and ELEMENTS_ID in(select DISTINCT TEACHER_PERSON_ID FROM
+                                                        T_JW_ARRAYCLASS_ARRAY
+                                                        WHERE class_id = #{classId} AND ARRAYCLASS_ID =  #{arrayclassId}))
+           or (ELEMENTS_TYPE = 3 and ELEMENTS_ID in(select DISTINCT COURSE_ID FROM
+                                                        T_JW_ARRAYCLASS_ARRAY
+                                                        WHERE class_id = #{classId} AND ARRAYCLASS_ID =  #{arrayclassId}))
+           or (ELEMENTS_TYPE = 4 )
+    </select>
+    <select id="getArrayClassRoomByClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassRoom">
+        SELECT
+            t.id id,
+            t.ARRAYCLASS_ID   arrayClassId,
+            FUNC_GET_DICVALUE(t.ROOM_TYPE, 'JSLX') roomType,
+            FUNC_GET_TABLEVALUE(t.ROOM_ID,'T_JW_CLASSROOM','ID','CLASS_ROOM_NAME') roomId,
+            t.ROOM_NAME       roomName,
+            t.PEOPLE_NUMBER  peopleNumber,
+            t.CLASS_ID        classId,
+            t.DEPARTMENTS_ID  departmentsId,
+            t.MAJOR_CODE      majorCode,
+            t.TRAINING_LEVEL  trainingLevel
+        FROM T_JW_ARRAYCLASS_ROOM t
+    </select>
+    <select id="getArrayclassResultClassByClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        SELECT  ID, ARRAYCLASS_ID arrayclassId, ARRAY_ID arrayId,
+                FUNC_GET_TABLEVALUE(DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId  ,
+                FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+                FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirection,
+                FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel,
+                CLASS_ID classId, COURSE_TYPE courseType,COURSE_ID courseId,
+                FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+                ROOM_ID	 roomId,
+                FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomShow,
+                TEACHER_PERSON_ID teacherPerson_id,
+                FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonName,
+                TEACHER_DEPT_ID teacherDeptId,
+                WEEK_TYPE weekType,FUNC_GET_DICVALUE(WEEK_TYPE, 'XZLX') weekTypeShow,
+                START_WEEK startWeek,END_WEEK endWeek,HOURS hours,CONNECT_HOURS connectHours,
+                MERGE_FLAG mergeFlag,WEEK week,HOURS_TYPE hoursType,HOURS_CODE hoursCode,
+                ARRAYCLASS_FLAG	arrayclassFlag
+         FROM T_JW_ARRAYCLASS_RESULT_CLASS t
+        where t.class_id =  #{classId}  AND ARRAYCLASS_ID =  #{arrayclassId} and ARRAYCLASS_FLAG ='1'
+    </select>
+    <select id="getArrayclassResultClassOtherClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        SELECT t.* ,
+            FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+            FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') className
+        FROM T_JW_ARRAYCLASS_RESULT_CLASS t
+        where t.class_id !=  #{classId}  AND ARRAYCLASS_ID =  #{arrayclassId}
+        AND t.teacher_person_id IN
+            (SELECT DISTINCT teacher_person_id FROM T_JW_ARRAYCLASS_ARRAY WHERE class_id = #{classId} AND
+             ARRAYCLASS_ID =  #{arrayclassId}
+            )
+    </select>
+    <select id="geArrayClassTimeByClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassTime">
+      SELECT * FROM T_JW_ARRAYCLASS_TIME t
+      WHERE  arrayclass_id = #{arrayclassId}
+      ORDER BY hours_code
+    </select>
+    <delete id="delClassResultByid" parameterType="java.lang.String">
+        DELETE  T_JW_ARRAYCLASS_RESULT_CLASS WHERE id = #{id}
+    </delete>
+    <insert id="insertResultClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        INSERT INTO T_JW_ARRAYCLASS_RESULT_CLASS
+        (ID,ARRAYCLASS_ID,ARRAY_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,
+            TRAINING_LEVEL,CLASS_ID,COURSE_TYPE,COURSE_ID,ROOM_ID,
+            TEACHER_PERSON_ID,TEACHER_DEPT_ID,WEEK_TYPE,START_WEEK,END_WEEK,
+            HOURS,CONNECT_HOURS,MERGE_FLAG,WEEK,HOURS_TYPE,HOURS_CODE,
+            ARRAYCLASS_FLAG,CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES (#{id},#{arrayclassId},#{arrayId},#{departmentsId},#{majorCode},#{majorDirection},
+           #{trainingLevel},#{classId}, #{courseType}, #{courseId},#{roomId},
+           #{teacherPersonId},#{teacherDeptId},#{weekType},#{startWeek}, #{endWeek},
+           #{hours},#{connectHours},#{mergeFlag},#{week},#{hoursType},#{hoursCode},
+           '1',#{creator},sysdate,#{createDept}
+        )
+    </insert>
+    <update id="updateResultClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        UPDATE T_JW_ARRAYCLASS_RESULT_CLASS
+        SET
+            COURSE_TYPE = #{courseType},
+            COURSE_ID = #{courseId},
+            ROOM_ID = #{roomId},
+            TEACHER_PERSON_ID = #{teacherPersonId},
+            TEACHER_DEPT_ID = #{teacherDeptId},
+            WEEK_TYPE = #{weekType},
+            START_WEEK = #{startWeek},
+            END_WEEK = #{endWeek},
+            HOURS = #{hours},
+            CONNECT_HOURS = #{connectHours},
+            MERGE_FLAG = #{mergeFlag},
+            WEEK = #{week},
+            HOURS_TYPE = #{hoursType},
+            HOURS_CODE = #{hoursCode},
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=sysdate
+        WHERE
+        id = #{id}
+    </update>
+    <!--     yangshuang end   -->
+
+    <!--    王强 start  -->
+    <!--班级课表查看-->
+    <select id="getClassSyllabusList" parameterType="java.lang.String"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassClass">
+        SELECT
+        ARRAYCLASS_ID arrayclassId,
+        CLASS_ID classId,
+        FUNC_GET_TABLEVALUE(CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') className ,
+        FUNC_GET_DEPTNAME(DEPARTMENTS_ID) departmentsId,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE,'T_XG_MAJOR','MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel
+        FROM T_JW_ARRAYCLASS_CLASS
+        WHERE ARRAYCLASS_ID = #{arrayclassId}
+        <if test="classId != null and classId != '' ">
+            AND FUNC_GET_TABLEVALUE(CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') LIKE #{classId}
+        </if>
+    </select>
+    <!--通过班级ID查询课表-->
+    <select id="getClassSyllabusById" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        SELECT  ID, ARRAYCLASS_ID arrayclassId, ARRAY_ID arrayId,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_TABLEVALUE(CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classShow,
+        FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel,
+        CLASS_ID classId, COURSE_TYPE courseType,COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        ROOM_ID	 roomId,
+        FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomShow,
+        TEACHER_PERSON_ID teacherPersonId,
+        FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonName,
+        TEACHER_DEPT_ID teacherDeptId,
+        WEEK_TYPE weekType,FUNC_GET_DICVALUE(WEEK_TYPE, 'XZLX') weekTypeShow,
+        START_WEEK startWeek,END_WEEK endWeek,HOURS hours,CONNECT_HOURS connectHours,
+        MERGE_FLAG mergeFlag,WEEK week,HOURS_TYPE hoursType,HOURS_CODE hoursCode,
+        ARRAYCLASS_FLAG	arrayclassFlag
+        FROM T_JW_ARRAYCLASS_RESULT_CLASS t
+        where t.CLASS_ID = #{classId}  AND t.ARRAYCLASS_ID =  #{arrayclassId}
+    </select>
+    <select id="getArrayClassTimeByClass" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassClass"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassTime">
+        SELECT * FROM T_JW_ARRAYCLASS_TIME t
+        WHERE  arrayclass_id = #{arrayclassId}
+        ORDER BY hours_code
+    </select>
+
+    <!--教师课表查看-->
+    <select id="getTeacherSyllabusList" parameterType="java.lang.String"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassTeacher">
+        SELECT DISTINCT
+        ARRAYCLASS_ID arrayclassId,
+        TEACHER_PERSON_ID teacherPersonId,
+        FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonShow ,
+        FUNC_GET_DEPTNAME(TEACHER_DEPT_ID) teacherDeptId
+        FROM T_JW_ARRAYCLASS_TEACHER
+        WHERE ARRAYCLASS_ID = #{arrayclassId}
+        <if test="teacherPersonId != null and teacherPersonId != '' ">
+            AND FUNC_GET_USERNAME(TEACHER_PERSON_ID) LIKE #{teacherPersonId}
+        </if>
+    </select>
+    <!--通过教师ID查询课表-->
+    <select id="getTeacherSyllabusById" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassTeacher"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        SELECT  ID, ARRAYCLASS_ID arrayclassId, ARRAY_ID arrayId,
+                FUNC_GET_TABLEVALUE(DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
+                FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+                FUNC_GET_TABLEVALUE(CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classShow,
+                FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirection,
+                FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') trainingLevel,
+                CLASS_ID classId, COURSE_TYPE courseType,COURSE_ID courseId,
+                FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+                ROOM_ID	 roomId,
+                FUNC_GET_TABLEVALUE(ROOM_ID, 'T_JW_ARRAYCLASS_ROOM', 'ROOM_ID', 'ROOM_NAME') roomShow,
+                TEACHER_PERSON_ID teacherPersonId,
+                FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonName,
+                TEACHER_DEPT_ID teacherDeptId,
+                WEEK_TYPE weekType,FUNC_GET_DICVALUE(WEEK_TYPE, 'XZLX') weekTypeShow,
+                START_WEEK startWeek,END_WEEK endWeek,HOURS hours,CONNECT_HOURS connectHours,
+                MERGE_FLAG mergeFlag,WEEK week,HOURS_TYPE hoursType,HOURS_CODE hoursCode,
+                ARRAYCLASS_FLAG	arrayclassFlag
+         FROM T_JW_ARRAYCLASS_RESULT_CLASS t
+        where t.TEACHER_PERSON_ID = #{teacherPersonId}  AND t.ARRAYCLASS_ID =  #{arrayclassId}
+    </select>
+    <select id="getArrayClassTimeByTeacher" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassTeacher"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassTime">
+        SELECT * FROM T_JW_ARRAYCLASS_TIME t
+        WHERE  arrayclass_id = #{arrayclassId}
+        ORDER BY hours_code
+    </select>
+    <select id="getArrayClassTeacherList" resultType="com.goisan.educational.arrayclass.bean.ArrayClass"
+            parameterType="com.goisan.educational.arrayclass.bean.StudentArrayClassLook">
+        select t.arrayclass_id arrayClassId,
+        t.arrayclass_name arrayClassName,
+        FUNC_GET_DICVALUE(t.term, 'XQ') term,
+        FUNC_GET_DICVALUE(t.ARRAYCLASS_FLAG, 'PKZT') arrayClassFlagShow,
+        t.term  termValue,
+        t.remark remark
+        from t_jw_arrayclass t
+        WHERE 1 = 1
+        <if test="arrayclassId != null and arrayclassId != '' ">
+            AND FUNC_GET_TABLEVALUE(arrayclass_id, 't_jw_arrayclass', 'arrayclass_id', 'arrayclass_name') LIKE #{arrayclassId}
+        </if>
+        <if test="term != null and term != '' ">
+            AND t.term = #{term}
+        </if>
+        AND t.arrayclass_id IN (select DISTINCT arrayclass_id from T_JW_ARRAYCLASS_TEACHER where TEACHER_PERSON_ID=#{teacherPersonId})
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="getTeacherName" parameterType="com.goisan.educational.arrayclass.bean.ArrayClassTeacher" resultType="java.lang.String">
+       SELECT FUNC_GET_USERNAME(TEACHER_PERSON_ID) teacherPersonName from T_JW_ARRAYCLASS_TEACHER where TEACHER_PERSON_ID=#{teacherPersonId}
+    </select>
+    <!--    王强 end   -->
+</mapper>

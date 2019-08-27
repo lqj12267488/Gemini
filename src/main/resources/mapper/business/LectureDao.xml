@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.lecture.dao.LectureDao">
+    <select id="getLectureList"
+            parameterType="com.goisan.educational.lecture.bean.Lecture"
+            resultType="com.goisan.educational.lecture.bean.Lecture">
+        select
+        id,
+        FUNC_GET_USERNAME(teacher_id) teacherId,
+        FUNC_GET_DEPTNAME(dept_id) deptId,
+        lecture_name,
+        FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        student_number,
+        class_hours,
+        place,
+        CASE WHEN FIELD_TYPE='1' THEN FUNC_GET_TABLEVALUE(PLACE, 'T_JW_MEETINGROOM', 'ID', 'MEETING_ROOM_NAME')
+        WHEN FIELD_TYPE='2' THEN FUNC_GET_TABLEVALUE(PLACE, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME')
+        WHEN FIELD_TYPE='3' THEN FUNC_GET_TABLEVALUE(PLACE, 'T_JW_DORM', 'ID', 'DORM_NAME')
+        ELSE '0' END placeShow,
+        FILE_URL,
+        create_time,
+        (select count(*) from T_SYS_FILES where TABLENAME = 'T_JW_LECTURE' and BUSINESS_ID = id) "count"
+        from T_JW_LECTURE
+        where 1=1
+        <if test="lectureName !=null and lectureName !='' ">
+            AND lecture_name like '%'||#{lectureName}||'%'
+        </if>
+    </select>
+    <insert id="saveLecture" parameterType="com.goisan.educational.lecture.bean.Lecture">
+        insert into
+        t_jw_lecture
+        (id,
+        field_type,
+        abuilding_id,
+        teacher_id,
+        dept_id,
+        lecture_name,
+        major_code,
+        training_level,
+        class_id,
+        student_number,
+        class_hours,
+        place,
+        creator,
+        create_time,
+        create_dept<if test="fileUrl != null and fileUrl != ''">,file_url</if>
+        ) values (
+        #{id},
+        #{fieldType},
+        #{abuildingId},
+        #{teacherId},
+        #{deptId},
+        #{lectureName},
+        #{majorCode},
+        #{trainingLevel},
+        #{classId},
+        #{studentNumber},
+        #{classHours},
+        #{place},
+        #{creator},
+        #{createTime},
+        #{createDept}<if test="fileUrl != null and fileUrl != ''">,#{fileUrl}</if>)
+    </insert>
+    <select id="getLectureById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.lecture.bean.Lecture">
+        select * from T_JW_LECTURE where id = #{id}
+    </select>
+    <update id="updateLecture" parameterType="com.goisan.educational.lecture.bean.Lecture">
+        update t_jw_lecture set teacher_id=#{teacherId},dept_id=#{deptId},lecture_name=#{lectureName},major_code=#{majorCode},class_id=#{classId},student_number=#{studentNumber},class_hours=#{classHours},place=#{place},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept}<if test="fileUrl != null and fileUrl != ''">,FILE_URL = #{fileUrl}</if>,
+        field_type = #{fieldType},
+        abuilding_Id = #{abuildingId}
+        where id = #{id}
+    </update>
+    <delete id="delLecture" parameterType="java.lang.String">
+        delete from T_JW_LECTURE where id = #{id}
+    </delete>
+</mapper>

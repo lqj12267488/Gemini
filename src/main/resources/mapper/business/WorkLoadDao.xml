@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.teacher.dao.WorkLoadDao">
+    <select id="getWorkLoadCheckList" parameterType="com.goisan.educational.teacher.bean.WorkLoadCheck"
+            resultType="com.goisan.educational.teacher.bean.WorkLoadCheck">
+        select TEACHER_ID teacherId,
+        FUNC_GET_USERNAME(TEACHER_NAME) teacherName,
+        HOURS hours,
+        RACE_HOURS raceHours,
+        LECTURE_HOURS lectureHours,
+        TEACHING_SECRETARIES_HOURS teachingSecretariesHours,
+        OTHER_HOURS otherHours,
+        TEACHING_SITUATION teachingSituation,
+        RACE_CLASS raceClass,
+        RACE_CLASS_NUM raceClassNum,
+        RACE_CLASS_CONTENT raceClassContent,
+        LECTURE_CLASS lectureClass,
+        LECTURE_CLASS_NUM lectureClassNum,
+        LECTURE_CLASS_CONTENT lectureClassContent,
+        LECTURE_CLASS_HOURS lectureClassHours,
+        OTHER_CONTENT otherContent,
+        TERM AS term
+        from T_JW_WORKLOAD_CHECK
+        where 1 = 1
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND DEPARTMENTSID= #{departmentsId}
+        </if>
+        <if test="major != null and major != '' ">
+            AND MAJOR = #{major}
+        </if>
+        <if test="teacherName != null and teacherName != '' ">
+            AND FUNC_GET_USERNAME(TEACHER_NAME) like '%'|| #{teacherName} ||'%'
+        </if>
+        <if test="teacherId != null and teacherId != '' ">
+            AND TEACHER_ID = #{teacherId}
+        </if>
+    </select>
+    <select id="selectWorkLoadCheckById" parameterType="java.lang.String" resultType="com.goisan.educational.teacher.bean.WorkLoadCheck">
+        select
+        TEACHER_ID teacherId,
+        TEACHER_NAME teacherName,
+        FUNC_GET_USERNAME(TEACHER_NAME) teacherNameShow,
+        HOURS hours,
+        RACE_HOURS raceHours,
+        LECTURE_HOURS lectureHours,
+        TEACHING_SECRETARIES_HOURS teachingSecretariesHours,
+        OTHER_HOURS otherHours,
+        TEACHING_SITUATION teachingSituation,
+        RACE_CLASS raceClass,
+        RACE_CLASS_NUM raceClassNum,
+        RACE_CLASS_CONTENT raceClassContent,
+        LECTURE_CLASS lectureClass,
+        LECTURE_CLASS_HOURS lectureClassHours,
+        LECTURE_CLASS_NUM lectureClassNum,
+        LECTURE_CLASS_CONTENT lectureClassContent,
+        OTHER_CONTENT otherContent,
+        TERM term,
+        DEPARTMENTSID departmentsId,
+        MAJOR major,
+        FUNC_GET_TABLEVALUE(DEPARTMENTSID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentsIdShow,
+        FUNC_GET_TABLEVALUE(MAJOR, 'T_XG_MAJOR', 'MAJOR_ID', 'MAJOR_NAME') majorCodeShow
+        from T_JW_WORKLOAD_CHECK where TEACHER_ID = #{teacherId}
+    </select>
+    <delete id="delWorkLoadCheckById" parameterType="java.lang.String">
+        delete from T_JW_WORKLOAD_CHECK where TEACHER_ID = #{teacherId}
+    </delete>
+    <update id="updatetWorkLoad" parameterType="com.goisan.educational.teacher.bean.WorkLoadCheck">
+        update T_JW_WORKLOAD_CHECK set
+        TERM=#{term},
+        DEPARTMENTSID=#{departmentsId},
+        MAJOR=#{major},
+        TEACHER_NAME=#{teacherName},
+        HOURS=#{hours},
+        RACE_HOURS=#{raceHours},
+        LECTURE_HOURS=#{lectureHours},
+        TEACHING_SECRETARIES_HOURS=#{teachingSecretariesHours},
+        OTHER_HOURS=#{otherHours},
+        TEACHING_SITUATION=#{teachingSituation},
+        RACE_CLASS=#{raceClass},
+        RACE_CLASS_NUM=#{raceClassNum},
+        RACE_CLASS_CONTENT=#{raceClassContent},
+        LECTURE_CLASS=#{lectureClass},
+        LECTURE_CLASS_NUM=#{lectureClassNum},
+        LECTURE_CLASS_CONTENT=#{lectureClassContent},
+        LECTURE_CLASS_HOURS=#{lectureClassHours},
+        OTHER_CONTENT=#{otherContent}
+        where TEACHER_ID = #{teacherId}
+    </update>
+    <insert id="insertWorkLoad" parameterType="com.goisan.educational.teacher.bean.WorkLoadCheck">
+        insert into T_JW_WORKLOAD_CHECK (TEACHER_ID,TERM,DEPARTMENTSID,MAJOR,TEACHER_NAME,HOURS,
+        RACE_HOURS,LECTURE_HOURS,TEACHING_SECRETARIES_HOURS,OTHER_HOURS,TEACHING_SITUATION,RACE_CLASS,
+        RACE_CLASS_NUM,RACE_CLASS_CONTENT,LECTURE_CLASS,LECTURE_CLASS_NUM,
+        LECTURE_CLASS_CONTENT,LECTURE_CLASS_HOURS,OTHER_CONTENT,creator,create_dept,create_time)
+        values (FUNC_GET_UUID,#{term},#{departmentsId},#{major},#{teacherName},#{hours},
+        #{raceHours},#{lectureHours},#{teachingSecretariesHours},#{otherHours},#{teachingSituation},#{raceClass},
+        #{raceClassNum}, #{raceClassContent},#{lectureClass},#{lectureClassNum},
+        #{lectureClassContent}, #{lectureClassHours},#{otherContent},#{creator},
+        #{createDept},sysdate)
+    </insert>
+</mapper>

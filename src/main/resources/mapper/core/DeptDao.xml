@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.DeptDao">
+    <select id="getTeachDeptTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+            dept_id id,
+            dept_name name,
+            parent_dept_id pid
+        FROM
+            t_sys_dept
+        ORDER BY
+            parent_dept_id,dept_order
+    </select>
+    <select id="getDeptTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+            dept_id id,
+            dept_name name,
+            parent_dept_id pid
+        FROM
+            t_sys_dept
+        ORDER BY
+            parent_dept_id,dept_order
+    </select>
+    <select id="getDeptListByParentId" parameterType="String"
+            resultType="com.goisan.system.bean.Dept">
+        SELECT * FROM t_sys_dept WHERE parent_dept_id = #{pId}
+    </select>
+    <insert id="saveDept" parameterType="com.goisan.system.bean.Dept">
+        INSERT INTO
+          t_sys_dept
+          (dept_id, dept_name, parent_dept_id, dept_type, dept_description, teaching_flag, dept_order,
+           creator, create_time, valid_flag,LEADER_FLAG)
+        VALUES
+        (#{deptId},#{deptName},#{parentDeptId},#{deptType},#{deptDescription},#{teachingFlag},
+        #{deptOrder},#{creator},sysdate,#{validFlag},#{leaderFlag})
+    </insert>
+    <select id="getDeptById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Dept">
+        SELECT * FROM t_sys_dept WHERE dept_id = #{id}
+    </select>
+    <delete id="deleteDeptById" parameterType="java.lang.String">
+        DELETE FROM t_sys_dept WHERE dept_id = #{id}
+    </delete>
+    <update id="updateDept" parameterType="com.goisan.system.bean.Dept">
+        UPDATE t_sys_dept SET dept_name = #{deptName}, parent_dept_id = #{parentDeptId}, dept_type = #{deptType},
+        dept_description = #{deptDescription},LEADER_FLAG = #{leaderFlag},
+        teaching_flag = #{teachingFlag}, dept_order = #{deptOrder}, valid_flag = #{validFlag}, change_time =sysdate, changer = #{changer}
+        WHERE dept_id = #{deptId}
+    </update>
+    <select id="getDeptListByPersonId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Dept">
+        SELECT * FROM t_sys_dept d,t_rs_employee_dept ed
+        WHERE d.dept_id = ed.dept_id AND ed.person_id = #{personId}
+    </select>
+    <select id="getAllDeptList" resultType="com.goisan.system.bean.Dept">
+        SELECT * FROM t_sys_dept d WHERE  d.dept_type='8'
+    </select>
+    <select id="getDeptAndPersonTree" resultType="com.goisan.system.bean.EmpDeptTree"
+            parameterType="java.lang.String">
+        SELECT
+          id,
+          name,
+          pid,
+          isper1   AS isper,
+          checked1 AS checked
+        FROM
+          (
+            SELECT
+              dept_id             id,
+              dept_name || '(部门)' name,
+              parent_dept_id      pid,
+              'false' AS          isper1,
+              'false' AS          checked1
+            FROM t_sys_dept WHERE VALID_FLAG = '1'
+            UNION ALL
+            (SELECT
+               t.*,
+               nvl2(t3.id, 'true', 'false') AS checked1
+             FROM
+               (SELECT
+                  t1.person_id id,
+                  t1.name      name,
+                  t2.dept_id   pid,
+                  'true' AS    isper1
+                FROM T_RS_EMPLOYEE t1, T_RS_EMPLOYEE_DEPT t2 ,t_sys_dept d
+                WHERE t1.person_id = t2.person_id AND t1.VALID_FLAG = '1' AND d.VALID_FLAG = '1' AND t2.dept_id=d.dept_id
+                ORDER BY t2.person_order
+               ) t
+               LEFT JOIN T_RS_EMPLOYEE_DEPT_ROLE t3 ON t.id = t3.person_id AND t.pid = t3.dept_id
+                                                       AND t3.role_id = #{roleid}
+            )
+          )
+    </select>
+    <select id="getMaxId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT max(to_number(DEPT_ID)) FROM T_SYS_DEPT WHERE PARENT_DEPT_ID = #{pId}
+    </select>
+    <!--同级部门名称查重create by wq-->
+    <select id="checkDeptName" parameterType="com.goisan.system.bean.Dept" resultType="com.goisan.system.bean.Select2">
+        SELECT DEPT_ID id,DEPT_NAME text
+        FROM (SELECT DEPT_ID,DEPT_NAME
+        FROM T_SYS_DEPT WHERE DEPT_ID LIKE '%'||#{parentDeptId}||'%')
+        WHERE DEPT_NAME=#{deptName} AND DEPT_ID!=#{deptId} AND DEPT_ID!=#{parentDeptId}
+    </select>
+    <select id="getEmpByDeptId" parameterType="String" resultType="String">
+        SELECT PERSON_ID FROM T_RS_EMPLOYEE_DEPT WHERE DEPT_ID = #{id}
+    </select>
+    <update id="updateDeptLeaderFlag" parameterType="com.goisan.system.bean.Dept">
+        UPDATE t_sys_dept SET
+        leader_flag = #{leaderFlag}
+        WHERE 1 = 1
+        <foreach collection="deptIds" item="item" open="AND dept_id in (" separator="," close=")">
+            ''||'${item}'||''
+        </foreach>
+    </update>
+    <select id="getLeaderDeptTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        dept_id id,
+        dept_name name,
+        parent_dept_id pid
+        FROM
+        t_sys_dept
+        WHERE leader_flag = '1'
+    </select>
+
+    <select id="getDeptByDeptName" parameterType="java.lang.String" resultType="com.goisan.system.bean.Dept">
+        SELECT
+        *
+        FROM
+        t_sys_dept
+        WHERE dept_name = #{deptName}
+    </select>
+
+    <select id="getDeptTeachTree" resultType="com.goisan.system.bean.Tree">
+         SELECT dept_id id, dept_name name, parent_dept_id pid
+           FROM t_sys_dept t
+          where t.teaching_flag = '1'
+          ORDER BY parent_dept_id, dept_order
+
+    </select>
+
+</mapper>

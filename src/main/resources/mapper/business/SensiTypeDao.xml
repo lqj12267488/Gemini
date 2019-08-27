@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.crawler.dao.SensiTypeDao">
+    <select id="getSensiTypeList"
+            parameterType="com.goisan.crawler.bean.SensiType"
+            resultType="com.goisan.crawler.bean.SensiType">
+        select id,type_name,pid from YQ_SENSITYPE
+    </select>
+    <insert id="saveSensiType" parameterType="com.goisan.crawler.bean.SensiType">
+        insert into YQ_SENSITYPE (id,type_name,pid) values (#{id},#{typeName},#{pid})
+    </insert>
+    <select id="getSensiTypeById" parameterType="java.lang.String"
+            resultType="com.goisan.crawler.bean.SensiType">
+        select * from YQ_SENSITYPE where id = #{id}
+    </select>
+    <update id="updateSensiType" parameterType="com.goisan.crawler.bean.SensiType">
+        update YQ_SENSITYPE set type_name=#{typeName},pid=#{pid} where id = #{id}
+    </update>
+    <delete id="delSensiType" parameterType="java.lang.String">
+        delete from YQ_SENSITYPE where id = #{id}
+    </delete>
+    <select id="getSensiWordBySensiTypeId" parameterType="String"
+            resultType="com.goisan.crawler.bean.SensiWord">
+        SELECT * FROM YQ_SENSIWORD WHERE SENSI_TYPE = #{id}
+    </select>
+</mapper>

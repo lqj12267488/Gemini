@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.expatriateteaching.dao.ExpatriateTeachingDao">
+    <select id="getExpatriateTeachingList"
+            parameterType="com.goisan.educational.expatriateteaching.bean.ExpatriateTeaching"
+            resultType="com.goisan.educational.expatriateteaching.bean.ExpatriateTeaching">
+        select id,
+        create_time,
+        FUNC_GET_USERNAME(TEACHER_ID) teacher_id,
+        FUNC_GET_DEPTNAME(TEACHER_DEPT_ID) teacher_dept_id,
+        START_TIME,
+        END_TIME,
+        CONTENT,
+        PLACE,
+        CROWD,
+        FILE_URL,
+        SUM,
+        TIME_SUM,
+        (select count(*) from T_SYS_FILES where  BUSINESS_ID = t.ID) "count"
+        from T_JW_EXPATRIATE_TEACHING t
+        <if test="nameShow != null and nameShow != ''">
+            where FUNC_GET_USERNAME(TEACHER_ID) like '%${nameShow}%'
+        </if>
+    </select>
+    <insert id="saveExpatriateTeaching" parameterType="com.goisan.educational.expatriateteaching.bean.ExpatriateTeaching">
+        insert into t_jw_expatriate_teaching (ID, TEACHER_ID, TEACHER_DEPT_ID, START_TIME, END_TIME, CREATOR, CONTENT, PLACE, CROWD, SUM, TIME_SUM, CREATE_TIME, CREATE_DEPT<if test="fileUrl != null and fileUrl != ''">,file_url</if>)
+        values (#{id}, #{teacherId}, #{teacherDeptId}, #{startTime}, #{endTime}, #{creator}, #{content}, #{place}, #{crowd}, #{sum}, #{timeSum}, #{createTime}, #{createDept}<if test="fileUrl != null and fileUrl != ''">,#{fileUrl}</if>)
+    </insert>
+    <select id="getExpatriateTeachingById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.expatriateteaching.bean.ExpatriateTeaching">
+        select t.*,FUNC_GET_USERNAME(t.TEACHER_ID) || '  ----  ' || FUNC_GET_DEPTNAME(TEACHER_DEPT_ID) nameShow
+        from T_JW_EXPATRIATE_TEACHING t
+        where id = #{id}
+    </select>
+    <update id="updateExpatriateTeaching" parameterType="com.goisan.educational.expatriateteaching.bean.ExpatriateTeaching">
+        update t_jw_expatriate_teaching
+        set TEACHER_ID=#{teacherId},
+            TEACHER_DEPT_ID=#{teacherDeptId},
+            START_TIME=#{startTime},
+            END_TIME=#{endTime},
+            CONTENT=#{content},
+            PLACE=#{place},
+            CROWD=#{crowd},
+            SUM=#{sum},
+            TIME_SUM=#{timeSum},
+            CHANGER=#{changer},
+            CHANGE_TIME=#{changeTime},
+            CHANGE_DEPT=#{changeDept}<if test="fileUrl != null and fileUrl != ''">,FILE_URL = #{fileUrl}</if>
+        where ID = #{id}
+    </update>
+    <delete id="delExpatriateTeaching" parameterType="java.lang.String">
+        delete
+        from T_JW_EXPATRIATE_TEACHING
+        where ID = #{id}
+    </delete>
+</mapper>

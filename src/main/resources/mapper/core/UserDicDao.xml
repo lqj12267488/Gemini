@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.UserDicDao" >
+    <select id="selectDicType" resultType="java.lang.String"  parameterType="java.lang.String">
+        SELECT
+        dic_url AS dicurl,
+        dic_name AS dicname
+        FROM
+        T_SYS_USERDIC_MAPPING t
+        where
+        t.dic_type=#{dictype}
+    </select>
+    <select id="selectName" resultType="java.lang.String"  parameterType="java.lang.String">
+        SELECT
+        dic_name AS dicname
+        FROM
+        T_SYS_USERDIC_MAPPING t
+        where
+        t.dic_type=#{dictype}
+    </select>
+    <select id="userDicAction" resultType="com.goisan.system.bean.UserDic" parameterType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.dic_type dictype,
+        t.dic_name dicname,
+        t.dic_code  diccode,
+        t.creator creator
+        FROM
+        T_SYS_USERDIC t
+        WHERE
+        1 = 1 AND VALID_FLAG = '1' AND
+        t.dic_type=#{dt}
+        ORDER BY to_number(t.dic_order) DESC
+    </select>
+    <insert id="insertUserDic" parameterType="com.goisan.system.bean.UserDic">
+        INSERT INTO
+        T_SYS_USERDIC
+        (id,name,dic_code,dic_name,dic_type,dic_order,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,#{name},FUNC_GET_USERDIC_NEXTVAL(#{dictype}),'${dicname}',#{dictype},FUNC_GET_USERDIC_NEXTVAL(#{dictype}),'${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getUserDicById" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.name name,
+        t.dic_name dicname,
+        t.dic_code diccode,
+        t.dic_order dicorder,
+        t.parent_dic_id parentDicId
+        FROM
+        T_SYS_USERDIC t
+        WHERE id =#{id}
+        AND
+        t.dic_type =#{dictype}
+    </select>
+    <update id="updateUserDicSupplies" parameterType="com.goisan.system.bean.UserDic">
+        UPDATE T_SYS_USERDIC SET
+        dic_name = #{dicname},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <update id="deleteUserDicById"  parameterType="java.lang.String">
+        UPDATE T_SYS_USERDIC set VALID_FLAG='0' WHERE id = #{id}
+    </update>
+    <select id="getUserDicComplete" resultType="com.goisan.system.bean.UserDic"
+            parameterType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.dic_code diccode,
+        t.dic_name dicname,
+        t.dic_order dicorder,
+        t.creator creator,
+        t.create_time
+        FROM
+        T_SYS_USERDIC t
+        WHERE 1 = 1
+        AND
+        t.dic_type =#{dictype}
+        and
+        VALID_FLAG= 1
+        <if test="diccode != null and diccode !='' ">
+            AND  t.dic_code=#{diccode}
+        </if>
+        <if test="dicname != null and dicname !='' ">
+            AND  t.dic_name LIKE '%${dicname}%'
+        </if>
+        ORDER BY to_number(t.dic_order) DESC
+    </select>
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic where dic_type = #{dictype} and dic_name = #{dicname} AND VALID_FLAG = '1'
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+        <if test="parentDicId != null and parentDicId !='' ">
+            AND  parent_dic_id = #{parentDicId}
+        </if>
+    </select>
+    <select id="checkCode" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic where dic_type = #{dictype} and dic_code = #{diccode}
+        <if test="id != null and id !='' ">
+            AND  id = #{id}
+        </if>
+    </select>
+    <select id="checkOrder" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic where dic_type = #{dictype} and dic_order = #{dicorder}
+        <if test="id != null and id !='' ">
+            AND  id = #{id}
+        </if>
+    </select>
+    <!--报修物品树-->
+    <select id="getDicTree" parameterType="java.lang.String" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        id id,
+        dic_name name,
+        parent_dic_id pid,
+        dic_order
+        FROM
+        t_sys_userdic
+        where
+        dic_type=#{dicType}
+        ORDER BY
+        dic_order
+    </select>
+    <!--code自动上升-->
+    <select id="getMaxDicCode" resultType="java.lang.String">
+        select  max(dic_code)+1 diccode  from T_SYS_USERDIC t where dic_type=#{dictype}
+    </select>
+    <!--排序-->
+    <select id="getMaxDicOrder" resultType="java.lang.String">
+        select  max(dic_order)+1 dicorder  from T_SYS_USERDIC t where dic_type=#{dictype}
+    </select>
+    <!--saveRepairGoods-->
+    <insert id="saveRepairGoods" parameterType="com.goisan.system.bean.UserDic">
+        INSERT INTO
+        T_SYS_USERDIC
+        (id,name,dic_order,dic_code,dic_name,dic_type,parent_dic_id,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${name}','${dicorder}','${diccode}',#{dicname},'${dictype}',#{parentDicId},'${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--updateRepairGoods-->
+    <update id="updateRepairGoods" parameterType="com.goisan.system.bean.UserDic">
+        UPDATE T_SYS_USERDIC SET
+        dic_name = #{dicname},
+        parent_dic_id=#{parentDicId},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <!--delRepairGoods-->
+    <delete id="delRepairGoods" parameterType="java.lang.String">
+        DELETE FROM  T_SYS_USERDIC WHERE ID = #{id}
+    </delete>
+    <select id="getDicName" resultType="java.lang.String"  parameterType="java.lang.String">
+        SELECT
+        t.dic_name name
+        FROM
+        T_SYS_USERDIC t
+        where
+        t.id=#{uid}
+    </select>
+    <select id="getMaxTypeid" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT max(to_number(id)) FROM t_sys_userdic WHERE parent_dic_id = #{pId} and dic_type=#{dictype}
+    </select>
+</mapper>

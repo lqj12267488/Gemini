@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--suppress ALL -->
+<mapper namespace="com.goisan.personnel.salary.dao.SalaryDao">
+    <select id="getSalaryList" parameterType="com.goisan.personnel.salary.bean.Salary"
+            resultType="com.goisan.personnel.salary.bean.Salary">
+        SELECT id,year,month,name,staff_id staffId,idcard,real_salary realSalary,
+                basicwage,insurance_fund insuranceFund,others,heating_fee heatingFee,
+                useraccounts,post_salary postSalary,wage_pay wagePay,bfzs,
+                basic_performance basicPerformance,reward_performance rewardPerformance,
+                child_allowance childAllowance,seniority_allowance seniorityAllowance,
+                rent_subsidies rentSubsidies,post_allowance postAllowance,
+                reissue_allowance reissueAllowance,lc_pv lcPv,lc_academic_salary lcAcademicSalary,
+                lc_title_allowance lcTitleAllowance,lc_age_salary lcAgeSalary,
+                lc_adjustment_allowance lcAdjustmentAllowance,lc_merit_pay lcMeritPay,
+                lc_child_allowance lcChildAllowance,lecture_fee lectureFee,
+                polytechnic_headmaster_fee polytechnicHeadmasterFee,
+                junior_headmaster_fee juniorHeadmasterFee,performance_appraisal_return performanceAppraisalReturn,
+                accountability_performance accountabilityPerformance,management_performance managementPerformance,
+                internal_allowance internalAllowance,zdbfzs,title_difference titleDifference,
+                replacement_wage replacementWage,replacement_wage_second replacementWageSecond,
+                recruit_students_achievements recruitStudentsAchievements,
+                contest_achievements contestAchievements,scientific_achievements scientificAchievements,
+                total_payable totalPayable,individual_income_tax individualIncomeTax,
+                endowment_insurance endowmentInsurance,
+                medical_insurance medicalInsurance,housing_fund housingFund,
+                occupational_pension occupationalPension,supplementary_ei supplementaryEi,
+                supplementary_mi supplementaryMi,supplementary_hf supplementaryHf,
+                supplementary_op supplementaryOp,supplementary_tax supplementaryTax,debit,
+                membership_dues membershipDues,lecture_fee_second lectureFeeSecond,
+                performance_appraisal_award performanceAppraisalAward,
+                creator,create_time createTime,create_dept createDept,valid_flag
+        FROM
+            T_RS_SALARY
+        WHERE 1 = 1 AND valid_flag = '1'
+            <if test="year != null and year !='' ">
+                AND  year = #{year}
+            </if>
+            <if test="month != null and month !='' ">
+                AND  month = #{month}
+            </if>
+    </select>
+    <select id="getListUnDoSalaryAppByType" parameterType="java.lang.String" resultType="com.goisan.personnel.salary.bean.Salary">
+        SELECT
+        id,
+        name,
+        creator,
+        year,
+        month,
+        create_time
+        FROM T_RS_SALARY
+        WHERE IDCARD= #{userId}
+    </select>
+    <select id=" getSalaryByApp" parameterType="java.lang.String"
+            resultType="com.goisan.personnel.salary.bean.Salary">
+        SELECT
+        distinct
+        id,year,month,name,staff_id staffId,idcard,real_salary realSalary,
+        basicwage,insurance_fund insuranceFund,others,heating_fee heatingFee,
+        useraccounts,post_salary postSalary,wage_pay wagePay,bfzs,
+        basic_performance basicPerformance,reward_performance rewardPerformance,
+        child_allowance childAllowance,seniority_allowance seniorityAllowance,
+        rent_subsidies rentSubsidies,post_allowance postAllowance,
+        reissue_allowance reissueAllowance,lc_pv lcPv,lc_academic_salary lcAcademicSalary,
+        lc_title_allowance lcTitleAllowance,lc_age_salary lcAgeSalary,
+        lc_adjustment_allowance lcAdjustmentAllowance,lc_merit_pay lcMeritPay,
+        lc_child_allowance lcChildAllowance,lecture_fee lectureFee,
+        polytechnic_headmaster_fee polytechnicHeadmasterFee,
+        junior_headmaster_fee juniorHeadmasterFee,performance_appraisal_return performanceAppraisalReturn,
+        accountability_performance accountabilityPerformance,management_performance managementPerformance,
+        internal_allowance internalAllowance,zdbfzs,title_difference titleDifference,
+        replacement_wage replacementWage,replacement_wage_second replacementWageSecond,
+        recruit_students_achievements recruitStudentsAchievements,
+        contest_achievements contestAchievements,scientific_achievements scientificAchievements,
+        total_payable totalPayable,individual_income_tax individualIncomeTax,
+        endowment_insurance endowmentInsurance,
+        medical_insurance medicalInsurance,housing_fund housingFund,
+        occupational_pension occupationalPension,supplementary_ei supplementaryEi,
+        supplementary_mi supplementaryMi,supplementary_hf supplementaryHf,
+        supplementary_op supplementaryOp,supplementary_tax supplementaryTax,debit,
+        membership_dues membershipDues,lecture_fee_second lectureFeeSecond,
+        performance_appraisal_award performanceAppraisalAward,
+        creator,create_time createTime,create_dept createDept,valid_flag
+        FROM T_RS_SALARY
+        WHERE 1 = 1 AND VALID_FLAG = '1' AND id=#{id}
+        order by create_time desc
+    </select>
+
+    <select id="getSalaryById" parameterType="java.lang.String"
+            resultType="com.goisan.personnel.salary.bean.Salary">
+        SELECT id,year,month,name,staff_id staffId,idcard,real_salary realSalary,
+                basicwage,insurance_fund insuranceFund,others,heating_fee heatingFee,
+                useraccounts,post_salary postSalary,wage_pay wagePay,bfzs,
+                basic_performance basicPerformance,reward_performance rewardPerformance,
+                child_allowance childAllowance,seniority_allowance seniorityAllowance,
+                rent_subsidies rentSubsidies,post_allowance postAllowance,
+                reissue_allowance reissueAllowance,lc_pv lcPv,lc_academic_salary lcAcademicSalary,
+                lc_title_allowance lcTitleAllowance,lc_age_salary lcAgeSalary,
+                lc_adjustment_allowance lcAdjustmentAllowance,lc_merit_pay lcMeritPay,
+                lc_child_allowance lcChildAllowance,lecture_fee lectureFee,
+                polytechnic_headmaster_fee polytechnicHeadmasterFee,
+                junior_headmaster_fee juniorHeadmasterFee,performance_appraisal_return performanceAppraisalReturn,
+                accountability_performance accountabilityPerformance,management_performance managementPerformance,
+                internal_allowance internalAllowance,zdbfzs,title_difference titleDifference,
+                replacement_wage replacementWage,replacement_wage_second replacementWageSecond,
+                recruit_students_achievements recruitStudentsAchievements,
+                contest_achievements contestAchievements,scientific_achievements scientificAchievements,
+                total_payable totalPayable,individual_income_tax individualIncomeTax,
+                endowment_insurance endowmentInsurance,
+                medical_insurance medicalInsurance,housing_fund housingFund,
+                occupational_pension occupationalPension,supplementary_ei supplementaryEi,
+                supplementary_mi supplementaryMi,supplementary_hf supplementaryHf,
+                supplementary_op supplementaryOp,supplementary_tax supplementaryTax,debit,
+                membership_dues membershipDues,lecture_fee_second lectureFeeSecond,
+                performance_appraisal_award performanceAppraisalAward,
+                creator,create_time createTime,create_dept createDept,valid_flag
+        FROM T_RS_SALARY
+        WHERE 1 = 1 AND VALID_FLAG = '1' AND id = #{id}
+    </select>
+    <insert id="insertSalary" parameterType="com.goisan.personnel.salary.bean.Salary">
+      INSERT INTO
+        T_RS_SALARY
+        (id,year,month,name,staff_id ,idcard,real_salary,basicwage,insurance_fund ,others,heating_fee ,useraccounts,post_salary ,
+                wage_pay ,bfzs,basic_performance ,reward_performance ,child_allowance ,seniority_allowance ,rent_subsidies ,post_allowance , reissue_allowance ,lc_pv ,lc_academic_salary ,
+                lc_title_allowance ,lc_age_salary ,lc_adjustment_allowance ,lc_merit_pay , lc_child_allowance , lecture_fee ,  polytechnic_headmaster_fee ,junior_headmaster_fee ,performance_appraisal_return ,
+                accountability_performance ,management_performance ,internal_allowance ,zdbfzs,title_difference , replacement_wage ,replacement_wage_second ,
+                recruit_students_achievements ,contest_achievements ,scientific_achievements ,total_payable ,individual_income_tax , endowment_insurance ,
+                medical_insurance ,housing_fund , occupational_pension ,supplementary_ei ,supplementary_mi ,supplementary_hf,
+                supplementary_op,supplementary_tax ,debit,membership_dues ,lecture_fee_second ,performance_appraisal_award,
+                creator,create_time,create_dept,valid_flag) values
+        (FUNC_GET_UUID,#{year},#{month},#{name},#{staffId},#{idcard},#{realSalary},#{basicwage},#{insuranceFund},#{others},#{heatingFee},#{useraccounts},#{postSalary},
+                #{wagePay},#{bfzs},#{basicPerformance},#{rewardPerformance },#{childAllowance}, #{seniorityAllowance},#{rentSubsidies},#{postAllowance },#{reissueAllowance },#{lcPv},#{lcAcademicSalary},
+                #{lcTitleAllowance},#{lcAgeSalary},#{lcAdjustmentAllowance},#{lcMeritPay},#{lcChildAllowance},#{lectureFee},#{polytechnicHeadmasterFee },#{juniorHeadmasterFee},#{performanceAppraisalReturn},
+                #{accountabilityPerformance},#{managementPerformance},#{internalAllowance},#{zdbfzs},#{titleDifference},#{replacementWage },#{replacementWageSecond},
+                #{recruitStudentsAchievements},#{contestAchievements},#{scientificAchievements},#{totalPayable},#{individualIncomeTax},#{endowmentInsurance},
+                #{medicalInsurance},#{housingFund},#{occupationalPension},#{supplementaryEi},#{supplementaryMi},#{supplementaryHf},
+                #{supplementaryOp},#{supplementaryTax},#{debit},#{membershipDues},#{lectureFeeSecond},#{performanceAppraisalAward},
+                #{creator},sysdate,#{createDept},'1')
+    </insert>
+    <update id="updateSalary" parameterType="com.goisan.personnel.salary.bean.Salary">
+      UPDATE  T_RS_SALARY t SET
+        <if test="year != null and year !='' ">
+              t.year = #{year},
+        </if>
+        <if test="month != null and month !='' ">
+              t.month = #{month},
+        </if>
+        <if test="name != null and name !='' ">
+              t.name = #{name},
+        </if>
+        <if test="idcard != null and idcard !='' ">
+              t.idcard = #{idcard},
+        </if>
+        <if test="realSalary != null and realSalary !='' ">
+            t.real_salary = #{realSalary},
+        </if>
+        t.staff_id = #{staffId},
+        t.basicwage = #{basicwage},
+        t.insurance_fund = #{insuranceFund},
+        t.others = #{others},
+        t.heating_fee = #{heatingFee},
+        t.useraccounts = #{useraccounts},
+        t.post_salary = #{postSalary},
+        t.wage_pay = #{wagePay},
+        t.bfzs = #{bfzs},
+        t.basic_performance = #{basicPerformance},
+        t.reward_performance = #{rewardPerformance},
+        t.child_allowance = #{childAllowance},
+        t.seniority_allowance = #{seniorityAllowance},
+        t.rent_subsidies = #{rentSubsidies},
+        t.post_allowance = #{postAllowance},
+        t.reissue_allowance = #{reissueAllowance},
+        t.lc_pv = #{lcPv},
+        t.lc_academic_salary = #{lcAcademicSalary},
+        t.lc_title_allowance = #{lcTitleAllowance},
+        t.lc_age_salary = #{lcAgeSalary},
+        t.lc_adjustment_allowance = #{lcAdjustmentAllowance},
+        t.lc_merit_pay = #{lcMeritPay},
+        t.lc_child_allowance = #{lcChildAllowance},
+        t.lecture_fee = #{lectureFee},
+        t.polytechnic_headmaster_fee = #{polytechnicHeadmasterFee},
+        t.junior_headmaster_fee = #{juniorHeadmasterFee},
+        t.performance_appraisal_return = #{performanceAppraisalReturn},
+        t.accountability_performance = #{accountabilityPerformance},
+        t.management_performance = #{managementPerformance},
+        t.internal_allowance = #{internalAllowance},
+        t.zdbfzs = #{zdbfzs},
+        t.title_difference = #{titleDifference},
+        t.replacement_wage = #{replacementWage},
+        t.replacement_wage_second = #{replacementWageSecond},
+        t.recruit_students_achievements = #{recruitStudentsAchievements},
+        t.contest_achievements = #{contestAchievements},
+        t.scientific_achievements = #{scientificAchievements},
+        t.total_payable = #{totalPayable},
+        t.individual_income_tax = #{individualIncomeTax},
+        t.endowment_insurance = #{endowmentInsurance},
+        t.medical_insurance = #{medicalInsurance},
+        t.housing_fund = #{housingFund},
+        t.occupational_pension = #{occupationalPension},
+        t.supplementary_ei = #{supplementaryEi},
+        t.supplementary_mi = #{supplementaryMi},
+        t.supplementary_hf = #{supplementaryHf},
+        t.supplementary_op = #{supplementaryOp},
+        t.supplementary_tax = #{supplementaryTax},
+        t.debit = #{debit},
+        t.membership_dues = #{membershipDues},
+        t.lecture_fee_second = #{lectureFeeSecond},
+        t.performance_appraisal_award = #{performanceAppraisalAward},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE  id = #{id}
+    </update>
+    <update id="delectSalary" parameterType="com.goisan.personnel.salary.bean.Salary">
+        UPDATE T_RS_SALARY t
+        SET
+            VALID_FLAG = '0',
+            changer= #{changer},
+            change_time= sysdate,
+            change_dept= #{changeDept}
+        WHERE 1 = 1
+            <if test="year != null and year !='' ">
+                AND t.year = #{year}
+            </if>
+            <if test="month != null and month !='' ">
+                AND t.month = #{month}
+            </if>
+            <if test="staffId != null and staffId !='' ">
+                AND t.staff_id = #{staffId}
+            </if>
+            <if test="idcard != null and idcard !='' ">
+                AND t.idcard = #{idcard}
+            </if>
+    </update>
+    <!--<update id="delectSalaryById" parameterType="com.goisan.personnel.salary.bean.Salary">
+        UPDATE T_RS_SALARY
+        SET
+            VALID_FLAG = '0',
+            changer= #{changer},
+            change_time= sysdate,
+            change_dept= #{changeDept}
+        WHERE
+            id = #{id}
+    </update>-->
+    <delete id="delectSalaryById" parameterType="com.goisan.personnel.salary.bean.Salary">
+        DELETE FROM T_RS_SALARY WHERE id = #{id}
+    </delete>
+    <select id="checkSalary" parameterType="com.goisan.personnel.salary.bean.Salary"
+            resultType="com.goisan.personnel.salary.bean.Salary">
+        select * from T_RS_SALARY
+        where year = #{year} AND month = #{month} AND name = #{name} AND idcard = #{idcard}
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </select>
+    <select id="getNameByIdCard" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select t.NAME from T_RS_EMPLOYEE t
+        where t.IDCARD=#{idCard}
+    </select>
+    <select id="getIdCardByName" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select t.IDCARD from T_RS_EMPLOYEE t
+        where t.NAME =#{name}
+    </select>
+</mapper>

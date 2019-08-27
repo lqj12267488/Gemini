@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.Funds3Dao">
+    <select id="fundsAction" resultType="com.goisan.synergy.workflow.bean.Funds3" parameterType="com.goisan.synergy.workflow.bean.Funds3">
+    select t.id            id,
+        FUNC_GET_USERNAME(t.manager)     manager,
+        func_get_deptname(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+       t.remark        remark,
+       t.reason     reason,
+       t.lowercase_amount   amount,
+       t.request_flag  requestFlag,
+       t."UPPERCASE AMOUNT"      amountUpper,
+       t.creator       creator,
+       t.create_time   createTime
+    from T_BG_FUNDS3_WF t
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        AND t.request_flag = '0' ORDER BY t.create_time DESC
+    </select>
+    <select id="fundsProcess" resultType="com.goisan.synergy.workflow.bean.Funds3">
+        select t.id            id,
+        FUNC_GET_USERNAME(t.manager)     manager,
+        func_get_deptname(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        t.remark        remark,
+        t.reason     reason,
+        t.lowercase_amount   amount,
+        t.request_flag  requestFlag,
+        t."UPPERCASE AMOUNT"      amountUpper,
+        t.creator       creator,
+        t.create_time   createTime
+        FROM T_BG_Funds3_WF t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND FUNC_GET_USERNAME(t.manager) LIKE #{manager}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="fundsComplete" resultType="com.goisan.synergy.workflow.bean.Funds3">
+        select  DISTINCT t.id            id,
+        FUNC_GET_USERNAME(t.manager)     manager,
+        func_get_deptname(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        t.remark        remark,
+        t.reason     reason,
+        t.lowercase_amount   amount,
+        t."UPPERCASE AMOUNT"      amountUpper,
+        t.creator       creator,
+        t.create_time   createTime,
+        t.feedback feedback,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag
+        from
+        T_BG_Funds3_WF t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND FUNC_GET_USERNAME(t.manager) LIKE #{manager}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="fundsList" resultType="com.goisan.synergy.workflow.bean.Funds3" parameterType="com.goisan.synergy.workflow.bean.Funds3">
+        select t.id            id,
+        FUNC_GET_USERNAME(t.manager)     manager,
+        func_get_deptname(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        t.remark        remark,
+        t.reason     reason,
+        t.lowercase_amount   amount,
+        t.request_flag  requestFlag,
+        t."UPPERCASE AMOUNT"      amountUpper,
+        t.creator       creator,
+        t.create_time   createTime
+        from T_BG_Funds3_WF t
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        AND t.request_flag = '0'
+        ORDER BY t.create_time DESC
+    </select>
+	<insert id="insertFunds" parameterType="com.goisan.synergy.workflow.bean.Funds3">
+		INSERT INTO T_BG_Funds3_WF
+          (id,
+           manager,
+           request_dept,
+           create_time,
+           request_date,
+           creator,
+           remark,
+           reason,
+           lowercase_amount,
+           "UPPERCASE AMOUNT",
+           request_flag,
+           create_dept)
+        values
+          ('${id}',
+           '${manager}',
+           '${requestDept}',
+           sysdate,
+           to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+           '${creator}',
+           '${remark}',
+           '${reason}',
+           '${amount}',
+           '${amountUpper}',
+           '0',
+           '${createDept}')
+	</insert>
+    <insert id="insertFundsAPP" parameterType="com.goisan.synergy.workflow.bean.Funds3">
+        INSERT INTO T_BG_Funds3_WF
+        (id,
+        manager,
+        request_dept,
+        create_time,
+        request_date,
+        creator,
+        remark,
+        reason,
+        lowercase_amount,
+        "UPPERCASE AMOUNT",
+        request_flag,
+        create_dept)
+        values
+        ('${id}',
+        '${manager}',
+        '${requestDept}',
+        sysdate,
+        to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+        '${creator}',
+        '${remark}',
+        '${reason}',
+        '${amount}',
+        '${amountUpper}',
+        '0',
+        '${createDept}')
+    </insert>
+	<select id="getFundsById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.Funds3">
+		select t.id            id,
+       FUNC_GET_USERNAME(t.manager)     manager,
+        func_get_deptname(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        t.remark        remark,
+        t.reason     reason,
+        t.lowercase_amount   amount,
+        t.request_flag  requestFlag,
+        t."UPPERCASE AMOUNT"      amountUpper,
+        t.creator       creator,
+        t.create_time   createTime
+  from T_BG_Funds3_WF t
+    WHERE id =#{id} ORDER BY t.create_time DESC
+	</select>
+	<update id="updateFunds" parameterType="com.goisan.synergy.workflow.bean.Funds3">
+		UPDATE T_BG_Funds3_WF SET
+        manager = #{manager},
+        request_dept = #{requestDept},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        remark = #{remark},
+        reason = #{reason},
+        lowercase_amount = #{amount},
+        "UPPERCASE AMOUNT" = #{amountUpper},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+	</update>
+	<update id="updateFundsRequestFlag" parameterType="com.goisan.synergy.workflow.bean.Funds3">
+		UPDATE T_BG_Funds3_WF SET
+         request_flag=#{requestFlag},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+	</update>
+	<delete id="deleteById"  parameterType="java.lang.String">
+		DELETE  T_BG_Funds3_WF WHERE id = #{id}
+	</delete>
+    <select id="selectDept" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="selectPerson" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getStartById" resultType="java.lang.String">
+        select
+        start_id startId
+        FROM T_SYS_WORKFLOW_START t
+        where t.BUSINESS_ID= #{businessId}
+    </select>
+    <select id="getRelationFundsList" resultType="com.goisan.workflow.bean.Start" parameterType="String">
+        select s.business_id businessId,
+       FUNC_GET_USERNAME(s.creator) creator,
+       w.workflow_name tableName,
+       s.create_time createTime
+  from t_sys_workflow_start s, t_sys_workflow w
+ where s.workflow_id = w.workflow_id
+   and s.business_id = #{businessId}
+ ORDER BY s.create_time DESC
+    </select>
+    <insert id="insertFundsRelation" parameterType="com.goisan.synergy.workflow.bean.Funds3Relation">
+        INSERT INTO T_BG_Funds3_Relation_WF
+  (id,
+   business_id,
+   funds_id,
+   create_time,
+   creator,
+   url,
+   app_url,
+   create_dept)
+values
+  ('${id}',
+   '${businessId}',
+   '${fundsId}',
+   sysdate,
+   '${creator}',
+   '${url}',
+   '${appUrl}',
+   '${createDept}')
+    </insert>
+    <delete id="deleteRelationById"  parameterType="java.lang.String">
+        DELETE  T_BG_Funds3_Relation_WF WHERE funds_id = #{id} and business_id = #{businessId}
+    </delete>
+
+    <update id="updateAppFunds" parameterType="com.goisan.synergy.workflow.bean.Funds3">
+        UPDATE T_BG_Funds3_WF SET
+        manager = #{manager},
+        request_dept = #{requestDept},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        remark = #{remark},
+        request_flag ='1',
+        reason = #{reason},
+        lowercase_amount = #{amount},
+        "UPPERCASE AMOUNT" = #{amountUpper},
+        creator=#{creator},
+        create_time=sysdate,
+        changer = #{creator},
+        change_dept = #{requestDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+</mapper>

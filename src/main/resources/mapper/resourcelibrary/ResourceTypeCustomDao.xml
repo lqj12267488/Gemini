@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.type.dao.ResourceTypeCustomDao">
+    <select id="getResourceTypeCustomList"
+            parameterType="com.goisan.type.bean.ResourceTypeCustom"
+            resultType="com.goisan.type.bean.ResourceTypeCustom">
+        select type_id,type_name,create_Time from zyk_type_custom
+        WHERE  1 = 1
+        <if test="creator != null and creator != '' and creator !='sa' ">
+            AND CREATOR = '${creator}'
+        </if>
+        <if test="typeName !=null and typeName !='' ">
+            AND type_name LIKE '%'||#{typeName}||'%'
+        </if>
+    </select>
+    <insert id="saveResourceTypeCustom" parameterType="com.goisan.type.bean.ResourceTypeCustom">
+        insert into zyk_type_custom (type_id,type_name,creator,create_time,create_dept)
+        values
+        (#{typeId},#{typeName},#{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getResourceTypeCustomById" parameterType="java.lang.String"
+            resultType="com.goisan.type.bean.ResourceTypeCustom">
+        select * from zyk_type_custom where type_id = #{id}
+    </select>
+    <update id="updateResourceTypeCustom" parameterType="com.goisan.type.bean.ResourceTypeCustom">
+        update zyk_type_custom set
+          type_name=#{typeName},
+          changer=#{changer},
+          change_time=sysdate,
+          change_dept=#{changeDept}
+        where type_id = #{typeId}
+    </update>
+    <delete id="delResourceTypeCustom" parameterType="java.lang.String">
+        delete from zyk_type_custom where type_id = #{id}
+    </delete>
+    <select id="checkTypeCustom" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT COUNT(RESOURCE_ID) AS remark
+          FROM ZYK_RESOURCE_PRIVATE WHERE resource_custom = #{id}
+    </select>
+
+</mapper>

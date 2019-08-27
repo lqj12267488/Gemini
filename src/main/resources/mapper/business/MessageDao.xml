@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.message.dao.MessageDao">
+    <!--主页查询-->
+    <select id="getMessageList" resultType="com.goisan.synergy.message.bean.Message"
+            parameterType="com.goisan.synergy.message.bean.Message">
+        SELECT
+        t.id,
+        t.title,
+        t.content,
+        t.type,
+        t.emp_id empId,
+        t.creator,
+        FUNC_GET_USERNAME(t.emp_id) empIdShow,
+        FUNC_GET_DEPTNAME(t.dept_Id) deptIdShow,
+        to_char(t.public_time,'yyyy-mm-dd')  publicTime,
+        FUNC_GET_DICVALUE(t.type,'TZLX') typeShow,
+        FUNC_GET_USERNAME(t.creator) requester,
+        FUNC_GET_DEPTNAME(t.create_dept) requestDept,
+        t.create_time createTime,
+        t.publish_flag publishFlag,
+        t.request_flag requestFlag,
+        t.dept_id deptId,
+        t.create_time ,
+        student_id stuId ,
+        parent_id parId,
+        FUNC_GET_USERNAME(t.parent_id) parIdShow,
+        FUNC_GET_USERNAME(t.student_id) stuIdShow
+        FROM T_SYS_MESSAGE t
+        WHERE 1 = 1 and (emp_id like '%${loginID}%' OR creator=#{loginID} OR dept_id LIKE '%${createDept}%') AND valid_flag ='1'
+        AND request_flag='2' AND t.type is not null
+        <if test="title != null and title != '' ">
+            AND title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND type LIKE #{type}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+    <!--通知查看-->
+    <select id="getMessageListes" resultType="com.goisan.synergy.message.bean.Message"
+            parameterType="com.goisan.synergy.message.bean.Message">
+        SELECT
+        t.id,
+        t.title,
+        t.content,
+        t.type,
+        t.emp_id empId,
+        t.creator,
+        FUNC_GET_USERNAME(t.emp_id) empIdShow,
+        FUNC_GET_DEPTNAME(t.dept_Id) deptIdShow,
+        to_char(t.public_time,'yyyy-mm-dd')  publicTime,
+        FUNC_GET_DICVALUE(t.type,'TZLX') typeShow,
+        FUNC_GET_USERNAME(t.creator) requester,
+        FUNC_GET_DEPTNAME(t.create_dept) requestDept,
+        t.create_time createTime,
+        FUNC_GET_DICVALUE(t.publish_flag,'TGFBZT') publishFlag,
+        t.dept_id deptId,
+        t.create_time ,
+        student_id stuId ,
+        parent_id parId,
+        FUNC_GET_USERNAME(t.parent_id) parIdShow,
+        FUNC_GET_USERNAME(t.student_id) stuIdShow
+        FROM T_SYS_MESSAGE t
+        WHERE 1 = 1 and (emp_id like '%${loginID}%' OR creator=#{loginID} OR dept_id LIKE '%${createDept}%') AND valid_flag ='1' AND publish_flag='1'
+        and t.type is not null
+        <if test="title != null and title != '' ">
+            AND title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND type LIKE #{type}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+    <!--人员树查询-->
+    <select id="getEmpTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        d.dept_id        id,
+        d.dept_name      name,
+        d.parent_dept_id pid
+        FROM t_sys_dept d
+        WHERE d.valid_flag='1'
+        UNION
+        SELECT
+        e.person_id id,
+        e.name,
+        ed.dept_id  pid
+        FROM t_rs_employee e, t_rs_employee_dept ed
+        WHERE e.person_id = ed.person_id AND ed.dept_id IN (SELECT dept_id FROM t_sys_dept WHERE valid_flag='1')
+    </select>
+    <!--新增保存-->
+    <insert id="insertMessage" parameterType="com.goisan.synergy.message.bean.Message">
+        INSERT INTO
+        T_SYS_MESSAGE
+        (id,title,content,type,public_time,valid_flag,emp_id,dept_id,request_flag,
+        creator,create_time,create_dept,WORKFLOW_FLAG,isDean) values
+        ('${id}','${title}','${content}','${type}',
+        sysdate,'1','${empId}','${deptId}','${requestFlag}',
+        '${creator}',sysdate,'${createDept}','${workFlowFlag}','${isDean}')
+    </insert>
+    <!--新增一条日志数据-->
+    <insert id="insertMessageLog" parameterType="com.goisan.synergy.message.bean.Message">
+        INSERT INTO
+        T_SYS_message_log
+        (id,MESSAGE_ID,type,READE_FLAG,valid_flag,
+        creator,create_time,create_dept) values
+        (func_get_uuid,'${id}','${type}','0','1',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+
+    <select id="getDeptPersonId" parameterType="java.lang.String" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT e.person_id id
+        FROM T_RS_EMPLOYEE_DEPT e
+        WHERE  e.dept_id = #{deptId}
+    </select>
+
+    <delete id="deleteMessage"  parameterType="java.lang.String">
+        DELETE FROM T_SYS_MESSAGE WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteMessageLog"  parameterType="java.lang.String">
+        DELETE FROM T_SYS_MESSAGE_LOG WHERE message_id = #{id}
+    </delete>
+
+    <select id="getMessageById" resultType="com.goisan.synergy.message.bean.Message" parameterType="java.lang.String">
+       SELECT
+        id,
+        title,
+        content,
+        type,
+        emp_id empId,
+        t.creator,
+        FUNC_GET_USERNAME(emp_id) empIdShow,
+        FUNC_GET_DEPTNAME(dept_Id) deptIdShow,
+        to_char(public_time,'yyyy-mm-dd')  publicTime,
+        FUNC_GET_DICVALUE(type,'TZLX') typeShow,
+        FUNC_GET_USERNAME(t.creator) requester,
+        FUNC_GET_DEPTNAME(t.create_dept) requestDept,
+        create_time createTime,
+        FUNC_GET_DICVALUE(t.publish_flag,'TGFBZT') publishFlag, dept_id deptId ,
+        student_id stuId ,parent_id parId,
+        FUNC_GET_TABLEVALUE(student_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') stuIdShow,
+        FUNC_GET_TABLEVALUE(parent_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') parIdShow
+        FROM T_SYS_MESSAGE t
+        WHERE id =#{id}
+    </select>
+
+    <update id="updateMessageLog" parameterType="com.goisan.synergy.message.bean.Message">
+        UPDATE T_SYS_MESSAGE_LOG SET
+        READE_FLAG='1'
+        WHERE message_id = #{id}
+    </update>
+    <!--查询接收部门和接收人员-->
+    <select id="getReceiptPersonByMessageId" parameterType="java.lang.String" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT DEPT_ID deptId,EMP_ID empId , student_id stuId ,parent_id parId FROM T_SYS_MESSAGE WHERE ID=#{id}
+    </select>
+    <!--通过通知id获取已读人员-->
+    <select id="getReadPersonByMessageId" parameterType="java.lang.String" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT CREATOR empId,CREATE_DEPT deptId,CREATE_TIME createTime
+        FROM T_SYS_MESSAGE_LOG WHERE MESSAGE_ID = #{id}
+    </select>
+    <!--通过部门id获取人员-->
+    <select id="getReceiptListByDeptId" parameterType="java.lang.String" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT t.PERSON_ID empId,FUNC_GET_USERNAME(t.PERSON_ID) empIdShow,
+        t.DEPT_ID deptId,FUNC_GET_DEPTNAME(t.DEPT_ID) deptIdShow
+        FROM T_RS_EMPLOYEE_DEPT t
+        WHERE
+            DEPT_ID in
+            <foreach collection="deptId" item="item" open="(" separator="," close=")">
+                ''||'${item}'||''
+            </foreach>
+            AND FUNC_GET_USERNAME(t.PERSON_ID) IS NOT NULL
+    </select>
+    <!--通过人员id获取部门-->
+    <select id="getReceiptListByPersonId" parameterType="java.lang.String" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT t.PERSON_ID empId,FUNC_GET_USERNAME(t.PERSON_ID) empIdShow,t.DEPT_ID deptId,FUNC_GET_DEPTNAME(t.DEPT_ID) deptIdShow
+        FROM T_RS_EMPLOYEE_DEPT t
+        WHERE PERSON_ID IN
+        <foreach collection="personId" item="item" open="(" separator="," close=")">
+            ''||'${item}'||''
+        </foreach>
+    </select>
+    <!--通过班级 id获取学生家长-->
+    <select id="getReceiptListByParId" parameterType="java.lang.String" resultType="com.goisan.synergy.message.bean.Message">
+        select
+        t.parent_id as empId,
+        s.name||'家长' as empIdShow,
+        t.student_id as deptId,
+        FUNC_GET_DEPTNAME(c.class_id,'1') || '班' ||s.name  as deptIdShow
+        from T_XG_STUDENT s , T_XG_PARENT_STUDENT t , T_XG_STUDENT_CLASS c
+        where s.student_id = t.student_id and s.student_id = c.student_id and
+          c.class_id in
+        <foreach collection="parId" item="item" open="(" separator="," close=")">
+            ''||'${item}'||''
+        </foreach>
+    </select>
+    <!--通知申请查询-->
+    <select id="getMessageRequest" resultType="com.goisan.synergy.message.bean.Message"
+            parameterType="com.goisan.synergy.message.bean.Message">
+        SELECT
+        id,
+        title,
+        content,
+        type,
+        emp_id empId,
+        FUNC_GET_USERNAME(emp_id) empIdShow,
+        FUNC_GET_DEPTNAME(dept_Id) deptIdShow,
+        to_char(public_time,'yyyy-mm-dd')  publicTime,
+        FUNC_GET_DICVALUE(type,'TZLX') typeShow,
+        FUNC_GET_USERNAME(t.creator) requester,
+        FUNC_GET_DEPTNAME(t.create_dept) requestDept,
+        create_time createTime,
+        FUNC_GET_DICVALUE(t.publish_flag,'TGFBZT') publishFlag,
+        dept_id deptId,t.student_id stuId ,t.parent_id parId
+        FROM T_SYS_MESSAGE t
+        WHERE 1 = 1
+        and (emp_id like '%${requester}%' OR creator=#{requester} OR dept_id LIKE '%${requestDept}%')
+        AND valid_flag ='1' and request_flag='0' AND publish_flag='2' and workflow_flag='1'
+        and t.type is not null
+        <if test="requester != 'sa'  and requester != null and requester != '' ">
+            AND t.creator= #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND t.create_dept= #{requestDept}
+        </if>
+        <if test="title != null and title != '' ">
+            AND title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND t.type LIKE #{type}
+        </if>
+        ORDER BY
+        create_time DESC
+    </select>
+    <update id="updatePublishFlag" parameterType="com.goisan.synergy.message.bean.Message">
+        UPDATE T_SYS_MESSAGE SET
+        publish_flag='2'
+        WHERE id = #{id}
+    </update>
+    <!--待办查询-->
+    <select id="getProcessList" resultType="com.goisan.synergy.message.bean.Message"
+            parameterType="com.goisan.synergy.message.bean.Message">
+        SELECT
+        t.id,
+        t.title,
+        t.content,
+        t.type,
+        t.emp_id empId,
+        FUNC_GET_USERNAME(t.emp_id) empIdShow,
+        FUNC_GET_DEPTNAME(t.dept_Id) deptIdShow,
+        to_char(t.public_time,'yyyy-mm-dd')  publicTime,
+        FUNC_GET_DICVALUE(t.type,'TZLX') typeShow,
+        FUNC_GET_USERNAME(t.creator) requester,
+        FUNC_GET_DEPTNAME(t.create_dept) requestDept,
+        t.create_time createTime,
+        FUNC_GET_DICVALUE(t.publish_flag,'TGFBZT') publishFlag,
+        t.dept_id deptId ,t.student_id stuId ,t.parent_id parId,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') stuIdShow,
+        FUNC_GET_TABLEVALUE(t.parent_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') parIdShow
+        FROM T_SYS_MESSAGE t,t_sys_workflow_start s,t_sys_workflow_handle r
+        WHERE 1 = 1 AND t.valid_flag ='1'
+        and t.type is not null
+        <if test="title != null and title != '' ">
+            AND t.title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND t.type LIKE #{type}
+        </if>
+        <if test="requester != 'sa' and requester != null and requester != '' ">
+            AND r.handle_user= #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND r.handle_dept= #{requestDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY
+        t.create_time DESC
+    </select>
+    <!--已办查询-->
+    <select id="getMessageComplete" resultType="com.goisan.synergy.message.bean.Message"
+            parameterType="com.goisan.synergy.message.bean.Message">
+        SELECT DISTINCT
+        t.id,
+        t.title,
+        t.content,
+        t.type,
+        t.emp_id empId,
+        FUNC_GET_USERNAME(t.emp_id) empIdShow,
+        FUNC_GET_DEPTNAME(t.dept_Id) deptIdShow,
+        to_char(t.public_time,'yyyy-mm-dd')  publicTime,
+        FUNC_GET_DICVALUE(t.type,'TZLX') typeShow,
+        FUNC_GET_USERNAME(t.creator) requester,
+        FUNC_GET_DEPTNAME(t.create_dept) requestDept,
+        t.create_time createTime,
+        FUNC_GET_DICVALUE(t.publish_flag,'TGFBZT') publishFlag,
+        t.dept_id deptId,
+        t.create_time,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') stuIdShow,
+        FUNC_GET_TABLEVALUE(t.parent_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') parIdShow
+        FROM
+        T_SYS_MESSAGE t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE
+        1 = 1
+        and t.type is not null
+        <if test="title != null and title != '' ">
+            AND t.title LIKE #{title}
+        </if>
+        <if test="type != null and type != '' ">
+            AND t.type LIKE #{type}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.create_time, 'yyyy-mm-dd') LIKE #{createTime}
+        </if>
+        <if test="creator != null and creator != '' ">
+            AND FUNC_GET_USERNAME(t.creator) LIKE #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND func_get_deptname(t.create_dept) LIKE #{createDept}
+        </if>
+        <if test="requester != 'sa'  and requester != null and requester != '' ">
+            AND r.handle_user= #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND r.handle_dept= #{requestDept}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <update id="updateMessage" parameterType="com.goisan.synergy.message.bean.Message">
+        UPDATE T_SYS_MESSAGE SET
+        title=#{title},type=#{type},emp_id=#{empId},dept_id=#{deptId},content=#{content},
+        CHANGER=#{changer},CHANGE_DEPT=#{changeDept},PARENT_ID=#{parId},STUDENT_ID=#{stuId},CHANGE_TIME=sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteNullMessage"  parameterType="java.lang.String">
+        delete t_sys_message m where m.type is null and (sysdate-m.create_time)>2 and m.id != #{id}
+    </delete>
+    <select id="getMessageListPerson" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT *
+        FROM (
+        SELECT '2' abc,
+        tt.id,
+        tt.title,
+        tt.content,
+        tt.type,
+        tt.public_time publicTime,
+        FUNC_GET_DICVALUE(tt.type, 'TZLX') typeShow,
+        tt.create_time createTime,
+        tt.dept_id deptId
+        FROM T_SYS_MESSAGE tt
+        WHERE 1 = 1
+        and tt.type is not null
+        and tt.request_flag = '2'
+        and tt.publish_flag = '1'
+        AND (tt.emp_id LIKE '%'||'${loginID}'||'%' OR
+        tt.creator = #{loginID} OR
+        tt.dept_id LIKE '%'||'${deptId}'||'%')
+        and tt.id not in
+        (select message_id
+        from T_SYS_MESSAGE_LOG l
+        where l.creator =#{loginID})
+        AND tt.valid_flag = '1'
+        ORDER BY createTime DESC
+        ) a WHERE ROWNUM &lt; 9
+    </select>
+    <!--首页通知更多(未读)-->
+    <select id="getMessageMoreList" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT *
+        FROM (select *
+        from (
+        SELECT '2' abc,
+        tt.id,
+        tt.title,
+        tt.content,
+        tt.type,
+        to_char(tt.public_time,'yyyy-mm-dd') publicTime,
+        '【'|| FUNC_GET_DICVALUE(tt.type, 'TZLX') || '】' ||  tt.title typeShow,
+        tt.create_time createTime,
+        tt.dept_id deptId
+        FROM T_SYS_MESSAGE tt
+        WHERE 1 = 1
+        and tt.type is not null
+        and tt.request_flag = '2'
+        and tt.publish_flag = '1'
+        AND (tt.emp_id LIKE '%'||'${loginID}'||'%' OR
+        tt.creator = #{loginID} OR
+        tt.dept_id LIKE '%'||'${deptId}'||'%')
+        and tt.id not in
+        (select message_id
+        from T_SYS_MESSAGE_LOG l
+        where l.creator =#{loginID})
+        AND tt.valid_flag = '1') a  ORDER BY createTime DESC )
+        ORDER BY createTime DESC
+    </select>
+    <!--首页通知更多(已读)-->
+    <select id="getMessageMoreReaded" resultType="com.goisan.synergy.message.bean.Message">
+        SELECT *
+        FROM (select *
+        from (
+        SELECT '2' abc,
+        tt.id,
+        tt.title,
+        tt.content,
+        tt.type,
+        to_char(tt.public_time,'yyyy-mm-dd') publicTime,
+        '【'|| FUNC_GET_DICVALUE(tt.type, 'TZLX') || '】' ||  tt.title typeShow,
+        tt.create_time createTime,
+        tt.dept_id deptId
+        FROM T_SYS_MESSAGE tt
+        WHERE 1 = 1
+        and tt.type is not null
+        and tt.request_flag = '2'
+        and tt.publish_flag = '1'
+        AND (tt.emp_id LIKE '%'||'${loginID}'||'%' OR
+        tt.creator = #{loginID} OR
+        tt.dept_id LIKE '%'||'${deptId}'||'%')
+        and tt.id in
+        (select message_id
+        from T_SYS_MESSAGE_LOG l
+        where l.creator =#{loginID})
+        AND tt.valid_flag = '1') a  ORDER BY createTime DESC )
+        ORDER BY createTime DESC
+    </select>
+    <update id="messagePublish" parameterType="com.goisan.synergy.message.bean.Message">
+        UPDATE T_SYS_MESSAGE SET
+        publish_flag='1',
+        request_flag='2'
+        WHERE id = #{id}
+    </update>
+</mapper>

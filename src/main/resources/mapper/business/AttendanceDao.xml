@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.attendance.attendance.dao.AttendanceDao">
+    <select id="getInfoList" parameterType="com.goisan.attendance.attendance.bean.AttendanceInfo"
+            resultType="com.goisan.attendance.attendance.bean.AttendanceInfo">
+        SELECT
+              id,
+              BASIC_FREQUENCY basicFrequency,
+              NO_SIGN_IN_FREQUENCY noSignInFrequency,
+              LATEST_OUT_OF_SIGN_IN latestOutOfSignIn,
+              LEAVE_NO_SIGN leaveNoSign,
+              PUBLIC_HOLIDAYS publicHolidays,
+              COMPASSIONATE_LEAVE compassionateLeave,
+              SICK_LEAVE sickLeave,
+              WRONG_SIGN_ON_BUSINESS  wrongSignOnBusiness,
+              year,
+              month,
+              name,
+              idcard,
+              coding,
+              creator,
+              create_time createTime,
+              create_dept createDept
+        FROM T_KQ_INFO
+        WHERE 1 = 1
+        <if test="name != null and name != '' ">
+            AND name like #{name}
+        </if>
+        <if test="year != null and year != '' ">
+            AND year = #{year}
+        </if>
+        <if test="month != null and month != '' ">
+            AND month = #{month}
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND idcard = #{idcard}
+        </if>
+        <if test="coding != null and coding != '' ">
+            AND coding = #{coding}
+        </if>
+
+        ORDER BY create_time desc
+    </select>
+    <select id="getInfoById" parameterType="java.lang.String"
+            resultType="com.goisan.attendance.attendance.bean.AttendanceInfo">
+        SELECT
+              id,
+              BASIC_FREQUENCY basicFrequency,
+              NO_SIGN_IN_FREQUENCY noSignInFrequency,
+              LATEST_OUT_OF_SIGN_IN latestOutOfSignIn,
+              LEAVE_NO_SIGN leaveNoSign,
+              PUBLIC_HOLIDAYS publicHolidays,
+              COMPASSIONATE_LEAVE compassionateLeave,
+              SICK_LEAVE sickLeave,
+              WRONG_SIGN_ON_BUSINESS  wrongSignOnBusiness,
+              year,month,name,
+              idcard,
+              coding,
+              creator,create_time createTime,create_dept createDept
+              FROM T_KQ_INFO t
+              WHERE  id = #{id}
+    </select>
+    <insert id="insertInfo" parameterType="com.goisan.attendance.attendance.bean.AttendanceInfo">
+        INSERT INTO T_KQ_INFO
+        (id,BASIC_FREQUENCY,NO_SIGN_IN_FREQUENCY,LATEST_OUT_OF_SIGN_IN ,LEAVE_NO_SIGN ,
+          PUBLIC_HOLIDAYS ,COMPASSIONATE_LEAVE ,SICK_LEAVE,WRONG_SIGN_ON_BUSINESS,year,month,name, idcard,coding,
+          creator,create_time,create_dept,VALID_FLAG) values
+        (#{id},#{basicFrequency},#{noSignInFrequency},#{latestOutOfSignIn},#{leaveNoSign} ,
+          #{publicHolidays},#{compassionateLeave},#{sickLeave},#{wrongSignOnBusiness},#{year},#{month},#{name},#{idcard},#{coding},
+        #{creator},sysdate,#{createDept},'1')
+    </insert>
+    <delete id="deleteInfoByCoding" parameterType="java.lang.String">
+        DELETE T_KQ_INFO WHERE  coding = #{coding}
+    </delete>
+    <select id="getImplogList" parameterType="com.goisan.attendance.attendance.bean.AttendanceImplog"
+            resultType="com.goisan.attendance.attendance.bean.AttendanceImplog">
+        SELECT
+            id, coding, IMPORT_NUMBER importNumber, IMPORT_FILE_NAME importFileName,FUNC_GET_USERNAME(operator) as operator ,
+        to_char(create_time,'yyyy-mm-dd') operatorTime , create_time createTime
+        FROM
+            T_KQ_IMPLOG
+        WHERE 1 = 1
+        <if test="operatorTime != null and operatorTime != '' ">
+            AND '${operatorTime}' = to_char(create_time,'yyyy-mm-dd')
+        </if>
+        <if test="operator != null and operator != '' ">
+            AND operator = #{operator}
+        </if>
+        and create_dept like func_get_range('${createDept}', '${level}')
+    </select>
+    <select id="getImplogById" parameterType="java.lang.String"
+            resultType="com.goisan.attendance.attendance.bean.AttendanceImplog">
+        SELECT
+            id, coding, IMPORT_NUMBER importNumber, IMPORT_FILE_NAME importFileName,FUNC_GET_USERNAME(operator) as operator,
+            to_char(create_time,'yyyy-mm-dd') operatorTime ,create_time createTime
+        FROM
+            T_KQ_IMPLOG
+          WHERE  id = #{id}
+    </select>
+    <insert id="insertImplog" parameterType="com.goisan.attendance.attendance.bean.AttendanceImplog">
+        INSERT INTO T_KQ_IMPLOG
+        (id,coding,IMPORT_NUMBER,IMPORT_FILE_NAME,operator,
+        creator,create_time,create_dept,VALID_FLAG) values
+        (#{id},#{coding},#{importNumber},#{importFileName},#{operator},
+        #{creator},sysdate,#{createDept},'1')
+    </insert>
+    <delete id="deleteImplogByCoding" parameterType="java.lang.String">
+        DELETE T_KQ_IMPLOG WHERE  coding = #{coding}
+    </delete>
+    <select id="getListUnDoAttendanceAppByType" parameterType="java.lang.String" resultType="com.goisan.attendance.attendance.bean.AttendanceInfo">
+        SELECT
+        id,
+        name,
+        creator,
+        year,
+        month,
+        create_time
+        FROM T_KQ_INFO
+        WHERE IDCARD= #{userId}
+    </select>
+</mapper>

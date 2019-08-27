@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.ComputerDao">
+    <select id="computerAction" resultType="com.goisan.synergy.workflow.bean.Computer" parameterType="com.goisan.synergy.workflow.bean.Computer">
+    SELECT
+    t.id id,
+	func_get_deptname(request_dept) AS requestdept,
+	t.reason reason,
+	func_get_userdicvalue(t.supplies_name,'JSJHC') suppliesnameShow,
+	t.supplies_name suppliesname,
+	FUNC_GET_USERNAME(t.manager) manager,
+	to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestdate,
+	t.remark remark,
+	t.creator creator,
+	t.create_time createtime
+	FROM
+	t_bg_computer_wf t
+	WHERE 1 = 1
+		<if test="creator != 'sa'  and creator != null and creator != '' ">
+			AND t.creator= #{creator}
+		</if>
+		<if test="requestdate != null and requestdate != '' ">
+			AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestdate}
+		</if>
+		<if test="createDept != null and createDept != '' ">
+			AND t.create_dept= #{createDept}
+		</if>
+		AND t.request_flag = '0'
+		ORDER BY t.create_time DESC
+    </select>
+	<insert id="insertComputer" parameterType="com.goisan.synergy.workflow.bean.Computer">
+		INSERT INTO
+		T_BG_COMPUTER_WF
+		(id,request_dept,reason,supplies_name,manager,request_date,remark,request_flag,creator,create_time,create_dept) values
+		(FUNC_GET_UUID,'${createDept}','${reason}','${suppliesname}','${creator}',to_date('${requestdate}','yyyy-mm-dd hh24:mi'),'${remark}','0','${creator}',sysdate,'${createDept}')
+	</insert>
+	<select id="getComputerById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.Computer">
+		SELECT
+		t.id id,
+		t.reason reason,
+		func_get_userdicvalue(t.supplies_name,'JSJHC') suppliesnameShow,
+		t.supplies_name suppliesname,
+		t.remark remark,
+       	to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi') as requestdate,
+		FUNC_GET_USERNAME(t.manager) manager,
+		FUNC_GET_DEPTNAME(t.request_dept) as requestdept,
+		t.creator creator,
+        t.create_time createtime
+		FROM
+		T_BG_COMPUTER_WF t
+		WHERE id = #{id}
+		ORDER BY t.create_time DESC
+	</select>
+	<select id="getComputerId" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.Computer">
+		SELECT
+		t.id id,
+		t.reason reason,
+		func_get_userdicvalue(t.supplies_name,'JSJHC') suppliesnameShow,
+		t.supplies_name suppliesname,
+		t.remark remark,
+		to_char(t.request_date,'yyyy-mm-dd') || ' ' || to_char(t.request_date,'hh24:mi') as requestdate,
+		FUNC_GET_USERNAME(t.manager) manager,
+		FUNC_GET_DEPTNAME(t.request_dept) as requestdept,
+		t.creator creator,
+		t.create_time createtime
+		FROM
+		T_BG_COMPUTER_WF t
+		WHERE id = #{id}
+		ORDER BY t.create_time DESC
+	</select>
+	<update id="updateComputer" parameterType="com.goisan.synergy.workflow.bean.Computer">
+		UPDATE T_BG_COMPUTER_WF SET
+        reason = #{reason},
+        supplies_name = #{suppliesname},
+        request_date = to_date(#{requestdate},'yyyy-mm-dd hh24:mi'),
+        remark = #{remark},
+        change_time= sysdate,
+        changer = #{changer},
+		change_dept = #{changeDept}
+        WHERE id = #{id}
+	</update>
+	<delete id="deleteComputerById"  parameterType="java.lang.String">
+		DELETE  T_BG_COMPUTER_WF WHERE id = #{id}
+	</delete>
+
+	<select id="getComputerList" resultType="com.goisan.synergy.workflow.bean.Computer"
+			parameterType="com.goisan.synergy.workflow.bean.Computer">
+		SELECT
+		t.id id,
+		func_get_deptname(request_dept) AS requestdept,
+		t.reason reason,
+		func_get_userdicvalue(t.supplies_name,'JSJHC') suppliesnameShow,
+		t.supplies_name suppliesname,
+		FUNC_GET_USERNAME(t.manager) manager,
+		to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestdate,
+		t.remark remark,
+		t.request_flag requestflag,
+		t.creator creator,
+		t.create_time createtime
+		FROM
+		t_bg_computer_wf t
+		WHERE 1 = 1 AND t.request_flag = '0'
+		<if test="creator != 'sa'  and creator != null and creator != '' ">
+			AND t.creator= #{creator}
+		</if>
+		<if test="requestdate != null and requestdate != '' ">
+			AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestdate}
+		</if>
+		<if test="createDept != null and createDept != '' ">
+			AND t.create_dept= #{createDept}
+		</if>
+		ORDER BY t.create_time DESC
+	</select>
+	<select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+		select
+		t.dept_id as "value",
+		t.dept_name as "label"
+		FROM T_SYS_DEPT t
+	</select>
+	<select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+		select
+		t.name as "label",
+		t.person_id as "value"
+		FROM T_RS_EMPLOYEE t
+	</select>
+
+	<select id="getProcessComputerList" resultType="com.goisan.synergy.workflow.bean.Computer"
+			parameterType="com.goisan.synergy.workflow.bean.Computer">
+		SELECT
+		t.id id,
+		func_get_deptname(request_dept) AS requestdept,
+		t.reason reason,
+		func_get_userdicvalue(t.supplies_name,'JSJHC') suppliesnameShow,
+		t.supplies_name suppliesname,
+		FUNC_GET_USERNAME(t.manager)  manager,
+		to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestdate,
+		t.remark remark,
+		t.request_flag requestflag,
+		t.creator creator,
+		t.create_time createtime
+		FROM
+		t_bg_computer_wf t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+		WHERE 1 = 1
+		<if test="requestdate != null and requestdate != '' ">
+			AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestdate}
+		</if>
+		<if test="manager != null and manager != '' ">
+			AND FUNC_GET_USERNAME(t.manager) LIKE #{manager}
+		</if>
+		<if test="requestdept != null and requestdept != '' ">
+			AND func_get_deptname(request_dept) LIKE #{requestdept}
+		</if>
+		<if test="creator != 'sa'  and creator != null and creator != '' ">
+			AND r.handle_user= #{creator}
+		</if>
+		<if test="createDept != null and createDept != '' ">
+			AND r.handle_dept= #{createDept}
+		</if>
+		AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+		ORDER BY r.create_time DESC
+	</select>
+	<select id="getCompleteComputerList" resultType="com.goisan.synergy.workflow.bean.Computer"
+			parameterType="com.goisan.synergy.workflow.bean.Computer">
+		SELECT
+		DISTINCT
+		t.id id,
+		func_get_deptname(request_dept) AS requestdept,
+		t.reason reason,
+		func_get_userdicvalue(t.supplies_name,'JSJHC') suppliesnameShow,
+		t.supplies_name suppliesname,
+		FUNC_GET_USERNAME(t.manager)  manager,
+		to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestdate,
+		t.remark remark,
+		func_get_dicvalue(t.request_flag,'GZLLZZT') requestflag,
+		t.creator creator,
+		t.feedback feedback,
+		func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackflag,
+		t.create_time createtime
+		FROM
+		t_bg_computer_wf t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+		WHERE 1 = 1
+		<if test="requestdate != null and requestdate != '' ">
+			AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestdate}
+		</if>
+		<if test="manager != null and manager != '' ">
+			AND FUNC_GET_USERNAME(t.manager) LIKE #{manager}
+		</if>
+		<if test="requestdept != null and requestdept != '' ">
+			AND func_get_deptname(t.request_dept) LIKE #{requestdept}
+		</if>
+		<if test="creator != 'sa'  and creator != null and creator != '' ">
+			AND r.handle_user= #{creator}
+		</if>
+		<if test="createDept != null and createDept != '' ">
+			AND r.handle_dept= #{createDept}
+		</if>
+		AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+		ORDER BY t.create_time DESC
+	</select>
+</mapper>

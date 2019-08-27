@@ -1,0 +1,1238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.StudentDao">
+    <!--学生列表获取-->
+    <select id="getStudentList" parameterType="com.goisan.system.bean.Student"
+            resultType="com.goisan.system.bean.Student">
+        SELECT
+        t.create_time createTime,
+        t.student_id studentId,t.name,t.sex,t.idcard,t.student_number studentNumber,t.birthday,u.user_account
+        userAccount,
+        t.nationality,t.nation,t.address,t.household_register_place householdRegisterPlace,
+        t.household_register_province houseProvince,
+        t.household_register_city houseCity,
+        t.household_register_county houseCounty,
+        t.political_status politicalStatus,t.home_phone homePhone,
+        t.tel,
+        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
+        r.class_id classId,
+        FUNC_GET_TABLEVALUE(r.class_id,'T_XG_CLASS','class_id','class_name') classShow,
+        STUDENT_STATUS studentStatus,
+        FUNC_GET_DICVALUE(STUDENT_STATUS, 'XSZT') studentStatusShow,
+        t.candidate_number_dz candidateNumberDz, t.study_mode_dz studyModeDz,
+        t.total_points totalPoints,t.idcard_type idCardType,
+        t.spell_name spellName,t.learn_mode learnMode,
+        t.enrollment_type enrollmentType, t.studying_way studyingWay,
+        t.marital_status maritalStatus,t.train_interval trainInterval,
+        t.source_place_division_code sourcePlaceDivisionCode,
+        t.birth_place_division_code birthPlaceDivisionCode,
+        t.native_place_division_code nativePlaceDivisionCode,
+        t.subordinate_station subordinateStation, t.residence_division_code residenceDivisionCode,
+        t.student_residence_type studentResidenceType,t.professional_expertise professionalExpertise,
+        t.eductional_system eductionalSystem, t.health_condition healthCondition,
+        t.enrollment_target enrollmentTarget,t.admissions_way admissionsWay,
+        t.cooperation_type cooperationType, t.examination_card_number examinationCardNumber,
+        t.candidate_number candidateNumber, t.test_scores testScores,
+        t.form_cooperative_eduation formCooperativeEducation,
+        t.code_cooperative_eduation codeCooperativeEducation,
+        t.external_teaching_point externalTeachingPoint,
+        t.subsection_culture subsectionCulture,
+        t.trailing_children_flag trailingChildrenFlag,
+        t."FROM"
+        FROM t_xg_student t ,T_XG_STUDENT_CLASS r,t_sys_user u
+        WHERE 1 = 1 AND r.student_id = t.student_id
+        AND u.user_id = t.student_id
+        <if test="classId != null and classId != '' ">
+            AND r.class_id = #{classId}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like #{name}
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND t.idcard like #{idcard}
+        </if>
+    </select>
+    <select id="getDepartmentsIdByStudentId" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select DEPARTMENTS_ID from T_XG_CLASS where CLASS_ID = (select distinct CLASS_ID from T_XG_STUDENT_CLASS where STUDENT_ID = #{studentId})
+    </select>
+    <select id="getStudentById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Student">
+        SELECT
+               s.student_id                 studentId,
+               t.CLASS_ID classId,
+               s.household_register_type    householdRegisterType,
+               s.address_province           addressProvince,
+               s.address_city               addressCity,
+               s.address_county             addressCounty,
+               s.teaching_place             teachingPlace,
+               s.remark,
+               s.graduated_school           graduatedSchool,
+               s.grants_flag                grantsFlag,
+               s.allowances_flag            allowancesFlag,
+               s.overseas_chinese           overseasChinese,
+               s.student_source             studentSource,
+               s.student_type               studentType,
+               s.candidate_number_dz        candidateNumberDz,
+               s.study_mode_dz              studyModeDz,
+               s.total_points               totalPoints,
+               s.idcard_type                idCardType,
+               s.spell_name                 spellName,
+               s.learn_mode                 learnMode,
+               s.enrollment_type            enrollmentType,
+               s.studying_way               studyingWay,
+               s.marital_status             maritalStatus,
+               s.train_interval             trainInterval,
+               s.source_place_division_code sourcePlaceDivisionCode,
+               s.birth_place_division_code  birthPlaceDivisionCode,
+               s.native_place_division_code nativePlaceDivisionCode,
+               s.subordinate_station        subordinateStation,
+               s.residence_division_code    residenceDivisionCode,
+               s.student_residence_type     studentResidenceType,
+               s.professional_expertise     professionalExpertise,
+               s.eductional_system          eductionalSystem,
+               s.health_condition           healthCondition,
+               s.enrollment_target          enrollmentTarget,
+               s.admissions_way             admissionsWay,
+               s.cooperation_type           cooperationType,
+               s.examination_card_number    examinationCardNumber,
+               s.candidate_number           candidateNumber,
+               s.test_scores                testScores,
+               s.form_cooperative_eduation  formCooperativeEducation,
+               s.code_cooperative_eduation  codeCooperativeEducation,
+               s.external_teaching_point    externalTeachingPoint,
+               s.subsection_culture         subsectionCulture,
+               s.trailing_children_flag     trailingChildrenFlag,
+               s. name,
+               s.sex,
+               s.year
+                  joinYear,
+               s.month
+                  joinMonth,
+               s.idcard,
+               s.student_number
+                  studentNumber,
+               s.birthday,
+               s.nationality,
+               s.nation,
+               s.address,
+               s.household_register_place
+                  householdRegisterPlace,
+               s.household_register_province
+                  houseProvince,
+               s.household_register_city
+                  houseCity,
+               s.household_register_county
+                  houseCounty,
+               s.candidate_number_dz
+                  candidateNumberDz,
+               s.study_mode_dz
+                  studyModeDz,
+               s.total_points
+                  totalPoints,
+                  FUNC_GET_TABLEVALUE(
+                          s.household_register_province,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  houseProvinceShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.household_register_city,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  houseCityShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.household_register_county,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  houseCountyShow,
+               s.political_status
+                  politicalStatus,
+               s.home_phone
+                  homePhone,
+               s.tel,
+                  FUNC_GET_DICVALUE(
+                          s.sex,
+                  'XB')
+                  sexShow,
+                  FUNC_GET_DICVALUE(
+                          s.student_source,
+                  'XSLY')
+                  studentSourceShow,
+                  FUNC_GET_DICVALUE(
+                          s.student_type,
+                  'XSLX')
+                  studentTypeShow,
+                  FUNC_GET_DICVALUE(
+                          s.grants_flag,
+                  'SF')
+                  grantsFlagShow,
+                  FUNC_GET_DICVALUE(
+                          s.overseas_chinese,
+                  'GATQB')
+                  overseasChineseShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.address_province,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  addressProvinceShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.address_city,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  addressCityShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.address_county,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  addressCountyShow,
+                  FUNC_GET_DICVALUE(
+                          s.nationality,
+                  'GJ')
+                  nationalityShow,
+                  FUNC_GET_DICVALUE(
+                          s.political_status,
+                  'ZZMM')
+                  politicalStatusShow,
+                  FUNC_GET_DICVALUE(
+                          s.household_register_type,
+                  'HJXZ')
+                  householdRegisterTypeShow,
+                  FUNC_GET_DICVALUE(
+                          s.nation,
+                  'MZ')
+                  nationShow,
+               s.STUDENT_STATUS
+                  studentStatus,
+                  FUNC_GET_DICVALUE(
+                          s.STUDENT_STATUS,
+                  'XSZT')
+                  studentStatusShow,
+                  FUNC_GET_DICVALUE(
+                          s.ALLOWANCES_FLAG,
+                  'SF')
+                  allowancesFlagShow,
+                  s."FROM"
+        FROM t_xg_student s,T_XG_STUDENT_CLASS t
+        WHERE s.STUDENT_ID = t.STUDENT_ID
+            and s.student_id = #{studentId}
+    </select>
+    <select id="getStudentByIdNoClassId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Student">
+        SELECT
+               s.student_id                 studentId,
+               s.household_register_type    householdRegisterType,
+               s.address_province           addressProvince,
+               s.address_city               addressCity,
+               s.address_county             addressCounty,
+               s.teaching_place             teachingPlace,
+               s.remark,
+               s.graduated_school           graduatedSchool,
+               s.grants_flag                grantsFlag,
+               s.allowances_flag            allowancesFlag,
+               s.overseas_chinese           overseasChinese,
+               s.student_source             studentSource,
+               s.student_type               studentType,
+               s.candidate_number_dz        candidateNumberDz,
+               s.study_mode_dz              studyModeDz,
+               s.total_points               totalPoints,
+               s.idcard_type                idCardType,
+               s.spell_name                 spellName,
+               s.learn_mode                 learnMode,
+               s.enrollment_type            enrollmentType,
+               s.studying_way               studyingWay,
+               s.marital_status             maritalStatus,
+               s.train_interval             trainInterval,
+               s.source_place_division_code sourcePlaceDivisionCode,
+               s.birth_place_division_code  birthPlaceDivisionCode,
+               s.native_place_division_code nativePlaceDivisionCode,
+               s.subordinate_station        subordinateStation,
+               s.residence_division_code    residenceDivisionCode,
+               s.student_residence_type     studentResidenceType,
+               s.professional_expertise     professionalExpertise,
+               s.eductional_system          eductionalSystem,
+               s.health_condition           healthCondition,
+               s.enrollment_target          enrollmentTarget,
+               s.admissions_way             admissionsWay,
+               s.cooperation_type           cooperationType,
+               s.examination_card_number    examinationCardNumber,
+               s.candidate_number           candidateNumber,
+               s.test_scores                testScores,
+               s.form_cooperative_eduation  formCooperativeEducation,
+               s.code_cooperative_eduation  codeCooperativeEducation,
+               s.external_teaching_point    externalTeachingPoint,
+               s.subsection_culture         subsectionCulture,
+               s.trailing_children_flag     trailingChildrenFlag,
+               s. name,
+               s.sex,
+               s.year
+                  joinYear,
+               s.month
+                  joinMonth,
+               s.idcard,
+               s.student_number
+                  studentNumber,
+               s.birthday,
+               s.nationality,
+               s.nation,
+               s.address,
+               s.household_register_place
+                  householdRegisterPlace,
+               s.household_register_province
+                  houseProvince,
+               s.household_register_city
+                  houseCity,
+               s.household_register_county
+                  houseCounty,
+               s.candidate_number_dz
+                  candidateNumberDz,
+               s.study_mode_dz
+                  studyModeDz,
+               s.total_points
+                  totalPoints,
+                  FUNC_GET_TABLEVALUE(
+                          s.household_register_province,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  houseProvinceShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.household_register_city,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  houseCityShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.household_register_county,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  houseCountyShow,
+               s.political_status
+                  politicalStatus,
+               s.home_phone
+                  homePhone,
+               s.tel,
+                  FUNC_GET_DICVALUE(
+                          s.sex,
+                  'XB')
+                  sexShow,
+                  FUNC_GET_DICVALUE(
+                          s.student_source,
+                  'XSLY')
+                  studentSourceShow,
+                  FUNC_GET_DICVALUE(
+                          s.student_type,
+                  'XSLX')
+                  studentTypeShow,
+                  FUNC_GET_DICVALUE(
+                          s.grants_flag,
+                  'SF')
+                  grantsFlagShow,
+                  FUNC_GET_DICVALUE(
+                          s.overseas_chinese,
+                  'GATQB')
+                  overseasChineseShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.address_province,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  addressProvinceShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.address_city,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  addressCityShow,
+                  FUNC_GET_TABLEVALUE(
+                          s.address_county,
+                  't_sys_administrative_divisions',
+                  'ID',
+                  'NAME')
+                  addressCountyShow,
+                  FUNC_GET_DICVALUE(
+                          s.nationality,
+                  'GJ')
+                  nationalityShow,
+                  FUNC_GET_DICVALUE(
+                          s.political_status,
+                  'ZZMM')
+                  politicalStatusShow,
+                  FUNC_GET_DICVALUE(
+                          s.household_register_type,
+                  'HJXZ')
+                  householdRegisterTypeShow,
+                  FUNC_GET_DICVALUE(
+                          s.nation,
+                  'MZ')
+                  nationShow,
+               s.STUDENT_STATUS
+                  studentStatus,
+                  FUNC_GET_DICVALUE(
+                          s.STUDENT_STATUS,
+                  'XSZT')
+                  studentStatusShow,
+                  FUNC_GET_DICVALUE(
+                          s.ALLOWANCES_FLAG,
+                  'SF')
+                  allowancesFlagShow,
+                  s."FROM"
+        FROM t_xg_student s
+        WHERE  s.student_id = #{studentId}
+    </select>
+    <insert id="insertStudent" parameterType="com.goisan.system.bean.Student">
+INSERT INTO t_xg_student
+(student_id, class_name, name, sex, idcard, student_number, birthday, year, month,
+ household_register_type,
+ address_province,
+ address_city,
+ address_county,
+ teaching_place,
+ remark,
+ graduated_school,
+ grants_flag,
+ allowances_flag,
+ overseas_chinese,
+ student_source,
+ student_type,
+ nationality, nation, address, household_register_place, household_register_province,
+ household_register_city, household_register_county, political_status, home_phone, tel,
+ student_status, creator, create_time, create_dept, valid_flag, candidate_number_dz, study_mode_dz, total_points,
+ idcard_type,
+ spell_name, learn_mode,
+ enrollment_type, studying_way,
+ marital_status, train_interval,
+ source_place_division_code,
+ birth_place_division_code,
+ native_place_division_code,
+ subordinate_station, residence_division_code,
+ student_residence_type, professional_expertise,
+ eductional_system, health_condition,
+ enrollment_target, admissions_way,
+ cooperation_type, examination_card_number,
+ candidate_number, test_scores,
+ form_cooperative_eduation,
+ code_cooperative_eduation,
+ external_teaching_point,
+ subsection_culture, trailing_children_flag, "FROM", NAME_OF_MEMBER, MEMBER_RELATIONSHIP, IS_GUARDIAN,
+ MEMBER_TELEPHONE_NUMBER, GRADUATION_SCHOOL)
+VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
+        to_date('${birthday}', 'yyyy-mm-dd'), '${joinYear}', '${joinMonth}',
+        '${householdRegisterType}',
+        '${addressProvince}',
+        '${addressCity}',
+        '${addressCounty}',
+        '${teachingPlace}',
+        '${remark}',
+        '${graduatedSchool}',
+        '${grantsFlag}',
+        '${allowancesFlag}',
+        '${overseasChinese}',
+        '${studentSource}',
+        '${studentType}',
+        '${nationality}', '${nation}', '${address}', '${householdRegisterPlace}', '${houseProvince}', '${houseCity}',
+        '${houseCity}', '${politicalStatus}', '${homePhone}', '${tel}', '${studentStatus}', '${creator}', sysdate,
+        '${createDept}', 1, '${candidateNumberDz}', '${studyModeDz}', '${totalPoints}',
+        '${idCardType}', '${spellName}', '${learnMode}', '${enrollmentType}', '${studyingWay}', '${maritalStatus}',
+        '${trainInterval}', '${sourcePlaceDivisionCode}', '${birthPlaceDivisionCode}', '${nativePlaceDivisionCode}',
+        '${subordinateStation}', '${residenceDivisionCode}', '${studentResidenceType}', '${professionalExpertise}',
+        '${eductionalSystem}', '${healthCondition}', '${enrollmentTarget}', '${admissionsWay}', '${cooperationType}',
+        '${examinationCardNumber}', '${candidateNumber}',
+        '${testScores}', '${formCooperativeEducation}', '${codeCooperativeEducation}', '${externalTeachingPoint}',
+        '${subsectionCulture}',
+        '${trailingChildrenFlag}', '${from}', '${nameOfMember}', '${memberRelationship}', '${isGuardian}',
+        '${memberTelephoneNumber}', '${graduationSchool}')
+    </insert>
+    <update id="updateStudent" parameterType="com.goisan.system.bean.Student">
+        UPDATE t_xg_student
+        SET
+            name = #{name},
+            year = #{joinYear},
+            month = #{joinMonth},
+            household_register_type = #{householdRegisterType},
+            address_province = #{addressProvince},
+            address_city = #{addressCity},
+            address_county = #{addressCounty},
+            teaching_place = #{teachingPlace},
+            remark = #{remark},
+            graduated_school = #{graduatedSchool},
+            grants_flag = #{grantsFlag},
+            allowances_flag = #{allowancesFlag},
+            overseas_chinese = #{overseasChinese},
+            student_source = #{studentSource},
+            student_type = #{studentType},
+            sex = #{sex},
+            idcard = #{idcard},
+            student_number = #{studentNumber},
+            birthday = to_date('${birthday}', 'yyyy-mm-dd'),
+            nationality = #{nationality},
+            nation = #{nation},
+            address = #{address},
+            household_register_place = #{householdRegisterPlace},
+            household_register_province = #{houseProvince},
+            household_register_city = #{houseCity},
+            household_register_county = #{houseCounty},
+            political_status = #{politicalStatus},
+            home_phone = #{homePhone},
+            tel = #{tel},
+            STUDENT_STATUS = #{studentStatus},
+            change_time = sysdate,
+            change_dept = #{changeDept},
+            changer = #{changer},
+            candidate_number_dz=#{candidateNumberDz},
+            study_mode_dz=#{studyModeDz},
+            total_points=#{totalPoints},
+            idcard_type=#{idCardType},
+            spell_name=#{spellName},
+            learn_mode=#{learnMode},
+            enrollment_type=#{enrollmentType},
+            studying_way=#{studyingWay},
+            marital_status=#{maritalStatus},
+            train_interval=#{trainInterval},
+            source_place_division_code=#{sourcePlaceDivisionCode},
+            birth_place_division_code=#{birthPlaceDivisionCode},
+            native_place_division_code=#{nativePlaceDivisionCode},
+            subordinate_station=#{subordinateStation},
+            residence_division_code=#{residenceDivisionCode},
+            student_residence_type=#{studentResidenceType},
+            professional_expertise=#{professionalExpertise},
+            eductional_system=#{eductionalSystem},
+            health_condition=#{healthCondition},
+            enrollment_target=#{enrollmentTarget},
+            admissions_way=#{admissionsWay},
+            cooperation_type=#{cooperationType},
+            examination_card_number=#{examinationCardNumber},
+            candidate_number=#{candidateNumber},
+            test_scores=#{testScores},
+            form_cooperative_eduation=#{formCooperativeEducation},
+            code_cooperative_eduation=#{codeCooperativeEducation},
+            external_teaching_point=#{externalTeachingPoint},
+            subsection_culture=#{subsectionCulture},
+            trailing_children_flag=#{trailingChildrenFlag},
+            "FROM" = #{from}
+        WHERE student_id = #{studentId}
+    </update>
+    <delete id="delStudent" parameterType="java.lang.String">
+        DELETE
+        FROM t_xg_student
+        WHERE student_id = #{studentId}
+    </delete>
+    <delete id="delClassStudentRelation" parameterType="java.lang.String">
+        DELETE
+        FROM T_XG_STUDENT_CLASS
+        WHERE student_id = #{studentId}
+    </delete>
+    <delete id="delRoleByStudentId" parameterType="java.lang.String">
+        DELETE
+        FROM T_XG_STUDENT_CLASS_ROLE
+        WHERE student_id = #{studentId}
+    </delete>
+    <select id="getMajorClassTree" resultType="com.goisan.system.bean.Tree">
+        SELECT id,name,pId
+        FROM (
+                 SELECT t.dept_id id, t.dept_name name,t.parent_dept_id pId
+                 FROM T_SYS_DEPT t
+                 WHERE t.dept_type = 8
+                 UNION ALL
+                 SELECT DISTINCT d.major_code id, d.major_name || ' -- ' || FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,d.departments_id pId
+                 FROM T_XG_MAJOR d
+                 WHERE d.valid_flag = 1
+                 UNION ALL
+                 SELECT e.class_id id,e.class_name name,e.major_code pId
+                 FROM T_XG_CLASS e
+                 WHERE e.valid_flag = 1
+             )
+        order by name
+    </select>
+
+    <select id="getMajorCodeByMajorName" parameterType="java.lang.String" resultType="java.lang.String">
+        select MAJOR_CODE from T_XG_MAJOR where MAJOR_NAME = #{majorName}
+    </select>
+
+    <select id="getMajorClassTreeByLevel" resultType="com.goisan.system.bean.Tree" parameterType="string">
+        SELECT id,name,pId
+        FROM (
+                 SELECT t.dept_id id, t.dept_name name,t.parent_dept_id pId
+                 FROM T_SYS_DEPT t
+                 WHERE t.dept_type = 8
+                    or t.dept_type &lt; 8
+                 UNION ALL
+                 SELECT DISTINCT d.major_code id, d.major_name || ' -- ' || FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,d.departments_id pId
+                 FROM T_XG_MAJOR d
+                 WHERE d.valid_flag = 1
+                   and d.training_level in (${level})
+                 UNION ALL
+                 SELECT e.class_id id,e.class_name name,e.major_code pId
+                 FROM T_XG_CLASS e
+                 WHERE e.valid_flag = 1
+                   AND E.MAJOR_CODE in
+                       (SELECT m.major_code
+                        from T_XG_MAJOR m
+                        where m.training_level in (${level}))
+             )
+        order by name
+    </select>
+    <insert id="addRelation" parameterType="com.goisan.system.bean.ClassStudentRelation">
+        INSERT INTO T_XG_STUDENT_CLASS
+        (id, student_id, class_id, student_order,
+         creator, create_time, create_dept, valid_flag)
+        values
+               (FUNC_GET_UUID, '${studentId}', '${classId}', '${studentOrder}', '${creator}', sysdate, '${createDept}', 1)
+    </insert>
+    <update id="updateRelation" parameterType="com.goisan.system.bean.ClassStudentRelation">
+        UPDATE T_XG_STUDENT_CLASS
+        set
+            class_id=#{classId}
+        WHERE student_id = #{studentId}
+
+    </update>
+    <update id="batchUpdateRelation" parameterType="com.goisan.system.bean.ClassStudentRelation">
+        UPDATE T_XG_STUDENT_CLASS
+        set
+            class_id=#{classId}
+        WHERE student_id in (${ids})
+
+    </update>
+    <select id="getTreeTable" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT distinct tablename
+        FROM (
+                 SELECT t.dept_id id, t.dept_name name,t.parent_dept_id pId,'T_SYS_DEPT' as tablename
+                 FROM T_SYS_DEPT t
+                 WHERE t.dept_type = 8
+                    or t.dept_type &lt; 8
+                 UNION ALL
+                 SELECT d.major_code id, d.major_name name,d.departments_id pId,'T_XG_MAJOR' as tablename
+                 FROM T_XG_MAJOR d
+                 WHERE d.valid_flag = 1
+                 UNION ALL
+                 SELECT e.class_id id,e.class_name name,e.major_code pId,'T_XG_CLASS' as tablename
+                 FROM T_XG_CLASS e
+                 WHERE e.valid_flag = 1
+             )
+        WHERE id = #{id}
+    </select>
+    <select id="getClassStudentRelation" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.ClassStudentRelation">
+        SELECT t.student_id studentId, t.class_id classId
+        FROM T_XG_STUDENT_CLASS t
+        WHERE student_id = #{studentId}
+    </select>
+    <select id="checkIdCard" resultType="com.goisan.system.bean.ClassStudentRelation" parameterType="java.lang.String">
+        SELECT
+               student_id               studentId,
+               name,
+               sex,
+               idcard,
+               student_number           studentNumber,
+               birthday,
+               nationality,
+               nation,
+               address,
+               household_register_place householdRegisterPlace,
+               political_status         politicalStatus,
+               home_phone               homePhone,
+               tel
+        FROM t_xg_student
+        WHERE idcard = #{idcard}
+    </select>
+    <select id="checkStudentNumber" resultType="com.goisan.system.bean.ClassStudentRelation"
+            parameterType="java.lang.String">
+        SELECT
+               student_id               studentId,
+               name,
+               sex,
+               idcard,
+               birthday,
+               nationality,
+               nation,
+               address,
+               household_register_place householdRegisterPlace,
+               political_status         politicalStatus,
+               home_phone               homePhone,
+               tel
+        FROM t_xg_student
+        WHERE student_number = #{studentNumber}
+    </select>
+    <insert id="insertClassStudentRelation">
+        INSERT INTO
+        t_xg_student_class (id,student_id,class_id)
+        SELECT
+        func_get_uuid as id,
+        ''||'${studentId}'||'' student_id,
+        class_id
+        FROM T_XG_CLASS
+        WHERE class_id in
+        <foreach collection="classids" item="item" open="(" separator="," close=")">
+            ''||'${item}'||''
+        </foreach>
+    </insert>
+    <select id="getStudentListByDept" resultType="com.goisan.system.bean.Student" parameterType="java.lang.String">
+        SELECT
+        t.create_time createTime,
+        u.user_account as userAccount, t.student_id studentId,t.name,t.sex,t.idcard,
+        t.student_number studentNumber,t.birthday,
+        t.nationality,t.nation,t.address,t.household_register_place householdRegisterPlace,
+        t.household_register_province houseProvince, t.household_register_city houseCity,
+        t.household_register_county houseCounty,t.political_status politicalStatus,
+        t.home_phone homePhone,t.tel,t.study_mode_dz,t.total_points,
+        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
+        r.class_id classId,
+        FUNC_GET_TABLEVALUE(r.class_id,'T_XG_CLASS','class_id','class_name') classShow,
+        FUNC_GET_DICVALUE(t.STUDENT_STATUS, 'XSZT') studentStatusShow,
+        t.candidate_number_dz candidateNumberDz, t.study_mode_dz learnModeDz,
+        t.total_points totalPoints,t.idcard_type idCardType,
+        t.spell_name spellName,t.learn_mode learnMode,
+        t.enrollment_type enrollmentType, t.studying_way studyingWay,
+        t.marital_status maritalStatus,t.train_interval trainInterval,
+        t.source_place_division_code sourcePlaceDivisionCode,
+        t.birth_place_division_code birthPlaceDivisionCode,
+        t.native_place_division_code nativePlaceDivisionCode,
+        t.subordinate_station subordinateStation, t.residence_division_code residenceDivisionCode,
+        t.student_residence_type studentResidenceType,t.professional_expertise professionalExpertise,
+        t.eductional_system eductionalSystem, t.health_condition healthCondition,
+        t.enrollment_target enrollmentTarget,t.admissions_way admissionsWay,
+        t.cooperation_type cooperationType, t.examination_card_number examinationCardNumber,
+        t.candidate_number candidateNumber, t.test_scores testScores,
+        t.form_cooperative_eduation formCooperativeEducation,
+        t.code_cooperative_eduation codeCooperativeEducation,
+        t.external_teaching_point externalTeachingPoint,
+        t.subsection_culture subsectionCulture,
+        t.trailing_children_flag trailingChildrenFlag
+        FROM t_xg_student t ,T_XG_STUDENT_CLASS r ,t_xg_class c , t_sys_user u ,T_XG_MAJOR m
+        WHERE
+        1 = 1 AND r.student_id = t.student_id AND r.class_id = c.class_id AND t.student_id = u.user_id
+        AND c.departments_id in (
+        select dept_id from T_SYS_DEPT t where dept_id = #{deptId} or t.parent_dept_id like #{deptIdLike} and dept_type
+        &lt;=8 )
+        AND c.major_code = m.major_code AND m.MAJOR_DIRECTION = c.MAJOR_DIRECTION
+        AND m.TRAINING_LEVEL = c.TRAINING_LEVEL
+        <if test="level != null and level != '' ">
+            AND m.training_level = #{level}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like #{name}
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND t.idcard like #{idcard}
+        </if>
+    </select>
+    <select id="getStudentListByMajor" resultType="com.goisan.system.bean.Student" parameterType="java.lang.String">
+        SELECT
+        t.create_time createTime,
+        u.user_account as userAccount,t.student_id studentId,t.name,t.sex,t.idcard,t.student_number
+        studentNumber,t.birthday,
+        t.nationality,t.nation,t.address,t.household_register_place householdRegisterPlace,
+        t.household_register_province houseProvince, t.household_register_city houseCity,
+        t.household_register_county houseCounty,t.political_status politicalStatus,
+        t.home_phone homePhone,t.tel,t.study_mode_dz,t.total_points,
+        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
+        r.class_id classId,
+        FUNC_GET_TABLEVALUE(r.class_id,'T_XG_CLASS','class_id','class_name') classShow,
+        FUNC_GET_DICVALUE(STUDENT_STATUS, 'XSZT') studentStatusShow,
+        t.candidate_number_dz candidateNumberDz, t.study_mode_dz learnModeDz,
+        t.total_points totalPoints,t.idcard_type idCardType,
+        t.spell_name spellName,t.learn_mode learnMode,
+        t.enrollment_type enrollmentType, t.studying_way studyingWay,
+        t.marital_status maritalStatus,t.train_interval trainInterval,
+        t.source_place_division_code sourcePlaceDivisionCode,
+        t.birth_place_division_code birthPlaceDivisionCode,
+        t.native_place_division_code nativePlaceDivisionCode,
+        t.subordinate_station subordinateStation, t.residence_division_code residenceDivisionCode,
+        t.student_residence_type studentResidenceType,t.professional_expertise professionalExpertise,
+        t.eductional_system eductionalSystem, t.health_condition healthCondition,
+        t.enrollment_target enrollmentTarget,t.admissions_way admissionsWay,
+        t.cooperation_type cooperationType, t.examination_card_number examinationCardNumber,
+        t.candidate_number candidateNumber, t.test_scores testScores,
+        t.form_cooperative_eduation formCooperativeEducation,
+        t.code_cooperative_eduation codeCooperativeEducation,
+        t.external_teaching_point externalTeachingPoint,
+        t.subsection_culture subsectionCulture,
+        t.trailing_children_flag trailingChildrenFlag
+        FROM t_xg_student t ,T_XG_STUDENT_CLASS r, t_sys_user u
+        WHERE 1 = 1 AND r.student_id = t.student_id AND t.student_id = u.user_id
+        <if test="level != null and level != '' ">
+            AND r.class_id in (select c.class_id from t_xg_class c ,T_XG_MAJOR m
+            where m.major_code = c.major_code and m.MAJOR_DIRECTION = c.MAJOR_DIRECTION and
+            m.TRAINING_LEVEL = c.TRAINING_LEVEL and c.major_code = #{majorCode} and m.training_level = #{level})
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like #{name}
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND t.idcard like #{idcard}
+        </if>
+    </select>
+    <select id="getStudentTree" resultType="com.goisan.system.bean.Tree" parameterType="java.lang.String">
+        SELECT id,name,pid,checked1 as checked
+        FROM
+             (SELECT t.dept_id id, t.dept_name name,t.parent_dept_id pId,0 checked1
+              FROM T_SYS_DEPT t
+              WHERE t.dept_type = 8
+                 or t.dept_type &lt; 8
+              UNION ALL
+              SELECT d.major_code id, d.major_name || ' -- ' || FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,d.departments_id pId,0 checked1
+              FROM T_XG_MAJOR d
+              WHERE d.valid_flag = 1
+              UNION ALL
+              SELECT e.class_id id,e.class_name name,e.major_code pId,0 checked1
+              FROM T_XG_CLASS e
+              WHERE e.valid_flag = 1
+              UNION ALL
+              (select s.id, s.name, s.pId, nvl2(rol.id, 1, 0) as checked1
+               from
+                    (SELECT stu.student_id id, stu.name name,rela.class_id pId,rela.student_id
+                     FROM t_xg_student stu,
+                          T_XG_STUDENT_CLASS rela
+                     where stu.student_id = rela.student_id
+                    ) s
+                        Left JOIN T_XG_STUDENT_CLASS_ROLE rol
+                                  on rol.student_id = s.student_id and rol.class_id = s.pId
+                                      and rol.role_id = #{roleId}
+              )
+             )
+    </select>
+
+
+    <select id="findStudentListByStudentId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Student">
+        SELECT
+               *
+        FROM t_xg_student
+        WHERE student_id in (${ids})
+    </select>
+    <select id="getStudentNameByStudentId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Student">
+        SELECT
+               FUNC_GET_TABLEVALUE(t.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentShow,
+               FUNC_GET_TABLEVALUE(t.major_code, 't_xg_major', 'major_code', 'major_name') majorShow,
+               t.class_name                                                                classShow,
+               FUNC_GET_DICVALUE(t.class_type, 'ZJBJLX')                                   classTypeShow,
+               u.name                                                                      name
+        FROM
+             T_XG_CLASS t,
+             T_XG_STUDENT_CLASS c,
+             T_SYS_USER u
+        WHERE
+            1 = 1
+          AND t.valid_flag = 1
+          and t.class_id = c.class_id
+          and c.student_id = u.user_id
+          and t.class_id = u.default_dept
+          AND c.student_id = #{studentId}
+    </select>
+    <!--学生个人缴费记录-->
+    <select id="getPaymentInfoStandardList"
+            resultType="com.goisan.system.bean.Student">
+        select *
+        from (SELECT t1.student_id                                            studentId,
+                     t1.idcard                                                idcard,
+                     t1.departments_id                                        departmentsId,
+                     t1.major_code                                            majorCode,
+                     t1.major_direction                                       majorDirection,
+                     t1.training_level                                        trainingLevel,
+                     t1.class_id                                              classId,
+                     t3.item_id                                               itemId,
+                     t1.name,
+                     t1.sex,
+                     t4.create_time                                           createTime,
+                     FUNC_GET_DICVALUE(t1.sex, 'XB')                          sexShow,
+                     decode(t1.departments_id,
+                            '',
+                            '',
+                            FUNC_GET_DEPTNAME(t1.departments_id))             departmentShow,
+                     decode(t1.major_code,
+                            '',
+                            '',
+                            FUNC_GET_TABLEVALUE(t1.major_code,
+                                                'T_XG_MAJOR',
+                                                'MAJOR_CODE',
+                                                'MAJOR_NAME') || '--' ||
+                            FUNC_GET_DICVALUE(t1.major_direction, 'ZXZYFX') || '--' ||
+                            FUNC_GET_DICVALUE(t1.training_level, 'ZXZYPYCC')) majorShow,
+                     decode(t1.class_id,
+                            '',
+                            '',
+                            FUNC_GET_TABLEVALUE(t1.class_id,
+                                                'T_XG_CLASS',
+                                                'CLASS_ID',
+                                                'CLASS_NAME'))                classShow,
+                     t4.payment_standard                                      paymentStandard,
+                     t4.payment_amount                                        paymentAmount,
+                     t4.refund_amount                                         refundAmount,
+                     FUNC_GET_USERDICVALUE(t3.item_id, 'JFXM') AS             planItemShow
+              FROM T_XG_ENROLLMENT_STUDENT t1,
+                   T_XG_PAYMENT_PLAN t2,
+                   T_XG_PAYMENT_PLAN_ITEM t3,
+                   T_XG_PAYMENT_RESULT t4
+              where t1.student_id = t4.student_id
+                and t4.item_id = t3.item_id
+                and t2.plan_id = t3.plan_id
+                AND t1.student_id = #{studentId}
+              union
+              SELECT t1.student_id                                            studentId,
+                     t1.idcard                                                idcard,
+                     t6.departments_id                                        departmentsId,
+                     t6.major_code                                            majorCode,
+                     t6.major_direction                                       majorDirection,
+                     t6.training_level                                        trainingLevel,
+                     t6.class_id                                              classId,
+                     t3.item_id                                               itemId,
+                     t1.name,
+                     t1.sex,
+                     t4.create_time                                           createTime,
+                     FUNC_GET_DICVALUE(t1.sex, 'XB')                          sexShow,
+                     decode(t6.departments_id,
+                            '',
+                            '',
+                            FUNC_GET_DEPTNAME(t6.departments_id))             departmentShow,
+                     decode(t6.major_code,
+                            '',
+                            '',
+                            FUNC_GET_TABLEVALUE(t6.major_code,
+                                                'T_XG_MAJOR',
+                                                'MAJOR_CODE',
+                                                'MAJOR_NAME') || '--' ||
+                            FUNC_GET_DICVALUE(t6.major_direction, 'ZXZYFX') || '--' ||
+                            FUNC_GET_DICVALUE(t6.training_level, 'ZXZYPYCC')) majorShow,
+                     decode(t5.class_id,
+                            '',
+                            '',
+                            FUNC_GET_TABLEVALUE(t5.class_id,
+                                                'T_XG_CLASS',
+                                                'CLASS_ID',
+                                                'CLASS_NAME'))                classShow,
+                     t4.payment_standard                                      paymentStandard,
+                     t4.payment_amount                                        paymentAmount,
+                     t4.refund_amount                                         refundAmount,
+                     FUNC_GET_USERDICVALUE(t3.item_id, 'JFXM') AS             planItemShow
+              FROM T_XG_STUDENT t1,
+                   T_XG_PAYMENT_PLAN t2,
+                   T_XG_PAYMENT_PLAN_ITEM t3,
+                   T_XG_PAYMENT_RESULT t4,
+                   T_XG_STUDENT_CLASS t5,
+                   T_XG_CLASS t6
+              WHERE t1.student_id = t4.student_id
+                AND t5.class_id = t6.class_id
+                AND t1.student_id = t5.student_id
+                AND t1.student_status = '1'
+                AND t3.ITEM_ID = t4.ITEM_ID
+                and t3.plan_id = t2.plan_id
+                AND t1.student_id = #{studentId}) a
+        order by a.createTime desc
+    </select>
+    <select id="getStudentStatisticsList" parameterType="com.goisan.system.bean.Student"
+            resultType="com.goisan.system.bean.Student">
+        select count(distinct s.STUDENT_ID) studentCount
+        from T_XG_STUDENT s,T_XG_STUDENT_CLASS r , T_XG_CLASS l
+        where 1=1
+        AND s.student_id =r.student_id AND r.class_id = l.class_id
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND l.departments_id=#{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND l.major_code=#{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND l.TRAINING_LEVEL=#{trainingLevel}
+        </if>
+        <if test="sex != null and sex != '' ">
+            AND s.sex=#{sex}
+        </if>
+        <if test="nation != null and nation != '' ">
+            AND s.nation=#{nation}
+        </if>
+        <if test="politicalStatus != null and politicalStatus != '' ">
+            AND s.POLITICAL_STATUS=#{sex}
+        </if>
+    </select>
+
+    <select id="getClassNameByClassId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT CLASS_NAME
+        FROM T_XG_CLASS
+        WHERE CLASS_ID = #{CLASSID}
+    </select>
+
+    <select id="getClassIdByClassName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT CLASS_ID
+        FROM T_XG_CLASS
+        WHERE CLASS_NAME = #{className}
+    </select>
+
+    <select id="getStudentByCandidateNumber" parameterType="String" resultType="com.goisan.system.bean.Student">
+        select * from T_XG_STUDENT where CANDIDATE_NUMBER_DZ = #{candidateNumber}
+    </select>
+
+    <select id="getStudentByStudentNumber" parameterType="String" resultType="com.goisan.system.bean.Student">
+        select * from T_XG_STUDENT where STUDENT_NUMBER = #{studentNumber}
+    </select>
+
+    <select id="exportStudent" parameterType="Map" resultType="com.goisan.system.bean.Student">
+        SELECT t.STUDENT_ID,
+        t.NAME,
+        USED_NAME,
+        IDCARD,
+        BIRTHDAY,
+        t.STUDENT_NUMBER,
+        HOUSEHOLD_REGISTER_PROVINCE,
+        HOUSEHOLD_REGISTER_CITY,
+        HOUSEHOLD_REGISTER_COUNTY,
+        HOUSEHOLD_REGISTER_PLACE,
+        ADDRESS_PROVINCE,
+        ADDRESS_CITY,
+        ADDRESS_COUNTY,
+        ADDRESS,
+        ALLOWANCES_FLAG,
+        GRANTS_FLAG,
+        STUDENT_SOURCE,
+        TEACHING_PLACE,
+        GRADUATED_SCHOOL,
+        t.REMARK,
+        HOME_PHONE,
+        TEL,
+        STUDENT_STATUS,
+        DORM_FLAG,
+        t."YEAR",
+        "MONTH",
+        CANDIDATE_NUMBER_DZ,
+        STUDY_MODE_DZ,
+        TOTAL_POINTS,
+        SPELL_NAME,
+        ENROLLMENT_TYPE,
+        STUDYING_WAY,
+        TRAIN_INTERVAL,
+        TRAILING_CHILDREN_FLAG,
+        SOURCE_PLACE_DIVISION_CODE,
+        BIRTH_PLACE_DIVISION_CODE,
+        NATIVE_PLACE_DIVISION_CODE,
+        SUBORDINATE_STATION,
+        RESIDENCE_DIVISION_CODE,
+        STUDENT_RESIDENCE_TYPE,
+        PROFESSIONAL_EXPERTISE,
+        HEALTH_CONDITION,
+        ENROLLMENT_TARGET,
+        ADMISSIONS_WAY,
+        COOPERATION_TYPE,
+        EXAMINATION_CARD_NUMBER,
+        CANDIDATE_NUMBER,
+        TEST_SCORES,
+        FORM_COOPERATIVE_EDUATION formCooperativeEducation,
+        CODE_COOPERATIVE_EDUATION codeCooperativeEducation,
+        EXTERNAL_TEACHING_POINT,
+        SUBSECTION_CULTURE,
+        NAME_OF_MEMBER,
+        MEMBER_RELATIONSHIP,
+        IS_GUARDIAN,
+        MEMBER_TELEPHONE_NUMBER,
+        GRADUATION_SCHOOL,
+        t.idcard_type,
+        FUNC_GET_DICVALUE(t.sex, 'XB') SEX,
+        FUNC_GET_DICVALUE(t.nationality, 'GJ') NATIONALITY,
+        FUNC_GET_DICVALUE(t.nation, 'MZ') NATION,
+        FUNC_GET_TABLEVALUE(r.class_id, 'T_XG_CLASS', 'class_id', 'class_name') classId,
+        FUNC_GET_DICVALUE(t.marital_status, 'HYZK') MARITAL_STATUS,
+        FUNC_GET_DICVALUE(t.STUDENT_TYPE, 'XSLX') STUDENT_TYPE,
+        FUNC_GET_DICVALUE(t.HOUSEHOLD_REGISTER_TYPE, 'HJXZ') HOUSEHOLD_REGISTER_TYPE,
+        FUNC_GET_DICVALUE(t.EDUCTIONAL_SYSTEM, 'XZ') EDUCTIONAL_SYSTEM,
+        FUNC_GET_DICVALUE(t.POLITICAL_STATUS, 'ZZMM') POLITICAL_STATUS,
+        FUNC_GET_DICVALUE(t.OVERSEAS_CHINESE, 'GATQB') OVERSEAS_CHINESE,
+        FUNC_GET_DICVALUE(t."FROM", 'XSLY') "FROM",
+        decode(FUNC_GET_DICVALUE(t.LEARN_MODE, 'XXXS'), null, t.LEARN_MODE,
+        FUNC_GET_DICVALUE(t.LEARN_MODE, 'XXXS')) LEARN_MODE,
+        m.MAJOR_CODE,
+        m.MAJOR_NAME MAJOR_SHOW,
+        FUNC_GET_DICVALUE(m.TRAINING_LEVEL, 'ZXZYPYCC') TRAINING_LEVEL
+        FROM t_xg_student       t,
+        T_XG_STUDENT_CLASS r,
+        t_xg_class         c,
+        t_sys_user         u,
+        T_XG_MAJOR         m
+        WHERE 1 = 1
+        AND r.student_id = t.student_id
+        AND r.class_id = c.class_id
+        AND t.student_id = u.user_id
+        AND c.major_code = m.major_code
+        AND m.MAJOR_DIRECTION = c.MAJOR_DIRECTION
+        AND m.TRAINING_LEVEL = c.TRAINING_LEVEL
+        <if test="departmentsId != null and departmentsId !='' ">
+            AND m.TRAINING_LEVEL = '1'
+            AND ( m.MAJOR_CODE = #{departmentsId}
+            or m.departments_id in (select dept_id
+            from T_SYS_DEPT t
+            where dept_id = #{departmentsId}
+            or t.parent_dept_id like #{departmentsId}||'%'
+            and dept_type &lt;= 8))
+        </if>
+        <if test="classId != null and classId != '' and classId != '001'">
+            AND r.class_id = #{classId}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like #{name}
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND t.idcard like #{idcard}
+        </if>
+        order by m.DEPARTMENTS_ID,MAJOR_SHOW,c.CLASS_NAME
+    </select>
+
+    <select id="checkStudentById" parameterType="string" resultType="map">
+        select STUDENT_ID
+        from T_DT_LEAGUEMEMBERS
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_DT_LEAGUEMEMBER_LOG
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_JW_ARRAYCLASS_RESULT_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_JW_ARRAYCLASS_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_JW_EXAM_ARRAY_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_JW_EXAM_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_JW_SCORE_IMPORT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_RS_STUDENT_ROLE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_SYS_MESSAGE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_CLASSCADRE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_DORM_ADJUST_LOG
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_DORM_ADJUST_RESULT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_DORM_AWAY
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_EMPLOYMENT_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_ENROLLMENT_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_INTERNSHIP_CHANGE_LOG
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_INTERNSHIP_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_PARENT_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_PARENT_STUDENT_ROLE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_PAYMENT_RESULT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENT
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTPUNISH
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTREWARD_CADRES
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTREWARD_CLASS
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTREWARD_FULLBURSE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTREWARD_GRANTS
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTREWARD_LOAN
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTREWARD_SCHOOLBURSE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTREWARD_STATEBURSE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENTREWARD_TUITIONFREE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENT_CHANGE_LOG
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENT_CLASS
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENT_CLASS_ROLE
+        where STUDENT_ID = #{studentId}
+        union
+        select STUDENT_ID
+        from T_XG_STUDENT_GRANTS
+        where STUDENT_ID = #{studentId}
+    </select>
+
+    <select id="getStudentNumByClassId" parameterType="java.lang.String" resultType="java.lang.String">
+            select count(stu.student_id) num
+      from t_xg_student stu, T_XG_STUDENT_CLASS class
+     where class.class_id =#{classId}
+       and stu.student_id = class.student_id
+       and stu.student_status = '1'
+     group by class.class_id
+    </select>
+
+</mapper>

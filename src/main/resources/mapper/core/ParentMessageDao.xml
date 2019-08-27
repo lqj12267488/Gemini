@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.system.dao.ParentMessageDao">
+    <select id="getParentMessageList"
+            parameterType="com.goisan.system.bean.ParentMessage"
+            resultType="com.goisan.system.bean.ParentMessage">
+        select message_id,title,message,
+          type,FUNC_GET_DICVALUE(type,'JZLY') typeShow,
+          FUNC_GET_TABLEVALUE(creator,'T_XG_PARENT','PARENT_ID','PARENT_NAME') creatorShow ,
+          FUNC_GET_TABLEVALUE(PERSON_ID,'T_SYS_USER','USER_ID','NAME') personIdShow ,
+          decode(  ( select count(0) from T_XG_PARENT_MESSAGE_LOG l
+             where l.message_id = m.message_id and l.reade_flag ='2'),'0','已读','未读' ) readeFlag,
+          decode(  ( select count(0) from T_XG_PARENT_MESSAGE_LOG l
+             where l.message_parent_id = m.message_id and l.reade_flag ='2' and l.creator &lt;&gt; #{creator}),'0','已读','未读' ) readeFlagShow
+          from T_XG_PARENT_MESSAGE m
+          WHERE 1 = 1 AND (MESSAGE_PARENT_ID ='' OR MESSAGE_PARENT_ID IS NULL )
+          AND creator = #{creator} AND create_dept = #{createDept}
+    </select>
+    <insert id="saveParentMessage" parameterType="com.goisan.system.bean.ParentMessage">
+        insert into t_xg_parent_message
+        (message_id,title,message,type,message_parent_id ,PERSON_ID,PERSON_DEPT_ID,
+        creator,create_time,create_dept)
+        values (#{messageId},#{title},#{message},#{type},#{messageParentId},#{personId},#{deptId},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getParentMessageById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.ParentMessage">
+        select m.message_id,m.title,m.message,
+          m.type,FUNC_GET_DICVALUE(m.type,'JZLY') typeShow,
+          FUNC_GET_USERNAME(m.create_dept,'1')||'家长'|| FUNC_GET_TABLEVALUE(m.creator,'T_XG_PARENT','PARENT_ID','PARENT_NAME') creatorShow,
+          FUNC_GET_USERNAME(m.person_id) personIdShow, m.person_id,m.creator
+          from T_XG_PARENT_MESSAGE m  where  m.message_id = #{messageId}
+    </select>
+    <update id="updateParentMessage" parameterType="com.goisan.system.bean.ParentMessage">
+        update t_xg_parent_message
+        set
+        title=#{title},message=#{message},type=#{type},
+        changer=#{changer},
+        change_time= sysdate ,change_dept=#{changeDept}
+        where message_id = #{messageId}
+    </update>
+    <delete id="delParentMessage" parameterType="java.lang.String">
+        delete from T_XG_PARENT_MESSAGE where message_id = #{messageId}
+    </delete>
+    <delete id="delParentMessageChild" parameterType="java.lang.String">
+        delete from T_XG_PARENT_MESSAGE where MESSAGE_PARENT_ID = #{messageId}
+    </delete>
+
+    <insert id="saveParentMessageLog" parameterType="com.goisan.system.bean.ParentMessage">
+        insert into t_xg_parent_message_log
+        (id,message_id,type,reade_flag,PERSON_ID,PERSON_DEPT_ID,message_parent_id ,
+        creator,create_time,create_dept)
+        values (
+        FUNC_GET_UUID,#{messageId},#{type},'2',#{personId},#{deptId},#{messageParentId},
+        #{creator},#{createTime},#{createDept})
+    </insert>
+    <update id="updateParentMessageLog" parameterType="com.goisan.system.bean.ParentMessage">
+        update t_xg_parent_message_log
+        set reade_flag='1',
+        changer=#{changer},
+        change_time=sysdate,change_dept=#{changeDept}
+        where creator  &lt;&gt; #{changer} AND ( message_id = #{messageId} or message_parent_id  = #{messageId} )
+         and reade_flag='2'
+    </update>
+    <delete id="delParentMessageLog" parameterType="java.lang.String">
+        delete from t_xg_parent_message_log where id = #{id}
+    </delete>
+
+    <select id="getParentMessageChildById"
+            parameterType="com.goisan.system.bean.ParentMessage"
+            resultType="com.goisan.system.bean.ParentMessage">
+        SELECT message_id,title,message,
+            type,FUNC_GET_DICVALUE(type,'JZLY') typeShow,
+            FUNC_GET_TABLEVALUE(creator,'T_SYS_USER','USER_ID','NAME') creatorShow ,
+            CREATE_TIME createTime , m.person_id,m.creator
+        FROM T_XG_PARENT_MESSAGE m
+        WHERE 1 = 1 AND MESSAGE_PARENT_ID = #{messageParentId}
+        ORDER BY CREATE_TIME
+    </select>
+    <select id="getParentMessageListByTeacher"
+            parameterType="com.goisan.system.bean.ParentMessage"
+            resultType="com.goisan.system.bean.ParentMessage">
+        select message_id,title,message,
+            type,FUNC_GET_DICVALUE(type,'JZLY') typeShow,
+            FUNC_GET_TABLEVALUE(creator,'T_XG_PARENT','PARENT_ID','PARENT_NAME') creatorShow ,
+            FUNC_GET_TABLEVALUE(PERSON_ID,'T_SYS_USER','USER_ID','NAME') personIdShow ,
+            decode(( select count(0) from T_XG_PARENT_MESSAGE_LOG l
+                where l.message_id = m.message_id and l.reade_flag ='2' ),'0','已读','未读' ) readeFlag,
+            decode(( select count(0) from T_XG_PARENT_MESSAGE_LOG l
+                where l.message_parent_id = m.message_id and l.reade_flag ='2'
+                  and l.creator  &lt;&gt; #{creator} ),'0','已读','未读' ) readeFlagShow
+        from T_XG_PARENT_MESSAGE m
+        WHERE 1 = 1 AND (MESSAGE_PARENT_ID ='' OR MESSAGE_PARENT_ID IS NULL )
+        AND PERSON_ID = #{creator} AND PERSON_DEPT_ID = #{createDept}
+    </select>
+
+</mapper>

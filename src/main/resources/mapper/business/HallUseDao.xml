@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--协同办公-礼堂使用管理Created and modify by wq on 2017/7/18.-->
+<mapper namespace="com.goisan.synergy.workflow.dao.HallUseDao">
+    <!--申请页列表显示和查询-->
+    <select id="getHallUseList" resultType="com.goisan.synergy.workflow.bean.HallUse"
+            parameterType="com.goisan.synergy.workflow.bean.HallUse">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        FUNC_GET_USERNAME(t.leader) leader,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        FUNC_GET_USERDICVALUE(t.use_device,'ITSB') usedeviceShow,
+        FUNC_GET_USERDICVALUE(t.use_device,'ITSB') usedevice,
+        t.people_number peopleNumber,
+        t.content content,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.creator,
+        t.create_dept,
+        t.create_time
+        FROM
+        T_BG_HALLUSE_WF t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <!--申请添加-->
+    <insert id="insertHallUse" parameterType="com.goisan.synergy.workflow.bean.HallUse">
+        insert into
+        T_BG_HALLUSE_WF t
+        (id,request_dept,requester,request_date,
+        leader,start_time,end_time,use_device,
+        people_number,content,remark,
+        creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${requestDept}','${requester}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+        '${leader}',to_date('${startTime}','yyyy-mm-dd hh24:mi'),to_date('${endTime}','yyyy-mm-dd hh24:mi'),'${usedevice}',
+        '${peopleNumber}','${content}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--<insert id="insertHallUseAPP" parameterType="com.goisan.synergy.workflow.bean.HallUse">
+        insert into
+        T_BG_HALLUSE_WF t
+        (id,request_dept,requester,request_date,
+        leader,start_time,end_time,use_device,
+        people_number,content,remark,
+        creator,create_time,create_dept) values
+        ('id','${requestDept}','${requester}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+        '${leader}',to_date('${startTime}','yyyy-mm-dd hh24:mi'),to_date('${endTime}','yyyy-mm-dd hh24:mi'),'${usedevice}',
+        '${peopleNumber}','${content}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>-->
+    <update id="updateHallUseAPP" parameterType="com.goisan.synergy.workflow.bean.HallUse">
+        update
+        T_BG_HALLUSE_WF
+        SET
+        id=#{id},
+        REQUEST_DEPT =#{requestDept},
+        REQUESTER =#{requester},
+        REQUEST_DATE = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        LEADER=#{leader},
+        START_TIME=to_date(#{startTime},'yyyy-mm-dd hh24:mi'),
+        END_TIME=to_date(#{endTime},'yyyy-mm-dd hh24:mi'),
+        use_device= #{usedevice},
+        PEOPLE_NUMBER=#{peopleNumber},
+        CONTENT=#{content},
+        REMARK=#{remark},
+        request_flag ='1',
+        creator=#{creator},
+        create_time=sysdate,
+        changer = #{creator},
+        change_time = sysdate,
+        change_dept = #{createDept}
+        WHERE
+        id = #{id}
+    </update>
+    <!--申请删除-->
+    <delete id="deleteHallUse" parameterType="java.lang.String">
+        DELETE FROM T_BG_HALLUSE_WF WHERE id = #{id}
+    </delete>
+    <!--申请修改-->
+    <update id="updateHallUse" parameterType="com.goisan.synergy.workflow.bean.HallUse">
+        update
+        T_BG_HALLUSE_WF
+        SET
+        id=#{id},
+        REQUEST_DEPT =#{requestDept},
+        REQUESTER =#{requester},
+        REQUEST_DATE = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        LEADER=#{leader},
+        START_TIME=to_date(#{startTime},'yyyy-mm-dd hh24:mi'),
+        END_TIME=to_date(#{endTime},'yyyy-mm-dd hh24:mi'),
+        use_device= #{usedevice},
+        PEOPLE_NUMBER=#{peopleNumber},
+        CONTENT=#{content},
+        REMARK=#{remark},
+        changer = #{changer},
+        change_time = sysdate,
+        change_dept = #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <!--通过id查询申请-->
+    <select id="getHallUseById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.HallUse">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi') requestDate,
+        t.leader leader,
+        to_char(t.start_time,'yyyy-mm-dd') || 'T' || to_char(t.start_time,'hh24:mi') startTime,
+        to_char(t.end_time,'yyyy-mm-dd') || 'T' || to_char(t.end_time,'hh24:mi') endTime,
+		FUNC_GET_USERDICVALUE(t.use_device,'ITSB') usedeviceShow,
+		t.use_device usedevice,
+        t.people_number peopleNumber,
+        t.content content,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.creator,
+        t.create_dept,
+        t.create_time , USE_DEVICE usedevice
+        FROM
+        T_BG_HALLUSE_WF t
+        WHERE id = #{id} ORDER BY t.create_time DESC
+    </select>
+    <!--待办页列表显示和查询-->
+    <select id="getHallUseProcessList" resultType="com.goisan.synergy.workflow.bean.HallUse"
+            parameterType="com.goisan.synergy.workflow.bean.HallUse">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        FUNC_GET_USERNAME(t.leader) leader,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        FUNC_GET_USERDICVALUE(t.use_device,'ITSB') usedeviceShow,
+        FUNC_GET_USERDICVALUE(t.use_device,'ITSB') usedevice,
+        t.content content,
+        t.people_number peopleNumber,
+        t.remark remark,
+        t.creator,
+        t.create_dept,
+        t.create_time,
+        t.feedback feedback
+        FROM
+        T_BG_HALLUSE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <!--已办页列表显示和查询-->
+    <select id="getHallUseCompleteList" resultType="com.goisan.synergy.workflow.bean.HallUse"
+            parameterType="com.goisan.synergy.workflow.bean.HallUse">
+        SELECT
+        DISTINCT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        FUNC_GET_USERNAME(t.leader) leader,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        FUNC_GET_USERDICVALUE(t.use_device,'ITSB') usedeviceShow,
+        FUNC_GET_USERDICVALUE(t.use_device,'ITSB') usedevice,
+        t.people_number peopleNumber,
+        t.content content,
+        t.remark remark,
+        t.creator,
+        t.create_dept,
+        t.create_time,
+        FUNC_GET_DICVALUE(t.REQUEST_FLAG,'GZLLZZT') requestFlag,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.FEEDBACK feedback
+        FROM
+        T_BG_HALLUSE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--查询所有人员id和姓名-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <!--查询所有部门id和名称-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--通过人员id查询人员姓名-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <!--通过部门id查询部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <!--获取操作人所在部门的所有人员-->
+    <select id="getDeptPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.Select2">
+        SELECT e.person_id id,e.name text
+        FROM T_RS_EMPLOYEE e,T_RS_EMPLOYEE_DEPT d
+        WHERE e.person_id = d.person_id and dept_id = #{deptId}
+        ORDER BY e.name
+    </select>
+
+    <!--礼堂使用规范维护-->
+    <select id="getHallUseStandard" parameterType="com.goisan.synergy.workflow.bean.Standard" resultType="com.goisan.synergy.workflow.bean.Standard">
+        SELECT
+        t.id id,
+        t.STANDARD_TYPE standardType,
+        t.STANDARD_NAME standardName,
+        t.STANDARD_CONTENT standardContent
+        FROM
+        T_BG_STANDARD_WF t
+        where t.STANDARD_TYPE=#{standardType}
+    </select>
+    <insert id="insertHallUseStandard" parameterType="com.goisan.synergy.workflow.bean.Standard">
+        insert into
+        T_BG_STANDARD_WF t
+        (id,STANDARD_TYPE,STANDARD_NAME,STANDARD_CONTENT,
+        creator,create_time,create_dept,changer,change_time,change_dept) values
+        (FUNC_GET_UUID,#{standardType},#{standardName},#{standardContent},
+        #{creator},sysdate,#{createDept},#{changer},sysdate,#{changeDept})
+    </insert>
+    <update id="updateHallUseStandard" parameterType="com.goisan.synergy.workflow.bean.Standard">
+        update
+        T_BG_STANDARD_WF
+        SET
+        STANDARD_TYPE=#{standardType},
+        STANDARD_NAME=#{standardName},
+        STANDARD_CONTENT=#{standardContent},
+        changer = #{changer},
+        change_time = sysdate,
+        change_dept = #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+</mapper>

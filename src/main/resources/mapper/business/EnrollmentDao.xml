@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.enrollment.dao.EnrollmentDao">
+    <select id="getEnrollmentList" parameterType="com.goisan.studentwork.enrollment.bean.Enrollment"
+            resultType="com.goisan.studentwork.enrollment.bean.Enrollment">
+        select
+        t.major_id majorId,
+        m.YEAR year,
+        t.departments_id departmentsId,
+        t.major_code majorCode,
+        t.training_level trainingLevel,
+        t.major_direction majorDirection,
+        t.school_system schoolSystem,
+        m.class_amount classAmount,
+        m.issuing_unit issuingUnit,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentShow,
+        FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorShow,
+        FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') trainingLevelShow,
+        FUNC_GET_DICVALUE(t.major_direction,'ZXZYFX') directionShow,
+        FUNC_GET_DICVALUE(t.school_system,'ZXZYXZ') schoolSystemShow,
+        FUNC_GET_DICVALUE(m.learning_type,'XXXS') learningTypeShow,
+        FUNC_GET_DICVALUE(m.issuing_unit,'BYZFFDW') issuingUnitShow,
+        case when m.plan_number is not null then m.plan_number else 0 end  planNumber,
+        (case when m.real_number is not null then m.real_number else 0 end) as realNumber
+        from T_XG_MAJOR t
+        left join
+        T_XG_ENROLLMENT_PLAN m
+        on m.major_code = t.major_code and
+        m.major_direction = t.major_direction and
+        m.training_level = t.training_level and
+        m.departments_id = t.departments_id and
+        m.valid_flag = '1'
+        where  1=1
+        <if test="year != null and year != '' ">
+            and m.year= #{year}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t.training_level= #{trainingLevel}
+        </if>
+        <if test="schoolSystem != null and schoolSystem != '' ">
+            AND t.school_system= #{schoolSystem}
+        </if>
+        order by t.departments_id desc, t.major_code desc,t.major_direction desc, t.training_level desc,t.school_system
+        desc
+
+    </select>
+
+    <select id="getMajorEnrollmentList" parameterType="com.goisan.studentwork.enrollment.bean.Enrollment"
+            resultType="com.goisan.studentwork.enrollment.bean.Enrollment">
+        select
+
+        t.departments_id departmentsId,
+        t.major_code majorCode,
+        t.training_level trainingLevel,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentShow,
+        FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' || '--' ||
+        FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') majorShow,
+        sum(case when m.plan_number is not null then m.plan_number else 0 end) planNumber,
+        sum(case when m.real_number is not null then m.real_number else 0 end) realNumber
+        from T_XG_MAJOR t
+        left join
+        T_XG_ENROLLMENT_PLAN m
+        on m.major_code = t.major_code and
+        m.training_level = t.training_level and
+        m.departments_id = t.departments_id and
+        m.valid_flag = '1'
+        <if test="startYear != null and startYear != '' ">
+            AND m.year >= #{startYear}
+        </if>
+        <if test="endYear != null and endYear != '' ">
+            AND #{endYear} >= m.year
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            having t.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            and t.major_code= #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            and t.training_level= #{trainingLevel}
+        </if>
+
+        group by
+        t.departments_id ,
+        t.major_code,
+        t.training_level
+        order by
+        t.departments_id ,
+        t.major_code,
+        t.training_level
+
+
+    </select>
+
+    <select id="getEnrollmentStudentList" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        SELECT
+        t.student_id studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        t.MAJOR_CODE majorCode,
+        t.TRAINING_LEVEL trainingLevel,
+        t.name name,
+        t.sex,
+        t.idcard,
+        t.student_number studentNumber,
+        t.birthday,
+        t.nationality,
+        t.nation,
+        t.address,
+        t.REPORT_STATUS reportStatus,
+      /*  t.PROGRAM_DURATION programDuration,*/
+        t.household_register_place housePlace,
+        t.household_register_province houseProvince,
+        t.household_register_city houseCity,
+        t.household_register_county houseCounty,
+        t.political_status politicalStatus,
+        t.home_phone homePhone,
+        t.MAJOR_DIRECTION majorDirection,
+        t.tel,
+        decode(t.departments_id,'','',FUNC_GET_DEPTNAME(t.departments_id) ) departmentShow,
+        decode(t.major_code,'','',FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') || '--' || FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC'))
+        majorShow,
+        FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') trainingLevelShow,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
+        FUNC_GET_DICVALUE(t.REPORT_STATUS, 'BDZT') reportStatusShow,
+        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
+        FUNC_GET_DICVALUE(t.STUDENT_STATUS ,'XSZT') studentStatusShow,
+         FUNC_GET_DICVALUE(t.program_duration,'XZ') programDurationShow,
+        FUNC_GET_DICVALUE(t.gradation,'CC') gradationShow,
+
+         t.STUDENT_STATUS studentStatus
+        FROM T_XG_ENROLLMENT_STUDENT t
+        WHERE 1 = 1
+
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <!--<if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>-->
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code like '%' ||#{majorCode}||'%'
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND t.idcard like '%' ||#{idcard}||'%'
+        </if>
+        order by t.CREATE_TIME desc,t.departments_id desc,t.major_code desc,t.major_direction desc,t.training_level desc
+    </select>
+
+    <!--<select id="getDepartmentsId" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"-->
+            <!--&lt;!&ndash;resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">&ndash;&gt;-->
+        <!--SELECT-->
+        <!--t.DEPARTMENTS_ID departmentsId-->
+        <!--FROM T_XG_ENROLLMENT_STUDENT t-->
+        <!--WHERE t.NAME = #{name}-->
+        <!--order by t.CREATE_TIME desc,t.departments_id desc,t.major_code desc,t.major_direction desc,t.training_level desc-->
+    <!--</select>-->
+
+    <select id="getStuEnrollmentList" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        SELECT
+        t.student_id studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        t.MAJOR_CODE majorCode,
+        t.TRAINING_LEVEL trainingLevel,
+        t.name name,
+        t.sex sex,
+        t.REPORT_STATUS reportStatus,
+        t.PROGRAM_DURATION programDuration,
+        t.idcard idcard,
+        t.nation nation,
+        t.MAJOR_DIRECTION majorDirection,
+        decode(t.departments_id,'','',FUNC_GET_DEPTNAME(t.departments_id) ) departmentShow,
+        decode(t.major_code,'','',FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') || '--' || FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC')) majorShow,
+        FUNC_GET_DICVALUE(t.REPORT_STATUS, 'BDZT') reportStatusShow,
+        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
+        FUNC_GET_DICVALUE(t.PROGRAM_DURATION,'XZ') educationalSystem,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirectionShow,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevelShow
+        FROM T_XG_ENROLLMENT_STUDENT t
+        WHERE 1 = 1
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        order by t.CREATE_TIME desc,t.departments_id desc,t.major_code desc,t.major_direction desc,t.training_level desc
+    </select>
+    <select id="getDistributeStudentList" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        SELECT
+        t.student_id studentId,
+        t.name,
+        t.sex,
+        t.idcard,
+        t.student_number studentNumber,
+        t.birthday,
+        t.nationality,
+        t.nation,
+        t.address,
+        t.departments_id,
+        t.major_code,
+        t.training_level,
+        t.class_id,
+        decode(t.departments_id,'','',FUNC_GET_DEPTNAME(t.departments_id) ) departmentShow,
+        decode(t.major_code,'','',FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') || '--' || FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC'))
+        majorShow,
+        decode(t.class_id,'','',FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') ) classShow,
+        t.household_register_place housePlace,
+        t.household_register_province houseProvince,
+        t.household_register_city houseCity,
+        t.household_register_county houseCounty,
+        t.political_status politicalStatus,t.home_phone homePhone,
+        t.tel,
+        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(t.CUT_FLAG ,'FBZT') cutFlag,
+        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
+        STUDENT_STATUS studentStatus,
+        FUNC_GET_DICVALUE(STUDENT_STATUS ,'XSZT') studentStatusShow
+        FROM T_XG_ENROLLMENT_STUDENT t
+        WHERE 1 = 1
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND t.idcard like '%'||#{idcard}||'%'
+        </if>
+        <if test="studentNumber != null and studentNumber != '' ">
+            AND t.student_number like '%'||#{studentNumber}||'%'
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        <if test="majorDirection != null and majorDirection != '' ">
+            AND t.major_direction= #{majorDirection}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t.class_id= #{classId}
+        </if>
+        ORDER by t.create_time desc
+    </select>
+    <select id="getEnrollmentStudentById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        SELECT
+        student_id studentId,
+        year joinYear,
+        month joinMonth,
+        name name,
+        sex sex,
+        student_category studentCategory,
+        finish_school finishSchool,
+        report_status reportStatus,
+        middle_class middleClass,
+        middle_score middleScore,
+        student_kind studentKind,
+        ticket_card ticketCard,
+        fill_status fillStatus,
+        weight weight,
+        height height,
+        clothes_number clothesNumber,
+        special_status specialStatus,
+        finish_card_status finishCardStatus,
+        staying_status stayingStatus,
+        household_register_type householdRegisterType,
+        idcard idcard,
+        class_id classId,
+        student_number studentNumber,
+        birthday birthday,
+        nationality nationality,
+        major_direction majorDirection,
+        nation nation,
+        address address,
+        departments_id departmentsId,
+        major_code majorCode,
+        training_level  trainingLevel,
+        household_register_place housePlace,
+        household_register_province houseProvince,
+        household_register_city houseCity,
+        household_register_county houseCounty ,
+        political_status politicalStatus,home_phone homePhone,
+        tel,
+        PROGRAM_DURATION programDuration,
+        GRADATION gradation,
+        cut_flag cutFlag,
+        FUNC_GET_DICVALUE(REPORT_STATUS,'BDZT') reportStatusShow,
+        FUNC_GET_DICVALUE(sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(nationality,'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(nation,'MZ') nationShow,
+        FUNC_GET_DICVALUE(program_duration,'XZ') programDurationShow,
+        FUNC_GET_DICVALUE(gradation,'CC') gradationShow,
+        STUDENT_STATUS studentStatus,
+        FUNC_GET_DICVALUE(STUDENT_STATUS ,'XSZT') studentStatusShow,
+        FUNC_GET_DICVALUE(political_status ,'ZZMM') politicalStatusShow,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsShow,
+        FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')   majorShow,
+        id_card_photo_url
+        FROM T_XG_ENROLLMENT_STUDENT
+        WHERE student_id = #{studentId}
+    </select>
+
+    <delete id="delEnrollmentStudent" parameterType="java.lang.String">
+        DELETE  FROM  T_XG_ENROLLMENT_STUDENT   WHERE  student_id = #{studentId}
+    </delete>
+    <select id="selectEnrollmentByMajorId" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.enrollment.bean.Enrollment">
+        select
+        *
+        from T_XG_ENROLLMENT_PLAN t
+        where  t.major_id= #{majorId}
+        and t.year=#{year}
+    </select>
+    <select id="findEnrollmentStudentListByIds" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        select
+        *
+        from T_XG_ENROLLMENT_STUDENT t
+        where  t.student_id IN (${ids})
+
+    </select>
+    <select id="checkEnrollmentStudentListByIds" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        select
+        *
+        from T_XG_ENROLLMENT_STUDENT t
+        where  t.student_id IN (${ids}) and t.CUT_FLAG='1'
+
+    </select>
+    <insert id="saveEnrollment" parameterType="com.goisan.studentwork.enrollment.bean.Enrollment">
+        insert into T_XG_ENROLLMENT_PLAN (
+        id,
+        year,
+        real_number,
+        learning_type,
+        class_amount,
+        main_course,
+        cooperative_enterprise,
+        skill_ticket,
+        major_id,
+        departments_id,
+        major_code,
+        major_direction,
+        training_level,
+        plan_number,
+        issuing_unit,
+        creator,
+        create_time,
+        create_dept) values (
+        #{id},
+        #{year},
+        #{realNumber},
+        #{learningType},
+        #{classAmount},
+        #{mainCourse},
+        #{cooperativeEnterprise},
+        #{skillTicket},
+        #{majorId},
+        #{departmentsId},
+        #{majorCode},
+        #{majorDirection},
+        #{trainingLevel},
+        #{planNumber},
+        #{issuingUnit},
+        #{creator},
+        #{createTime},
+        #{createDept})
+    </insert>
+    <update id="updateEnrollment" parameterType="com.goisan.studentwork.enrollment.bean.Enrollment">
+        update T_XG_ENROLLMENT_PLAN
+        set
+        plan_number=#{planNumber},
+        learning_type=#{learningType},
+        class_amount=#{classAmount},
+        main_course=#{mainCourse},
+        cooperative_enterprise=#{cooperativeEnterprise},
+        skill_ticket=#{skillTicket},
+        issuing_unit=#{issuingUnit},
+        changer=#{changer},
+        change_time=#{changeTime},
+        change_dept=#{changeDept}
+        where major_id = #{majorId}
+    </update>
+    <update id="updateBatchEnrollment" parameterType="com.goisan.studentwork.enrollment.bean.Enrollment">
+        update T_XG_ENROLLMENT_PLAN
+        set
+        learning_type=#{learningType},
+        class_amount=#{classAmount},
+        main_course=#{mainCourse},
+        cooperative_enterprise=#{cooperativeEnterprise},
+        skill_ticket=#{skillTicket},
+        plan_number=#{planNumber},
+        issuing_unit=#{issuingUnit},
+        changer=#{changer},
+        change_time=#{changeTime},
+        change_dept=#{changeDept}
+        where major_id in  (${majorId})
+        and year=#{year}
+    </update>
+    <select id="checkEnrollmentIdCard" resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"
+            parameterType="java.lang.String">
+        SELECT
+        *
+        FROM T_XG_ENROLLMENT_STUDENT
+        WHERE idcard = #{idcard}
+    </select>
+    <insert id="insertEnrollmentStudent" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        INSERT INTO  T_XG_ENROLLMENT_STUDENT
+        (student_id,year,month,major_direction,departments_id,major_code,training_level,name,sex,idcard,
+        student_number ,birthday,nationality,nation,address,household_register_place ,household_register_province,
+        household_register_city, household_register_county,political_status,home_phone,tel,STUDENT_STATUS,
+        cut_flag,
+        student_category,
+        finish_school,
+        middle_class,
+        middle_score,
+        student_kind,
+        ticket_card,
+        fill_status,
+        weight,
+        height,
+        clothes_number,
+        special_status,
+        finish_card_status,
+        staying_status,
+        report_status,
+        household_register_type,
+        creator,create_time,create_dept,valid_flag,id_card_photo_url,PROGRAM_DURATION,GRADATION)
+        VALUES
+        ('${studentId}','${joinYear}','${joinMonth}','${majorDirection}','${departmentsId}','${majorCode}',
+        '${trainingLevel}','${name}','${sex}','${idcard}','${studentNumber}',to_date('${birthday}','yyyy-mm-dd'),
+        '${nationality}','${nation}','${address}','${housePlace}','${houseProvince}','${houseCity}','${houseCounty}',
+        '${politicalStatus}','${homePhone}','${tel}','${studentStatus}','${cutFlag}',
+        '${studentCategory}',
+        '${finishSchool}',
+        '${middleClass}',
+        '${middleScore}',
+        '${studentKind}',
+        '${ticketCard}',
+        '${fillStatus}',
+        '${weight}',
+        '${height}',
+        '${clothesNumber}',
+        '${specialStatus}',
+        '${finishCardStatus}',
+        '${stayingStatus}',
+        '${reportStatus}',
+        '${householdRegisterType}',
+        '${creator}',sysdate,'${createDept}',1,'${idCardPhotoUrl}','${programDuration}','${gradation}')
+    </insert>
+    <update id="updateEnrollmentStudent" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        UPDATE T_XG_ENROLLMENT_STUDENT SET
+        name = #{name},
+        sex = #{sex},
+        idcard  = #{idcard},
+        month= #{joinMonth},
+        student_number = #{studentNumber},
+        major_direction = #{majorDirection},
+        birthday = to_date('${birthday}','yyyy-mm-dd'),
+        nationality = #{nationality},
+        nation = #{nation},
+        student_category=#{studentCategory},
+        finish_school=#{finishSchool},
+        middle_class=#{middleClass},
+        middle_score=#{middleScore},
+        student_kind=#{studentKind},
+        ticket_card=#{ticketCard},
+        fill_status=#{fillStatus},
+        weight=#{weight},
+        height=#{height},
+        clothes_number=#{clothesNumber},
+        special_status=#{specialStatus},
+        finish_card_status=#{finishCardStatus},
+        staying_status=#{stayingStatus},
+        household_register_type=#{householdRegisterType},
+        address = #{address},
+        departments_id = #{departmentsId},
+        major_code = #{majorCode},
+        training_level = #{trainingLevel},
+        household_register_place = #{housePlace},
+        household_register_province = #{houseProvince},
+        household_register_city = #{houseCity},
+        household_register_county = #{houseCounty},
+        political_status = #{politicalStatus},
+        REPORT_STATUS = #{reportStatus},
+        home_phone = #{homePhone},
+        tel = #{tel},
+        PROGRAM_DURATION=#{programDuration},
+        GRADATION=#{gradation},
+        change_time = sysdate,
+        change_dept = #{changeDept},
+        changer = #{changer}
+        WHERE student_id = #{studentId}
+    </update>
+    <update id="updateAllStuMaintain" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        UPDATE T_XG_ENROLLMENT_STUDENT SET
+        REPORT_STATUS = '1',
+        change_time = sysdate,
+        change_dept = #{changeDept},
+        changer = #{changer}
+        WHERE student_id = #{studentId}
+    </update>
+    <update id="updateAllStuMaintainCancel" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        UPDATE T_XG_ENROLLMENT_STUDENT SET
+        REPORT_STATUS = '0',
+        change_time = sysdate,
+        change_dept = #{changeDept},
+        changer = #{changer}
+        WHERE student_id = #{studentId}
+    </update>
+    <update id="doDistributeClasses" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        UPDATE T_XG_ENROLLMENT_STUDENT SET
+        departments_id = #{deptId},
+        major_code = #{majorCode},
+        major_direction = #{majorDirection},
+        training_level = #{trainingLevel},
+        class_id = #{classId},
+        cut_flag = '1'
+        WHERE student_id in (${ids})
+    </update>
+    <update id="doDistributeClass" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        UPDATE T_XG_ENROLLMENT_STUDENT SET
+        departments_id = #{deptId},
+        major_code = #{majorCode},
+        major_direction = #{majorDirection},
+        training_level = #{trainingLevel},
+        class_id = #{classId},
+        cut_flag = '1'
+        WHERE student_id = #{id}
+    </update>
+    <select id="selectRealNumberByIds" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT
+        real_number
+        FROM T_XG_ENROLLMENT_PLAN
+        WHERE
+        departments_id = #{deptId} and
+        major_code = #{majorCode} and
+        training_level = #{trainingLevel} and
+        major_direction = #{majorDirection}
+        and year= #{year}
+    </select>
+    <update id="updateEnrollmentRealNumberByConditions"
+            parameterType="com.goisan.studentwork.enrollment.bean.Enrollment">
+        update T_XG_ENROLLMENT_PLAN
+        set
+        real_number=#{realNumber}
+        where
+        departments_id = #{departmentsId} and
+        major_code = #{majorCode} and
+        training_level = #{trainingLevel} and
+        major_direction = #{majorDirection}
+    </update>
+    <select id="findOverYearsList" parameterType="com.goisan.studentwork.enrollment.bean.Enrollment"
+            resultType="com.goisan.studentwork.enrollment.bean.Enrollment">
+        select FUNC_GET_TABLEVALUE(t.major_code,'T_XG_MAJOR','MAJOR_CODE','MAJOR_NAME') majorShow ,t.*
+        from
+        (select *
+        from (select t.major_code , m.year, sum(m.real_number) as real_number from
+        T_XG_MAJOR t left join
+        T_XG_ENROLLMENT_PLAN m on
+        m.major_code = t.major_code and
+        m.major_direction = t.major_direction and
+        m.training_level = t.training_level and
+        m.departments_id = t.departments_id and
+        m.valid_flag = '1'
+        group by t.major_code , m.year)
+        pivot(sum(real_number)
+        for YEAR in(
+        <if test="year>=2020 ">
+            '2020' twentyNumber,
+        </if>
+        <if test="year>=2019 ">
+            '2019' nineteenNumber,
+        </if>
+        <if test="year>=2018 ">
+            '2018' eigthteenNumber,
+        </if>
+        <if test="year>=2017 ">
+            '2017' seventeenNumber,
+        </if>
+        <if test="year>=2016 ">
+            '2016' sixteenNumber,
+        </if>
+        <if test="year>=2015 ">
+            '2015' fiveteenNumber,
+        </if>
+        <if test="year>=2014 ">
+            '2014' fourteenNumber
+        </if>
+        ))
+        )t
+
+
+    </select>
+    <select id="findYearsList" resultType="com.goisan.system.bean.SysDic">
+        select dic_code diccode,dic_name dicname from T_SYS_DIC t
+        where parent_id = '33a2ef2d-7c05-4edb-b030-3abbf10aeb9e'
+        order by dic_code desc
+
+    </select>
+    <select id="getStudentInfoList" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        SELECT
+        t.student_id studentId,
+        t.name,
+        t.sex,
+        t.idcard,
+        t.student_number studentNumber,
+        t.nationality,
+        t.nation,
+        t.household_register_place housePlace,
+        t.household_register_province houseProvince,
+        t.household_register_city houseCity,
+        t.household_register_county houseCounty,
+        t.political_status politicalStatus,
+        t.home_phone homePhone,
+        t.tel,
+        FUNC_GET_DICVALUE(t.year ,'ND') joinYear,
+        FUNC_GET_DICVALUE(t.month ,'YF') joinMonth,
+        decode(t.departments_id,'','',FUNC_GET_DEPTNAME(t.departments_id) ) departmentShow,
+        decode(t.major_code,'','',FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') || '--' || FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC'))
+        majorShow,
+        decode(t.class_id,'','',FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') ) classShow,
+        decode(t.household_register_province,'','',FUNC_GET_TABLEVALUE(t.household_register_province,
+        'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') ) provinceShow,
+        decode(t.household_register_city,'','',FUNC_GET_TABLEVALUE(t.household_register_city,
+        'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') ) cityShow,
+        decode(t.household_register_county,'','',FUNC_GET_TABLEVALUE(t.household_register_county,
+        'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') ) countyShow,
+        FUNC_GET_DICVALUE(t.political_status ,'ZZMM') politicalStatusShow,
+        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
+        FUNC_GET_DICVALUE(t.STUDENT_STATUS ,'XSZT') studentStatusShow,
+        t.STUDENT_STATUS studentStatus
+        FROM T_XG_ENROLLMENT_STUDENT t
+        WHERE 1 = 1
+        <if test="studentNumber != null and studentNumber != '' ">
+            AND t.student_number like '%'||#{studentNumber}||'%'
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND t.idcard like '%'||#{idcard}||'%'
+        </if>
+        <if test="tel != null and tel != '' ">
+            AND t.tel like '%'||#{tel}||'%'
+        </if>
+        <if test="sex != null and sex != '' ">
+            AND t.sex = #{sex}
+        </if>
+        <if test="politicalStatus != null and politicalStatus != '' ">
+            AND t.political_status = #{politicalStatus}
+        </if>
+        <if test="studentStatus != null and studentStatus != '' ">
+            AND t.student_status = #{studentStatus}
+        </if>
+        <if test="joinYear != null and joinYear != '' ">
+            AND t.year = #{joinYear}
+        </if>
+        <if test="joinMonth != null and joinMonth != '' ">
+            AND t.month = #{joinMonth}
+        </if>
+        <if test="nationality != null and nationality != '' ">
+            AND t.nationality = #{nationality}
+        </if>
+        <if test="nation != null and nation != '' ">
+            AND t.nation = #{nation}
+        </if>
+        <if test="houseProvince != null and houseProvince != '' ">
+            AND t.HOUSEHOLD_REGISTER_PROVINCE = #{houseProvince}
+        </if>
+        <if test="houseCity != null and houseCity != '' ">
+            AND t.HOUSEHOLD_REGISTER_CITY = #{houseCity}
+        </if>
+        <if test="houseCounty != null and houseCounty != '' ">
+            AND t.HOUSEHOLD_REGISTER_COUNTY = #{houseCounty}
+        </if>
+        <if test="departmentsId != null and departmentsId != ''">
+            AND t.departments_id = #{departmentsId}
+        </if>
+        <if test="majorDirection != null and majorDirection != ''">
+            AND t.major_direction = #{majorDirection}
+        </if>
+        <if test="majorCode != null and majorCode != ''">
+            AND t.major_code = #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != ''">
+            AND t.training_level = #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != ''">
+            AND t.class_id = #{classId}
+        </if>
+
+    </select>
+
+    <delete id="deleteEnrollment" parameterType="java.lang.String">
+        delete from T_XG_ENROLLMENT_PLAN where major_id =#{majorId} and YEAR=#{year}
+    </delete>
+    <delete id="batchDeleteEnrollment" parameterType="java.lang.String">
+        delete from T_XG_ENROLLMENT_PLAN where major_id  in (${majorId}) and YEAR=#{year}
+    </delete>
+    <select id="getStudentDetailsResultList" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+         SELECT
+        student_id studentId,
+        year joinYear,
+        month joinMonth,
+        name name,
+        sex sex,
+        student_category studentCategory,
+        finish_school finishSchool,
+        middle_class middleClass,
+        middle_score middleScore,
+        student_kind studentKind,
+        ticket_card ticketCard,
+        fill_status fillStatus,
+        weight weight,
+        height height,
+        clothes_number clothesNumber,
+        special_status specialStatus,
+        finish_card_status finishCardStatus,
+        staying_status stayingStatus,
+        household_register_type householdRegisterType,
+        idcard idcard,
+        class_id classId,
+        student_number studentNumber,
+        birthday birthday,
+        nationality nationality,
+        major_direction majorDirection,
+        nation nation,
+        address address,
+        departments_id departmentsId,
+        major_code majorCode,
+        training_level  trainingLevel,
+        household_register_place housePlace,
+        FUNC_GET_TABLEVALUE(household_register_province, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') houseProvince,
+        FUNC_GET_TABLEVALUE(household_register_city, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') houseCity,
+        FUNC_GET_TABLEVALUE(household_register_county, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') houseCounty ,
+        political_status politicalStatus,home_phone homePhone,
+        tel,
+        cut_flag cutFlag,
+        FUNC_GET_DICVALUE(sex ,'XB') sexShow,
+        FUNC_GET_DICVALUE(nationality,'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(nation,'MZ') nationShow,
+        STUDENT_STATUS studentStatus,
+        FUNC_GET_DICVALUE(STUDENT_STATUS ,'XSZT') studentStatusShow,
+        FUNC_GET_DICVALUE(political_status ,'ZZMM') politicalStatusShow,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentShow,
+        FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')   majorShow,
+        FUNC_GET_TABLEVALUE(CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classShow,
+        remark,
+        id_card_photo_url
+        FROM T_XG_ENROLLMENT_STUDENT WHERE 1=1
+        <if test="idcard != null and idcard != '' ">
+            AND idcard = #{idcard}
+        </if>
+        <if test="name != null and name != '' ">
+            AND name like '%'||#{name}||'%'
+        </if>
+    </select>
+</mapper>

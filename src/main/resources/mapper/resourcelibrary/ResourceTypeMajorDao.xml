@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.type.dao.ResourceTypeMajorDao">
+    <select id="getResourceTypeMajorList"
+            parameterType="com.goisan.type.bean.ResourceTypeMajor"
+            resultType="com.goisan.type.bean.ResourceTypeMajor">
+        select resource_major_id,resource_major_name,resource_major_order,
+        resource_subject_id,
+        FUNC_GET_TABLEVALUE(resource_subject_id, 'ZYK_TYPE_SUBJECT', 'RESOURCE_SUBJECT_ID', 'RESOURCE_SUBJECT_NAME')  resourceSubjectIdShow,
+        remark from ZYK_TYPE_MAJOR
+        where 1 = 1
+        <if test="resourceMajorName != null and resourceMajorName != ''">
+            AND resource_major_name LIKE  '%'||#{resourceMajorName}||'%'
+        </if>
+        <if test="resourceSubjectId != null and resourceSubjectId != ''">
+            AND resource_subject_id = #{resourceSubjectId}
+        </if>
+        order by LPAD(resource_major_order,5,'0')
+    </select>
+    <insert id="saveResourceTypeMajor" parameterType="com.goisan.type.bean.ResourceTypeMajor">
+        insert into zyk_type_major
+        (resource_major_id,resource_major_name,resource_major_order,resource_subject_id,remark,
+        creator,create_time,create_dept)
+        values (#{resourceMajorId},#{resourceMajorName},#{resourceMajorOrder},#{resourceSubjectId},#{remark},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getResourceTypeMajorById" parameterType="java.lang.String"
+            resultType="com.goisan.type.bean.ResourceTypeMajor">
+        select * from ZYK_TYPE_MAJOR where resource_major_id = #{id}
+    </select>
+    <update id="updateResourceTypeMajor" parameterType="com.goisan.type.bean.ResourceTypeMajor">
+        update zyk_type_major
+        set resource_major_name=#{resourceMajorName},
+        resource_major_order=#{resourceMajorOrder},
+        resource_subject_id=#{resourceSubjectId},
+        remark=#{remark},changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+         where resource_major_id = #{resourceMajorId}
+    </update>
+    <delete id="delResourceTypeMajor" parameterType="java.lang.String">
+        delete from ZYK_TYPE_MAJOR where resource_major_id = #{id}
+    </delete>
+    <select id="checkTypeMajor" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT SUM(remark) AS remark FROM (
+        SELECT COUNT(RESOURCE_ID) AS remark
+        FROM ZYK_RESOURCE_PUBLIC WHERE RESOURCE_MAJOR_ID = #{id}
+        UNION ALL
+        SELECT COUNT(RESOURCE_COURSE_ID) AS remark
+        FROM ZYK_TYPE_COURSE WHERE RESOURCE_MAJOR_ID = #{id}
+        )
+    </select>
+</mapper>

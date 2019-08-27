@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.OfficeItemDao">
+    <select id="officeItemAction" resultType="com.goisan.synergy.workflow.bean.OfficeItem" parameterType="com.goisan.synergy.workflow.bean.OfficeItem">
+    select t.id            id,
+    FUNC_GET_USERNAME(t.requester)     requester,
+    FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+    to_char(t.request_date,'yyyy-mm-dd') as requestDate,
+    t.remark        remark,
+    func_get_userdicvalue(t.item_name,'BGHC')     itemNameShow,
+    t.item_name   itemName,
+    t.item_number   itemNumber,
+    t.creator       creator,
+    t.create_time   createTime,
+    t.create_dept   createDept,
+    t.changer       changer,
+    t.change_time   changeTime,
+    t.change_dept   changeDept,
+    t.valid_flag    validFlag
+    from T_BG_OFFICEITEM_WF t
+    WHERE 1 = 1
+    <if test="requestDate != null and requestDate != '' ">
+        AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+    </if>
+    <if test="creator != 'sa'  and creator != null and creator != '' ">
+        AND t.creator= #{creator}
+    </if>
+    <if test="createDept != null and createDept != '' ">
+        AND t.create_dept= #{createDept}
+    </if>
+    AND t.request_flag = '0'
+    ORDER BY t.create_time DESC
+</select>
+    <select id="officeItemProcess" resultType="com.goisan.synergy.workflow.bean.OfficeItem" parameterType="com.goisan.synergy.workflow.bean.OfficeItem">
+        select t.id            id,
+        FUNC_GET_USERNAME(t.requester)     requester,
+        FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd ')  requestDate,
+        t.remark        remark,
+        t.item_name    itemName,
+        func_get_userdicvalue(t.item_name,'BGHC')     itemNameShow,
+        t.item_number   itemNumber
+
+        from T_BG_OFFICEITEM_WF t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND FUNC_GET_DEPTNAME(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY r.create_time DESC
+    </select>
+    <select id="officeItemComplete" resultType="com.goisan.synergy.workflow.bean.OfficeItem" parameterType="com.goisan.synergy.workflow.bean.OfficeItem">
+        SELECT
+        DISTINCT
+        t.id,
+        FUNC_GET_USERNAME(t.requester)     requester,
+        FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd ') as requestDate,
+        t.remark        remark,
+        func_get_userdicvalue(t.item_name,'BGHC')     itemName,
+        func_get_userdicvalue(t.item_name,'BGHC')     itemNameShow,
+        t.item_number   itemNumber,
+        t.feedback feedback,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.creator       creator,
+        t.create_time   createTime,
+        t.create_dept   createDept,
+        t.changer       changer,
+        t.change_time   changeTime,
+        t.change_dept   changeDept,
+        t.valid_flag    validFlag
+        from T_BG_OFFICEITEM_WF t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND FUNC_GET_DEPTNAME(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+	<insert id="insertOfficeItem" parameterType="com.goisan.synergy.workflow.bean.OfficeItem">
+		INSERT INTO T_BG_OFFICEITEM_WF
+          (id,
+           requester,
+           request_dept,
+           request_date,
+           remark,
+           item_name,
+           item_number,
+           create_dept,
+           creator,
+           create_time,
+           request_flag)
+        values
+          ('${id}',
+           '${creator}',
+           '${createDept}',
+           to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+           '${remark}',
+           '${itemName}',
+           '${itemNumber}',
+           '${createDept}',
+           '${creator}',
+           sysdate,
+           '0')
+	</insert>
+	<select id="getOfficeItemById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.OfficeItem">
+		select t.id,
+       FUNC_GET_USERNAME(t.requester)     requester,
+       FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+       to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi') as requestDate,
+       func_get_userdicvalue(t.item_name,'BGHC')     itemNameShow,
+       t.item_name    itemName,
+       t.remark,
+       t.item_number
+    from T_BG_OFFICEITEM_WF t
+    WHERE id =#{id} ORDER BY t.create_time DESC
+	</select>
+	<update id="updateOfficeItem" parameterType="com.goisan.synergy.workflow.bean.OfficeItem">
+		UPDATE T_BG_OFFICEITEM_WF SET
+		id=#{id},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        remark = #{remark},
+        item_name = #{itemName},
+        item_number = #{itemNumber},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+	</update>
+	<delete id="deleteById"  parameterType="java.lang.String">
+		DELETE  T_BG_OFFICEITEM_WF WHERE id = #{id}
+	</delete>
+    <select id="selectDept" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="selectPerson" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+</mapper>

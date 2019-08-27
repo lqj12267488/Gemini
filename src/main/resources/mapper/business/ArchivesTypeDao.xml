@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.archives.dao.ArchivesTypeDao">
+    <select id="getArchivesTypeTree" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        type_id id,
+        type_name name,
+        parent_type_id pid
+        FROM
+        dzda_type
+        ORDER BY
+        parent_type_id,dept_order
+    </select>
+    <select id="getArchivesTypeById" parameterType="java.lang.String"
+            resultType="com.goisan.archives.bean.ArchivesType">
+        SELECT * FROM dzda_type WHERE type_id = #{typeId}
+    </select>
+    <select id="getMaxTypeid" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT max(to_number(type_id)) FROM dzda_type WHERE parent_type_id = #{pId}
+    </select>
+    <!--查重-->
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.archives.bean.ArchivesType">
+        select * from dzda_type where type_name = #{typeName} and parent_type_id = #{parentTypeId} AND VALID_FLAG = '1'
+        <if test="typeId != null and typeId !='' ">
+            AND  type_id != #{typeId}
+        </if>
+    </select>
+    <!--排序-->
+    <select id="getMaxDeptOrder" resultType="java.lang.String">
+        select  max(to_number(dept_order)) deptOrder  from dzda_type t where parent_type_id=#{parentTypeId}
+    </select>
+    <!--保存类型-->
+    <insert id="saveArchivesType" parameterType="com.goisan.archives.bean.ArchivesType">
+        INSERT INTO
+        dzda_type
+        (TYPE_ID,TYPE_NAME,DEPT_ORDER,PARENT_TYPE_ID,CREATOR,CREATE_TIME,CREATE_DEPT) VALUES
+        ('${typeId}','${typeName}','${deptOrder}',#{parentTypeId},'${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--修改保存-->
+    <update id="updateArchivesType" parameterType="com.goisan.archives.bean.ArchivesType">
+        UPDATE dzda_type SET
+        type_name = #{typeName},
+        PARENT_TYPE_ID=#{parentTypeId},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE type_id = #{typeId}
+    </update>
+    <delete id="deleteArchivesType" parameterType="java.lang.String">
+        DELETE FROM dzda_type WHERE type_Id = #{id}
+    </delete>
+    <select id="getTypeName" resultType="java.lang.String">
+        select type_name from dzda_type where type_Id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.type.dao.ResourceTypeSubjectDao">
+    <select id="getResourceTypeSubjectList"
+            parameterType="com.goisan.type.bean.ResourceTypeSubject"
+            resultType="com.goisan.type.bean.ResourceTypeSubject">
+        select resource_subject_id,resource_subject_name,resource_subject_order,remark from zyk_type_subject
+        where 1 = 1 AND VALID_FLAG = '1'
+        <if test="resourceSubjectName != null and resourceSubjectName != ''">
+            AND RESOURCE_SUBJECT_NAME LIKE  '%'||#{resourceSubjectName}||'%'
+        </if>
+        order by LPAD(resource_subject_order,5,'0')
+    </select>
+    <insert id="saveResourceTypeSubject" parameterType="com.goisan.type.bean.ResourceTypeSubject">
+        insert into zyk_type_subject
+        (resource_subject_id,resource_subject_name,resource_subject_order,remark,creator,create_time,create_dept)
+        values
+        (#{resourceSubjectId},#{resourceSubjectName},#{resourceSubjectOrder},#{remark},#{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getResourceTypeSubjectById" parameterType="java.lang.String"
+            resultType="com.goisan.type.bean.ResourceTypeSubject">
+        select * from zyk_type_subject where resource_subject_id = #{id}
+    </select>
+    <update id="updateResourceTypeSubject" parameterType="com.goisan.type.bean.ResourceTypeSubject">
+        update zyk_type_subject
+        set resource_subject_name=#{resourceSubjectName},
+        resource_subject_order=#{resourceSubjectOrder},
+        remark=#{remark},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        where resource_subject_id = #{resourceSubjectId}
+    </update>
+    <delete id="delResourceTypeSubject" parameterType="java.lang.String">
+        delete from zyk_type_subject where resource_subject_id = #{id}
+    </delete>
+    <select id="checkTypeSubject" parameterType="java.lang.String"
+            resultType="java.lang.String">
+      SELECT SUM(remark) AS remark FROM (
+        SELECT COUNT(RESOURCE_ID) AS remark
+            FROM ZYK_RESOURCE_PUBLIC WHERE resource_subject_id = #{id}
+        UNION ALL
+        SELECT COUNT(RESOURCE_COURSE_ID) AS remark
+            FROM ZYK_TYPE_COURSE WHERE resource_subject_id = #{id}
+        UNION ALL
+        SELECT COUNT(RESOURCE_MAJOR_ID) AS remark
+            FROM ZYK_TYPE_MAJOR WHERE resource_subject_id = #{id}
+      )
+    </select>
+</mapper>

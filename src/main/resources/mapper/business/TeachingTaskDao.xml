@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.teachingtask.dao.TeachingTaskDao">
+    <select id="getTeachingTaskList"
+            parameterType="com.goisan.educational.teachingtask.bean.TeachingTask"
+            resultType="com.goisan.educational.teachingtask.bean.TeachingTask">
+        SELECT
+        id,
+        school_year,
+        semester,
+        prepared_time,
+        student_num,
+        week_time,
+        employed_title,
+        other_dept,
+        teacher_id,
+        remarks,
+        course_id,
+        FUNC_GET_TABLEVALUE(teacher_id, 'T_SYS_USER', 'user_id', 'name') teacherName,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
+        FUNC_GET_TABLEVALUE(class_info, 'T_XG_CLASS', 'class_id', 'class_name') className,
+        FUNC_GET_TABLEVALUE(prepared_by, 'T_SYS_USER', 'user_id', 'name') preparedByName,
+        FUNC_GET_TABLEVALUE(department, 'T_SYS_DEPT', 'dept_id', 'dept_name') departmentName,
+        FUNC_GET_DICVALUE(semester,'XQ') semesterName,
+        FUNC_GET_DICVALUE(exam_method,'KHFS') examMethod,
+        create_time
+        FROM T_JW_TEACHINGTASK
+        <where>
+            <if test="teacherId!=null and teacherId!=''">
+                teacher_id = #{teacherId}
+            </if>
+            <if test="courseId!=null and courseId!=''">
+                AND course_id = #{courseId}
+            </if>
+            <if test="semester!=null and semester!=''">
+                AND semester = #{semester}
+            </if>
+            <if test="department!=null and department!=''">
+                AND department = #{department}
+            </if>
+            <if test="preparedBy!=null and preparedBy!=''">
+                AND prepared_by = #{preparedBy}
+            </if>
+        </where>
+        ORDER BY
+        create_time DESC
+    </select>
+
+    <!--用于补考查询考试科目数量-->
+    <select id="getTeachingTaskList3"
+            parameterType="com.goisan.educational.teachingtask.bean.TeachingTask"
+            resultType="com.goisan.educational.teachingtask.bean.TeachingTask">
+        SELECT
+        id,
+        school_year,
+        semester,
+        prepared_time,
+        student_num,
+        week_time,
+        employed_title,
+        other_dept,
+        teacher_id,
+        remarks,
+        course_id,
+        FUNC_GET_TABLEVALUE(teacher_id, 'T_SYS_USER', 'user_id', 'name') teacherName,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
+        FUNC_GET_TABLEVALUE(class_info, 'T_XG_CLASS', 'class_id', 'class_name') className,
+        FUNC_GET_TABLEVALUE(prepared_by, 'T_SYS_USER', 'user_id', 'name') preparedByName,
+        FUNC_GET_TABLEVALUE(department, 'T_SYS_DEPT', 'dept_id', 'dept_name') departmentName,
+        FUNC_GET_DICVALUE(semester,'XQ') semesterName,
+        FUNC_GET_DICVALUE(exam_method,'KHFS') examMethod,
+        create_time
+        FROM T_JW_TEACHINGTASK
+        <where>
+            <if test="teacherId!=null and teacherId!=''">
+                teacher_id = #{teacherId}
+            </if>
+            <if test="courseId!=null and courseId!=''">
+                AND course_id = #{courseId}
+            </if>
+            <if test="semester!=null and semester!=''">
+                AND semester = #{semester}
+            </if>
+            <if test="department!=null and department!=''">
+                AND department = #{department}
+            </if>
+            <if test="preparedBy!=null and preparedBy!=''">
+                AND prepared_by = #{preparedBy}
+            </if>
+            <if test="classInfo!=null and classInfo!=''">
+                AND  class_info = #{classInfo}
+            </if>
+        </where>
+        ORDER BY
+        create_time DESC
+    </select>
+    <select id="getTeachingTaskListBydept"
+            parameterType="com.goisan.educational.teachingtask.bean.TeachingTask"
+            resultType="com.goisan.educational.teachingtask.bean.TeachingTask">
+        SELECT
+        id,
+        school_year,
+        semester,
+        prepared_time,
+        student_num,
+        week_time,
+        employed_title,
+        other_dept,
+        teacher_id,
+        remarks,
+        course_id,
+        FUNC_GET_TABLEVALUE(teacher_id, 'T_SYS_USER', 'user_id', 'name') teacherName,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
+        FUNC_GET_TABLEVALUE(class_info, 'T_XG_CLASS', 'class_id', 'class_name') className,
+        FUNC_GET_TABLEVALUE(prepared_by, 'T_SYS_USER', 'user_id', 'name') preparedByName,
+        FUNC_GET_TABLEVALUE(department, 'T_SYS_DEPT', 'dept_id', 'dept_name') departmentName,
+        FUNC_GET_DICVALUE(semester,'XQ') semesterName,
+        FUNC_GET_DICVALUE(exam_method,'KHFS') examMethod,
+        create_time
+        FROM T_JW_TEACHINGTASK
+        <where>
+            department = #{department}
+            <if test="teacherId!=null and teacherId!=''">
+                AND teacher_id = #{teacherId}
+            </if>
+            <if test="courseId!=null and courseId!=''">
+                AND course_id = #{courseId}
+            </if>
+            <if test="semester!=null and semester!=''">
+                AND semester = #{semester}
+            </if>
+            <if test="preparedBy!=null and preparedBy!=''">
+                AND prepared_by = #{preparedBy}
+            </if>
+        </where>
+        ORDER BY
+        create_time DESC
+    </select>
+    <insert id="insertTeachingTask" parameterType="com.goisan.educational.teachingtask.bean.TeachingTask">
+        insert
+        into T_JW_TEACHINGTASK (id,
+                                school_year,
+                                semester,
+                                department,
+                                prepared_by,
+                                prepared_time,
+                                teacher_id,
+                                class_info,
+                                student_num,
+                                course_id,
+                                week_time,
+                                employed_title,
+                                other_dept,
+                                remarks,
+                                creator,
+                                create_time,
+                                create_dept,
+                                exam_method)
+        values (#{id},
+                #{schoolYear},
+                #{semester},
+                #{department},
+                #{preparedBy},
+                #{preparedTime},
+                #{teacherId},
+                #{classInfo},
+                #{studentNum},
+                #{courseId},
+                #{weekTime},
+                #{employedTitle},
+                #{otherDept},
+                #{remarks},
+                #{creator},
+                #{createTime},
+                #{createDept},
+                #{examMethod})
+    </insert>
+    <select id="getTeachingTaskById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teachingtask.bean.TeachingTask">
+        SELECT
+            t.id,
+            t.semester,
+            t.department,
+            t.prepared_by,
+            t.prepared_time,
+            t.exam_method,
+            t.teacher_id,
+            t.class_info,
+            t.student_num,
+            t.course_id,
+            t.week_time,
+            t.employed_title,
+            t.other_dept,
+            t.remarks,
+            FUNC_GET_TABLEVALUE(t.teacher_id, 'T_SYS_USER', 'user_id', 'name')          teacherName,
+            FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
+            FUNC_GET_TABLEVALUE(t.class_info, 'T_XG_CLASS', 'class_id', 'class_name')   className,
+            FUNC_GET_TABLEVALUE(t.prepared_by, 'T_SYS_USER', 'user_id', 'name')         preparedByName,
+            FUNC_GET_TABLEVALUE(t.department, 'T_SYS_DEPT', 'dept_id', 'dept_name')     departmentName
+        FROM T_JW_TEACHINGTASK t
+        WHERE t.id = #{id}
+    </select>
+    <update id="updateTeachingTask" parameterType="com.goisan.educational.teachingtask.bean.TeachingTask">
+        update T_JW_TEACHINGTASK
+        set
+            school_year=#{schoolYear},
+            semester=#{semester},
+            department=#{department},
+            prepared_by=#{preparedBy},
+            prepared_time=#{preparedTime},
+            teacher_id=#{teacherId},
+            class_info=#{classInfo},
+            student_num=#{studentNum},
+            course_id=#{courseId},
+            week_time=#{weekTime},
+            employed_title=#{employedTitle},
+            other_dept=#{otherDept},
+            remarks=#{remarks},
+            changer=#{changer},
+            change_time=#{changeTime},
+            change_dept=#{changeDept},
+            exam_method=#{examMethod}
+        where
+            id = #{id}
+    </update>
+    <delete id="deleteTeachingTaskByIds" parameterType="java.lang.String">
+        delete
+        from T_JW_TEACHINGTASK
+        where id = #{id}
+    </delete>
+
+    <select id="getNewestPreparedBy" resultType="com.goisan.educational.teachingtask.bean.TeachingTask">
+        SELECT *
+        FROM (
+                 SELECT
+                     t.id,
+                     t.semester,
+                     t.department,
+                     t.prepared_by,
+                     t.prepared_time,
+                     t.teacher_id,
+                     t.class_info,
+                     t.student_num,
+                     t.course_id,
+                     t.week_time,
+                     t.employed_title,
+                     t.other_dept,
+                     t.remarks,
+                     FUNC_GET_TABLEVALUE(t.teacher_id, 'T_SYS_USER', 'user_id', 'name')          teacherName,
+                     FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
+                     FUNC_GET_TABLEVALUE(t.class_info, 'T_XG_CLASS', 'class_id', 'class_name')   className,
+                     FUNC_GET_TABLEVALUE(t.prepared_by, 'T_SYS_USER', 'user_id', 'name')         preparedByName,
+                     FUNC_GET_TABLEVALUE(t.department, 'T_SYS_DEPT', 'dept_id', 'dept_name')     departmentName,
+                     FUNC_GET_DICVALUE(exam_method,'KHFS') examMethod
+                 FROM T_JW_TEACHINGTASK t
+                 ORDER BY
+                     t.create_time DESC)
+        WHERE rownum = 1
+    </select>
+
+    <select id="getTeachingTaskByClassIdAndCourseIdAndSemester" resultType="com.goisan.educational.teachingtask.bean.TeachingTask" parameterType="com.goisan.educational.teachingtask.bean.TeachingTask">
+        SELECT
+        t.*,
+        FUNC_GET_TABLEVALUE(t.teacher_id, 'T_SYS_USER', 'user_id', 'name') teacherName,
+        FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
+        FUNC_GET_TABLEVALUE(t.class_info, 'T_XG_CLASS', 'class_id', 'class_name') className,
+        FUNC_GET_TABLEVALUE(t.prepared_by, 'T_SYS_USER', 'user_id', 'name') preparedByName,
+        FUNC_GET_TABLEVALUE(t.department, 'T_SYS_DEPT', 'dept_id', 'dept_name') departmentName,
+        FUNC_GET_DICVALUE(semester,'XQ') semesterName,
+        FUNC_GET_DICVALUE(exam_method,'KHFS') examMethod
+        FROM T_JW_TEACHINGTASK t WHERE class_info = #{classInfo} AND course_id = #{courseId} AND semester = #{semester}
+        <if test="id != null and id != ''">
+            AND t.id != #{id}
+        </if>
+    </select>
+    <select id="getPersonIdByStaffId" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.person_id from T_RS_EMPLOYEE t where t.staff_id = #{staffId}
+    </select>
+</mapper>

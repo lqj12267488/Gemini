@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentspace.studentpersonalworks.dao.StudentPersonalWorksDao">
+    <select id="getPersonalWorksList"
+            parameterType="com.goisan.studentspace.studentpersonalworks.bean.StudentPersonalWorks"
+            resultType="com.goisan.studentspace.studentpersonalworks.bean.StudentPersonalWorks">
+        select
+        ID id,
+        RESOURCE_NAME resourceName,
+        UPLOAD_PERSON_ID uploadPersonId,
+        UPLOAD_DEPT_ID uploadDeptId,
+        to_char(UPLOAD_TIME,'yyyy-mm-dd hh24:mi') uploadTime,
+        remark
+        from T_XS_PERSONALWORKS t
+        WHERE 1 = 1 and t.valid_flag = '1'
+        <if test="creator !='' and creator!=null">
+            AND t.CREATOR = #{creator}
+        </if>
+        <if test="resourceName !='' and resourceName!=null">
+            AND t.RESOURCE_NAME like '%'||#{resourceName}||'%'
+        </if>
+        AND t.UPLOAD_PERSON_ID = #{uploadPersonId}
+        ORDER BY
+        t.create_time DESC
+    </select>
+    <insert id="saveStudentPersonalWorks"
+            parameterType="com.goisan.studentspace.studentpersonalworks.bean.StudentPersonalWorks">
+        insert into T_XS_PERSONALWORKS
+        (ID,RESOURCE_NAME,UPLOAD_PERSON_ID,UPLOAD_DEPT_ID,UPLOAD_TIME,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values
+        (#{id},#{resourceName},#{creator},#{createDept},#{createTime},#{remark},
+        #{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getStudentPersonalWorksById" parameterType="java.lang.String"
+            resultType="com.goisan.studentspace.studentpersonalworks.bean.StudentPersonalWorks">
+        select
+        ID,
+        RESOURCE_NAME resourceName,
+        UPLOAD_PERSON_ID uploadPersonId,
+        UPLOAD_DEPT_ID uploadDeptId,
+        UPLOAD_TIME uploadTime,
+        REMARK
+        from
+        T_XS_PERSONALWORKS t
+        where
+        1=1
+        and
+        ID = #{id}
+    </select>
+
+    <update id="updateStudentPersonalWorks"
+            parameterType="com.goisan.studentspace.studentpersonalworks.bean.StudentPersonalWorks">
+      update T_XS_PERSONALWORKS
+      set
+      RESOURCE_NAME=#{resourceName},
+      REMARK=#{remark},
+      change_time=#{changeTime},
+      change_dept=#{changeDept},
+      changer = #{changer}
+      where
+      id = #{id}
+    </update>
+    <delete id="delStudentPersonalWorks" parameterType="java.lang.String">
+        DELETE FROM T_XS_PERSONALWORKS WHERE id = #{id}
+    </delete>
+    <!--
+  <update id="delResourcePrivate" parameterType="java.lang.String">
+      UPDATE ZYK_RESOURCE_PRIVATE set valid_flag = '0'  where   RESOURCE_ID = #{resourceId}
+  </update>
+
+  <select id="myResourceRecycleList"
+          parameterType="com.goisan.approval.bean.ResourcePrivate"
+          resultType="com.goisan.approval.bean.ResourcePrivate">
+      select
+      RESOURCE_ID resourceId,
+      RESOURCE_NAME resourceName,
+      FUNC_GET_TABLEVALUE(RESOURCE_CUSTOM, 'zyk_type_custom', 'type_id', 'type_name') resourceCustom ,
+      FUNC_GET_DICVALUE(resource_type, 'ZYK_ZYLX') resourceType,
+      FUNC_GET_DICVALUE(PUBLIC_FLAG, 'ZYK_SF') publicFlagShow,PUBLIC_FLAG as publicFlag,
+      FUNC_GET_DICVALUE(CLASSIC_FLAG, 'ZYK_SF') classicFlagShow,CLASSIC_FLAG as classicFlag,
+      FUNC_GET_USERNAME(UPLOAD_PERSON_ID) uploadPersonId,
+      FUNC_GET_DEPTNAME(UPLOAD_DEPT_ID) uploadDeptId,
+      UPLOAD_TIME uploadTime,
+      remark
+      from ZYK_RESOURCE_PRIVATE t
+      where 1 = 1
+      <if test="resourceName !='' and resourceName!=null">
+          AND t.RESOURCE_NAME like '%'||#{resourceName}||'%'
+      </if>
+      <if test="resourceType !='' and resourceType!=null">
+          AND t.resource_type = #{resourceType}
+      </if>
+      <if test="creator !='' and creator!=null and creator !='sa'">
+          AND t.creator = #{creator}
+      </if>
+      and t.valid_flag = '0'
+      ORDER BY
+      t.create_time DESC
+  </select>
+  <update id="backResourceRecycle" parameterType="java.lang.String">
+      UPDATE ZYK_RESOURCE_PRIVATE set valid_flag = '1'  where   RESOURCE_ID = #{resourceId}
+  </update>
+  <delete id="delResourceURL" parameterType="java.lang.String">
+      DELETE FROM ZYK_FILES WHERE business_id = #{resourceId}
+  </delete>
+  <select id="selectFileURL" parameterType="java.lang.String" resultType="com.goisan.system.bean.Files">
+      select file_url from ZYK_FILES t where business_id = #{resourceId}
+  </select>
+  <update id="updatePrivateFlag" parameterType="com.goisan.approval.bean.ResourcePrivate">
+      update ZYK_RESOURCE_PRIVATE
+      set
+      <if test="publicFlag !='' and publicFlag!=null">
+          public_flag = #{publicFlag},
+      </if>
+      <if test="classicFlag !='' and classicFlag!=null">
+          classic_flag = #{classicFlag},
+      </if>
+      change_time=sysdate,
+      change_dept=#{changeDept},
+      changer = #{changer}
+      where
+      RESOURCE_ID = #{resourceId}
+  </update>
+-->
+</mapper>

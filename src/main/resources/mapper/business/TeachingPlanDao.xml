@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.teachingplan.dao.TeachingPlanDao">
+    <select id="selectList" parameterType="com.goisan.educational.teachingplan.bean.TeachingPlan"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingPlan">
+        SELECT
+          id,
+          plan_name,
+          FUNC_GET_TABLEVALUE(departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')         departments_id,
+          FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+               '--' ||   FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC')  major_code,
+          FUNC_GET_DICVALUE( major_direction,'ZXZYFX') major_direction ,
+          training_level ,
+          FUNC_GET_DICVALUE(COURSE_TYPE, 'KCLX') COURSE_TYPE ,
+          FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')         course_id,
+          FUNC_GET_TABLEVALUE(textbook_id, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbook_id,
+          func_get_deptname('CLASS_ID','1')  className,
+          FUNC_GET_DICVALUE(year ,'ND')                                                     year,
+          class_id      classId,
+          FUNC_GET_DICVALUE(term, 'KKJHXQ')                                                 term,
+          start_time,end_time,total_weeks,total_hours,theoretical_weeks,theoretical_hours,total_theoretical_hours,
+          practice_weeks,practice_hours,total_practice_hours,request_flag,feedback, feedback_flag,
+          theorypractice_hours theoryPracticeHours
+        FROM T_JW_TEACHINGPLAN
+        WHERE 1=1
+        <if test=" year != null and year != '' ">
+            AND year = #{year}
+        </if>
+        <if test="term != null and term != '' ">
+            AND term = #{term}
+        </if>
+        <if test="planName != null and planName != '' ">
+            AND plan_name LIKE '%'||#{planName}||'%'
+        </if>
+        AND (request_flag = '0' OR request_flag IS NULL)
+    </select>
+    <insert id="save" parameterType="com.goisan.educational.teachingplan.bean.TeachingPlan">
+        insert into t_jw_teachingplan (id,plan_name,departments_id,major_code,major_direction,training_level,COURSE_TYPE,course_id,textbook_id,year,class_id,term,start_time,end_time,total_weeks,total_hours,theoretical_weeks,theoretical_hours,total_theoretical_hours,practice_weeks,practice_hours,total_practice_hours,creator,create_time,create_dept,theorypractice_hours)
+        values (#{id},#{planName},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{courseType},#{courseId},#{textbookId},#{year},#{classId},#{term},#{startTime},#{endTime},#{totalWeeks},#{totalHours},#{theoreticalWeeks},#{theoreticalHours},#{totalTheoreticalHours},#{practiceWeeks},#{practiceHours},#{totalPracticeHours},#{creator},#{createTime},#{createDept},#{theoryPracticeHours})
+    </insert>
+    <select id="selectById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingPlan">
+        select id,
+         PLAN_NAME,
+DEPARTMENTS_ID,
+MAJOR_CODE,
+MAJOR_DIRECTION,
+TRAINING_LEVEL,
+COURSE_TYPE,
+COURSE_ID,
+TEXTBOOK_ID,
+FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseIdShow,
+FUNC_GET_TABLEVALUE(textbook_id, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textBookIdShow,
+YEAR,
+CLASS_ID,
+TERM,
+START_TIME,
+END_TIME,
+TOTAL_WEEKS,
+TOTAL_HOURS,
+THEORETICAL_WEEKS,
+THEORETICAL_HOURS,
+TOTAL_THEORETICAL_HOURS,
+PRACTICE_WEEKS,
+PRACTICE_HOURS,
+TOTAL_PRACTICE_HOURS,
+REQUEST_FLAG,
+FEEDBACK,
+FEEDBACK_FLAG,
+CREATOR,
+CREATE_TIME,
+CREATE_DEPT,
+CHANGER,
+CHANGE_TIME,
+CHANGE_DEPT,
+VALID_FLAG,
+THEORYPRACTICE_HOURS,
+CLASS_NAME
+         from T_JW_TEACHINGPLAN where id = #{id}
+    </select>
+    <update id="update" parameterType="com.goisan.educational.teachingplan.bean.TeachingPlan">
+        update t_jw_teachingplan set plan_name=#{planName},departments_id=#{departmentsId},
+        major_code=#{majorCode},major_direction=#{majorDirection},training_level=#{trainingLevel},COURSE_TYPE=#{courseType},
+        course_id=#{courseId},textbook_id=#{textbookId},year=#{year},class_id=#{classId},term=#{term},start_time=#{startTime},end_time=#{endTime},total_weeks=#{totalWeeks},total_hours=#{totalHours},theoretical_weeks=#{theoreticalWeeks},theoretical_hours=#{theoreticalHours},total_theoretical_hours=#{totalTheoreticalHours},practice_weeks=#{practiceWeeks},practice_hours=#{practiceHours},total_practice_hours=#{totalPracticeHours},request_flag=#{requestFlag},feedback=#{feedback},feedback_flag=#{feedbackFlag},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept},
+        theorypractice_hours=#{theoryPracticeHours} where id = #{id}
+    </update>
+    <delete id="del" parameterType="java.lang.String">
+        delete from T_JW_TEACHINGPLAN where id = #{id}
+    </delete>
+    <select id="getClassNames" parameterType="String" resultType="String">
+        SELECT CLASS_NAME FROM T_XG_CLASS WHERE CLASS_ID in (${classIds})
+    </select>
+    <select id="getCourseByMajor" resultType="com.goisan.system.bean.Select2">
+        SELECT COURSE_ID id,COURSE_NAME text  FROM T_JW_COURSE WHERE MAJOR_CODE=(select MAJOR_CODE FROM T_XG_MAJOR WHERE MAJOR_ID = #{majorId})
+    </select>
+    <select id="getTextbookByMajor" resultType="com.goisan.system.bean.Select2">
+        SELECT TEXTBOOK_ID id,TEXTBOOK_NAME text  FROM T_JW_TEXTBOOK WHERE MAJOR_CODE=(select MAJOR_CODE FROM T_XG_MAJOR WHERE MAJOR_ID = #{majorId})
+    </select>
+    <select id="getProcessList"
+            parameterType="com.goisan.educational.teachingplan.bean.TeachingPlan"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingPlan">
+        SELECT
+        t.id,
+        t.plan_name,
+        FUNC_GET_TABLEVALUE(t.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')         departmentsIdShow,
+
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        '--' || FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC')  majorCode,
+        FUNC_GET_DICVALUE( major_direction,'ZXZYFX')  major_direction,
+        training_level training_level,
+        FUNC_GET_DICVALUE(COURSE_TYPE, 'KCLX') COURSE_TYPE ,
+
+        FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')         courseId,
+        FUNC_GET_TABLEVALUE(t.textbook_id, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbookId,
+        FUNC_GET_DICVALUE(t.year ,'ND')                                                     year,
+        FUNC_GET_DEPTNAME(t.class_id,'1' ) className,
+        t.class_id,
+        FUNC_GET_DICVALUE(t.term, 'KKJHXQ')                                                 term,
+        t.start_time,
+        t.end_time,
+        t.total_weeks,
+        t.total_hours,
+        t.theoretical_weeks,
+        t.theoretical_hours,
+        t.total_theoretical_hours,
+        t.practice_weeks,
+        t.practice_hours,
+        t.total_practice_hours,
+        t.request_flag,
+        t.feedback,
+        t.feedback_flag
+        FROM T_JW_TEACHINGPLAN t,t_sys_workflow_start s,t_sys_workflow_handle r
+        WHERE 1=1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+        <if test=" year != null and year != '' ">
+            AND year = #{year}
+        </if>
+        <if test="term != null and term != '' ">
+            AND term = #{term}
+        </if>
+        <if test="planName != null and planName != '' ">
+            AND plan_name LIKE '%'||#{planName}||'%'
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+    </select>
+    <select id="getCompleteList"
+            parameterType="com.goisan.educational.teachingplan.bean.TeachingPlan"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingPlan">
+        SELECT DISTINCT
+        t.id,
+        t.plan_name,
+        FUNC_GET_TABLEVALUE(t.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')         departments_id,
+
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        '--' ||  FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC')  major_code,
+        FUNC_GET_DICVALUE( major_direction,'ZXZYFX')  major_direction,
+        training_level training_level,
+        FUNC_GET_DICVALUE(COURSE_TYPE, 'KCLX') COURSE_TYPE ,
+        FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')         course_id,
+        FUNC_GET_TABLEVALUE(t.textbook_id, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbook_id,
+        FUNC_GET_DICVALUE(t.year ,'ND')                                                     year,
+        t.class_id,
+        FUNC_GET_DICVALUE(t.term, 'KKJHXQ')                                                 term,
+        t.start_time,
+        t.end_time,
+        t.total_weeks,
+        t.total_hours,
+        t.theoretical_weeks,
+        t.theoretical_hours,
+        t.total_theoretical_hours,
+        t.practice_weeks,
+        t.practice_hours,
+        t.total_practice_hours,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT')  requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback
+        FROM T_JW_TEACHINGPLAN t,t_sys_workflow_start s,t_sys_workflow_handle r
+        WHERE 1=1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test=" year != null and year != '' ">
+            AND year = #{year}
+        </if>
+        <if test="term != null and term != '' ">
+            AND term = #{term}
+        </if>
+        <if test="planName != null and planName != '' ">
+            AND plan_name LIKE '%'||#{planName}||'%'
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+    </select>
+    <select id="getTeachingPlan" parameterType="java.lang.String" resultType="com.goisan.educational.teachingplan.bean.TeachingPlan">
+        SELECT
+        a.id,
+        a.plan_name,
+        FUNC_GET_TABLEVALUE(a.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')         departmentsId,
+        FUNC_GET_TABLEVALUE(a.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        '--' ||   FUNC_GET_DICVALUE(a.training_level, 'ZXZYPYCC')  majorCode,
+        FUNC_GET_DICVALUE( a.major_direction,'ZXZYFX') major_direction ,
+        a.training_level ,
+        FUNC_GET_DICVALUE(a.COURSE_TYPE, 'KCLX') courseType ,
+        FUNC_GET_TABLEVALUE(a.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')         courseId,
+        FUNC_GET_TABLEVALUE(a.textbook_id, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbookId,
+        FUNC_GET_DICVALUE(a.year ,'ND')                                                     year,
+        a.class_id,
+        FUNC_GET_DICVALUE(a.term, 'KKJHXQ')                                                 term,
+        a.start_time,a.end_time,a.total_weeks,a.total_hours,a.theoretical_weeks,a.theoretical_hours,a.total_theoretical_hours,
+        a.practice_weeks,a.practice_hours,a.total_practice_hours,a.request_flag,a.feedback, a.feedback_flag
+        FROM T_JW_TEACHINGPLAN a where a.id=#{id}
+    </select>
+    <select id="getTeachingPlan1" parameterType="java.lang.String" resultType="com.goisan.educational.teachingplan.bean.TeachingPlan">
+         SELECT
+          a.id,
+          a.plan_name,
+          FUNC_GET_TABLEVALUE(a.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')         departmentsId,
+          FUNC_GET_TABLEVALUE(a.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+               '--' ||   FUNC_GET_DICVALUE(a.training_level, 'ZXZYPYCC')  majorCode,
+          FUNC_GET_DICVALUE( a.major_direction,'ZXZYFX') major_direction ,
+          a.training_level ,
+          FUNC_GET_DICVALUE(a.COURSE_TYPE, 'KCLX') courseType ,
+          FUNC_GET_TABLEVALUE(a.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')         courseId,
+          FUNC_GET_TABLEVALUE(a.textbook_id, 'T_JW_TEXTBOOK', 'TEXTBOOK_ID', 'TEXTBOOK_NAME') textbookId,
+          FUNC_GET_DICVALUE(a.year ,'ND')                                                     year,
+          a.class_id,
+          FUNC_GET_DICVALUE(a.term, 'KKJHXQ')                                                 term,
+          a.start_time,a.end_time,a.total_weeks,a.total_hours,a.theoretical_weeks,a.theoretical_hours,a.total_theoretical_hours,
+          a.practice_weeks,a.practice_hours,a.total_practice_hours,a.request_flag,a.feedback, a.feedback_flag,
+          b.week,
+          b.content,
+          b.theoretical_hours,
+          b.practice_hours,
+          b.total_hours,
+          b.practice_place,
+          b.focus,
+          b.difficulty,
+          b.homework,
+           a.theorypractice_hours  theoryPracticeHours
+        FROM T_JW_TEACHINGPLAN a,T_JW_TEACHINGPLAN_DETAIL b where a.id=b.plan_id and a.id=#{id}
+    </select>
+</mapper>

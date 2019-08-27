@@ -1,0 +1,922 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.teachingresult.dao.TeacherResultDao">
+    <select id="getTeacherResultList" resultType="com.goisan.educational.teachingresult.bean.TeachingResult" parameterType="com.goisan.educational.teachingresult.bean.TeachingResult">
+        select t.id                    id,
+        FUNC_GET_DICVALUE(t.result_object,'CGDX')         resultObject,
+        FUNC_GET_USERNAME(t.result_person_id)      resultPersonId,
+        func_get_deptname(t.result_person_dept_id) resultPersonDeptId,
+        FUNC_GET_DICVALUE(t.result_type,'JYCGLB')           resultType,
+        FUNC_GET_DICVALUE(t.result_level,'JYCGJB')          resultLevel,
+        to_char(t.result_time,'yyyy-mm-dd')           resultTime,
+        t.remark                remark,
+        CASE
+        WHEN t.id not in (select f.result_id from t_jw_teachingresult_file f) THEN
+        '否'
+        ELSE
+        '是'
+        END AS files
+        from t_jw_teachingresult t
+        WHERE 1 = 1
+        <if test="resultPersonId != null and resultPersonId != '' ">
+            AND t.result_person_id = '${resultPersonId}'
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="resultObject != null and resultObject != '' ">
+            AND t.result_object = '${resultObject}'
+        </if>
+        <if test="resultType != null and resultType != '' ">
+            AND t.result_type = '${resultType}'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+	<insert id="insertTeachingResult" parameterType="com.goisan.educational.teachingresult.bean.TeachingResult">
+        INSERT INTO t_jw_teachingresult
+        (id,result_object,result_person_id,result_person_dept_id,result_type,result_level,result_time,remark,creator,create_time,create_dept)
+        VALUES
+        (FUNC_GET_UUID,'${resultObject}','${resultPersonId}','${resultPersonDeptId}','${resultType}','${resultLevel}',to_date('${resultTime}','yyyy-mm-dd'),'${remark}','${creator}',sysdate,'${createDept}')
+	</insert>
+	<select id="getTeachingResultById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResult">
+        select t.id                    id,
+        t.result_object         resultObject,
+        (FUNC_GET_USERNAME(t.result_person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.result_person_dept_id))as resultPersonId,
+        (t.result_person_dept_id || ','|| t.result_person_id) as resultPersonDeptId,
+        t.result_type           resultType,
+        t.result_level          resultLevel,
+        to_char(t.result_time,'yyyy-mm-dd')  resultTime,
+        t.remark                remark,
+        CASE
+        WHEN t.id not in (select f.result_id from t_jw_teachingresult_file f) THEN
+        '否'
+        ELSE
+        '是'
+        END AS files
+        from t_jw_teachingresult t
+        WHERE 1 = 1 AND id =#{id} ORDER BY t.create_time DESC
+	</select>
+	<update id="updateTeachingResult" parameterType="com.goisan.educational.teachingresult.bean.TeachingResult">
+		UPDATE t_jw_teachingresult SET
+        result_object = #{resultObject},
+        result_person_id = #{resultPersonId},
+        result_time = to_date(#{resultTime},'yyyy-mm-dd'),
+        remark = #{remark},
+        result_person_dept_id = #{resultPersonDeptId},
+        result_type = #{resultType},
+        result_level = #{resultLevel},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+	</update>
+	<delete id="deleteTeachingResultById"  parameterType="java.lang.String">
+		DELETE  t_jw_teachingresult WHERE id = #{id}
+	</delete>
+    <select id="selectDept" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="selectPerson" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+<!--教科研成果管理-项目(课题)-->
+    <select id="getTeachingResultProjectList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultProject" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultProject">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.PROJECT_TYPE,'XMLX') projectType,
+        t.PROJECT_NAME projectName,
+        FUNC_GET_DICVALUE(t.PROJECT_ROLE,'BRJSXM') projectRole,
+        FUNC_GET_DICVALUE(t.RANKING,'BRPM') ranking,
+        FUNC_GET_DICVALUE(t.SUBJECT,'XKLY') subject,
+        t.APPROVE_NUM approveNum,
+        t.FUNDS_AMOUNT fundsAmount,
+        t.START_DATE startDate,
+        t.END_DATE endDate,
+        FUNC_GET_DICVALUE(t.PROJECT_SOURCE,'XMLY') projectSource,
+        t.PROJECT_CLIENT projectClient,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_PROJECT t
+        WHERE 1 = 1 AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="projectName != null and projectName != '' ">
+            AND t.PROJECT_NAME LIKE '%${projectName}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultProject" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultProject">
+        INSERT INTO T_JW_TEACHINGRESULT_PROJECT
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,PROJECT_TYPE,PROJECT_NAME,PROJECT_ROLE,
+        RANKING,SUBJECT,APPROVE_NUM,FUNDS_AMOUNT,
+        START_DATE,END_DATE,
+        PROJECT_SOURCE,PROJECT_CLIENT,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${projectType}','${projectName}','${projectRole}',
+        '${ranking}','${subject}','${approveNum}','${fundsAmount}',
+        to_date('${startDate}','yyyy-mm-dd'),to_date('${endDate}','yyyy-mm-dd'),
+        '${projectSource}','${projectClient}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultProjectById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultProject">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.PROJECT_TYPE projectType,
+        t.PROJECT_NAME projectName,
+        t.PROJECT_ROLE projectRole,
+        t.RANKING ranking,
+        t.SUBJECT subject,
+        t.APPROVE_NUM approveNum,
+        t.FUNDS_AMOUNT fundsAmount,
+        to_char(start_date,'yyyy-mm-dd') startDate,
+        to_char(end_date,'yyyy-mm-dd') endDate,
+        t.PROJECT_SOURCE projectSource,
+        t.PROJECT_CLIENT projectClient,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_PROJECT t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultProject" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultProject">
+        UPDATE T_JW_TEACHINGRESULT_PROJECT SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        PROJECT_TYPE = #{projectType},
+        PROJECT_NAME = #{projectName},
+        PROJECT_ROLE = #{projectRole},
+        RANKING = #{ranking},
+        SUBJECT = #{subject},
+        APPROVE_NUM  = #{approveNum},
+        FUNDS_AMOUNT  = #{fundsAmount},
+        START_DATE  = to_date(#{startDate},'yyyy-mm-dd'),
+        END_DATE  = to_date(#{endDate},'yyyy-mm-dd'),
+        PROJECT_SOURCE  = #{projectSource},
+        PROJECT_CLIENT  = #{projectClient},
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultProject"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_PROJECT WHERE id = #{id}
+    </delete>
+<!--教科研成果管理-国家标准或行业标准-->
+    <select id="getTeachingResultStandardList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultStandard" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultStandard">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        func_get_deptname(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.ROLE,'BRJSLW') Role,
+        t.STANDARD_NUM standardNum,
+        to_char(t.PUBLISH_DATE,'yyyy-mm-dd') publishDate,
+        t.PUBLISH_UNIT publishUnit,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_STANDARD t
+        WHERE 1 = 1 AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="standardNum != null and standardNum != '' ">
+            AND t.STANDARD_NUM LIKE '%${standardNum}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultStandard" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultStandard">
+        INSERT INTO T_JW_TEACHINGRESULT_STANDARD
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,ROLE,
+        STANDARD_NUM,PUBLISH_DATE,PUBLISH_UNIT,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${role}',
+        '${standardNum}',to_date('${publishDate}','yyyy-mm-dd'),'${publishUnit}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultStandardById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultStandard">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.ROLE role,
+        t.STANDARD_NUM standardNum,
+        to_char(t.PUBLISH_DATE,'yyyy-mm-dd') publishDate,
+        t.PUBLISH_UNIT publishUnit,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_STANDARD t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultStandard" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultStandard">
+        UPDATE T_JW_TEACHINGRESULT_STANDARD SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        ROLE = #{role},
+        STANDARD_NUM = #{standardNum},
+        PUBLISH_DATE = to_date(#{publishDate},'yyyy-mm-dd'),
+        PUBLISH_UNIT = #{publishUnit},
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultStandard"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_STANDARD WHERE id = #{id}
+    </delete>
+<!--教科研成果管理-国家医药证书-->
+    <select id="getTeachingResultMedicineList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultMedicine" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultMedicine">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.ROLE,'BRJSYY') Role,
+        t.MEDICINE_NUM medicineNum,
+        t.MEDICINE_NAME medicineName,
+        to_char(t.PUBLISH_DATE,'yyyy-mm-dd') publishDate,
+        to_char(t.VALIDITY_TERM,'yyyy-mm-dd') validityTerm,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_MEDICINE t
+        WHERE 1 = 1 AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="medicineName != null and medicineName != '' ">
+            AND t.MEDICINE_NAME LIKE '%${medicineName}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultMedicine" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultMedicine">
+        INSERT INTO T_JW_TEACHINGRESULT_MEDICINE
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,ROLE,MEDICINE_NUM,MEDICINE_NAME,
+        PUBLISH_DATE,VALIDITY_TERM,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${role}','${medicineNum}','${medicineName}',
+        to_date('${publishDate}','yyyy-mm-dd'),to_date('${validityTerm}','yyyy-mm-dd'),'${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultMedicineById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultMedicine">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.ROLE role,
+        t.MEDICINE_NUM medicineNum,
+        t.MEDICINE_NAME medicineName,
+        to_char(t.PUBLISH_DATE,'yyyy-mm-dd') publishDate,
+        to_char(t.VALIDITY_TERM,'yyyy-mm-dd') validityTerm,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_MEDICINE t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultMedicine" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultMedicine">
+        UPDATE T_JW_TEACHINGRESULT_MEDICINE SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        ROLE = #{role},
+        MEDICINE_NUM = #{medicineNum},
+        MEDICINE_NAME = #{medicineName},
+        PUBLISH_DATE = to_date(#{publishDate},'yyyy-mm-dd'),
+        VALIDITY_TERM = to_date(#{validityTerm},'yyyy-mm-dd'),
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultMedicine"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_MEDICINE WHERE id = #{id}
+    </delete>
+<!--教科研成果管理-论文-->
+    <select id="getTeachingResultPaperList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultPaper" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultPaper">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.ROLE,'BRJSLW') Role,
+        t.PAPER_NAME paperName,
+        t.JOURNAL_NAME journalName,
+        to_char(t.PUBLISH_DATE,'yyyy-mm-dd') publishDate,
+        t.VOLUME_NUM volumeNum,
+        t.ISSUE_NUM issueNum,
+        t.START_NUM startNum,
+        t.END_NUM endNum,
+        FUNC_GET_DICVALUE(t.SUBJECT,'XKLY') subject,
+        FUNC_GET_DICVALUE(t.EMBODY_SITUATION,'LWSLQK') embodySituation,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_PAPER t
+        WHERE 1 = 1 AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="paperName != null and paperName != '' ">
+            AND t.PAPER_NAME LIKE '%${paperName}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultPaper" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultPaper">
+        INSERT INTO T_JW_TEACHINGRESULT_PAPER
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,ROLE,PAPER_NAME,JOURNAL_NAME,
+        PUBLISH_DATE,VOLUME_NUM,ISSUE_NUM,START_NUM,END_NUM,
+        SUBJECT,EMBODY_SITUATION,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${role}','${paperName}','${journalName}',
+        to_date('${publishDate}','yyyy-mm-dd'),'${volumeNum}','${issueNum}','${startNum}','${endNum}',
+        '${subject}','${embodySituation}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultPaperById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultPaper">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.ROLE role,
+        t.PAPER_NAME paperName,
+        t.JOURNAL_NAME journalName,
+        to_char(t.PUBLISH_DATE,'yyyy-mm-dd') publishDate,
+        t.VOLUME_NUM volumeNum,
+        t.ISSUE_NUM issueNum,
+        t.START_NUM startNum,
+        t.END_NUM endNum,
+        t.SUBJECT subject,
+        t.EMBODY_SITUATION embodySituation,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_PAPER t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultPaper" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultPaper">
+        UPDATE T_JW_TEACHINGRESULT_PAPER SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        ROLE = #{role},
+        PAPER_NAME = #{paperName},
+        JOURNAL_NAME = #{journalName},
+        PUBLISH_DATE = to_date(#{publishDate},'yyyy-mm-dd'),
+        VOLUME_NUM = #{volumeNum},
+        ISSUE_NUM = #{issueNum},
+        START_NUM = #{startNum},
+        END_NUM = #{endNum},
+        SUBJECT = #{subject},
+        EMBODY_SITUATION = #{embodySituation},
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultPaper"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_PAPER WHERE id = #{id}
+    </delete>
+<!--教科研成果管理-著作-->
+    <select id="getTeachingResultWritingList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultWriting" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultWriting">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.ROLE,'BRJSZZ') Role,
+        t.WRITING_NAME writingName,
+        FUNC_GET_DICVALUE(t.WRITING_TYPE,'ZZLB') writingType,
+        FUNC_GET_DICVALUE(t.SUBJECT,'XKLY') subject,
+        to_char(t.PUBLISH_DATE,'yyyy-mm-dd') publishDate,
+        t.PRESS_NAME pressName,
+        t.PUBLISH_NUM publishNum,
+        t.TOTAL_COUNT totalCount,
+        t.WORD_COUNT wordCount,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_WRITING t
+        WHERE 1 = 1 AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="writingName != null and writingName != '' ">
+            AND t.WRITING_NAME LIKE '%${writingName}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultWriting" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultWriting">
+        INSERT INTO T_JW_TEACHINGRESULT_WRITING
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,ROLE,WRITING_TYPE,WRITING_NAME,SUBJECT,
+        PUBLISH_DATE,PRESS_NAME,PUBLISH_NUM,
+        TOTAL_COUNT,WORD_COUNT,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${role}','${writingType}','${writingName}','${subject}',
+        to_date('${publishDate}','yyyy-mm-dd'),'${pressName}','${publishNum}',
+        '${totalCount}','${wordCount}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultWritingById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultWriting">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.ROLE role,
+        t.WRITING_NAME writingName,
+        t.WRITING_TYPE writingType,
+        t.SUBJECT subject,
+        to_char(t.PUBLISH_DATE,'yyyy-mm-dd') publishDate,
+        t.PRESS_NAME pressName,
+        t.PUBLISH_NUM publishNum,
+        t.TOTAL_COUNT totalCount,
+        t.WORD_COUNT wordCount,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_WRITING t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultWriting" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultWriting">
+        UPDATE T_JW_TEACHINGRESULT_WRITING SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        ROLE = #{role},
+        WRITING_TYPE = #{writingType},
+        WRITING_NAME = #{writingName},
+        SUBJECT = #{subject},
+        PUBLISH_DATE = to_date(#{publishDate},'yyyy-mm-dd'),
+        PRESS_NAME = #{pressName},
+        PUBLISH_NUM = #{publishNum},
+        TOTAL_COUNT = #{totalCount},
+        WORD_COUNT = #{wordCount},
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultWriting"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_WRITING WHERE id = #{id}
+    </delete>
+<!--教科研成果管理-文艺作品-->
+    <select id="getTeachingResultArtList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultArt" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultArt">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.ROLE,'BRJSYY') role,
+        FUNC_GET_DICVALUE(t.ART_TYPE,'WYZPLB') artType,
+        t.ART_NAME artName,
+        to_char(t.FINISH_DATE,'yyyy-mm-dd') finishDate,
+        t.FINISH_PLACE finishPlace,
+        t.WORK_DESCRIBE workDescribe,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_ART t where 1=1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="artName != null and artName != '' ">
+            AND t.ART_NAME LIKE '%${artName}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultArt" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultArt">
+        INSERT INTO T_JW_TEACHINGRESULT_ART
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,ROLE,ART_TYPE,ART_NAME,
+        FINISH_DATE,FINISH_PLACE,WORK_DESCRIBE,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${role}','${artType}','${artName}',
+        to_date('${finishDate}','yyyy-mm-dd'),'${finishPlace}','${workDescribe}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultArtById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultArt">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.ROLE role,
+        t.ART_TYPE artType,
+        t.ART_NAME artName,
+        to_char(t.FINISH_DATE,'yyyy-mm-dd') finishDate,
+        t.FINISH_PLACE finishPlace,
+        t.WORK_DESCRIBE workDescribe,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_ART t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultArt" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultArt">
+        UPDATE T_JW_TEACHINGRESULT_ART SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        ROLE = #{role},
+        ART_TYPE = #{artType},
+        ART_NAME = #{artName},
+        FINISH_DATE = to_date(#{finishDate},'yyyy-mm-dd'),
+        FINISH_PLACE = #{finishPlace},
+        WORK_DESCRIBE = #{workDescribe},
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultArt"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_ART WHERE id = #{id}
+    </delete>
+<!--教科研成果管理-指导学生参加竞赛获奖-->
+    <select id="getTeachingResultGuideList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultGuide" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultGuide">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.ROLE,'BRJSZD') Role,
+        t.PRIZE_NAME prizeName,
+        t.PRIZE_RANK prizeRank,
+        to_char(t.PRIZE_DATE,'yyyy-mm-dd') prizeDate,
+        t.WORK_DESCRIBE workDescribe,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_GUIDE t
+        WHERE 1 = 1 AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="prizeName != null and prizeName != '' ">
+            AND t.PRIZE_NAME LIKE '%${prizeName}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultGuide" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultGuide">
+        INSERT INTO T_JW_TEACHINGRESULT_GUIDE
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,ROLE,PRIZE_NAME,PRIZE_RANK,
+        PRIZE_DATE,WORK_DESCRIBE,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${role}','${prizeName}','${prizeRank}',
+        to_date('${prizeDate}','yyyy-mm-dd'),'${workDescribe}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultGuideById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultGuide">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.ROLE role,
+        t.PRIZE_NAME prizeName,
+        t.PRIZE_RANK prizeRank,
+        to_char(t.PRIZE_DATE,'yyyy-mm-dd') prizeDate,
+        t.WORK_DESCRIBE workDescribe,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_GUIDE t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultGuide" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultGuide">
+        UPDATE T_JW_TEACHINGRESULT_GUIDE SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        ROLE = #{role},
+        PRIZE_NAME = #{prizeName},
+        PRIZE_RANK = #{prizeRank},
+        PRIZE_DATE = to_date(#{prizeDate},'yyyy-mm-dd'),
+        WORK_DESCRIBE = #{workDescribe},
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultGuide"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_GUIDE WHERE id = #{id}
+    </delete>
+<!--教科研成果管理-专利或软件著作权-->
+    <select id="getTeachingResultPatentList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultPatent" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultPatent">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.ROLE,'BRJSYY') Role,
+        t.PATENT_NAME patentName,
+        t.PATENT_NUM patentNum,
+        FUNC_GET_DICVALUE(t.PATENT_TYPE,'ZLZZLX') patentType,
+        FUNC_GET_DICVALUE(t.SUBJECT,'XKLY') subject,
+        to_char(t.NOTICE_DATE,'yyyy-mm-dd') noticeDate,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_PATENT t
+        WHERE 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="patentName != null and patentName != '' ">
+            AND t.PATENT_NAME LIKE '%${patentName}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultPatent" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultPatent">
+        INSERT INTO T_JW_TEACHINGRESULT_PATENT
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,ROLE,SUBJECT,NOTICE_DATE,
+        PATENT_TYPE,PATENT_NAME,PATENT_NUM,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${role}','${subject}',to_date('${noticeDate}','yyyy-mm-dd'),
+        '${patentType}','${patentName}','${patentNum}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultPatentById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultPatent">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.ROLE role,
+        t.SUBJECT subject,
+        to_char(t.NOTICE_DATE,'yyyy-mm-dd') noticeDate,
+        t.PATENT_TYPE patentType,
+        t.PATENT_NUM patentNum,
+        t.PATENT_NAME patentName,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_PATENT t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultPatent" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultPatent">
+        UPDATE T_JW_TEACHINGRESULT_PATENT SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        ROLE = #{role},
+        SUBJECT = #{subject},
+        NOTICE_DATE = to_date(#{noticeDate},'yyyy-mm-dd'),
+        PATENT_TYPE = #{patentType},
+        PATENT_NUM = #{patentNum},
+        PATENT_NAME = #{patentName},
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultPatent"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_PATENT WHERE id = #{id}
+    </delete>
+<!--教科研成果管理-咨询报告或研究报告-->
+    <select id="getTeachingResultReportList" resultType="com.goisan.educational.teachingresult.bean.TeachingResultReport" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultReport">
+        select
+        t.id id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_DICVALUE(t.TYPICAL_FLAG,'SDBXXM') typicalFlag,
+        FUNC_GET_DICVALUE(t.ROLE,'BRJSYY') Role,
+        t.REPORT_NAME reportName,
+        to_char(t.REPORT_DATE,'yyyy-mm-dd') reportDate,
+        t.CONSIGNER consigner,
+        t.remark remark,
+        t.create_time createTime
+        from T_JW_TEACHINGRESULT_REPORT t
+        WHERE 1 = 1 AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(t.person_id)='${personId}'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND FUNC_GET_DEPTNAME(t.dept_id) LIKE '${deptId}'
+        </if>
+        <if test="reportName != null and reportName != '' ">
+            AND t.REPORT_NAME LIKE '%${reportName}%'
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <insert id="insertTeachingResultReport" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultReport">
+        INSERT INTO T_JW_TEACHINGRESULT_REPORT
+        (id,person_id,dept_id,
+        TYPICAL_FLAG,ROLE,REPORT_NAME,
+        REPORT_DATE,CONSIGNER,REMARK,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        VALUES
+        (FUNC_GET_UUID,'${personId}','${deptId}',
+        '${typicalFlag}','${role}','${reportName}',
+        to_date('${reportDate}','yyyy-mm-dd'),'${consigner}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getTeachingResultReportById" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultReport">
+        select
+        t.id id,
+        (FUNC_GET_USERNAME(t.person_id) || '  ----  ' || FUNC_GET_DEPTNAME(t.dept_id)) as personId,
+        (t.dept_id || ','|| t.person_id) as deptId,
+        t.TYPICAL_FLAG typicalFlag,
+        t.ROLE role,
+        t.REPORT_NAME reportName,
+        to_char(t.REPORT_DATE,'yyyy-mm-dd') reportDate,
+        t.CONSIGNER consigner,
+        t.remark remark
+        from T_JW_TEACHINGRESULT_REPORT t
+        WHERE 1 = 1 AND id =#{id}
+    </select>
+    <update id="updateTeachingResultReport" parameterType="com.goisan.educational.teachingresult.bean.TeachingResultReport">
+        UPDATE T_JW_TEACHINGRESULT_REPORT SET
+        person_id = #{personId},
+        dept_id = #{deptId},
+        TYPICAL_FLAG = #{typicalFlag},
+        ROLE = #{role},
+        REPORT_NAME = #{reportName},
+        REPORT_DATE = to_date(#{reportDate},'yyyy-mm-dd'),
+        CONSIGNER = #{consigner},
+        REMARK = #{remark},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingResultReport"  parameterType="java.lang.String">
+        DELETE  T_JW_TEACHINGRESULT_REPORT WHERE id = #{id}
+    </delete>
+<!--教科研成果统计-->
+    <select id="getCountList" parameterType="java.lang.String" resultType="com.goisan.educational.teachingresult.bean.TeachingResultProject">
+        select id,FUNC_GET_USERNAME(personId) personId,deptId,FUNC_GET_DICVALUE(resultType,'CGLX') resultType,resultType AS resultTypeValue,creator,createDept,createDate
+        FROM
+        (select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_PROJECT pr
+        UNION ALL
+        select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_STANDARD st
+        UNION ALL
+        select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_MEDICINE me
+        UNION ALL
+        select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_PAPER pa
+        UNION ALL
+        select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_ART ar
+        UNION ALL
+        select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_GUIDE gu
+        UNION ALL
+        select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_WRITING wr
+        UNION ALL
+        select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_PATENT pa
+        UNION ALL
+        select id id,
+        person_id personId,FUNC_GET_DEPTNAME(dept_id) deptId,RESULT_TYPE resultType,
+        FUNC_GET_USERNAME(creator) creator, FUNC_GET_DEPTNAME(create_dept) createDept, to_char(create_time, 'yyyy-mm-dd hh24:mi') createDate
+        from T_JW_TEACHINGRESULT_REPORT re)
+        WHERE 1=1
+        <if test="personId != null and personId != ''">
+            AND personId = '${personId}'
+        </if>
+        <if test="deptId != null and deptId != ''">
+            AND deptId = '${deptId}'
+        </if>
+        <if test="resultType != null and resultType != ''">
+            AND resultType = '${resultType}'
+        </if>
+    </select>
+
+<!--通过教科研成果id删除附件-->
+    <delete id="deleteFilesByBusinessId" parameterType="string">
+        DELETE FROM T_SYS_FILES WHERE BUSINESS_ID = #{businessId}
+    </delete>
+</mapper>

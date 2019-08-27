@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.courseSign.dao.CourseSignDao">
+    <insert id="saveCourseSign" parameterType="com.goisan.educational.courseSign.bean.CourseSign">
+        INSERT INTO T_JW_COURSEPLAN_SIGN
+         (SIGN_ID, plan_id,details_id, TERM_ID, course_id, course_name, term,
+          PERSON_ID,DEPT_ID,
+          creator, create_time, create_dept,VALID_FLAG)
+        VALUES
+        (#{signId}, #{planId}, #{detailsId}, #{termId}, #{courseId}, #{courseName},  #{term},
+         #{personId},  #{deptId},
+         #{creator}, sysdate, #{createDept},'0')
+    </insert>
+    <update id="updateCourseSign" parameterType="com.goisan.educational.courseSign.bean.CourseSign">
+        UPDATE T_JW_COURSEPLAN_SIGN
+        SET
+            term = #{term} ,
+            changer= #{changer},
+            change_time= sysdate,
+            change_dept= #{changeDept}
+        WHERE   SIGN_ID= #{signId}
+    </update>
+    <select id="getCourseSignByid" parameterType="java.lang.String"
+            resultType="com.goisan.educational.courseSign.bean.CourseSign">
+        SELECT t.sign_id signId , t.details_id detailsId,
+              FUNC_GET_TABLEVALUE(t.plan_id, 'T_JW_COURSEPLAN', 'PLAN_ID', 'PLAN_NAME') planId  ,
+              FUNC_GET_DICVALUE(m.term,'KKJHXQ') termId ,
+              t.course_id courseId,t.course_name courseName,
+              FUNC_GET_DICVALUE(t.term,'XQ') term,
+              FUNC_GET_USERNAME(t.person_id ) personId,
+              FUNC_GET_DEPTNAME(t.dept_id) deptId ,t.term termValue
+        FROM T_JW_COURSEPLAN_SIGN t , T_JW_COURSEPLAN_TERM m
+        WHERE t.term_id = m.id AND t.sign_id = #{signId}
+    </select>
+    <select id="getCourseSignList" parameterType="com.goisan.educational.courseSign.bean.CourseSign"
+            resultType="com.goisan.educational.courseSign.bean.CourseSign">
+        SELECT t.sign_id signId , t.details_id detailsId,
+        FUNC_GET_TABLEVALUE(t.plan_id, 'T_JW_COURSEPLAN', 'PLAN_ID', 'PLAN_NAME') planId ,t.plan_id AS planName  ,
+        FUNC_GET_DICVALUE(m.term,'KKJHXQ') termId ,
+        t.term_id as termValue ,
+        t.course_id courseId,t.course_name courseName,
+        FUNC_GET_DICVALUE(t.term,'XQ') term,
+        FUNC_GET_USERNAME(t.person_id ) personId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        FUNC_GET_TABLEVALUE((case when FUNC_GET_DEPTNAME(class_id,1) is not null then t.class_id else '空' end),'T_XG_CLASS','class_id','class_name')
+         as classId
+        FROM T_JW_COURSEPLAN_SIGN t , T_JW_COURSEPLAN_TERM m
+        WHERE t.term_id = m.id
+        <if test="term != null and term != ''">
+            AND t.term = #{term}
+        </if>
+        <if test="planId != null and planId != ''">
+            AND t.plan_id = #{planId}
+        </if>
+        <if test="signId != null and signId != ''">
+            AND t.sign_id = #{signId}
+        </if>
+        <if test="termId != null and termId != ''">
+            AND t.term_id = #{termId}
+        </if>
+        <if test="personId != null and personId != ''">
+            AND t.person_id = #{personId}
+        </if>
+        <if test="deptId != null and deptId != ''">
+            AND t.dept_id = #{deptId}
+        </if>
+    </select>
+    <select id="getCourseDetailsByOne" parameterType="java.lang.String"
+            resultType="com.goisan.educational.courseSign.bean.CourseSignClass">
+        select
+        m.sign_id signId,
+        t.DEPARTMENTS_ID departmentsId,
+        t.major_code majorCode,
+        t.major_direction majorDirection,
+        t.training_level trainingLevel
+        from T_JW_COURSE t,T_JW_COURSEPLAN_SIGN m
+        where t.course_id = m.course_id
+        and m.sign_id = #{signId}
+    </select>
+    <insert id="saveCourseClass" parameterType="com.goisan.educational.courseSign.bean.CourseSignClass">
+        insert INTO T_JW_COURSEPLAN_SIGN_CLASS
+        (id,sign_id,departments_id,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CREATOR,CREATE_TIME,CREATE_DEPT,VALID_FLAG)
+        VALUES
+        (#{id},#{signId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{creator},sysdate,#{createDept},'1')
+    </insert>
+    <insert id="saveCourseClassAll" parameterType="com.goisan.educational.courseSign.bean.CourseSignClass">
+        insert INTO T_JW_COURSEPLAN_SIGN_CLASS
+        (id,sign_id,departments_id,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,CREATOR,CREATE_TIME,CREATE_DEPT,VALID_FLAG)
+        SELECT
+        #{id} id,#{signId} sign_id,
+        t.departments_Id,t.major_code,t.major_direction,t.training_level,t.class_id,
+        #{creator} CREATOR,sysdate CREATE_TIME,#{createDept} CREATE_DEPT,'1'
+        FROM T_XG_CLASS t WHERE t.CLASS_ID=#{classId}
+    </insert>
+    <delete id="delCourseSign" parameterType="java.lang.String">
+        DELETE FROM T_JW_COURSEPLAN_SIGN WHERE sign_id = #{signId}
+    </delete>
+
+    <select id="getClassBySignId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.courseSign.bean.CourseSignClass">
+        SELECT * FROM T_JW_COURSEPLAN_SIGN_CLASS WHERE sign_id = #{signId}
+    </select>
+    <update id="updateCourseSignClass" parameterType="com.goisan.educational.courseSign.bean.CourseSignClass">
+        UPDATE T_JW_COURSEPLAN_SIGN_CLASS
+        SET
+        class_id = #{classId} ,
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE   SIGN_ID= #{signId}
+    </update>
+    <delete id="delCourseSignClass" parameterType="java.lang.String">
+        DELETE FROM T_JW_COURSEPLAN_SIGN_CLASS WHERE sign_id = #{signId}
+    </delete>
+
+    <select id="getClassTreeBySign" resultType="com.goisan.system.bean.Tree" parameterType="java.lang.String">
+        SELECT DEPARTMENTS_ID id, FUNC_GET_DEPTNAME(DEPARTMENTS_ID) name, '' pid
+            FROM T_JW_COURSEPLAN
+            where PLAN_ID = #{id}
+        UNION
+        SELECT distinct d.major_code id, d.major_name name, d.departments_id pId
+            FROM T_XG_MAJOR d  , T_JW_COURSEPLAN jj
+            WHERE d.valid_flag = 1 and jj.major_code = d.major_code
+                and jj.major_direction = d.major_direction and jj.training_level = d.training_level
+                and jj.PLAN_ID =  #{id}
+        UNION
+        SELECT distinct cc.class_id id, cc.class_name name, cc.major_code pid
+            FROM t_xg_class cc, T_JW_COURSEPLAN jj
+            WHERE  cc.valid_flag = 1 and cc.major_code = cc.major_code
+                and jj.major_code = cc.major_code and jj.major_direction = cc.major_direction
+                and jj.training_level = cc.training_level
+                and jj.PLAN_ID =  #{id}
+    </select>
+    <update id="updateSignListBySignId" parameterType="java.lang.String">
+        UPDATE
+        T_JW_COURSEPLAN_SIGN
+        SET
+        class_id = (select wmsys.wm_concat(t.class_id) as class_id from T_JW_COURSEPLAN_SIGN_CLASS t where t.sign_id = #{signId})
+        WHERE
+        sign_id = #{signId}
+    </update>
+    <select id="getArrayClassCourseIdsPlanByCouesePlanId" parameterType="String" resultType="String">
+        SELECT id FROM T_JW_ARRAYCLASS_COURSEPLAN WHERE PLAN_ID = #{id}
+    </select>
+</mapper>

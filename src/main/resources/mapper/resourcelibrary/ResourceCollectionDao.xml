@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.collection.dao.ResourceCollectionDao">
+    <select id="getResourceCollectionList"
+            parameterType="com.goisan.collection.bean.ResourceCollection"
+            resultType="com.goisan.collection.bean.ResourceCollection">
+        select c.id,
+        c.resource_id,
+        FUNC_GET_TABLEVALUE(c.resource_id,'ZYK_RESOURCE_PUBLIC','RESOURCE_ID','RESOURCE_NAME') resourceName,
+        (FUNC_GET_USERNAME(p.public_person_id) || '  ----  ' || FUNC_GET_DEPTNAME(p.public_dept_id)) personShow,
+        p.public_person_id AS personId,
+        c.dept_id,
+        c.resource_type,
+        func_get_dicvalue(p.resource_type,'ZYK_ZYLX') resourceTypeShow
+        from zyk_collection c, ZYK_RESOURCE_PUBLIC p
+        WHERE 1 = 1
+        AND c.resource_id = p.resource_id
+        AND c.valid_flag = '1'
+        <if test="personId !='' and personId!=null">
+            AND c.person_id = #{personId}
+        </if>
+        <if test="resourceType !='' and resourceType!=null">
+            AND p.resource_type = #{resourceType}
+        </if>
+        <if test="resourceName !='' and resourceName!=null">
+            AND c.resource_id IN (
+              SELECT RESOURCE_ID FROM ZYK_RESOURCE_PUBLIC
+                WHERE RESOURCE_NAME LIKE  '%'||'${resourceName}'||'%' )
+        </if>
+    </select>
+    <insert id="saveResourceCollection" parameterType="com.goisan.collection.bean.ResourceCollection">
+        insert into zyk_collection
+        (id,resource_id,person_id,dept_id,resource_type,creator,create_time,create_dept,valid_flag)
+        values (#{id},#{resourceId},#{creator},#{createDept},#{resourceType},#{creator},sysdate,#{createDept},'1')
+    </insert>
+    <select id="getResourceCollectionById" parameterType="java.lang.String"
+            resultType="com.goisan.collection.bean.ResourceCollection">
+        select * from zyk_collection where id = #{id}
+    </select>
+    <update id="updateResourceCollection" parameterType="com.goisan.collection.bean.ResourceCollection">
+        update zyk_collection
+          set
+            valid_flag = '0',changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+             where valid_flag = '1' AND resource_id = #{resourceId} AND person_id = #{changer}
+    </update>
+    <delete id="delResourceCollection" parameterType="java.lang.String">
+        UPDATE zyk_collection set valid_flag = '0' where id = #{id}
+    </delete>
+</mapper>

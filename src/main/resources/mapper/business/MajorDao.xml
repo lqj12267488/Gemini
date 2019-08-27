@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.major.dao.MajorDao">
+    <update id="addTeachFileTalentTrain" parameterType="com.goisan.educational.major.bean.TalentTrain">
+        update T_JW_TALENTTRAIN
+        set TEACH_FILE_ID = #{teachFile}
+        where id = #{id}
+    </update>
+    <update id="addPracticeFileTalentTrain" parameterType="com.goisan.educational.major.bean.TalentTrain">
+        update T_JW_TALENTTRAIN
+        set PRACTICE_FILE_ID = #{teachFile}
+        where id = #{id}
+    </update>
+    <update id="addDistributeFileTalentTrain" parameterType="com.goisan.educational.major.bean.TalentTrain">
+        update T_JW_TALENTTRAIN
+        set DISTRIBUTE_FILE_ID = #{teachFile}
+        where id = #{id}
+    </update>
+
+    <select id="getMajorList" parameterType="com.goisan.educational.major.bean.Major"
+            resultType="com.goisan.educational.major.bean.Major">
+        select t.major_id majorId,
+        t.major_name majorName,
+        t.major_code majorCode,
+        FUNC_GET_DICVALUE(t.max_year, 'XYNX') as maxYear,
+        t.MAJOR_SCHOOL majorSchool,
+        t.major_direction majorDirection,
+        t.ORDERS_STUDENT_NUM ordersStudentnum,
+        t.school_system schoolSystem,
+        t.departments_id departmentsId,
+        t.spring_autumn_flag springAutumnFlag,
+        t.training_level trainingLevel,
+        t.CLASS_NUM classNum,
+        t.ORDERS_CLASS_NUM ordersClassnum,
+        t.MAJOR_DIRECTION_CODE majorDirectionCode,
+        t.NOW_MAJOR majorNow,
+        to_char(t.APPROVAL_TIME ,'yyyy-mm-dd') approvalTime,
+        to_char(t.first_recruit_time,'yyyy-mm-dd') firstRecruitTime,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_DICVALUE(t.ORDERS_STUDENT_NUM, 'ZXZYLX') as StudentnumShow,
+        FUNC_GET_DICVALUE(t.school_system, 'ZXZYXZ') as schoolSystemShow,
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') as majorDirectionShow,
+        FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') as trainingLevelShow,
+        FUNC_GET_DICVALUE(t.CLASS_NUM, 'SF') as classNumShow,
+        FUNC_GET_DICVALUE(t.ORDERS_CLASS_NUM, 'SF') as ordersClassnumShow,
+        FUNC_GET_DICVALUE(t.spring_autumn_flag, 'SF') as springAutumnFlagShow,
+        FUNC_GET_DICVALUE(t.valid_flag, 'SF') as validFlagShow,
+        FUNC_GET_DICVALUE(t.MAJOR_SCHOOL, 'XY') as majorSchoolShow,
+        FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE,'T_RS_EMPLOYEE','person_id','name') directionCodeShow,
+        FUNC_GET_TABLEVALUE(t.NOW_MAJOR,'T_RS_EMPLOYEE','person_id','name') majorNowShow,
+        FUNC_GET_DICVALUE(t.FOCUS_COURSE_TYPE, 'ZDZY') as focusTypeShow,
+        FUNC_GET_DICVALUE(t.UNIQUE_COURSE_TYPE, 'TSZY') as uniqueTypeShow,
+        remark,
+        FILE_URL,
+        PROFESSION_CHARACT,
+        t.create_time createTime
+        from t_xg_major t
+        WHERE 1 = 1
+        and t.valid_flag = '1'
+        <if test="departmentsId != null and departmentsId != '' and departmentsId != 'null'">
+            AND departments_id = #{departmentsId}
+        </if>
+        <if test="majorName != null and majorName != '' and majorName != 'null' ">
+            AND major_name LIKE '%${majorName}%'
+        </if>
+        <if test="majorCode != null and majorCode != '' and majorCode != 'null' ">
+            AND major_code LIKE '%${majorCode}%'
+        </if>
+        order by t.create_time desc
+    </select>
+
+    <!--获得所有的专业-->
+    <select id="getAllMajor" resultType="com.goisan.educational.major.bean.Major">
+        select t.major_id                                                                        majorId,
+               t.major_name                                                                      majorName,
+               t.major_code                                                                      majorCode,
+               t.MAJOR_SCHOOL                                                                    majorSchool,
+               t.major_direction                                                                 majorDirection,
+               t.ORDERS_STUDENT_NUM                                                              ordersStudentnum,
+               t.school_system                                                                   schoolSystem,
+               t.departments_id                                                                  departmentsId,
+               t.spring_autumn_flag                                                              springAutumnFlag,
+               t.training_level                                                                  trainingLevel,
+               t.CLASS_NUM                                                                       classNum,
+               t.ORDERS_CLASS_NUM                                                                ordersClassnum,
+               t.MAJOR_DIRECTION_CODE                                                            majorDirectionCode,
+               t.NOW_MAJOR                                                                       majorNow,
+               to_char(t.APPROVAL_TIME, 'yyyy-mm-dd')                                            approvalTime,
+               to_char(t.first_recruit_time, 'yyyy-mm-dd')                                       firstRecruitTime,
+               FUNC_GET_TABLEVALUE(departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')         departmentsIdShow,
+               FUNC_GET_DICVALUE(t.ORDERS_STUDENT_NUM, 'ZXZYLX') as                              StudentnumShow,
+               FUNC_GET_DICVALUE(t.school_system, 'ZXZYXZ')      as                              schoolSystemShow,
+               FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX')    as                              majorDirectionShow,
+               FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC')   as                              trainingLevelShow,
+               FUNC_GET_DICVALUE(t.CLASS_NUM, 'SF')              as                              classNumShow,
+               FUNC_GET_DICVALUE(t.ORDERS_CLASS_NUM, 'SF')       as                              ordersClassnumShow,
+               FUNC_GET_DICVALUE(t.spring_autumn_flag, 'SF')     as                              springAutumnFlagShow,
+               FUNC_GET_DICVALUE(t.valid_flag, 'SF')             as                              validFlagShow,
+               FUNC_GET_DICVALUE(t.MAJOR_SCHOOL, 'XY')           as                              majorSchoolShow,
+               FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE, 'T_RS_EMPLOYEE', 'person_id', 'name') directionCodeShow,
+               FUNC_GET_TABLEVALUE(t.NOW_MAJOR, 'T_RS_EMPLOYEE', 'person_id', 'name')            majorNowShow,
+               FUNC_GET_DICVALUE(t.FOCUS_COURSE_TYPE, 'ZDZY')    as                              focusTypeShow,
+               FUNC_GET_DICVALUE(t.UNIQUE_COURSE_TYPE, 'TSZY')   as                              uniqueTypeShow,
+               remark,
+               FILE_URL,
+               PROFESSION_CHARACT,
+               t.create_time                                                                     createTime
+        from t_xg_major t
+        where t.VALID_FLAG = '1'
+    </select>
+
+    <select id="getMajorListExport" parameterType="com.goisan.educational.major.bean.Major"
+            resultType="com.goisan.educational.major.bean.Major">
+        select t.major_id majorId,
+        t.major_name majorName,
+        t.major_code majorCode,
+        t.MAJOR_SCHOOL majorSchool,
+        t.major_direction majorDirection,
+        t.ORDERS_STUDENT_NUM ordersStudentnum,
+        t.school_system schoolSystem,
+        t.departments_id departmentsId,
+        t.spring_autumn_flag springAutumnFlag,
+        t.training_level trainingLevel,
+        t.CLASS_NUM classNum,
+        t.ORDERS_CLASS_NUM ordersClassnum,
+        t.MAJOR_DIRECTION_CODE majorDirectionCode,
+        to_char(t.APPROVAL_TIME ,'yyyy-mm') approvalTime,
+        to_char(t.first_recruit_time, 'yyyy-mm') firstRecruitTime,
+        t.max_year maxYear,
+        FUNC_GET_DICVALUE(t.max_year, 'XYNX') as maxYearShow,
+        FUNC_GET_DICVALUE(t.NOW_MAJOR, 'SF') as majorNow,
+        FUNC_GET_DICVALUE(t.GLOBAL_MAJOR, 'SF') as majorGlobal,
+        t.CLASS_NUM classNum,
+        t.ORDERS_CLASS_NUM ordersClassnum,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_DICVALUE(t.ORDERS_STUDENT_NUM, 'ZXZYLX') as StudentnumShow,
+        FUNC_GET_DICVALUE(t.school_system, 'ZXZYXZ') as schoolSystemShow,
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') as majorDirectionShow,
+        FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') as trainingLevelShow,
+        FUNC_GET_DICVALUE(t.CLASS_NUM, 'SF') as classNumShow,
+        FUNC_GET_DICVALUE(t.ORDERS_CLASS_NUM, 'SF') as ordersClassnumShow,
+        FUNC_GET_DICVALUE(t.spring_autumn_flag, 'SF') as springAutumnFlagShow,
+        FUNC_GET_DICVALUE(t.valid_flag, 'SF') as validFlagShow,
+        FUNC_GET_DICVALUE(t.MAJOR_SCHOOL, 'XY') as majorSchoolShow,
+        FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE,'T_RS_EMPLOYEE','person_id','name') directionCodeShow,
+        FUNC_GET_TABLEVALUE(t.NOW_MAJOR,'T_RS_EMPLOYEE','person_id','name') majorNowShow,
+        FUNC_GET_DICVALUE(t.FOCUS_COURSE_TYPE, 'ZDZY') as focusTypeShow,
+        FUNC_GET_DICVALUE(t.UNIQUE_COURSE_TYPE, 'TSZY') as uniqueTypeShow,
+        remark,
+        FILE_URL,
+        PROFESSION_CHARACT,
+        t.create_time createTime
+        from t_xg_major t
+        WHERE 1 = 1
+        and t.valid_flag = '1'
+        <if test="departmentsId != null and departmentsId != '' and departmentsId != 'null'">
+            AND departments_id = #{departmentsId}
+        </if>
+        <if test="majorName != null and majorName != '' and majorName != 'null' ">
+            AND major_name LIKE '%${majorName}%'
+        </if>
+        <if test="majorCode != null and majorCode != '' and majorCode != 'null' ">
+            AND major_code LIKE '%${majorCode}%'
+        </if>
+        order by t.create_time desc
+    </select>
+    <select id="getMajorByMajorId" parameterType="java.lang.String"
+            resultType="com.goisan.educational.major.bean.Major">
+        select t.major_id                               majorId,
+               t.major_name                             majorName,
+               t.major_code                             majorCode,
+               t.MAJOR_SCHOOL                           majorSchool,
+               t.major_direction                        majorDirection,
+               t.ORDERS_STUDENT_NUM                     ordersStudentnum,
+               t.school_system                          schoolSystem,
+               t.departments_id                         departmentsId,
+               t.spring_autumn_flag                     springAutumnFlag,
+               t.training_level                         trainingLevel,
+               t.CLASS_NUM                              classNum,
+               t.ORDERS_CLASS_NUM                       ordersClassnum,
+               t.MAJOR_DIRECTION_CODE                   majorDirectionCode,
+               t.NOW_MAJOR                              majorNow,
+               to_char(t.approval_time, 'yyyy-mm')      approvalTime,
+               to_char(t.END_RECRUIT_TIME, 'yyyy-mm')   endRecruittime,
+               to_char(t.first_recruit_time, 'yyyy-mm') firstRecruitTime,
+               t.GLOBAL_MAJOR                           majorGlobal,
+               t.FOCUS_COURSE_TYPE                      focusCourseType,
+               t.UNIQUE_COURSE_TYPE                     uniqueCourseType,
+               t.max_year                               maxYear,
+               --         FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+               --         FUNC_GET_DICVALUE(t.ORDERS_STUDENT_NUM, 'ZXZYLX') as StudentnumShow,
+               --         FUNC_GET_DICVALUE(t.school_system, 'ZXZYXZ') as schoolSystemShow,
+               --         FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') as majorDirectionShow,
+               --         FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') as trainingLevelShow,
+               --         FUNC_GET_DICVALUE(t.CLASS_NUM, 'SF') as classNumShow,
+               --         FUNC_GET_DICVALUE(t.ORDERS_CLASS_NUM, 'SF') as ordersClassnumShow,
+               --         FUNC_GET_DICVALUE(t.spring_autumn_flag, 'SF') as springAutumnFlagShow,
+               --         FUNC_GET_DICVALUE(t.valid_flag, 'SF') as validFlagShow,
+               --         FUNC_GET_DICVALUE(t.MAJOR_SCHOOL, 'XY') as majorSchoolShow,
+               --         FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE,'T_RS_EMPLOYEE','person_id','name') directionCodeShow,
+               --         FUNC_GET_TABLEVALUE(t.NOW_MAJOR,'T_RS_EMPLOYEE','person_id','name') majorNowShow,
+               remark,
+               t.PROFESSION_CHARACT                     professionCharact
+        from t_xg_major t
+        WHERE major_id = #{majorId}
+    </select>
+    <!--<insert id="insertMajor" parameterType="com.goisan.educational.major.bean.Major">-->
+        <!--INSERT INTO t_xg_major-->
+        <!--(valid_flag, major_id, major_name, major_code, MAJOR_SCHOOL, major_direction, ORDERS_STUDENT_NUM,-->
+        <!--school_system, departments_id, training_level, CLASS_NUM, ORDERS_CLASS_NUM, spring_autumn_flag,-->
+        <!--MAJOR_DIRECTION_CODE, NOW_MAJOR, approval_time, first_recruit_time, FOCUS_COURSE_TYPE,-->
+        <!--MAX_YEAR, GLOBAL_MAJOR, UNIQUE_COURSE_TYPE, END_RECRUIT_TIME,-->
+        <!--creator, create_time, create_dept, remark, profession_Charact<if test="fileUrl != null and fileUrl != ''">-->
+        <!--,file_url</if>)-->
+        <!--VALUES-->
+        <!--('1', func_get_uuid, '${majorName}', '${majorCode}', '${majorSchool}', '${majorDirection}',-->
+        <!--'${ordersStudentnum}',-->
+        <!--'${schoolSystem}', '${departmentsId}', '${trainingLevel}', '${classNum}', '${ordersClassnum}',-->
+        <!--'${springAutumnFlag}',-->
+        <!--'${majorDirectionCode}', '${majorNow}', to_date('${approvalTime}', 'yyyy-mm'), to_date('${firstRecruitTime}',-->
+        <!--'yyyy-mm'),-->
+        <!--'${focusCourseType}', '${maxYear}', '${majorGlobal}', '${uniqueCourseType}', to_date('${endRecruittime}',-->
+        <!--'yyyy-mm'),-->
+        <!--'${creator}', sysdate, '${createDept}', '${remark}', '${professionCharact}'<if-->
+            <!--test="fileUrl != null and fileUrl != ''">,#{fileUrl}</if>)-->
+    <!--</insert>-->
+<!--修改新增专业，学制根据专业年限插入-->
+    <insert id="insertMajor" parameterType="com.goisan.educational.major.bean.Major">
+        INSERT INTO t_xg_major
+        (valid_flag, major_id, major_name, major_code, MAJOR_SCHOOL, major_direction, ORDERS_STUDENT_NUM,
+        school_system, departments_id, training_level, CLASS_NUM, ORDERS_CLASS_NUM, spring_autumn_flag,
+        MAJOR_DIRECTION_CODE, NOW_MAJOR, approval_time, first_recruit_time, FOCUS_COURSE_TYPE,
+        MAX_YEAR, GLOBAL_MAJOR, UNIQUE_COURSE_TYPE, END_RECRUIT_TIME,
+        creator, create_time, create_dept, remark, profession_Charact<if test="fileUrl != null and fileUrl != ''">
+        ,file_url</if>)
+        VALUES
+        ('1', func_get_uuid, '${majorName}', '${majorCode}', '${majorSchool}', '${majorDirection}',
+        '${ordersStudentnum}',
+        '${maxYear}', '${departmentsId}', '${trainingLevel}', '${classNum}', '${ordersClassnum}',
+        '${springAutumnFlag}',
+        '${majorDirectionCode}', '${majorNow}', to_date('${approvalTime}', 'yyyy-mm'), to_date('${firstRecruitTime}',
+        'yyyy-mm'),
+        '${focusCourseType}', '${maxYear}', '${majorGlobal}', '${uniqueCourseType}', to_date('${endRecruittime}',
+        'yyyy-mm'),
+        '${creator}', sysdate, '${createDept}', '${remark}', '${professionCharact}'<if
+            test="fileUrl != null and fileUrl != ''">,#{fileUrl}</if>)
+    </insert>
+
+    <!--<update id="updateMajor" parameterType="com.goisan.educational.major.bean.Major">-->
+        <!--UPDATE t_xg_major set-->
+        <!--major_name = #{majorName},-->
+        <!--major_school = #{majorSchool},-->
+        <!--ORDERS_STUDENT_NUM = #{ordersStudentnum},-->
+        <!--school_system = #{schoolSystem},-->
+        <!--departments_id = #{departmentsId},-->
+        <!--CLASS_NUM = #{classNum},-->
+        <!--ORDERS_CLASS_NUM = #{ordersClassnum},-->
+        <!--spring_autumn_flag = #{springAutumnFlag},-->
+        <!--MAJOR_DIRECTION_CODE = #{majorDirectionCode},-->
+        <!--MAJOR_DIRECTION = #{majorDirection},-->
+        <!--NOW_MAJOR = #{majorNow},-->
+        <!--remark = #{remark},-->
+        <!--focus_course_type = #{focusCourseType},-->
+        <!--unique_course_type = #{uniqueCourseType},-->
+        <!--MAX_YEAR = #{maxYear},-->
+        <!--GLOBAL_MAJOR = #{majorGlobal},-->
+        <!--PROFESSION_CHARACT = #{professionCharact},-->
+        <!--TRAINING_LEVEL = #{trainingLevel},-->
+        <!--<if test="approvalTime != null ">-->
+            <!--approval_time = to_date('${approvalTime}','yyyy-mm'),-->
+        <!--</if>-->
+        <!--<if test="firstRecruitTime != null ">-->
+            <!--first_recruit_time = to_date('${firstRecruitTime}','yyyy-mm'),-->
+        <!--</if>-->
+        <!--<if test="endRecruittime != null">-->
+            <!--END_RECRUIT_TIME=to_date('${endRecruittime}','yyyy-mm'),-->
+        <!--</if>-->
+        <!--<if test="fileUrl != null and fileUrl != ''">-->
+            <!--file_url = #{fileUrl},-->
+        <!--</if>-->
+        <!--change_time = #{changeTime},-->
+        <!--change_dept = #{changeDept},-->
+        <!--changer = #{changer}-->
+        <!--WHERE major_id = #{majorId}-->
+    <!--</update>-->
+
+<!--修改，在修改专业年限时，同时修改学制，codeValue同-->
+    <update id="updateMajor" parameterType="com.goisan.educational.major.bean.Major">
+        UPDATE t_xg_major set
+        major_name = #{majorName},
+        major_school = #{majorSchool},
+        ORDERS_STUDENT_NUM = #{ordersStudentnum},
+        school_system = #{maxYear},
+        departments_id = #{departmentsId},
+        CLASS_NUM = #{classNum},
+        ORDERS_CLASS_NUM = #{ordersClassnum},
+        spring_autumn_flag = #{springAutumnFlag},
+        MAJOR_DIRECTION_CODE = #{majorDirectionCode},
+        MAJOR_DIRECTION = #{majorDirection},
+        NOW_MAJOR = #{majorNow},
+        remark = #{remark},
+        focus_course_type = #{focusCourseType},
+        unique_course_type = #{uniqueCourseType},
+        MAX_YEAR = #{maxYear},
+        GLOBAL_MAJOR = #{majorGlobal},
+        PROFESSION_CHARACT = #{professionCharact},
+        TRAINING_LEVEL = #{trainingLevel},
+        <if test="approvalTime != null ">
+            approval_time = to_date('${approvalTime}','yyyy-mm'),
+        </if>
+        <if test="firstRecruitTime != null ">
+            first_recruit_time = to_date('${firstRecruitTime}','yyyy-mm'),
+        </if>
+        <if test="endRecruittime != null">
+            END_RECRUIT_TIME=to_date('${endRecruittime}','yyyy-mm'),
+        </if>
+        <if test="fileUrl != null and fileUrl != ''">
+            file_url = #{fileUrl},
+        </if>
+        change_time = #{changeTime},
+        change_dept = #{changeDept},
+        changer = #{changer}
+        WHERE major_id = #{majorId}
+    </update>
+
+    <delete id="delectMajorByMajorId" parameterType="java.lang.String">
+        delete
+        from t_xg_major
+        WHERE major_id = #{majorId}
+    </delete>
+    <select id="checkMajorName" parameterType="com.goisan.educational.major.bean.Major"
+            resultType="com.goisan.educational.major.bean.Major">
+        select *
+        from t_xg_major
+        where major_code = #{majorCode}
+          AND major_name = #{majorName}
+          AND training_level = #{trainingLevel}
+          AND major_direction = #{majorDirection}
+    </select>
+    <select id="checkMajorCode" parameterType="com.goisan.educational.major.bean.Major"
+            resultType="com.goisan.educational.major.bean.Major">
+        select * from t_xg_major
+        where major_code = #{majorCode}
+        <if test="majorId != null and majorId != ''">
+            AND major_id = #{majorId}
+        </if>
+    </select>
+
+    <!--人才培养方案SQL语句-->
+    <select id="getTalentTrainList"
+            resultType="com.goisan.educational.major.bean.TalentTrain">
+
+        select t1.id,
+        t1.plan_name planName,
+        t1.year_type yearType,
+        t1.train_plan trainPlan,
+        t1.request_flag,
+        t1.valid_flag,
+        t1.laststatus,
+        t1.remark,
+        t1.creator,
+        t1.suit_school,
+        t1.train_mode,
+        t1.action_grade,
+        to_char(t1.upload_time, 'yyyyMMdd') uploadTime,
+        t1.ACTION_GRADE actionGrade,
+        NVL(f1.change_time, f1.create_time) teachFileTime,
+        NVL(f2.change_time, f2.create_time) practiceFileTime,
+        NVL(f3.change_time, f3.create_time) distributeFileTime,
+
+        FUNC_GET_TABLEVALUE(t1.departments_id,
+        'T_SYS_DEPT',
+        'DEPT_ID',
+        'DEPT_NAME') departmentsIdShow,
+        FUNC_GET_DICVALUE(t1.request_flag, 'ZYK_ZYSQZT') requestFlag,
+        d.dic_name suitSchool,
+        t2.major_name majorIdShow,
+        t2.major_code majorCode,
+        FUNC_GET_DICVALUE(t2.training_level, 'ZXZYPYCC') trainingLevel,
+        FUNC_GET_DICVALUE(t2.SCHOOL_SYSTEM,'XZ') schoolSystem,
+        t1.PRACTICE_FILE_ID practiceFile,
+        t1.DISTRIBUTE_FILE_ID distributeFile,
+        t1.TEACH_FILE_ID teachFile11,
+        f1.file_type teachFileType,
+        f2.file_type practiceFileType,
+        f3.file_type distributeFileType
+        from T_JW_TALENTTRAIN t1
+        left join t_xg_major t2 on t1.major_id = t2.major_id
+        left join T_SYS_FILES f1 on t1.teach_file_id=f1.file_id
+        left join T_SYS_FILES f2 on t1.practice_file_id=f2.file_id
+        left join T_SYS_FILES f3 on t1.distribute_file_id=f3.file_id
+        left join T_SYS_DIC d on t1.suit_school=d.id
+        where 1 = 1
+        <if test="tt.planName !=null and tt.planName !=''">
+            and t1.TRAIN_PLAN like '%'|| #{tt.planName} || '%'
+        </if>
+        <if test="tt.departmentsId !=null and tt.departmentsId !=''">
+            and t1.departments_id=#{tt.departmentsId}
+        </if>
+        <if test="tt.majorId != null and tt.majorId !=''">
+            and t1.major_id=#{tt.majorId}
+        </if>
+        <if test="uid != null and uid !=''">
+            and t1.creator=#{uid}
+        </if>
+        order by decode(t1.request_flag,'1', 1,'0',3,'2', 4,'4', 5, '3', 2)
+    </select>
+    <insert id="insertTalentTrain" parameterType="com.goisan.educational.major.bean.TalentTrain">
+        INSERT INTO T_JW_TALENTTRAIN
+        (id, DEPARTMENTS_ID, MAJOR_ID, YEAR_TYPE, TRAIN_PLAN, REQUEST_FLAG,
+         creator, create_time, create_dept, train_mode, SUIT_SCHOOL, ACTION_GRADE, TEACH_FILE_ID, PRACTICE_FILE_ID,
+         DISTRIBUTE_FILE_ID)
+        VALUES (func_get_uuid, '${departmentsId}', '${majorId}', '${yearType}', '${trainPlan}',
+                '0', '${creator}', sysdate, '${createDept}', '${trainMode}', '${suitSchool}', '${actionGrade}',
+                '${teachFile11}', '${practiceFile}', '${distributeFile}')
+    </insert>
+    <update id="updateTalentTrain" parameterType="com.goisan.educational.major.bean.TalentTrain">
+        UPDATE T_JW_TALENTTRAIN
+        set
+        DEPARTMENTS_ID = #{departmentsId},
+        MAJOR_ID = #{majorId},
+        YEAR_TYPE = #{yearType},
+        TRAIN_PLAN = #{trainPlan},
+        change_time = sysdate,
+        change_dept = #{changeDept},
+        changer = #{changer},
+        train_mode = #{trainMode},
+        ACTION_GRADE = #{actionGrade},
+        <if test="teachFile11 !=null and teachFile11 !=''">
+            TEACH_FILE_ID = #{teachFile11},
+        </if>
+        <if test="practiceFile !=null and practiceFile !=''">
+            PRACTICE_FILE_ID = #{practiceFile},
+        </if>
+        <if test="distributeFile !=null and distributeFile !=''">
+            DISTRIBUTE_FILE_ID = #{distributeFile},
+        </if>
+        SUIT_SCHOOL = #{suitSchool}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTalenTrain" parameterType="java.lang.String">
+        delete
+        from T_JW_TALENTTRAIN
+        where id = #{id}
+    </delete>
+    <select id="getTalentTrainById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.major.bean.TalentTrain">
+        select t.*,
+               t.SUIT_SCHOOL                                                               suitSchool,
+               t.ACTION_GRADE                                                              actionGrade,
+               FUNC_GET_TABLEVALUE(t.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsIdShow,
+               FUNC_GET_TABLEVALUE(MAJOR_ID, 'T_XG_MAJOR', 'MAJOR_code', 'MAJOR_NAME')     majorIdShow,
+               t.PRACTICE_FILE_ID                                                          practiceFile,
+               t.DISTRIBUTE_FILE_ID                                                        distributeFile,
+               t.TEACH_FILE_ID                                                             teachFile11,
+               f1.FILE_NAME teachFileName,
+               f2.FILE_NAME practiceFileName,
+               f3.FILE_NAME distributeFileName
+        from T_JW_TALENTTRAIN t
+                 left join T_SYS_FILES f1 on t.teach_file_id = f1.file_id
+                 left join T_SYS_FILES f2 on t.practice_file_id = f2.file_id
+                 left join T_SYS_FILES f3 on t.distribute_file_id = f3.file_id
+        where t.id = #{id}
+    </select>
+    <update id="submitTalent" parameterType="java.lang.String">
+        UPDATE T_JW_TALENTTRAIN
+        set request_flag='1',
+            laststatus=#{lastStatus}
+        WHERE id = #{id}
+    </update>
+    <select id="getStatusByTid" parameterType="String" resultType="String">
+        select FUNC_GET_DICVALUE(t.request_flag, 'ZYK_ZYSQZT') requestFlag
+        from T_JW_TALENTTRAIN t
+        where t.id = #{tid}
+    </select>
+    <select id="getCoursePlan" parameterType="java.lang.String"
+            resultType="com.goisan.educational.courseplan.bean.CoursePlan">
+        select t.PLAN_ID                           planId,
+               t.PLAN_NAME                         planName,
+               FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID) departmentsId
+        from T_JW_COURSEPLAN t
+    </select>
+    <select id="sfRelation" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        select func_get_dicvalue(r.flag, 'SF')
+        from T_JW_RELATIONCOURSE r
+        where r.plan_id = #{pid}
+          and r.train_id = #{id}
+    </select>
+    <insert id="saveRelationTalent" parameterType="com.goisan.educational.major.bean.TalentTrain">
+        INSERT INTO T_JW_RELATIONCOURSE
+        (id, PLAN_ID, PLAN_NAME, TRAIN_ID, TRAIN_NAME, creator, create_time, create_dept, flag)
+        VALUES (func_get_uuid, '${planId}', '${planName}', '${id}', '${trainName}', '${creator}', sysdate,
+                '${createDept}', '1')
+    </insert>
+    <delete id="delRelationTalent" parameterType="java.lang.String">
+        delete
+        from T_JW_RELATIONCOURSE
+        where PLAN_ID = #{pid}
+          and TRAIN_ID = #{tid}
+    </delete>
+    <select id="getTalentTrainListProcess" parameterType="com.goisan.educational.major.bean.TalentTrain"
+            resultType="com.goisan.educational.major.bean.TalentTrain">
+        select t.*,
+        FUNC_GET_TABLEVALUE(t.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_TABLEVALUE(substr(t.major_id,1,instr(t.major_id,',',1,1)-1), 'T_XG_MAJOR', ' MAJOR_CODE', 'MAJOR_NAME')
+        majorIdShow,
+        FUNC_GET_DICVALUE(t.request_flag,'ZYK_ZYSQZT') requestFlag
+        from T_JW_TALENTTRAIN t
+        where 1 = 1 and request_flag='1'
+        <if test="planName !=null and planName !=''">
+            and TRAIN_PLAN like '%'|| #{planName} || '%'
+        </if>
+        <if test="departmentsId !=null and departmentsId !=''">
+            and departments_id=#{departmentsId}
+        </if>
+        <if test="majorId != null and majorId !=''">
+            and major_id=#{majorId}
+        </if>
+        order by t.create_time desc
+    </select>
+    <update id="saveTalentProcess" parameterType="java.lang.String">
+        UPDATE T_JW_TALENTTRAIN
+        set request_flag=#{requestFlag},
+            REMARK=#{trainPlan},
+            laststatus='1'
+        WHERE id = #{id}
+    </update>
+    <select id="getDeptIdByDeptName" parameterType="java.lang.String" resultType="java.lang.String">
+        select dept_id
+        from T_SYS_DEPT t
+        where dept_name like '%' || #{id} || '%'
+    </select>
+
+    <select id="getMajorCodeIdList" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT MAJOR_CODE "label",
+               MAJOR_ID   "value"
+        FROM T_XG_MAJOR
+    </select>
+    <select id="getrelationMajor" parameterType="java.lang.String"
+            resultType="com.goisan.educational.courseplan.bean.CoursePlan">
+        select t.id                               planId,
+               t.PLAN_NAME                        planName,
+               to_char(CREATE_TIME, 'yyyy-mm-dd') year
+        from T_JW_RELATIONCOURSE t
+        where TRAIN_ID = #{id}
+    </select>
+    <select id="getStudentNumber" resultType="com.goisan.educational.major.bean.Major">
+        SELECT s.major_code                                              majorCode,
+               to_char(SYSDATE, 'YYYY') - t.year                         classNumber,
+               t.year,
+               count(case
+                         when to_char(SYSDATE, 'MM') &lt; '08'
+                             then to_char(SYSDATE, 'YYYY') - t.year end) studentNumber
+        FROM t_xg_student t,
+             T_XG_STUDENT_CLASS r,
+             T_XG_CLASS s
+        where t.student_id = r.student_id
+          and s.class_id = r.class_id
+          and s.graduation_flag = '1'
+          and t.year &lt; to_char(SYSDATE, 'YYYY')
+        GROUP BY t.year, s.major_code
+        order by s.major_code, classNumber
+    </select>
+    <select id="getStudentNumberOrder" resultType="com.goisan.educational.major.bean.Major">
+        SELECT s.major_code                                              majorCode,
+               to_char(SYSDATE, 'YYYY') - t.year                         classNumber,
+               t.year,
+               count(case
+                         when to_char(SYSDATE, 'MM') &gt; '08'
+                             then to_char(SYSDATE, 'YYYY') - t.year end) studentNumber
+        FROM t_xg_student t,
+             T_XG_STUDENT_CLASS r,
+             T_XG_CLASS s
+        where t.student_id = r.student_id
+          and s.class_id = r.class_id
+          and s.graduation_flag = '1'
+          and t.year &lt; to_char(SYSDATE, 'YYYY')
+        GROUP BY t.year, s.major_code
+        order by s.major_code, classNumber
+    </select>
+    <select id="getSourceType" resultType="com.goisan.educational.major.bean.Major">
+        SELECT s.major_code                                              majorCode,
+               count(case when t.STUDENT_SOURCE = '1' then '普通高中起点' end) sourceNumberOne,
+               count(case when t.STUDENT_SOURCE = '2' then '中职起点' end)   sourceNumberTwo,
+               count(case when t.STUDENT_SOURCE = '3' then '其他' end)     sourceNumberThree
+        FROM t_xg_student t,
+             T_XG_STUDENT_CLASS r,
+             T_XG_CLASS s
+        where t.student_id = r.student_id
+          and s.class_id = r.class_id
+          and s.graduation_flag = '1'
+          and t.year &lt; to_char(SYSDATE, 'YYYY')
+        GROUP BY s.major_code
+        order by s.major_code
+    </select>
+    <select id="getMajorCodeNumber" resultType="com.goisan.educational.major.bean.Major">
+        SELECT s.major_code majorCode,
+               count(*)     majorNumber
+        FROM t_xg_student t,
+             T_XG_STUDENT_CLASS r,
+             T_XG_CLASS s
+        where t.student_id = r.student_id
+          and s.class_id = r.class_id
+          and s.graduation_flag = '1'
+          and t.year &lt; to_char(SYSDATE, 'YYYY')
+        GROUP BY s.major_code
+        order by s.major_code
+    </select>
+
+    <!--保存人才方案的驳回-->
+    <update id="saveTalentAgainst" parameterType="java.lang.String">
+        UPDATE T_JW_TALENTTRAIN
+        set request_flag=#{requestFlag},
+            REMARK=#{trainPlan}
+        WHERE id = #{id}
+    </update>
+
+    <!--清空TalentTrain的teachFile-->
+    <update id="clearTeachFile" parameterType="java.lang.String">
+        UPDATE T_JW_TALENTTRAIN
+        set TEACH_FILE_ID=''
+        WHERE id = #{talentTrainId}
+    </update>
+
+    <!--清空TalentTrain的practiceFile-->
+    <update id="clearPtacticeFile" parameterType="java.lang.String">
+        UPDATE T_JW_TALENTTRAIN
+        set PRACTICE_FILE_ID=''
+        WHERE id = #{talentTrainId}
+    </update>
+
+    <!--清空TalentTrain的distributeFile-->
+    <update id="clearDistributeFile" parameterType="java.lang.String">
+        UPDATE T_JW_TALENTTRAIN
+        set DISTRIBUTE_FILE_ID=''
+        WHERE id = #{talentTrainId}
+    </update>
+    <!--查找附件-->
+    <select id="getFilesByFileId" parameterType="String"
+            resultType="com.goisan.system.bean.Files">
+        SELECT * FROM T_SYS_FILES WHERE file_id = #{fileId}
+    </select>
+</mapper>

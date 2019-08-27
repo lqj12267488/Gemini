@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.otherAchievements.dao.OtherAchievementsDao">
+
+    <select id="getOtherAchievementsList" resultType="com.goisan.educational.otherAchievements.bean.OtherAchievements"
+            parameterType="com.goisan.educational.otherAchievements.bean.OtherAchievements">
+        select t.ID,
+        FUNC_GET_DICVALUE(t.semester,'XQ') AS semester,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENT, 'T_SYS_DEPT','dept_id','dept_name') AS department,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID, 'T_XG_CLASS','class_id','class_name') AS className,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC')
+          || ' -- ' || FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') majorCode,
+        t.MAJOR_CODE  majorShow,
+        t.TRAINING_LEVEL trainingLevel,
+        t.MAJOR_DIRECTION majorDirection,
+        t.DEPARTMENT  departmentId,
+        t.CURRICULUM AS curriculum,
+        t.CURRICULUM courseId,
+        t.semester semesterId,
+        t.CLASS_ID classId,
+        t.ASSESSMENT_TYPE
+        from T_JW_OTHER_ACHIEVEMENTS t
+        where 1 = 1
+        <if test="semester!= null and semester != '' ">
+            and   t.semester = #{semester}
+        </if>
+        <if test="department!= null and department != '' ">
+            and t.DEPARTMENT = #{department}
+        </if>
+        <if test="className!= null and className != '' ">
+            and FUNC_GET_TABLEVALUE(t.CLASS_ID, 'T_XG_CLASS','class_id','class_name')  like #{className}
+        </if>
+        <if test="curriculum!= null and curriculum != '' ">
+            and  t.CURRICULUM like #{curriculum}
+        </if>
+    </select>
+
+    <insert id="saveOtherAchievements" parameterType="com.goisan.educational.otherAchievements.bean.OtherAchievements">
+        insert into T_JW_OTHER_ACHIEVEMENTS (ID,SEMESTER,DEPARTMENT,CLASS_ID,CURRICULUM,ASSESSMENT_TYPE,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL)
+        values (FUNC_GET_UUID, #{semester}, #{department},#{classId},#{curriculum},#{assessmentType},#{majorCode},#{majorDirection},#{trainingLevel})
+    </insert>
+
+    <update id="updateOtherAchievements" parameterType="com.goisan.educational.otherAchievements.bean.OtherAchievements">
+            UPDATE T_JW_OTHER_ACHIEVEMENTS SET
+            SEMESTER = #{semester},
+            DEPARTMENT = #{department},
+            CLASS_ID = #{classId},
+            CURRICULUM = #{curriculum},
+            ASSESSMENT_TYPE = #{assessmentType},
+            MAJOR_CODE = #{majorCode},
+            MAJOR_DIRECTION = #{majorDirection},
+            TRAINING_LEVEL = #{trainingLevel}
+        WHERE  id = #{id}
+    </update>
+
+    <delete id="deleteOtherAchievements" parameterType="String">
+        delete
+        from T_JW_OTHER_ACHIEVEMENTS
+        where ID = #{id}
+    </delete>
+
+    <select id="getOtherAchievementsById" resultType="com.goisan.educational.otherAchievements.bean.OtherAchievements" parameterType="String">
+        select id,
+               SEMESTER,
+               DEPARTMENT,
+               CLASS_ID classId,
+               FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+               FUNC_GET_DICVALUE(MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+               FUNC_GET_DICVALUE(TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+               MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+               CURRICULUM,
+               ASSESSMENT_TYPE
+        from T_JW_OTHER_ACHIEVEMENTS
+        where id = #{id}
+    </select>
+
+</mapper>

@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.logistics.assets.dao.AssetsDao">
+    <select id="assetsAction" parameterType="com.goisan.logistics.assets.bean.Assets"
+            resultType="com.goisan.logistics.assets.bean.Assets">
+        SELECT
+        id,
+        FUNC_GET_USERDICVALUE(t.assets_type, 'XCLB') assets_type,
+        assets_num_in,
+        assets_num_all,
+        assets_name,
+        unit,
+        status,
+        specifications,
+        remark,
+        price,
+        to_char(t.in_time, 'yyyy-mm-dd') in_time,
+        creator,
+        create_time,
+        create_dept,
+        change_time,
+        change_dept,
+        changer,
+        brand,
+        valid_flag
+        FROM
+        T_ZW_ASSETS t
+        WHERE 1 = 1
+        <if test="inTime != null and inTime != '' ">
+            AND to_char(t.in_time,'yyyy-mm-dd') LIKE #{inTime}
+        </if>
+        <if test="id != null and id != '' and id != 'all'">
+            and ID in (${id})
+        </if>
+        AND status = '1' AND t.assets_num_in != 0
+        UNION
+        SELECT
+        t1.ASSETS_ID id,
+        FUNC_GET_USERDICVALUE(t1.assets_type, 'XCLB') assets_type,
+        1 assets_num_in,
+        1 assets_num_all,
+        t2.assets_name,
+        t1.unit,
+        t1.status,
+        t1.specifications,
+        t1.remark,
+        t1.price,
+        to_char(t2.in_time, 'yyyy-mm-dd') in_time,
+        t1.creator,
+        t1.create_time,
+        t1.create_dept,
+        t1.change_time,
+        t1.change_dept,
+        t1.changer,
+        t1.brand,
+        t1.valid_flag
+        FROM t_zw_assets_details t1, t_zw_assets t2
+        WHERE 1 = 1
+        <if test="inTime != null and inTime != '' ">
+            AND to_char(t2.in_time,'yyyy-mm-dd') LIKE #{inTime}
+        </if>
+        <if test="id != null and id != '' and id != 'all'">
+            and ID in (${id})
+        </if>
+        AND t1.status = '1' AND t1.parent_assets_id = t2.id
+        order by  create_time desc
+    </select>
+    <select id="exportAssignedList" resultType="com.goisan.logistics.assets.bean.AssetsDetails">
+        SELECT
+        t1.assets_id,
+        FUNC_GET_USERDICVALUE(t2.assets_type, 'XCLB') assets_type,
+        t1.assets_num,
+        t2.assets_name,
+        t1.unit,
+        t1.status,
+        t1.specifications,
+        t2.remark,
+        t1.price,
+        t1.creator,
+        t1.use_time,
+        to_char(t1.use_time, 'yyyy-mm-dd') use_time_show,
+        t1.create_time,
+        t1.create_dept,
+        t1.change_time,
+        t1.change_dept,
+        t1.changer,
+        t2.brand,
+        t1.valid_flag,
+        FUNC_GET_DEPTNAME(t1.USER_DEPT) user_dept,
+        FUNC_GET_USERNAME(t1.USER_ID) user_id,
+        t1.use_position
+        FROM t_zw_assets_details t1, t_zw_assets t2
+        WHERE 1 = 1
+        <if test="ids != null and ids != '' and ids != 'all'">
+            and t1.ASSETS_ID in (${ids})
+        </if>
+        AND t1.status = '2' AND t1.parent_assets_id = t2.id
+        order by t2.CREATE_TIME desc
+    </select>
+    <!--通过ById获取修改页面的id-->
+    <select id="getAssetsById" parameterType="java.lang.String"
+            resultType="com.goisan.logistics.assets.bean.Assets">
+        SELECT
+          t.id,
+          t.assets_name,
+          t.assets_type,
+          t.assets_num_all,
+          t.assets_num_in,
+          t.unit,
+          t.price,
+          t.specifications,
+          t.brand,
+          t.remark,
+          to_char(t.in_time, 'yyyy-mm-dd') inTime,
+          t.creator,
+          t.create_time,
+          t.create_dept,
+          t.changer,
+          t.change_time,
+          t.change_dept,
+          t.valid_flag
+        FROM
+          T_ZW_ASSETS t
+        WHERE
+          id = #{id}
+        ORDER BY t.create_time DESC
+    </select>
+    <!--新增数据-->
+    <insert id="insertAssets" parameterType="com.goisan.logistics.assets.bean.Assets">
+        INSERT INTO T_ZW_ASSETS
+        (id,assets_name,assets_type,assets_num_all,assets_num_in,unit,price,specifications,brand,remark,in_time,creator,create_time,create_dept)
+        VALUES
+        ('${id}',#{assetsName},#{assetsType},#{assetsNumAll},#{assetsNumIn},#{unit},#{price},#{specifications},#{brand},#{remark},to_date(#{inTime},'yyyy-mm-dd'),#{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateAssets" parameterType="com.goisan.logistics.assets.bean.Assets">
+        UPDATE T_ZW_ASSETS
+        SET
+        id = #{id},
+        assets_name = #{assetsName},
+        assets_type = #{assetsType},
+        assets_num_all = #{assetsNumAll},
+        <if test="assetsNumIn != ''">
+            assets_num_in = #{assetsNumIn},
+        </if>
+        unit = #{unit},
+        price = #{price},
+        specifications = #{specifications},
+        brand = #{brand},
+        remark = #{remark},
+        in_time = to_date(#{inTime}, 'yyyy-mm-dd'),
+        changer = #{changer},
+        change_time = sysdate,
+        change_dept = #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <delete id="deleteAssetsById" parameterType="java.lang.String">
+        DELETE T_ZW_ASSETS WHERE id = #{id}
+    </delete>
+    <delete id="deleteAssetsDetailById" parameterType="java.lang.String">
+        DELETE T_ZW_ASSETS_DETAILS WHERE assets_id = #{assetsId}
+    </delete>
+    <select id="getAssetsByIds" parameterType="java.lang.String"
+            resultType="com.goisan.logistics.assets.bean.Assets">
+        SELECT
+        id,
+        assets_name,
+        assets_num_in
+        FROM t_zw_assets
+        WHERE id IN (${ids})
+        UNION
+        SELECT
+        ad.assets_id id,
+        a.assets_name,
+        1 assets_num_in
+        FROM t_zw_assets_details ad, t_zw_assets a
+        WHERE ad.assets_id IN (${ids})
+        AND ad.parent_assets_id = a.id
+    </select>
+    <insert id="saveAssetsDetails" parameterType="com.goisan.logistics.assets.bean.AssetsDetails">
+        INSERT INTO T_ZW_ASSETS_DETAILS (assets_id, parent_assets_id, assets_type, assets_num, unit, price, specifications,
+        brand, remark, status,scrap_reson, use_type, user_dept, user_id, use_time, use_position, direction, creator, create_time, create_dept)
+        VALUES (#{assetsId}, #{parentAssetsId}, #{assetsType}, #{assetsNum}, #{unit}, #{price},
+                #{specifications}, #{brand}, #{remark}, #{status},#{scrapReson}, #{useType}, #{userDept},
+                #{userId}, #{useTime}, #{usePosition}, #{direction}, #{creator}, #{createTime},
+                #{createDept})
+    </insert>
+    <insert id="saveAssetsLog" parameterType="com.goisan.logistics.assets.bean.AssetsLog">
+        INSERT INTO T_ZW_ASSETS_LOG (id, assets_id, parent_assets_id, status,scrap_reson, track, creator, create_time, create_dept)
+        VALUES (#{id},#{assetsId},#{parentAssetsId},#{status},#{scrapReson},#{track},#{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getAssetsDetails" parameterType="java.lang.String"
+            resultType="com.goisan.logistics.assets.bean.AssetsDetails">
+        SELECT * FROM T_ZW_ASSETS_DETAILS WHERE assets_id = #{id}
+    </select>
+    <update id="updateAssetsDetails" parameterType="com.goisan.logistics.assets.bean.AssetsDetails">
+        UPDATE T_ZW_ASSETS_DETAILS
+        SET parent_assets_id = #{parentAssetsId},
+          assets_type        = #{assetsType},
+          assets_num         = #{assetsNum},
+          unit               = #{unit},
+          price              = #{price},
+          specifications     = #{specifications},
+          brand              = #{brand},
+          remark             = #{remark},
+          status             = #{status},
+          use_type           = #{useType},
+          user_dept          = #{userDept},
+          user_id            = #{userId},
+          use_time           = #{useTime},
+          use_position       = #{usePosition},
+          direction          = #{direction},
+          creator            = #{creator},
+          create_time        = #{createTime},
+          create_dept        = #{createDept},
+          changer            = #{changer},
+          change_time        = #{changeTime},
+          change_dept        = #{changeTime}
+        WHERE assets_id = #{assetsId}
+    </update>
+    <select id="countAssetsDetailsByPid" parameterType="java.lang.String"
+            resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM T_ZW_ASSETS_DETAILS
+    </select>
+    <update id="updateAssetsDetailsByPid">
+        UPDATE T_ZW_ASSETS_DETAILS SET status = #{status},direction = #{direction} WHERE parent_assets_id = #{id}
+    </update>
+    <select id="getAssigned" parameterType="com.goisan.logistics.assets.bean.AssetsDetails"
+            resultType="com.goisan.logistics.assets.bean.AssetsDetails">
+        SELECT
+        t1.assets_id,
+        FUNC_GET_USERDICVALUE(t2.assets_type, 'XCLB') assets_type,
+        t1.assets_num,
+        t2.assets_name,
+        t1.unit,
+        t1.status,
+        t1.specifications,
+        t2.remark,
+        t1.price,
+        t1.creator,
+        t1.use_time,
+        to_char(t1.use_time, 'yyyy-mm-dd') use_time_show,
+        t1.create_time,
+        t1.create_dept,
+        t1.change_time,
+        t1.change_dept,
+        t1.changer,
+        t2.brand,
+        t1.valid_flag,
+        FUNC_GET_DEPTNAME(t1.USER_DEPT) user_dept,
+        FUNC_GET_USERNAME(t1.USER_ID) user_id,
+        t1.use_position
+        FROM t_zw_assets_details t1, t_zw_assets t2
+        WHERE 1 = 1
+        <if test="creator != 'sa' and creator != null and creator != ''">
+            AND t2.creator = #{creator}
+        </if>
+        <if test="useTimeShow != null and useTimeShow != '' ">
+            AND to_char(t1.USE_TIME,'yyyy-mm-dd') LIKE #{useTimeShow}
+        </if>
+        AND t1.status = '2' AND t1.parent_assets_id = t2.id
+        order by t2.CREATE_TIME desc
+    </select>
+    <select id="getChanged" parameterType="com.goisan.logistics.assets.bean.AssetsDetails"
+            resultType="com.goisan.logistics.assets.bean.AssetsDetails">
+        SELECT
+        t1.assets_id,
+        FUNC_GET_USERDICVALUE(t2.assets_type, 'XCLB') assets_type,
+        t1.assets_num,
+        t2.assets_name,
+        t1.unit,
+        t1.status,
+        t1.specifications,
+        t2.remark,
+        t1.price,
+        to_char(t2.in_time, 'yyyy-mm-dd hh24:mi') in_time,
+        t1.creator,
+        t1.use_time,
+        to_char(t1.create_time, 'yyyy-mm-dd') use_time_show,
+        t1.create_dept,
+        t1.change_time,
+        t1.change_dept,
+        t1.changer,
+        t2.brand,
+        t1.use_position,
+        t1.valid_flag,
+        FUNC_GET_DEPTNAME(t1.USER_DEPT) user_dept,
+        FUNC_GET_USERNAME(t1.USER_ID) user_id,
+        t1.use_position
+        FROM t_zw_assets_details t1, t_zw_assets t2
+        WHERE 1 = 1
+        <if test="creator != 'sa' and creator != null and creator != ''">
+            AND t2.creator = #{creator}
+        </if>
+        <if test="inTime != null and inTime != '' ">
+            AND to_char(t1.create_time,'yyyy-mm-dd') LIKE #{inTime}
+        </if>
+        AND t1.status > 2 AND t1.parent_assets_id = t2.id
+    </select>
+    <select id="getAssetsDetailsList" parameterType="com.goisan.logistics.assets.bean.AssetsDetails"
+            resultType="com.goisan.logistics.assets.bean.AssetsDetails">
+        SELECT
+        t1.assets_id,
+        FUNC_GET_USERDICVALUE(t2.assets_type, 'XCLB') assets_type,
+        t1.assets_num,
+        t2.assets_name,
+        t1.unit,
+        t1.status,
+        t1.specifications,
+        t2.remark,
+        t1.price,
+        to_char(t2.in_time, 'yyyy-mm-dd hh24:mi') in_time,
+        t1.creator,
+        t1.use_time,
+        to_char(t1.use_time, 'yyyy-mm-dd') use_time_show,
+        t1.create_time,
+        t1.create_dept,
+        t1.change_time,
+        t1.change_dept,
+        t1.changer,
+        t2.brand,
+        t1.use_position,
+        t1.valid_flag,
+        FUNC_GET_DEPTNAME(t1.USER_DEPT) user_dept,
+        FUNC_GET_USERNAME(t1.USER_ID) user_id,
+        t1.use_position
+        FROM t_zw_assets_details t1, t_zw_assets t2
+        WHERE 1 = 1
+        <if test="creator != 'sa' and creator != null and creator != ''">
+            AND t2.creator = #{creator}
+        </if>
+        <if test="inTime != null and inTime != '' ">
+            AND to_char(t2.in_time,'yyyy-mm-dd') LIKE '%${inTime}%'
+        </if>
+        AND t1.parent_assets_id = t2.id
+    </select>
+    <select id="getLogs" parameterType="java.lang.String"
+            resultType="com.goisan.logistics.assets.bean.AssetsLog">
+        SELECT FUNC_GET_USERNAME(creator) creator, FUNC_GET_DICVALUE(status,'XCZT') status,track,to_char(CREATE_TIME, 'yyyy-mm-dd hh24:mi') timeShow FROM T_ZW_ASSETS_LOG WHERE ASSETS_ID = #{id}
+    </select>
+    <select id="getUserDictName"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT
+            DIC_CODE id,
+            dic_name text
+        FROM t_sys_userdic
+        WHERE valid_flag = '1' and dic_type = #{name}
+        ORDER BY dic_order
+    </select>
+    <select id="getDeptName"  resultType="com.goisan.system.bean.Select2">
+        select
+         DEPT_ID  id,
+         DEPT_NAME	text
+        from T_SYS_DEPT
+        WHERE valid_flag = '1'
+        ORDER BY CREATE_TIME
+    </select>
+    <select id="getAssetsIdByIds" resultType="com.goisan.logistics.assets.bean.Assets">
+        SELECT
+        FUNC_GET_USERDICVALUE(t.assets_type, 'XCLB') assets_type,
+        assets_num_in,
+        assets_num_all,
+        assets_name,
+        unit,
+        status,
+        specifications,
+        remark,
+        price,
+        to_char(t.in_time, 'yyyy-mm-dd') in_time,
+        creator,
+        create_time,
+        create_dept,
+        change_time,
+        change_dept,
+        changer,
+        brand,
+        valid_flag
+        FROM
+        T_ZW_ASSETS t
+        WHERE ID in (${ids})
+        AND status = '1' AND t.assets_num_in != 0
+        UNION all
+        SELECT
+            FUNC_GET_USERDICVALUE(t1.assets_type, 'XCLB') assets_type,
+            t2.assets_num_in assetsNumIn,
+            t2.assets_num_all assetsNumAll,
+            t2.assets_name,
+            t1.unit,
+            t1.status,
+            t1.specifications,
+            t1.remark,
+            t1.price,
+            to_char(t2.in_time, 'yyyy-mm-dd') in_time,
+            t1.creator,
+            t1.create_time,
+            t1.create_dept,
+            t1.change_time,
+            t1.change_dept,
+            t1.changer,
+            t1.brand,
+            t1.valid_flag
+        FROM t_zw_assets_details t1, t_zw_assets t2
+        WHERE 1 = 1
+        and t1.assets_id in (${ids})
+         AND t1.parent_assets_id = t2.id
+    </select>
+</mapper>

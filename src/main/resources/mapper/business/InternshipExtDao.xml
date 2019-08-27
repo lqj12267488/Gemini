@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.internships.dao.InternshipExtDao">
+    <select id="InternshipExtAction" parameterType="com.goisan.studentwork.internships.bean.InternshipExt"
+            resultType="com.goisan.studentwork.internships.bean.InternshipExt">
+        SELECT
+        y.id  id,
+        y.internship_unit_id internshipUnitId,
+        y.departments_id departmentsId,
+        y.receive_number receiveNumber,
+        y.salary salary,
+        FUNC_GET_TABLEVALUE(y.internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow,
+        FUNC_GET_TABLEVALUE(y.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow ,
+        FUNC_GET_DICVALUE(y.salary, 'GZSRSP') salaryShow,
+        y.create_time createTime
+        FROM
+        T_XG_INTERNSHIP_UNIT_EXT y,T_XG_INTERNSHIP_UNIT x
+        WHERE  1 = 1  AND y.valid_flag = 1 AND x.internship_unit_id=y.internship_unit_id
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND y.departments_id = #{departmentsId}
+        </if>
+        <if test="internshipUnitId != null and internshipUnitId != '' ">
+            AND y.internship_unit_id = #{internshipUnitId}
+        </if>
+        order by y.create_time desc
+    </select>
+
+    <select id="internshipExtActionById" parameterType="com.goisan.studentwork.internships.bean.InternshipExt"
+            resultType="com.goisan.studentwork.internships.bean.InternshipExt">
+        SELECT
+        DISTINCT
+        t.id  id,
+        t.internship_unit_id internshipUnitId,
+        t.departments_id departmentsId,
+        t.receive_number receiveNumber,
+        t.salary salary,
+        FUNC_GET_TABLEVALUE(t.internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow,
+        FUNC_GET_TABLEVALUE(t.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow ,
+        FUNC_GET_DICVALUE(t.salary, 'GZSRSP') salaryShow,
+        t.create_time createTime
+        FROM
+       (SELECT
+        y.id  id,
+        y.internship_unit_id internshipUnitId,
+        y.departments_id departmentsId,
+        y.receive_number receiveNumber,
+        y.salary salary,
+        FUNC_GET_TABLEVALUE(y.internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow,
+        FUNC_GET_TABLEVALUE(y.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow ,
+        FUNC_GET_DICVALUE(y.salary, 'GZSRSP') salaryShow,
+        y.create_time createTime
+        FROM
+        T_XG_INTERNSHIP_UNIT_EXT y,T_XG_INTERNSHIP_UNIT x
+        WHERE  1 = 1  AND y.valid_flag = 1 AND x.internship_unit_id=y.internship_unit_id),T_XG_INTERNSHIP_UNIT_EXT t
+        WHERE t.internship_unit_id=#{internshipUnitId}
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id = #{departmentsId}
+        </if>
+        <if test="internshipUnitId != null and internshipUnitId != '' ">
+            AND t.internship_unit_id = #{internshipUnitId}
+        </if>
+        order by t.create_time desc
+    </select>
+    <select id="selectId" parameterType="com.goisan.studentwork.internships.bean.InternshipExt"
+            resultType="com.goisan.studentwork.internships.bean.InternshipExt">
+        SELECT internship_unit_id  internshipUnitId FROM T_XG_INTERNSHIP_UNIT WHERE internship_unit_id = #{internshipUnitId}
+    </select>
+    <select id="getInternshipExtId" parameterType="com.goisan.studentwork.internships.bean.InternshipExt"
+            resultType="com.goisan.studentwork.internships.bean.InternshipExt">
+        SELECT
+        t.id id,
+        /*t.internship_unit_id internshipUnitId,
+        t.departments_id departmentsId,*/
+        t.receive_number receiveNumber,
+       /* t.salary salary,*/
+        t.INTERNSHIP_UNIT_ID,
+        FUNC_GET_TABLEVALUE(t.internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow ,
+        FUNC_GET_TABLEVALUE(t.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
+        FUNC_GET_DICVALUE(t.salary, 'GZSRSP') salary,
+        x.area area,
+        x.address address,
+        x.contact_person contactPerson,
+        x.contact_number contactNumber,
+        t.create_time createTime
+        FROM
+        T_XG_INTERNSHIP_UNIT_EXT t,T_XG_INTERNSHIP_UNIT x
+        WHERE 1 = 1 AND t.id = #{id} AND x.internship_unit_id = t.internship_unit_id
+        order by t.create_time desc
+    </select>
+    <select id="getInternshipExtById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.internships.bean.InternshipExt">
+        SELECT
+        id id,
+        internship_unit_id internshipUnitId,
+        departments_id departmentsId,
+        salary salary,
+        receive_number receiveNumber,
+        FUNC_GET_TABLEVALUE(internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow ,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow ,
+        FUNC_GET_DICVALUE(salary, 'GZSRSP') salaryShow,
+        create_time createTime
+        FROM
+        T_XG_INTERNSHIP_UNIT_EXT
+        WHERE id = #{id}
+    </select>
+    <insert id="insertInternshipExt" parameterType="com.goisan.studentwork.internships.bean.InternshipExt">
+        INSERT INTO  T_XG_INTERNSHIP_UNIT_EXT
+        (id,internship_unit_id,departments_id,receive_number,salary
+        ,creator,create_time,create_dept,valid_flag)
+        VALUES
+        (func_get_uuid,'${internshipUnitId}','${departmentsId}','${receiveNumber}','${salary}'
+        ,'${creator}',sysdate,'${createDept}',1 )
+    </insert>
+    <update id="updateInternshipExtById" parameterType="com.goisan.studentwork.internships.bean.InternshipExt">
+        UPDATE T_XG_INTERNSHIP_UNIT_EXT SET
+        internship_unit_id = #{internshipUnitId},
+        departments_id  = #{departmentsId},
+        receive_number = #{receiveNumber},
+        salary = #{salary}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteInternshipExtById" parameterType="java.lang.String">
+        DELETE FROM T_XG_INTERNSHIP_UNIT_EXT  WHERE id = #{id}
+    </delete>
+
+</mapper>
+

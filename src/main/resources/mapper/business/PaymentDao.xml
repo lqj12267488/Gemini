@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.payment.dao.PaymentDao">
+    <select id="getCostItemList" parameterType="com.goisan.studentwork.payment.bean.CostItem"
+            resultType="com.goisan.studentwork.payment.bean.CostItem">
+        SELECT
+        t1.COST_ID costId,
+        t1.COST_TYPE costType,
+        t1.COST_NAME costName,
+        t1.CREATE_TIME createTime
+        FROM T_XG_COST_ITEM t1
+        WHERE 1=1
+        <if test="costName != null and costName != '' and costName != 'undefined'">
+            AND t1.COST_NAME like '%'|| #{costName}||'%'
+        </if>
+
+    </select>
+    <select id="getNewStudentStandardList" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"
+            resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
+        SELECT
+        t1.student_id studentId,
+        t1.idcard idcard,
+        t1.departments_id departmentsId,
+        t1.major_code majorCode,
+        t1.major_direction majorDirection,
+        t1.training_level trainingLevel,
+        t1.class_id classId,
+        t3.item_id itemId,
+        t1.name,
+        t1.sex,
+        FUNC_GET_DICVALUE(t1.sex ,'XB') sexShow,
+        decode(t1.departments_id,'','',FUNC_GET_DEPTNAME(t1.departments_id)) departmentShow,
+        decode(t1.major_code, '','', FUNC_GET_TABLEVALUE(t1.major_code,'T_XG_MAJOR','MAJOR_CODE','MAJOR_NAME')
+        || '--' || FUNC_GET_DICVALUE(t1.major_direction, 'ZXZYFX') || '--' ||
+        FUNC_GET_DICVALUE(t1.training_level, 'ZXZYPYCC')) majorShow,
+        decode(t1.class_id,'','',FUNC_GET_TABLEVALUE(t1.class_id, 'T_XG_CLASS', 'CLASS_ID','CLASS_NAME')) classShow,
+        t4.payment_standard paymentStandard,
+        FUNC_GET_USERDICVALUE(t3.item_id, 'JFXM') AS planItemShow
+        FROM T_XG_ENROLLMENT_STUDENT t1
+        left join T_XG_PAYMENT_PLAN t2 on t1.year = t2.year
+        left join T_XG_PAYMENT_PLAN_ITEM t3 on t2.plan_id = t3.plan_id
+        left join T_XG_PAYMENT_RESULT t4 on t1.idcard = t4.student_id and t4.item_id =t3.item_id
+        WHERE 1 =1
+        and t2.plan_id= #{planId}
+        <if test="name != null and name != '' ">
+            AND t1.name like '%'||#{name}||'%'
+        </if>
+        <if test="departmentsId != null and departmentsId != '' and departmentsId != 'undefined'">
+            AND t1.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t1.major_code= #{majorCode}
+        </if>
+        <if test="majorDirection != null and majorDirection != '' ">
+            AND t1.major_direction= #{majorDirection}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t1.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t1.class_id= #{classId}
+        </if>
+        <if test="itemId != null and itemId != '' and itemId != 'null' ">
+            AND t3.item_id= #{itemId}
+        </if>
+        order by t1.departments_id desc,t1.major_code desc,t1.major_direction desc,t1.training_level desc,t1.class_id
+        desc,t3.item_id
+    </select>
+    <select id="getStatusStudentStandardList" parameterType="com.goisan.system.bean.Student"
+            resultType="com.goisan.system.bean.Student">
+        SELECT t1.student_id studentId,
+        t1.idcard idcard,
+        t6.departments_id departmentsId,
+        t6.major_code majorCode,
+        t6.major_direction majorDirection,
+        t6.training_level trainingLevel,
+        t6.class_id classId,
+        t1.item_id itemId,
+        t1.name,
+        t1.sex,
+        FUNC_GET_DICVALUE(t1.sex, 'XB') sexShow,
+        decode(t6.departments_id, '', '', FUNC_GET_DEPTNAME(t6.departments_id)) departmentShow,
+        decode(t6.major_code, '', '',
+        FUNC_GET_TABLEVALUE(t6.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(t6.major_direction, 'ZXZYFX') || '--' ||
+        FUNC_GET_DICVALUE(t6.training_level, 'ZXZYPYCC')) majorShow,
+        decode(t5.class_id, '', '', FUNC_GET_TABLEVALUE(t5.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')) classShow,
+        t4.payment_standard paymentStandard,
+        FUNC_GET_USERDICVALUE(t1.item_id, 'JFXM') AS planItemShow
+        FROM (SELECT t.*,t3.ITEM_ID,t3.plan_id
+        FROM T_XG_STUDENT t, T_XG_PAYMENT_PLAN_ITEM t3 <if test="name != null and name != '' ">
+        where t.name like '%'||#{name}||'%'
+    </if>) t1, T_XG_PAYMENT_PLAN t2,
+        T_XG_PAYMENT_RESULT t4,
+        T_XG_STUDENT_CLASS t5,
+        T_XG_CLASS t6
+        WHERE t1.student_id = t4.student_id (+)
+        AND t5.class_id = t6.class_id
+        and t4.plan_id(+) = t1.plan_id
+        and t1.plan_id=t2.plan_id
+        AND t1.student_id = t5.student_id
+        AND t1.student_status = '1'
+        AND t1.ITEM_ID=t4.ITEM_ID(+)
+        and t2.plan_id=#{planId}
+        <if test="departmentsId != null and departmentsId != '' and departmentsId != 'undefined' ">
+            AND t6.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t6.major_code= #{majorCode}
+        </if>
+        <if test="majorDirection != null and majorDirection != '' ">
+            AND t6.major_direction= #{majorDirection}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t6.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t6.class_id= #{classId}
+        </if>
+        <if test="itemId != null and itemId != '' and itemId != 'null' ">
+            AND t1.item_id= #{itemId}
+        </if>
+        order by t6.departments_id desc,t6.major_code desc,t6.major_direction desc,t6.training_level desc,t6.class_id
+        desc
+
+    </select>
+    <select id="getPaymentInfoStandardList" parameterType="com.goisan.system.bean.Student"
+            resultType="com.goisan.system.bean.Student">
+        SELECT
+        t1.student_id studentId,
+        t1.idcard idcard,
+        t1.departments_id departmentsId,
+        t1.major_code majorCode,
+        t1.major_direction majorDirection,
+        t1.training_level trainingLevel,
+        t1.class_id classId,
+        t3.item_id itemId,
+        t1.name,
+        t1.sex,
+        FUNC_GET_DICVALUE(t1.sex ,'XB') sexShow,
+        decode(t1.departments_id,'','',FUNC_GET_DEPTNAME(t1.departments_id)) departmentShow,
+        decode(t1.major_code, '','', FUNC_GET_TABLEVALUE(t1.major_code,'T_XG_MAJOR','MAJOR_CODE','MAJOR_NAME')
+        || '--' || FUNC_GET_DICVALUE(t1.major_direction, 'ZXZYFX') || '--' ||
+        FUNC_GET_DICVALUE(t1.training_level, 'ZXZYPYCC')) majorShow,
+        decode(t1.class_id,'','',FUNC_GET_TABLEVALUE(t1.class_id, 'T_XG_CLASS', 'CLASS_ID','CLASS_NAME')) classShow,
+        t4.payment_standard paymentStandard,
+        t4.payment_amount paymentAmount,
+        t4.refund_amount refundAmount,
+        FUNC_GET_USERDICVALUE(t3.item_id, 'JFXM') AS planItemShow
+        FROM T_XG_ENROLLMENT_STUDENT t1, T_XG_PAYMENT_PLAN t2 ,T_XG_PAYMENT_PLAN_ITEM t3 ,
+        T_XG_PAYMENT_RESULT t4 where
+        t1.student_id = t4.student_id
+        and t4.item_id =t3.item_id
+        and t2.plan_id = t3.plan_id
+        and t2.plan_id=#{planId}
+        <if test="name != null and name != '' ">
+            AND t1.name like '%'||#{name}||'%'
+        </if>
+        <if test="departmentsId != null and departmentsId != '' and departmentsId != 'undefined' ">
+            AND t1.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t1.major_code= #{majorCode}
+        </if>
+        <if test="majorDirection != null and majorDirection != '' ">
+            AND t1.major_direction= #{majorDirection}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t1.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t1.class_id= #{classId}
+        </if>
+        <if test="itemId != null and itemId != '' and itemId != 'null' ">
+            AND t3.item_id= #{itemId}
+        </if>
+        <if test="studentId != null and studentId != '' and studentId != 'null' ">
+            AND t1.student_id = #{studentId}
+        </if>
+        union
+        SELECT t1.student_id studentId,
+        t1.idcard idcard,
+        t6.departments_id departmentsId,
+        t6.major_code majorCode,
+        t6.major_direction majorDirection,
+        t6.training_level trainingLevel,
+        t6.class_id classId,
+        t1.item_id itemId,
+        t1.name,
+        t1.sex,
+        FUNC_GET_DICVALUE(t1.sex, 'XB') sexShow,
+        decode(t6.departments_id, '', '', FUNC_GET_DEPTNAME(t6.departments_id)) departmentShow,
+        decode(t6.major_code, '', '',
+        FUNC_GET_TABLEVALUE(t6.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(t6.major_direction, 'ZXZYFX') || '--' ||
+        FUNC_GET_DICVALUE(t6.training_level, 'ZXZYPYCC')) majorShow,
+        decode(t5.class_id, '', '', FUNC_GET_TABLEVALUE(t5.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')) classShow,
+        t4.payment_standard paymentStandard,
+        t4.payment_amount paymentAmount,
+        t4.refund_amount refundAmount,
+        FUNC_GET_USERDICVALUE(t1.item_id, 'JFXM') AS planItemShow
+        FROM (SELECT t.*,t3.ITEM_ID,t3.plan_id
+        FROM T_XG_STUDENT t, T_XG_PAYMENT_PLAN_ITEM t3 ) t1, T_XG_PAYMENT_PLAN t2,
+        T_XG_PAYMENT_RESULT t4,
+        T_XG_STUDENT_CLASS t5,
+        T_XG_CLASS t6
+        WHERE t1.student_id = t4.student_id (+)
+        AND t5.class_id = t6.class_id
+        and t4.plan_id(+) = t1.plan_id
+        and t1.plan_id=t2.plan_id
+        AND t1.student_id = t5.student_id
+        AND t1.student_status = '1'
+        AND t1.ITEM_ID=t4.ITEM_ID(+)
+        and t4.payment_standard is not null
+        and t2.plan_id=#{planId}
+        and t6.departments_id like func_get_range('${createDept}', '${level}')
+        <if test="name != null and name != '' ">
+            AND t1.name like '%'||#{name}||'%'
+        </if>
+        <if test="departmentsId != null and departmentsId != '' and departmentsId != 'undefined' ">
+            AND t6.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t6.major_code= #{majorCode}
+        </if>
+        <if test="majorDirection != null and majorDirection != '' ">
+            AND t6.major_direction= #{majorDirection}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t6.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t6.class_id= #{classId}
+        </if>
+        <if test="itemId != null and itemId != '' and itemId != 'null' ">
+            AND t1.item_id= #{itemId}
+        </if>
+        <if test="studentId != null and studentId != '' and studentId != 'null' ">
+            AND t1.student_id = #{studentId}
+        </if>
+
+    </select>
+    <select id="getPaymentPlanList" parameterType="com.goisan.studentwork.payment.bean.PaymentPlan"
+            resultType="com.goisan.studentwork.payment.bean.PaymentPlan">
+        SELECT
+        t1.plan_id planId,
+        t1.plan_name planName,
+        t1.YEAR year,
+        to_char(t1.start_time,'yyyy-mm-dd') startTime,
+        to_char(t1.end_time,'yyyy-mm-dd') endTime,
+        FUNC_GET_USERDICVALUE(t1.plan_item,'JFXM') AS planItemShow,
+        FUNC_GET_DICVALUE(t1.term,'XQ') AS termShow
+        FROM T_XG_PAYMENT_PLAN t1
+        WHERE 1=1
+        <if test="planName != null and planName != '' ">
+            AND t1.plan_name like '%'||#{planName}||'%'
+        </if>
+        <if test="year != null and year != '' ">
+            AND t1.year = #{year}
+        </if>
+        <if test="term != null and term != '' ">
+            AND t1.term = #{term}
+        </if>
+        <if test="planId != null and planId != '' ">
+            AND t1.plan_id in (select distinct plan_id from T_XG_PAYMENT_RESULT where student_id = #{planId} )
+        </if>
+        and t1.create_dept like func_get_range('${createDept}', '${level}')
+    </select>
+    <select id="selectPaymentPlanByPlanId" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.payment.bean.PaymentPlan">
+        select
+        plan_id planId,
+        plan_name planName,
+        year year,
+        FUNC_GET_USERDICVALUE(plan_item,'JFXM') AS planItemShow,
+        term term,
+        to_char(start_time,'yyyy-mm-dd')  startTime,
+        to_char(end_time,'yyyy-mm-dd')  endTime,
+        plan_item planItem
+        from T_XG_PAYMENT_PLAN where plan_id = #{planId}
+    </select>
+    <select id="findPaymentResultListByPlanId" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.payment.bean.PaymentResult">
+        select
+        *
+        from T_XG_PAYMENT_RESULT where plan_id = #{planId}
+    </select>
+    <select id="findPaymentResultListByIds" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.payment.bean.PaymentResult">
+        select
+        *
+        from T_XG_PAYMENT_RESULT where STUDENT_ID = '${idcard}' and ITEM_ID= '${itemId}'
+    </select>
+    <select id="checkPaymentItem" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.payment.bean.PaymentPlanItem">
+        select
+        *
+        from T_XG_PAYMENT_PLAN_ITEM where ITEM_ID= #{itemId}
+    </select>
+    <insert id="savePaymentPlan" parameterType="com.goisan.studentwork.payment.bean.PaymentPlan">
+        INSERT INTO T_XG_PAYMENT_PLAN (plan_id, plan_name, year,start_time,end_time,plan_item,term,
+        CREATOR, CREATE_TIME, CREATE_DEPT)
+        VALUES (#{planId},#{planName},#{year},to_date('${startTime}','yyyy-mm-dd'),
+        to_date('${endTime}','yyyy-mm-dd'),#{planItem},#{term},#{creator},#{createTime},#{createDept})
+    </insert>
+    <insert id="savePaymentPlanItem" parameterType="com.goisan.studentwork.payment.bean.PaymentPlanItem">
+        INSERT INTO T_XG_PAYMENT_PLAN_ITEM (id, item_id,plan_id,CREATOR, CREATE_TIME, CREATE_DEPT)
+        VALUES (FUNC_GET_UUID,#{itemId},#{planId},#{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="selectPaymentResultByIds" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.payment.bean.PaymentResult">
+        select * from T_XG_PAYMENT_RESULT where student_id = #{studentId} AND  item_id = #{itemId}
+    </select>
+    <insert id="savePaymentResult" parameterType="com.goisan.studentwork.payment.bean.PaymentResult">
+        INSERT INTO T_XG_PAYMENT_RESULT (id, item_id,plan_id,class_id,student_id,payment_standard,creator, create_time, create_dept)
+        VALUES (FUNC_GET_UUID,'${itemId}','${planId}','${classId}','${studentId}','${paymentStandard}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <update id="updatePaymentResult" parameterType="com.goisan.studentwork.payment.bean.PaymentResult">
+        update T_XG_PAYMENT_RESULT
+        set
+        <if test="paymentStandard != null and paymentStandard != '' ">
+            payment_standard='${paymentStandard}',
+        </if>
+        <if test="paymentAmount != null and paymentAmount != '' ">
+            payment_amount='${paymentAmount}',
+        </if>
+        <if test="refundAmount != null and refundAmount != '' ">
+            refund_amount='${refundAmount}',
+        </if>
+        changer='${changer}',
+        change_dept='${changeDept}',
+        change_time=sysdate
+        where student_id = '${studentId}'
+        and item_id= '${itemId}'
+        and PLAN_ID='${planId}'
+    </update>
+    <update id="updatePaymentPlan" parameterType="com.goisan.studentwork.payment.bean.PaymentPlan">
+        update T_XG_PAYMENT_PLAN
+        set
+        plan_name=#{planName},
+        term=#{term},
+        year=#{year},
+        plan_item=#{planItem},
+        start_time = to_date(#{startTime},'yyyy-mm-dd'),
+        end_time = to_date(#{endTime},'yyyy-mm-dd'),
+        changer=#{changer},
+        change_dept=#{changeDept},
+        change_time=sysdate
+        where plan_id = #{planId}
+    </update>
+    <delete id="deletePaymentPlan" parameterType="java.lang.String">
+        DELETE FROM T_XG_PAYMENT_PLAN WHERE plan_id =#{planId}
+    </delete>
+    <delete id="deletePaymentResult" parameterType="java.lang.String">
+        DELETE FROM T_XG_PAYMENT_RESULT WHERE plan_id =#{planId}
+    </delete>
+    <delete id="deletePaymentPlanItem" parameterType="java.lang.String">
+        DELETE FROM T_XG_PAYMENT_PLAN_ITEM WHERE plan_id =#{planId}
+    </delete>
+    <insert id="saveCostItem" parameterType="com.goisan.studentwork.payment.bean.CostItem">
+        INSERT INTO T_XG_COST_ITEM (cost_id, cost_type, cost_name,CREATOR, CREATE_TIME, CREATE_DEPT)
+        VALUES (FUNC_GET_UUID,#{costType},#{costName},#{creator},#{createTime},#{createDept})
+    </insert>
+    <insert id="saveCostMajor" parameterType="com.goisan.studentwork.payment.bean.CostMajor">
+        insert into T_XG_COST_MAJOR (
+        id,
+        year,
+        major_fee,
+        major_id,
+        departments_id,
+        major_code,
+        major_direction,
+        school_system,
+        training_level,
+        creator,
+        create_time,
+        create_dept) values (
+        #{id},
+        #{year},
+        #{majorFee},
+        #{majorId},
+        #{departmentsId},
+        #{majorCode},
+        #{majorDirection},
+        #{schoolSystem},
+        #{trainingLevel},
+        #{creator},
+        #{createTime},
+        #{createDept})
+    </insert>
+    <update id="updateCostMajor" parameterType="com.goisan.studentwork.payment.bean.CostMajor">
+        update T_XG_COST_MAJOR
+        set
+        major_fee=#{majorFee},
+        changer=#{changer},
+        change_time=#{changeTime},
+        change_dept=#{changeDept}
+        where major_id = #{majorId}
+    </update>
+    <delete id="deleteCostMajor" parameterType="java.lang.String">
+        DELETE FROM T_XG_COST_MAJOR WHERE major_id =#{majorId} and YEAR=#{year}
+    </delete>
+    <delete id="batchDeleteCostMajor" parameterType="java.lang.String">
+        delete from T_XG_COST_MAJOR where major_id  in (${majorId}) and YEAR=#{year}
+    </delete>
+    <select id="selectCostItemByCostId" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.payment.bean.CostItem">
+        SELECT
+        cost_id costId,
+        cost_type costType,
+        cost_name costName
+        FROM T_XG_COST_ITEM WHERE COST_ID = #{costId}
+    </select>
+    <update id="updateCostItem" parameterType="com.goisan.studentwork.payment.bean.CostItem">
+        UPDATE T_XG_COST_ITEM
+        SET
+        cost_name = #{costName} ,
+        CHANGER = #{changer},
+        CHANGE_TIME = #{changeTime},
+        CHANGE_DEPT   = #{changeDept}
+        WHERE COST_ID = #{costId}
+    </update>
+    <delete id="deleteCostItem" parameterType="java.lang.String">
+        DELETE FROM T_XG_COST_ITEM WHERE COST_ID = #{costId}
+    </delete>
+    <select id="getCostMajorList" parameterType="com.goisan.studentwork.payment.bean.CostMajor"
+            resultType="com.goisan.studentwork.payment.bean.CostMajor">
+        select
+        t.major_id majorId,
+        #{year} year,
+        t.departments_id departmentsId,
+        t.major_code majorCode,
+        t.training_level trainingLevel,
+        t.major_direction majorDirection,
+        t.school_system schoolSystem,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentShow,
+        FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorShow,
+        FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') trainingShow,
+        FUNC_GET_DICVALUE(t.major_direction,'ZXZYFX') directionShow,
+        FUNC_GET_DICVALUE(t.school_system,'ZXZYXZ') systemShow,
+        m.major_fee majorFee
+        from T_XG_MAJOR t
+        left join
+        T_XG_COST_MAJOR m
+        on m.major_code = t.major_code and
+        m.major_direction = t.major_direction and
+        m.training_level = t.training_level and
+        m.departments_id = t.departments_id and
+        m.valid_flag = '1' and
+        <if test="year != null and year != '' ">
+            m.year= #{year}
+        </if>
+
+        where 1 = 1
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t.training_level= #{trainingLevel}
+        </if>
+        <if test="schoolSystem != null and schoolSystem != '' ">
+            AND t.school_system= #{schoolSystem}
+        </if>
+
+    </select>
+    <select id="selectCostMajorById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.payment.bean.CostMajor">
+        select
+        *
+        from T_XG_COST_MAJOR t
+        where  t.major_id= #{majorId}
+        and t.year=#{year}
+    </select>
+    <select id="getPersonalPaymentList" parameterType="com.goisan.studentwork.payment.bean.PaymentResult"
+            resultType="com.goisan.studentwork.payment.bean.PaymentResult">
+        SELECT
+        t4.student_id studentId,
+        FUNC_GET_TABLEVALUE(t4.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
+        t3.item_id itemId,
+        t2.plan_name planName,
+        FUNC_GET_USERDICVALUE(t3.item_id, 'JFXM') AS planItemShow,
+        t4.payment_standard paymentStandard,
+        t4.payment_amount paymentAmount,
+        t4.refund_amount refundAmount
+        FROM T_XG_PAYMENT_PLAN t2,
+        T_XG_PAYMENT_PLAN_ITEM t3,
+        T_XG_PAYMENT_RESULT t4
+        where t4.item_id = t3.item_id and t4.plan_id = t3.plan_id
+        and t2.plan_id = t3.plan_id
+        <if test="studentId != null and studentId != '' ">
+            AND t4.student_id = #{studentId}
+        </if>
+        order by t2.plan_id, t4.class_id, t4.student_id
+
+    </select>
+</mapper>

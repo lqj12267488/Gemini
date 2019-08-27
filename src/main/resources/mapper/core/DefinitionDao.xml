@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.workflow.dao.DefinitionDao">
+    <select id="getDefinitionListByNodeIdAndWorkflowId" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Definition">
+        SELECT d.*,n.node_name nextNodeName FROM t_sys_workflow_definition d,t_sys_workflow_node n
+        WHERE d.node_id = #{nodeId} AND d.workflow_id =#{workflowId} AND d.next_node_id = n.node_id
+    </select>
+    <insert id="saveDefinition" parameterType="com.goisan.workflow.bean.Definition">
+        INSERT INTO t_sys_workflow_definition (id, workflow_id, node_id, next_node_id, term, operation_name, creator, create_time, create_dept)
+         VALUES
+         (#{id},#{workflowId},#{nodeId},#{nextNodeId},#{term},#{operationName},#{creator},#{createTime},#{createDept})
+    </insert>
+    <delete id="deleteDefinition" parameterType="java.lang.String">
+        DELETE FROM t_sys_workflow_definition WHERE id = #{id}
+    </delete>
+</mapper>

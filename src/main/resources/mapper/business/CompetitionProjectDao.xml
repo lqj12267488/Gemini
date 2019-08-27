@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.competition.dao.CompetitionProjectDao">
+    <select id="competitionProjectAction" resultType="com.goisan.educational.competition.bean.CompetitionProject"
+            parameterType="com.goisan.educational.competition.bean.CompetitionProject">
+        select
+            id,
+            competition_project competitionProject,
+            FUNC_GET_DICVALUE(competition_level,'JSJB')  competitionLevel,
+            competition_company competitionCompany,
+            year,
+            create_time createTime
+        from T_JW_COMPETITION_PROJECT
+        WHERE 1 = 1
+        <if test="competitionProject != null and competitionProject != '' ">
+            AND competition_project LIKE #{competitionProject}
+        </if>
+        <if test="competitionLevel != null and competitionLevel != '' ">
+            AND competition_level = #{competitionLevel}
+        </if>
+        <if test="competitionCompany != null and competitionCompany != '' ">
+            AND competition_company LIKE '%'||#{competitionCompany}||'%'
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="insertCompetitionProject" parameterType="com.goisan.educational.competition.bean.CompetitionProject">
+        INSERT INTO T_JW_COMPETITION_PROJECT
+        (
+        id,
+        competition_project,
+        competition_level,
+        competition_company,
+        year,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${competitionProject}',
+        '${competitionLevel}',
+        '${competitionCompany}',
+        '${year}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <select id="getCompetitionProjectById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.competition.bean.CompetitionProject">
+        select
+            id,
+            competition_project competitionProject,
+            competition_level competitionLevel,
+            competition_company competitionCompany,
+            year
+        from T_JW_COMPETITION_PROJECT
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateCompetitionProjectById" parameterType="com.goisan.educational.competition.bean.CompetitionProject">
+        UPDATE T_JW_COMPETITION_PROJECT SET
+        competition_project = #{competitionProject},
+        competition_level = #{competitionLevel},
+        competition_company = #{competitionCompany},
+        year = #{year},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteCompetitionProjectById" parameterType="java.lang.String">
+        DELETE  T_JW_COMPETITION_PROJECT WHERE id = #{id}
+    </delete>
+    <select id="selectCompetitionProject" parameterType="java.lang.String" resultType="com.goisan.educational.competition.bean.AwardWinning">
+        SELECT *  FROM T_JW_AWARD_WINNING where   competition_name = #{id}
+    </select>
+</mapper>

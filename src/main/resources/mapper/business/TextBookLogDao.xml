@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.textbook.dao.TextBookLogDao">
+    <select id="textBookInventoryLog" parameterType="com.goisan.educational.textbook.bean.TextBookLog"
+            resultType="com.goisan.educational.textbook.bean.TextBookLog">
+        SELECT id,
+        FUNC_GET_DICVALUE(t.TEXTBOOK_TYPE,'JCLX') as textbookType,
+        FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') textbookId,
+        FUNC_GET_DICVALUE(t.OPERATION_TYPE,'KCCZLX') as operationType,
+        t.OPERATION_NUM as operationNum,
+        FUNC_GET_USERNAME(t.creator) as creator,
+        to_char(t.create_time,'yyyy-MM-dd hh:mm:ss') createTime,
+        t.operation_time operationTime,
+        t.remark
+        FROM T_JW_TEXTBOOK_LOG t
+        WHERE 1 = 1 AND  t.OPERATION_NUM !='0' AND  t.TEXTBOOK_ID = #{textbookId}
+
+    </select>
+    <insert id="insertTextBookLog" parameterType="com.goisan.educational.textbook.bean.TextBookLog">
+        insert into
+        T_JW_TEXTBOOK_LOG t
+        (id,textbook_type,textbook_id,operation_type,operation_num,operation_time,creator,create_time,create_dept,remark)values
+        (FUNC_GET_UUID,'${textbookType}','${textbookId}','${operationType}','${operationNum}',sysdate,'${creator}',sysdate,'${createDept}','${remark}')
+    </insert>
+    <update id="updateTextBookNum" parameterType="com.goisan.educational.textbook.bean.TextBookLog">
+        update
+        T_JW_TEXTBOOK t
+        SET
+        t.TEXTBOOK_NUM_ALL=t.TEXTBOOK_NUM_ALL+to_number(#{operationNum}),
+        t.TEXTBOOK_NUM_IN=t.TEXTBOOK_NUM_IN+to_number(#{operationNum}),
+        t.changer = #{changer},
+        t.change_time = sysdate,
+        t.change_dept = #{changeDept}
+        WHERE
+        t.textbook_id = #{textbookId}
+    </update>
+    <select id="getTextBookInventory" parameterType="com.goisan.educational.textbook.bean.TextBook" resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT
+        t1.TEXTBOOK_ID,
+        t1.TEXTBOOK_NAME,
+        t1.TEXTBOOK_NUMBER,
+        t1.MAJOR_CODE majorCode,
+        FUNC_GET_DICVALUE(t1.TEXTBOOK_TYPE,'JCLX') textbookType,
+        FUNC_GET_DICVALUE(t1.TEXTBOOK_CATEGORY,'JCLB') TEXTBOOK_CATEGORY,
+        FUNC_GET_DICVALUE(t1.TEXTBOOK_NATURE,'JCXZ') textbook_nature,
+        t1.PUBLISHING_HOUSE,
+        t1.FIRST_EDITOR_COMPANY,
+        t1.EDITOR,
+        t1.EDITION,
+        t1.PRICE,
+        t1.TEXTBOOK_NUM_ALL,
+        t1.TEXTBOOK_NUM_IN,
+        t1.subscribe_code,
+        t1.REMARK,
+        to_char(t1.version_date,'yyyy-mm-dd') versionDate,
+        t1.create_time,
+        t1.TEXTBOOK_NUM_IN textbookNumIn,
+        t1.DISCOUNT discount
+        FROM T_JW_TEXTBOOK t1
+        WHERE 1=1
+        <if test="textbookName != null and textbookName != ''">
+            AND t1.TEXTBOOK_NAME LIKE '%${textbookName}%'
+        </if>
+        <if test="textbookNumber != null and textbookNumber != ''">
+            AND t1.textbook_number  LIKE '%'||#{textbookNumber}||'%'
+        </if>
+        <if test="textbookNature != null and textbookNature != '' and textbookNature != 'undefined'">
+            AND t1.textbook_nature = #{textbookNature}
+        </if>
+        order by t1.create_time desc
+    </select>
+    <select id="getTextBookByIds" parameterType="java.lang.String" resultType="com.goisan.educational.textbook.bean.TextBook">
+        SELECT
+            t1.TEXTBOOK_ID,
+            t1.TEXTBOOK_NAME,
+            t1.TEXTBOOK_NUMBER,
+            t1.MAJOR_CODE majorCode,
+            FUNC_GET_DICVALUE(t1.TEXTBOOK_TYPE,'JCLX') textbookType,
+            FUNC_GET_DICVALUE(t1.TEXTBOOK_CATEGORY,'JCLB') TEXTBOOK_CATEGORY,
+            FUNC_GET_DICVALUE(t1.TEXTBOOK_NATURE,'JCXZ') textbook_nature,
+            t1.PUBLISHING_HOUSE,
+            t1.FIRST_EDITOR_COMPANY,
+            t1.EDITOR,
+            t1.EDITION,
+            t1.PRICE,
+            t1.TEXTBOOK_NUM_ALL,
+            t1.TEXTBOOK_NUM_IN,
+            t1.subscribe_code,
+            t1.REMARK,
+            to_char(t1.version_date,'yyyy-mm-dd') versionDate,
+            t1.create_time,
+            t1.TEXTBOOK_NUM_IN textbookNumIn,
+            t1.DISCOUNT discount
+        FROM T_JW_TEXTBOOK t1
+        WHERE   t1.TEXTBOOK_ID IN ('${ids}')
+    </select>
+    <select id="getTotalByTermTextBookId" parameterType="com.goisan.educational.textbook.bean.TextBookOrderLog" resultType="java.lang.String">
+        select sum(t.actual_num*t.discount) from T_JW_TEXTBOOK_ORDERLOG t where t.textbook_id = #{textbookId} and t.term = #{term}
+    </select>
+    <select id="getSumTextBookOrderLogGiveNum" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare" resultType="java.lang.String">
+        select sum(GIVE_NUM) from  T_JW_TEXTBOOK_DECLARE_LOG s where  s.TEXTBOOK_PLAN_ID = #{declareId}
+    </select>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.skill.dao.SkillDao">
+    <select id="skillAction" resultType="com.goisan.educational.skill.bean.Skill"
+            parameterType="com.goisan.educational.skill.bean.Skill">
+        select
+            id,
+            project_name        projectName,
+            to_char(appraisal_time ,'yyyy-mm') as appraisalTime,
+            appraisal_company   appraisalCompany,
+            appraisal_number    appraisalNumber,
+            create_time   createTime,
+            ISSUING_OFFICE issuingOffice,
+            PROJECT_LEVEL projectLevel
+        from T_JW_SKILL
+        WHERE 1 = 1
+        <if test=" appraisalCompany != null and appraisalCompany != '' ">
+            AND appraisal_company LIKE '%'||#{appraisalCompany}||'%'
+        </if>
+        <if test="projectName != null and projectName != '' ">
+            AND project_name LIKE #{projectName}
+        </if>
+        <if test="appraisalTime != null and appraisalTime != '' ">
+            AND to_char(appraisal_time ,'yyyy-mm') = #{appraisalTime}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="insertSkill" parameterType="com.goisan.educational.skill.bean.Skill">
+        INSERT INTO T_JW_SKILL
+        (
+        id,
+        project_name,
+        appraisal_time,
+        appraisal_company,
+        appraisal_number,
+        creator,
+        create_time,
+        create_dept,
+        PROJECT_LEVEL,
+        ISSUING_OFFICE,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${projectName}',
+        to_date('${appraisalTime}','yyyy-mm'),
+        '${appraisalCompany}',
+        '${appraisalNumber}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '${projectLevel}',
+        '${issuingOffice}',
+        '1')
+    </insert>
+    <select id="getSkillById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.skill.bean.Skill">
+        select
+            id,
+            project_name        projectName,
+            to_char(appraisal_time ,'yyyy-mm') as appraisalTime,
+            appraisal_company   appraisalCompany,
+            appraisal_number    appraisalNumber,
+            ISSUING_OFFICE   issuingOffice,
+            PROJECT_LEVEL projectLevel
+        from T_JW_SKILL
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateSkillById" parameterType="com.goisan.educational.skill.bean.Skill">
+        UPDATE T_JW_SKILL SET
+        project_name        = #{projectName},
+        appraisal_time      = to_date(#{appraisalTime},'yyyy-mm'),
+        appraisal_company   = #{appraisalCompany},
+        appraisal_number    = #{appraisalNumber},
+        change_dept = #{changeDept},
+        change_time = sysdate,
+        PROJECT_LEVEL = #{projectLevel},
+        ISSUING_OFFICE = #{issuingOffice}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteSkillById" parameterType="java.lang.String">
+        DELETE  T_JW_SKILL WHERE id = #{id}
+    </delete>
+</mapper>

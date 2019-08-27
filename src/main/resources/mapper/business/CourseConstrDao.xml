@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.courseconstr.dao.CourseConstrDao">
+    <select id="selectList" parameterType="com.goisan.educational.courseconstr.bean.CourseConstr"
+            resultType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        SELECT COURSE_ID classId,
+          FUNC_GET_DICVALUE(t.CLASS_TYPES,'KCJSLX') classTypes,
+          FUNC_GET_DICVALUE(t.COURSE_PROPERTIES,'KCJSSX')  courseProperties,
+          FUNC_GET_DICVALUE(t.SCHOOL_ENTERPRISE_COOPERATION,'KCSF')  schoolEnterpriseCooperation,
+          FUNC_GET_DICVALUE(t.CORE_CURRICULUM,'KCSF')  coreCurriculum,
+          FUNC_GET_DICVALUE(t.EXCELLENT_COURSE,'KCJPKC')  excellentCourse,
+          FUNC_GET_DICVALUE(t.VENUE,'KCSKDD')  venue,
+          FUNC_GET_DICVALUE(t.TEST_METHOD,'KCKSKHFF')  testMethod,
+          FUNC_GET_DICVALUE(t.CLASS_CERTIFIATE,'KCSF')  classCertifiate,
+          t.PRESCRIBED_PERIODS prescribedPeriods,
+          FUNC_GET_DICVALUE(t.TEACHING_METHOD,'ZYSKFS')teachingMethod,
+          t.CLASS_NAME className,
+          t.creator       creator,
+          t.create_time   createTime,
+          t.create_dept   createDept,
+          t.changer       changer,
+          t.change_time   changeTime,
+          t.change_dept   changeDept,
+          t.valid_flag    validFlag,
+          t.practice_class practiceClass
+          from T_JW_COURSECONSTR t
+          WHERE 1 = 1
+          AND t.COURSE_CODE='2'
+   </select>
+    <insert id="save" parameterType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        INSERT INTO T_JW_COURSECONSTR
+  (COURSE_ID,
+  CLASS_NAME,
+   CLASS_TYPES,
+   COURSE_PROPERTIES,
+   SCHOOL_ENTERPRISE_COOPERATION,
+   CORE_CURRICULUM,
+   EXCELLENT_COURSE,
+   VENUE,
+   TEACHING_METHOD,
+   TEST_METHOD,
+   CLASS_CERTIFIATE,
+   PRESCRIBED_PERIODS,
+   PRACTICE_CLASS,
+   CREATOR,
+   CREATE_TIME,
+   CREATE_DEPT,
+   COURSE_CODE
+   )
+    VALUES
+  (FUNC_GET_UUID,
+   #{className},
+    #{classTypes},
+    #{courseProperties},
+    #{schoolEnterpriseCooperation},
+    #{coreCurriculum},
+    #{excellentCourse},
+    #{venue},
+    #{teachingMethod},
+    #{testMethod},
+    #{classCertifiate},
+    #{prescribedPeriods},
+    #{practiceClass},
+    #{creator},
+    #{createTime},
+    #{createDept},
+    '2'
+   )
+</insert>
+    <select id="selectById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        SELECT COURSE_ID classId,
+          t.CLASS_TYPES  classTypes,
+          t.CLASS_NAME className,
+          t.COURSE_PROPERTIES  courseProperties,
+          t.SCHOOL_ENTERPRISE_COOPERATION  schoolEnterpriseCooperation,
+          t.CORE_CURRICULUM  coreCurriculum,
+          t.EXCELLENT_COURSE  excellentCourse,
+          t.VENUE   venue,
+          t.TEST_METHOD  testMethod,
+          t.TEACHING_METHOD   teachingMethod,
+          t.CLASS_CERTIFIATE    classCertifiate,
+          t.PRESCRIBED_PERIODS prescribedPeriods,
+          t.practice_class practiceClass,
+          t.creator       creator,
+          t.create_time   createTime,
+          t.create_dept   createDept,
+          t.changer       changer,
+          t.change_time   changeTime,
+          t.change_dept   changeDept,
+          t.valid_flag    validFlag
+          from T_JW_COURSECONSTR t  WHERE COURSE_ID = #{id}
+          AND COURSE_CODE = '2'
+    </select>
+    <update id="update" parameterType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        UPDATE T_JW_COURSECONSTR
+        SET COURSE_Id = #{classId}, CLASS_TYPES = #{classTypes},
+        CLASS_NAME =#{className},
+        COURSE_PROPERTIES=#{courseProperties},PRESCRIBED_PERIODS=#{prescribedPeriods},
+        PRACTICE_CLASS=#{practiceClass},CORE_CURRICULUM=#{coreCurriculum},
+        SCHOOL_ENTERPRISE_COOPERATION=#{schoolEnterpriseCooperation}, EXCELLENT_COURSE=#{excellentCourse},
+        VENUE=#{venue}, TEACHING_METHOD=#{teachingMethod},
+        TEST_METHOD=#{testMethod}, CLASS_CERTIFIATE=#{classCertifiate},
+        CHANGER = #{changer}, CHANGE_TIME = #{changeTime},
+        CHANGE_DEPT  = #{changeDept}
+        WHERE COURSE_ID = #{classId}
+    </update>
+    <delete id="del" parameterType="java.lang.String">
+        DELETE FROM T_JW_COURSECONSTR WHERE COURSE_ID = #{id}
+    </delete>
+    <select id="checkCourseConstrName" parameterType="com.goisan.educational.courseconstr.bean.CourseConstr"
+            resultType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        select * from T_JW_COURSECONSTR
+        where  CLASS_NAME = #{className}
+        AND CREATE_DEPT LIKE func_get_range('${createDept}','6')
+        <if test="classId != null and classId != ''">
+            AND COURSE_ID != #{classId}
+        </if>
+    </select>
+
+    <select id="selectListMajor" parameterType="com.goisan.educational.courseconstr.bean.CourseConstr"
+            resultType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        SELECT COURSE_ID classId,
+          FUNC_GET_DICVALUE(t.CLASS_TYPES,'KCJSLX') classTypes,
+          FUNC_GET_DICVALUE(t.COURSE_PROPERTIES,'KCJSSX')  courseProperties,
+          FUNC_GET_DICVALUE(t.SCHOOL_ENTERPRISE_COOPERATION,'KCSF')  schoolEnterpriseCooperation,
+          FUNC_GET_DICVALUE(t.CORE_CURRICULUM,'KCSF')  coreCurriculum,
+          FUNC_GET_DICVALUE(t.EXCELLENT_COURSE,'KCJPKC')  excellentCourse,
+          FUNC_GET_DICVALUE(t.VENUE,'KCSKDD')  venue,
+          FUNC_GET_DICVALUE(t.TEST_METHOD,'KCKSKHFF')  testMethod,
+          FUNC_GET_DICVALUE(t.CLASS_CERTIFIATE,'KCSF')  classCertifiate,
+          t.PRESCRIBED_PERIODS prescribedPeriods,
+          FUNC_GET_DICVALUE(t.TEACHING_METHOD,'ZYSKFS')  teachingMethod,
+          t.CLASS_NAME className,
+          t.creator       creator,
+          t.create_time   createTime,
+          t.create_dept   createDept,
+          t.changer       changer,
+          t.change_time   changeTime,
+          t.change_dept   changeDept,
+          t.valid_flag    validFlag,
+          t.practice_class practiceClass
+          from T_JW_COURSECONSTR t
+          WHERE 1 = 1
+          AND t.COURSE_CODE='1'
+   </select>
+    <insert id="saveMajor" parameterType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        INSERT INTO T_JW_COURSECONSTR
+  (COURSE_ID,
+  CLASS_NAME,
+   CLASS_TYPES,
+   COURSE_PROPERTIES,
+   SCHOOL_ENTERPRISE_COOPERATION,
+   CORE_CURRICULUM,
+   EXCELLENT_COURSE,
+   VENUE,
+   TEACHING_METHOD,
+   TEST_METHOD,
+   CLASS_CERTIFIATE,
+   PRESCRIBED_PERIODS,
+   PRACTICE_CLASS,
+   CREATOR,
+   CREATE_TIME,
+   CREATE_DEPT,
+   COURSE_CODE
+   )
+    VALUES
+  (FUNC_GET_UUID,
+   #{className},
+    #{classTypes},
+    #{courseProperties},
+    #{schoolEnterpriseCooperation},
+    #{coreCurriculum},
+    #{excellentCourse},
+    #{venue},
+    #{teachingMethod},
+    #{testMethod},
+    #{classCertifiate},
+    #{prescribedPeriods},
+    #{practiceClass},
+    #{creator},
+    #{createTime},
+    #{createDept},
+    '1'
+   )
+</insert>
+    <select id="selectMajorById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        SELECT COURSE_ID classId,
+          t.CLASS_TYPES  classTypes,
+          t.CLASS_NAME className,
+          t.COURSE_PROPERTIES  courseProperties,
+          t.SCHOOL_ENTERPRISE_COOPERATION  schoolEnterpriseCooperation,
+          t.CORE_CURRICULUM  coreCurriculum,
+          t.EXCELLENT_COURSE  excellentCourse,
+          t.VENUE   venue,
+          t.TEST_METHOD  testMethod,
+          t.TEACHING_METHOD   teachingMethod,
+          t.CLASS_CERTIFIATE    classCertifiate,
+          t.PRESCRIBED_PERIODS prescribedPeriods,
+          t.practice_class practiceClass,
+          t.creator       creator,
+          t.create_time   createTime,
+          t.create_dept   createDept,
+          t.changer       changer,
+          t.change_time   changeTime,
+          t.change_dept   changeDept,
+          t.valid_flag    validFlag
+          from T_JW_COURSECONSTR t  WHERE COURSE_ID = #{id}
+          AND COURSE_CODE = '1'
+    </select>
+    <update id="updateMajor" parameterType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        UPDATE T_JW_COURSECONSTR
+        SET COURSE_Id = #{classId}, CLASS_TYPES = #{classTypes},
+        CLASS_NAME =#{className},
+        COURSE_PROPERTIES=#{courseProperties},PRESCRIBED_PERIODS=#{prescribedPeriods},
+        PRACTICE_CLASS=#{practiceClass},CORE_CURRICULUM=#{coreCurriculum},
+        SCHOOL_ENTERPRISE_COOPERATION=#{schoolEnterpriseCooperation}, EXCELLENT_COURSE=#{excellentCourse},
+        VENUE=#{venue}, TEACHING_METHOD=#{teachingMethod},
+        TEST_METHOD=#{testMethod}, CLASS_CERTIFIATE=#{classCertifiate},
+        CHANGER = #{changer}, CHANGE_TIME = #{changeTime},
+        CHANGE_DEPT  = #{changeDept}
+        WHERE COURSE_ID = #{classId}
+    </update>
+    <delete id="delMajor" parameterType="java.lang.String">
+        DELETE FROM T_JW_COURSECONSTR WHERE COURSE_ID = #{id}
+    </delete>
+    <select id="checkCourseConstrMajorName" parameterType="com.goisan.educational.courseconstr.bean.CourseConstr"
+            resultType="com.goisan.educational.courseconstr.bean.CourseConstr">
+        select * from T_JW_COURSECONSTR
+        where  CLASS_NAME = #{className}
+        AND CREATE_DEPT LIKE func_get_range('${createDept}','6')
+        AND COURSE_CODE ='1'
+        <if test="classId != null and classId != ''">
+            AND COURSE_ID != #{classId}
+        </if>
+    </select>
+
+
+
+</mapper>

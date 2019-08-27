@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--教务管理-教室信息维护create by wq 170715-->
+<mapper namespace="com.goisan.educational.place.classroom.dao.ClassroomDao">
+    <!--获取数据表并依据Classroom对象查询-->
+    <select id="getClassroomList" parameterType="com.goisan.educational.place.classroom.bean.Classroom" resultType="com.goisan.educational.place.classroom.bean.Classroom">
+        SELECT
+        t.id id,
+        t.class_room_name classroomName,
+        FUNC_GET_TABLEVALUE(t.building_id,'T_JW_BUILDING','ID','BUILDING_NAME') buildingId,
+        t.people_number peopleNumber,
+        FUNC_GET_DICVALUE(t.floor,'LC') floor,
+        FUNC_GET_DICVALUE(t.room_type,'JSLX') roomType,
+        FUNC_GET_DICVALUE(t.use_status,'SYZT') useStatus,
+        t.remark remark,
+        t.creator creator,
+        t.create_time createTime,
+        t.create_dept createDept,
+        t.changer changer,
+        t.change_time changeTime,
+        t.change_dept changeDept,
+        t.valid_flag validFlag
+        FROM
+        T_JW_CLASSROOM t
+        WHERE 1 = 1
+        <if test="classroomName != null and classroomName != ''">
+            AND t.class_room_name LIKE #{classroomName}
+        </if>
+        <if test="floor != null and floor != ''">
+            AND t.floor LIKE #{floor}
+        </if>
+        <if test="useStatus != null and useStatus != ''">
+            AND t.use_status LIKE #{useStatus}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <!--通过ById获取修改页面的id-->
+    <select id="getClassroomById" parameterType="java.lang.String" resultType="com.goisan.educational.place.classroom.bean.Classroom">
+        SELECT
+        t.id id,
+        t.class_room_name classroomName,
+        t.building_id buildingId,
+        t.floor floor,
+        t.room_type roomType,
+        t.people_number peopleNumber,
+        t.use_status useStatus,
+        t.remark remark,
+        t.valid_flag validFlag
+        FROM
+        T_JW_CLASSROOM t
+        WHERE
+        id = #{id}
+    </select>
+    <!--新增数据-->
+    <insert id="insertClassroom" parameterType="com.goisan.educational.place.classroom.bean.Classroom">
+        INSERT INTO
+        T_JW_CLASSROOM
+        (id,class_room_name,building_id,people_number,floor,room_type,use_status,remark,creator,create_time,create_dept)
+        VALUES
+        (FUNC_GET_UUID,'${classroomName}','${buildingId}','${peopleNumber}','${floor}','${roomType}','${useStatus}','${remark}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <update id="updateClassroom" parameterType="com.goisan.educational.place.classroom.bean.Classroom">
+        UPDATE
+        T_JW_CLASSROOM
+        SET
+        class_room_name = #{classroomName},
+        building_id = #{buildingId},
+        people_number = #{peopleNumber},
+        floor = #{floor},
+        room_type=#{roomType},
+        use_status = #{useStatus},
+        remark = #{remark},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <delete id="deleteClassroom" parameterType="java.lang.String">
+        DELETE
+        T_JW_CLASSROOM
+        WHERE
+        id = #{id}
+    </delete>
+    <!--自动获取教室名称-->
+    <select id="selectClassroomName" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        t.id as "value",
+        t.class_room_name as "label"
+        FROM
+        t_JW_CLASSROOM t
+    </select>
+    <!--名称去重-->
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_JW_CLASSROOM where class_room_name = #{classroomName}
+        <if test="id != null and id != ''">
+            AND  id!= #{id}
+        </if>
+    </select>
+    <!--自动获取人员名称-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name FROM t_rs_employee WHERE person_id = #{personId}
+    </select>
+    <!--自动获取部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name FROM t_sys_dept WHERE dept_id = #{deptId}
+    </select>
+    <select id="checkApplyClass" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT CLASS_ID FROM T_XG_CLASS WHERE ROOM_ID = #{id}
+    </select>
+</mapper>

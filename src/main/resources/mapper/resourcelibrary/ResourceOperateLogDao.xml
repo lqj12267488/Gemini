@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.operateLog.dao.ResourceOperateLogDao">
+    <select id="getResourceOperateLogList"
+            parameterType="com.goisan.operateLog.bean.ResourceOperateLog"
+            resultType="com.goisan.operateLog.bean.ResourceOperateLog">
+        select log_id,resource_id,person_id,
+        dept_id,operate_type,operate_time,resource_tablename
+        from ZYK_OPERATE_LOG
+    </select>
+    <insert id="saveResourceOperateLog" parameterType="com.goisan.operateLog.bean.ResourceOperateLog">
+        insert into zyk_operate_log
+        (log_id,resource_id,person_id,dept_id,operate_type,
+        operate_time,resource_tablename,BUSINESS_ID,
+        creator,create_time,create_dept,VALID_FLAG)
+        values
+        (#{logId},#{resourceId},#{creator},#{createDept},#{operateType},
+        sysdate,#{resourceTablename},#{businessId},
+        #{creator},sysdate,#{createDept},'1')
+    </insert>
+    <select id="getResourceOperateLogById" parameterType="java.lang.String"
+            resultType="com.goisan.operateLog.bean.ResourceOperateLog">
+        select * from ZYK_OPERATE_LOG where log_id = #{id}
+    </select>
+    <update id="updateResourceOperateLog" parameterType="com.goisan.operateLog.bean.ResourceOperateLog">
+        update zyk_operate_log
+         set resource_id=#{resourceId},person_id=#{personId},dept_id=#{deptId},operate_type=#{operateType},operate_time=#{operateTime},resource_tablename=#{resourceTablename},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept} where log_id = #{log_id}
+    </update>
+    <delete id="delResourceOperateLog" parameterType="java.lang.String">
+        delete from ZYK_OPERATE_LOG where log_id = #{id}
+    </delete>
+</mapper>

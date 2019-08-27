@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.practice.dao.InsuranceDao">
+    <select id="insuranceAction" resultType="com.goisan.practice.bean.Insurance"
+            parameterType="com.goisan.practice.bean.Insurance">
+        select
+        id,
+        FUNC_GET_TABLEVALUE(name,'T_XG_STUDENT','STUDENT_ID','NAME') name,
+        FUNC_GET_DICVALUE(sex, 'XB') sex,
+        idcard,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        insurance_number insuranceNumber,
+        departments_id departmentsId,
+        major_code majorCode,
+        create_time createTime
+        from T_JY_PRACTICE_INSURANCE
+        WHERE 1 = 1
+        <if test="name != null and name != '' ">
+            AND FUNC_GET_TABLEVALUE(name,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{name}
+        </if>
+        <if test="sex != null and sex != '' ">
+            AND sex = #{sex}
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            AND idcard LIKE '%'||#{idcard}||'%'
+        </if>
+        <if test="insuranceNumber != null and insuranceNumber != '' ">
+            AND insurance_number LIKE '%'||#{insuranceNumber}||'%'
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') like  '%'||#{classId}||'%'
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="insertInsurance" parameterType="com.goisan.practice.bean.Insurance">
+        INSERT INTO T_JY_PRACTICE_INSURANCE
+        (
+        id,
+        name,
+        sex,
+        idcard,
+        class_id,
+        insurance_number,
+        departments_id,
+        major_code,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${name}',
+        '${sex}',
+        '${idcard}',
+        '${classId}',
+        '${insuranceNumber}',
+        '${departmentsId}',
+        '${majorCode}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <select id="getInsuranceById" parameterType="java.lang.String"
+            resultType="com.goisan.practice.bean.Insurance">
+        select
+        id,
+        name,
+        sex,
+        idcard,
+        class_id classId,
+        insurance_number insuranceNumber,
+        departments_id departmentsId,
+        major_code majorCode
+        from T_JY_PRACTICE_INSURANCE
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateInsuranceById" parameterType="com.goisan.practice.bean.Insurance">
+        UPDATE T_JY_PRACTICE_INSURANCE SET
+        name = #{name},
+        sex = #{sex},
+        idcard= #{idcard},
+        class_id = #{classId},
+        insurance_number = #{insuranceNumber},
+        departments_id = #{departmentsId},
+        major_code = #{majorCode},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteInsuranceById" parameterType="java.lang.String">
+        DELETE  T_JY_PRACTICE_INSURANCE WHERE id = #{id}
+    </delete>
+    <select id="getStudent" resultType="com.goisan.practice.bean.Insurance" parameterType="java.lang.String">
+        select
+        departments_id,
+        major_code,
+        class_id
+        from T_XG_CLASS
+        where
+        class_id =
+            (select
+            class_id
+            from T_XG_STUDENT_CLASS
+            where student_id =#{idcard})
+    </select>
+</mapper>

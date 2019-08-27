@@ -1,0 +1,114 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: hanyu
+  Date: 2017/9/8
+  Time: 15:38
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <script type="text/javascript" src="<%=request.getContextPath()%>/libs/js/app/jquery-1.11.1.js"></script>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/libs/css/app/mui.min.css">
+    <!--App自定义的css-->
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/libs/css/app/app.css"/>
+    <link href="<%=request.getContextPath()%>/libs/css/app/mui.picker.css" rel="stylesheet"/>
+    <link href="<%=request.getContextPath()%>/libs/css/app/mui.poppicker.css" rel="stylesheet"/>
+
+    <script src="<%=request.getContextPath()%>/libs/js/app/mui.min.js"></script>
+    <script src="<%=request.getContextPath()%>/libs/js/app/mui.picker.js"></script>
+    <script src="<%=request.getContextPath()%>/libs/js/app/mui.poppicker.js"></script>
+<body><%-- onload="onl();"--%>
+<!-- 主页面容器 -->
+<div class="mui-inner-wrap mui-content" id="mainPage">
+    <!-- 主页面标题 -->
+    <header class="mui-bar mui-bar-nav">
+        <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color:#fff;"></a>
+        <h1 class="mui-title">档案查询申请</h1>
+        <span id="appIndex" class="mui-icon mui-icon-home mui-pull-right" onclick="backMain()"
+              style="color:#fff;"></span>
+    </header>
+    <!--style="padding-top: 0%"-->
+    <div class="">
+        <div class="col-md-3 tar" style="background:#d0d0d0;height:25px;vertical-align:middle; ">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>申请部门
+        </div>
+        <div class="col-md-9" style="height:40px;vertical-align:middle;text-align:center;">
+            <input id="dept" type="text" style="line-height:40px;height:40px;text-align:center;"
+                   class="validate[required,maxSize[100]] form-control"
+                   value="${fileQuery.requestDept}" readonly="readonly"/>
+        </div>
+        <div class="col-md-3 tar" style="background:#d0d0d0;height:25px;vertical-align:middle; ">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>申请人
+        </div>
+        <div class="col-md-9" style="height:40px;vertical-align:middle;text-align:center;">
+            <input id="jbr" type="text" style="line-height:40px;height:40px;text-align:center;"
+                   class="validate[required,maxSize[100]] form-control"
+                   value="${fileQuery.requester}" readonly="readonly"/>
+        </div>
+        <div class="col-md-3 tar" style="background:#d0d0d0;height:25px;vertical-align:middle;">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>申请时间
+        </div>
+        <div class="col-md-9" style="vertical-align:middle;text-align:center;">
+            <input id="f_requestDate" type="text" style="line-height:40px;height:40px;text-align:center;"
+                   class="validate[required,maxSize[100]] form-control"
+                   value="${fileQuery.requestDate}" readonly="readonly"/>
+        </div>
+        <div class="col-md-3 tar" style="background:#d0d0d0;height:25px;vertical-align:middle;">
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>查询内容
+        </div>
+        <div class="col-md-9" style="vertical-align:middle;text-align:center;">
+            <input id="queryContent" type="text" style="line-height:40px;height:40px;text-align:center;"
+                   onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
+                   maxlength="330" placeholder="最多输入330个字"
+                   class="validate[required,maxSize[100]] form-control"
+                   value="${fileQuery.queryContent}"/>
+        </div>
+        <div class="col-md-3 tar" style="background:#d0d0d0;vertical-align:middle;">
+            &nbsp;&nbsp;&nbsp;&nbsp;备注
+        </div>
+        <div class="col-md-9" style="vertical-align:middle;text-align:center;">
+                <textarea id="remark" style="text-align:center;" maxlength="330" placeholder="最多输入330个字"
+                          class="validate[required,maxSize[100]] form-control"
+                          value="${fileQuery.remark}">${fileQuery.remark}</textarea>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#f_requestDate").val('${fileQuery.requestDate}'.replace("T", " "));
+    })
+
+    function save() {
+        var date = $("#f_requestDate").val();
+        date = date.replace('T', '');
+        if ($("#queryContent").val() == "" || $("#queryContent").val() == "0" || $("#queryContent").val() == undefined) {
+            alert("请填写查询内容");
+            return;
+        }
+        showSaveLoadingByClass('.saveBtnClass button');
+        $.post("<%=request.getContextPath()%>/fileQuery/saveFileQuery", {
+            id: '${fileQuery.id}',
+            queryContent: $("#queryContent").val(),
+            remark: $("#remark").val(),
+            requestDate: date
+        }, function (msg) {
+            hideSaveLoadingByClass('.saveBtnClass button');
+            alert("数据修改成功！");
+        })
+        return true;
+    }
+
+    function backMain() {
+        window.location.href = "<%=request.getContextPath()%>/loginApp/index";
+    }
+</script>

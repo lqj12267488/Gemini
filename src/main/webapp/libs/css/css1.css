@@ -1,0 +1,187 @@
+@charset "utf-8";
+/* CSS Document */
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%
+}
+* {
+	margin: 0px;
+	padding: 0px;
+	border: 0;
+	font-size: 14px;
+	font-family: "Microsoft YaHei";
+}
+img {
+	border: none;
+}
+body {
+	background:url(../images/bj.jpg) no-repeat;
+	/*background: url(bj.jpg) no-repeat;*/
+	background-size: cover;
+	background-attachment: fixed;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+}
+.con {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	max-width: 1200px;
+	overflow: hidden;
+	margin: 0px auto;
+}
+.nr {
+	width: 100%;
+	height: 70%;
+	overflow: hidden;
+}
+.foot {
+	height: 10%;
+}
+.logo {
+	width: 100%;
+	height: 20%;
+	margin-left: 8%;
+	display: block;
+	margin-top: 4%;
+}
+.dl {
+	width: 340px;
+	height: 342px;
+	padding: 40px;
+	overflow: hidden;
+	background: url(../images/dlbj_07.png) no-repeat;
+	display: block;
+	float: right;
+	position: relative;
+	right: 4%;
+}
+.dl form {
+	width: 260px;
+	overflow: hidden;
+	display: block;
+	margin: 0px auto;
+	margin-top: 120px;/* bottom: 30%;
+    right: 27%;*/
+}
+.dl input {
+	width: 200px;
+	height: 42px;
+	display: block;
+	float: left;
+	border-radius: 6px;
+	margin-bottom: 16px;
+	border: 3px #7ce2ff solid;
+	padding: 0px 10px 0px 44px;
+	color: #666;
+	font-size: 16px;
+	background: #fff;
+}
+.dl input:last-child {
+	margin-bottom: 30px;
+}
+.dl input:hover {
+	box-shadow: 0px 0px 3px #7ce2ff;
+}
+.dl .name {
+	background: url(images/dl_11.png) no-repeat;
+	background-position: 10px 10px;
+	background-color: #fff;
+}
+.dl .pwd {
+	background: url(images/dl_14.png) no-repeat;
+	background-position: 10px 10px;
+	background-color: #fff;
+}
+.dl .bt {
+	width: 50%;
+	height: 42px;
+	display: block;
+	border: 0;
+	margin: 0px auto;
+	border-radius: 4px;
+	background: #0c7dc7;
+	color: #fff;
+	margin-bottom: 10px;
+	font-size: 16px;
+	box-shadow: 0px 4px 0px #065488;
+}
+.dl .bt:hover {
+	box-shadow: none;
+}
+.foot {
+	text-align: center;
+	margin: 10px 10%;
+	color: #82cfe7;
+	display: block;
+}
+ @media screen and (max-width: 1024px) {
+.logo {
+	width: 70%;
+	margin: auto;
+	position: absolute;
+	top: 80px;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	-ms-transform: translate(-50%, 0%); /* Internet Explorer */
+	-moz-transform: translate(-50%, 0%); /* Firefox */
+	-webkit-transform: translate(-50%, 0%); /* Safari 和 Chrome */
+	-o-transform: translate(-50%, 0%); /* Opera */
+	height: auto;
+}
+.logo img {
+	width: 100%;
+	max-width: 366px;
+	display: block;
+	margin: 0px auto;
+}
+.dl {
+	width: 80%;
+	margin: auto;
+	padding: 0;
+	height: auto;
+	float: none;
+	position: inherit;
+	right: 0;
+	background: none;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%); /* Internet Explorer */
+	-moz-transform: translate(-50%, -50%); /* Firefox */
+	-webkit-transform: translate(-50%, -50%); /* Safari 和 Chrome */
+	-o-transform: translate(-50%, -50%); /* Opera */
+}
+.dl form {
+	margin: 0;
+	width: 100%;
+}
+.dl form input {
+	width: 100%;
+	box-sizing: border-box;
+	height: 50px;
+}
+.dl form .bt {
+	margin: auto;
+	margin-bottom: 10px;
+	width: 100%;
+}
+.foot {
+	margin: 0;
+	position: absolute;
+	bottom: 40px;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	-ms-transform: translate(-50%, 0%); /* Internet Explorer */
+	-moz-transform: translate(-50%, 0%); /* Firefox */
+	-webkit-transform: translate(-50%, 0%); /* Safari 和 Chrome */
+	-o-transform: translate(-50%, 0%); /* Opera */
+	height: auto;
+}
+}

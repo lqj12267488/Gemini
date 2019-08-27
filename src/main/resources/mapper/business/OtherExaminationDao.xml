@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.otherexamination.dao.OtherExaminationDao">
+
+    <select id="getOtherExaminationList" resultType="com.goisan.educational.otherexamination.bean.OtherExamination"
+            parameterType="com.goisan.educational.otherexamination.bean.OtherExamination">
+        select t.ID,
+        t.EXAM_NAME,
+        t.EXAM_TYPE,
+        FUNC_GET_DICVALUE(t.EXAM_TYPE,'KHFS') examTypeShow,
+        t.COURSE course,
+        FUNC_GET_TABLEVALUE(t.COURSE, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,
+        t.TERM term,
+        FUNC_GET_DICVALUE(t.TERM,'XQ') termShow,
+        t.CREATE_TIME createTime
+        from T_JW_OTHER_EXAMINATION_COUNT t
+        where 1=1
+        <if test="term != null and term != '' ">
+            and t.term = #{term}
+        </if>
+        <if test="examName != null and examName != '' ">
+            and EXAM_NAME like '%'||#{examName}||'%'
+        </if>
+        <if test="course != null and course != '' ">
+            and FUNC_GET_TABLEVALUE(t.COURSE, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') like '%'||#{course}||'%'
+        </if>
+        <if test="examType != null and examType != '' ">
+            and t.EXAM_TYPE = #{examType}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getScoreImport" resultType="com.goisan.educational.otherexamination.bean.OtherExamination"
+            parameterType="com.goisan.educational.otherexamination.bean.OtherExamination">
+        select t.ID,
+        s.NAME name,
+        s.STUDENT_NUMBER studentNumber,
+        s.IDCARD idcard,
+        s.SEX sex,
+        FUNC_GET_DICVALUE(s.SEX,'XB') sexShow,
+        t.MAJOR_CODE majorCode,
+        FUNC_GET_TABLEVALUE(t.major_code, 't_xg_major', 'major_code', 'major_name') majorCodeShow,
+        t.CLASS_ID classId,
+        FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classIdShow,
+        t.TERM_ID termId,
+        FUNC_GET_DICVALUE(t.TERM_ID,'XQ') termShow,
+        t.SCORE_EXAM_NAME scoreExamName,
+        t.COURSE_ID courseId,
+        decode(FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME'),'',course_id,FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')) courseIdShow,
+        t.EXAM_METHOD examMethod,
+        FUNC_GET_DICVALUE(t.exam_method,'KHFS') examMethodShow,
+        t.TEACHING_TEACHER_ID teachingTeacherId,
+        FUNC_GET_USERNAME(t.TEACHING_TEACHER_ID) teachingTeacherIdShow,
+        t.SCORE score,
+        to_char(t.UPLOAD_TIME,'yyyy-mm-dd') uploadTime,
+        t.CREATE_TIME createTime,
+        t.submit_flag submitFlag
+        from T_JW_SCORE_IMPORT t,T_XG_STUDENT s
+        where 1=1 and t.STUDENT_ID = s.STUDENT_ID and s.STUDENT_STATUS='1' and t.SCORE_EXAM_ID = #{scoreExamId}
+        <if test="name != null and name != '' ">
+            and s.NAME like #{name}
+        </if>
+        <if test="studentNumber != null and studentNumber != '' ">
+            and s.STUDENT_NUMBER like #{studentNumber}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+
+    <select id="getScoreImportById" resultType="com.goisan.educational.otherexamination.bean.OtherExamination"
+            parameterType="com.goisan.educational.otherexamination.bean.OtherExamination">
+        select t.ID,
+        s.NAME name,
+        s.STUDENT_NUMBER studentNumber,
+        s.IDCARD idcard,
+        s.SEX sex,
+        FUNC_GET_DICVALUE(s.SEX,'XB') sexShow,
+        t.DEPARTMENTS_ID departmentsId,
+        t.MAJOR_CODE majorCode,
+        t.TRAINING_LEVEL trainingLevel,
+        FUNC_GET_TABLEVALUE(t.major_code, 't_xg_major', 'major_code', 'major_name') majorCodeShow,
+        t.CLASS_ID classId,
+        FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') classIdShow,
+        t.TERM_ID termId,
+        FUNC_GET_DICVALUE(t.TERM_ID,'XQ') termShow,
+        t.SCORE_EXAM_NAME scoreExamName,
+        t.COURSE_ID courseId,
+        FUNC_GET_TABLEVALUE(t.course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseIdShow,
+        t.EXAM_METHOD examMethod,
+        FUNC_GET_DICVALUE(t.exam_method,'KHFS') examMethodShow,
+        t.TEACHING_TEACHER_ID teachingTeacherId,
+        FUNC_GET_USERNAME(t.TEACHING_TEACHER_ID) teachingTeacherIdShow,
+        t.SCORE score,
+        to_char(t.UPLOAD_TIME,'yyyy-mm-dd') uploadTime,
+        t.CREATE_TIME createTime
+        from T_JW_SCORE_IMPORT t,T_XG_STUDENT s
+        where 1=1 and t.STUDENT_ID = s.STUDENT_ID and t.ID=#{id}
+        ORDER BY t.create_time DESC
+    </select>
+
+    <insert id="saveOtherExamination" parameterType="com.goisan.educational.otherexamination.bean.OtherExamination">
+        insert into T_JW_OTHER_EXAMINATION_COUNT (ID, EXAM_NAME,TERM,COURSE,EXAM_TYPE,CREATOR,CREATE_DEPT,CREATE_TIME)
+        values (#{id}, #{examName}, #{term},#{course},#{examType},#{creator},#{createDept},sysdate)
+    </insert>
+
+    <update id="updateOtherExamination" parameterType="com.goisan.educational.otherexamination.bean.OtherExamination">
+        update T_JW_OTHER_EXAMINATION_COUNT
+        set EXAM_NAME=#{examName},
+            term=#{term},
+            COURSE=#{course},
+            EXAM_TYPE=#{examType},
+            CHANGER=#{changer},
+            CHANGE_DEPT=#{changeDept},
+            CHANGE_TIME=sysdate
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteOtherExamination" parameterType="String">
+        delete
+        from T_JW_OTHER_EXAMINATION_COUNT
+        where ID = #{id}
+    </delete>
+
+    <delete id="deleteById" parameterType="String">
+        delete
+        from T_JW_SCORE_IMPORT
+        where ID = #{id}
+    </delete>
+
+    <update id="updateOpenFlag" parameterType="java.lang.String">
+        UPDATE
+        T_JW_SCORE_IMPORT
+        SET
+        open_flag = #{openFlag}
+        WHERE
+        teaching_teacher_id = #{teachingTeacherId}
+        AND
+        score_exam_id = #{id}
+    </update>
+
+    <select id="getOtherExaminationById" resultType="com.goisan.educational.otherexamination.bean.OtherExamination" parameterType="String">
+        select id,
+               EXAM_NAME,
+               TERM,
+               COURSE,
+               EXAM_TYPE
+        from T_JW_OTHER_EXAMINATION_COUNT
+        where id = #{id}
+    </select>
+
+    <update id="updateOtherExaminationImport" parameterType="com.goisan.educational.otherexamination.bean.OtherExamination">
+        update T_JW_SCORE_IMPORT
+        set SCORE=#{score},
+            CHANGER=#{changer},
+            CHANGE_DEPT=#{changeDept},
+            CHANGE_TIME=sysdate
+        where ID = #{id}
+    </update>
+
+    <insert id="insertScoreImportByOtherExamination" parameterType="com.goisan.educational.score.bean.ScoreImport" >
+        INSERT INTO
+            T_JW_SCORE_IMPORT
+            (id,
+             class_id,
+             departments_id,
+             major_code,
+             training_level,
+             major_direction,
+             course_id,
+             score_exam_id,
+             score_exam_name,
+             student_id,
+             teaching_teacher_id,
+             student_name,
+             score,
+             term_id,
+             exam_method,
+             upload_time,
+             creator, create_time, create_dept,order_exam_flag)
+        values
+            (FUNC_GET_UUID, '${classId}', '${departmentsId}',
+                            '${majorCode}','${trainingLevel}','${majorDirection}','${courseId}',
+                            '${scoreExamId}', '${scoreExamName}',
+                            '${studentId}', '${teachingTeacherId}', '${studentName}', '${score}',
+                            '${termId}', '${examMethod}',sysdate, '${creator}', sysdate, '${createDept}','2')
+    </insert>
+    <select id="getScoreExamListByOtherExam" resultType="com.goisan.educational.score.bean.ScoreImport"
+            parameterType="com.goisan.educational.score.bean.ScoreImport">
+        select distinct i.score_exam_name,i.score_exam_id,
+        course_id
+        from t_jw_score_import i
+        where i.SUBMIT_FLAG = '1'
+        <if test="classId != '' and classId !=null">
+            and i.class_id = #{classId}
+        </if>
+        <if test="scoreExamId != '' and scoreExamId !=null">
+            and i.score_exam_id = #{scoreExamId}
+        </if>
+        <if test="courseId != '' and courseId !=null">
+            and i.course_id = #{courseId}
+        </if>
+    </select>
+</mapper>

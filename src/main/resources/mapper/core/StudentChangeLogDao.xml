@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.StudentChangeLogDao">
+    <select id="getStudentChangeLogList" parameterType="com.goisan.system.bean.StudentChangeLog"
+            resultType="com.goisan.system.bean.StudentChangeLog">
+        SELECT
+            (SELECT t2.name FROM T_XG_STUDENT t2 WHERE t2.student_id = t.student_id) studentShow,
+            FUNC_GET_DICVALUE(change_type,'XSYDLX') changeTypeShow,
+            student_id studentId,change_type changeType,old_code oldCode,
+            old_content oldContent,new_code newCode,new_content newContent,
+            to_char(create_time,'yyyy/mm/dd hh24:mi:ss') logTime
+        FROM T_XG_STUDENT_CHANGE_LOG t
+        WHERE 1 = 1
+            <if test="studentId != null and studentId != '' ">
+                AND student_id=#{studentId}
+            </if>
+            <if test="changeType != null and changeType != '' ">
+                AND change_type=#{changeType}
+            </if>
+        ORDER BY create_time DESC
+    </select>
+    <select id="getClassByStudentId"  parameterType="java.lang.String" resultType="com.goisan.system.bean.Select2">
+        SELECT wm_concat(class_id) id ,wm_concat(class_name) as text
+          FROM (
+              SELECT t1.class_id,t2.class_name
+                  FROM T_XG_STUDENT_CLASS t1, T_XG_CLASS t2
+                  WHERE t1.class_id = t2.class_id AND t1.student_id = #{studentId}
+            )
+    </select>
+    <select id="getStatusByStudentId"  parameterType="java.lang.String" resultType="com.goisan.system.bean.Select2">
+        SELECT STUDENT_STATUS id,
+               FUNC_GET_DICVALUE(STUDENT_STATUS,'XSZT') text
+          FROM T_XG_STUDENT
+         WHERE student_id = #{studentId}
+    </select>
+    <insert id="saveLog" parameterType="com.goisan.system.bean.StudentChangeLog">
+        INSERT INTO
+            T_XG_STUDENT_CHANGE_LOG (
+                ID,creator,create_time,create_dept,valid_flag,
+                STUDENT_ID,change_type,old_code,old_content,new_code,new_content
+            )
+        VALUES (
+                FUNC_GET_UUID,#{creator}, sysdate,#{createDept},1,
+                #{studentId},#{changeType},#{oldCode},#{oldContent},#{newCode},#{newContent}
+            )
+    </insert>
+
+    <update id="updateStudentStatus" parameterType="com.goisan.system.bean.Student">
+        UPDATE t_xg_student SET
+          STUDENT_STATUS = #{studentStatus}
+        WHERE student_id = #{studentId}
+    </update>
+    <select id="getStudentChangeStatisticsList" parameterType="com.goisan.system.bean.StudentChangeLog"
+            resultType="com.goisan.system.bean.StudentChangeLog">
+       select count(distinct STUDENT_ID) studentCount
+       from T_XG_STUDENT_CHANGE_LOG
+       where 1=1
+        <if test="changeType != null and changeType != '' ">
+            AND change_type=#{changeType}
+        </if>
+        <if test="changeType != 1">
+            <if test="changeStatus != null and changeStatus != '' ">
+                AND NEW_CODE=#{changeStatus}
+            </if>
+        </if>
+        <if test="changeStartTime != null and changeStartTime != '' and changeEndTime != null and changeEndTime != ''  ">
+            AND create_time BETWEEN to_date('${changeStartTime}','yyyy-mm-dd') AND to_date('${changeEndTime}','yyyy-mm-dd')
+        </if>
+    </select>
+</mapper>

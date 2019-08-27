@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.dormitory.dao.DormAdjustResultDao">
+   <select id="getDistributeList" parameterType="com.goisan.system.bean.Student" resultType="com.goisan.system.bean.Student">
+        SELECT
+            t.student_id studentId,
+            t.name,
+            c.departments_id departmentsId,
+            c.major_code majorCode,
+            c.training_level trainingLevel,
+            t.student_number studentNumber,
+            FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
+            FUNC_GET_DEPTNAME(c.departments_id) departmentShow,
+            FUNC_GET_TABLEVALUE(c.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' || FUNC_GET_DICVALUE(c.training_level, 'ZXZYPYCC')  majorShow,
+            FUNC_GET_TABLEVALUE(c.class_id,'T_XG_CLASS','class_id','class_name') classShow
+        FROM t_xg_student t,T_XG_STUDENT_CLASS r,T_XG_CLASS c
+        WHERE 1 = 1  AND r.student_id = t.student_id
+        and r.class_id=c.class_id
+         and t.dorm_flag='0'
+       <if test="departmentsId != null and departmentsId != '' ">
+           AND c.departments_id= #{departmentsId}
+       </if>
+       <if test="majorCode != null and majorCode != '' ">
+           AND c.major_code= #{majorCode}
+       </if>
+       <if test="trainingLevel != null and trainingLevel != '' ">
+           AND c.training_level= #{trainingLevel}
+       </if>
+       <if test="classId != null and classId != '' ">
+           AND c.class_id= #{classId}
+       </if>
+       <if test="name != null and name != '' ">
+           AND t.name like  '%'||#{name}||'%'
+       </if>
+       <if test="createDept != null and createDept != '' ">
+           AND c.departments_id = #{createDept}
+       </if>
+      order by c.departments_id,c.major_code,c.training_level desc
+   </select>
+
+   <select id="getStudentByValue" parameterType="java.lang.String" resultType="com.goisan.system.bean.Student">
+        SELECT
+           t.sex
+        FROM t_xg_student t
+        WHERE 1 = 1  AND t.student_id  in (${check_value})
+             group by t.sex
+
+    </select>
+   <select id="getStudentByIds" parameterType="java.lang.String" resultType="com.goisan.system.bean.Student">
+         SELECT
+         distinct
+         c.class_id,t.student_id,t.name
+        FROM t_xg_student t,T_XG_STUDENT_CLASS r,T_XG_CLASS c
+        WHERE 1 = 1  AND r.student_id = t.student_id
+        and r.class_id=c.class_id
+        AND  t.student_id  in (${ids})
+
+    </select>
+   <select id="selectStudentByValue" parameterType="java.lang.String" resultType="com.goisan.system.bean.Student">
+        SELECT
+          distinct t.sex
+        FROM t_xg_student t
+        WHERE 1 = 1  AND t.student_id  in (${check_value})
+
+    </select>
+   <select id="getDormNumberByDormId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+           t.people_number
+        FROM T_JW_DORM t
+        WHERE 1 = 1  AND t.id  = #{dormId}
+
+    </select>
+    <insert id="insertDormAdjustResult" parameterType="com.goisan.studentwork.dormitory.bean.DormAdjustResult">
+        insert into T_XG_DORM_ADJUST_RESULT (id,dorm_id,student_id,class_id,dorm_flag,creator,create_dept,create_time)
+        values (FUNC_GET_UUID,#{dormId},#{studentId},#{classId},#{dormFlag},#{creator},#{createDept},sysdate)
+    </insert>
+    <insert id="insertDormAdjustLog" parameterType="com.goisan.studentwork.dormitory.bean.DormAdjustLog">
+        insert into T_XG_DORM_ADJUST_LOG (log_id,dorm_id,student_id,class_id,log_type,content,log_time,creator,create_dept,create_time)
+        values (FUNC_GET_UUID,#{dormId},#{studentId},#{classId},#{logType},#{content},sysdate,#{creator},#{createDept},sysdate)
+    </insert>
+    <update id="updateStudentDormFlag" parameterType="com.goisan.system.bean.Student">
+        update t_xg_student
+        set dorm_flag=#{dormFlag},
+        changer=#{changer},
+        change_dept=#{changeDept},
+        change_time=sysdate
+        where student_id in (${studentId})
+
+    </update>
+    <update id="updateOneStudentDormFlag" parameterType="com.goisan.system.bean.Student">
+        update t_xg_student
+        set dorm_flag=#{dormFlag},
+        changer=#{changer},
+        change_dept=#{changeDept},
+        change_time=sysdate
+        where student_id =#{studentId}
+
+    </update>
+    <update id="updateDormNowNumber" parameterType="com.goisan.educational.place.dorm.bean.Dorm">
+        update T_JW_DORM
+        set now_number=#{nowNumber},
+        changer=#{changer},
+        change_dept=#{changeDept},
+        change_time=sysdate
+        where id = #{id}
+
+    </update>
+
+
+
+    <select id="getAdjustmentList" parameterType="com.goisan.studentwork.dormitory.bean.DormAdjustResult" resultType="com.goisan.studentwork.dormitory.bean.DormAdjustResult">
+        SELECT
+        t.id id,
+        t.student_id studentId,
+        t.dorm_id dormId,
+        c.departments_id departmentsId,
+        c.major_code majorCode,
+        c.training_level trainingLevel,
+        FUNC_GET_DEPTNAME(c.departments_id) departmentShow,
+        FUNC_GET_TABLEVALUE(c.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' || FUNC_GET_DICVALUE(c.training_level, 'ZXZYPYCC')  majorShow,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','class_id','class_name') classShow,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','student_id','name') studentName,
+        FUNC_GET_TABLEVALUE(t.dorm_id,'T_JW_DORM','ID','DORM_NAME') dormName
+        FROM T_XG_DORM_ADJUST_RESULT t,T_XG_STUDENT_CLASS r,T_XG_CLASS c,t_xg_student s
+        WHERE 1 = 1  AND r.student_id = t.student_id
+        and r.class_id=c.class_id
+        and t.student_id=s.student_id
+        and c.departments_id like func_get_range('${createDept}', '${level}')
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND c.departments_id= #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND c.major_code= #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND c.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND c.class_id= #{classId}
+        </if>
+        <if test="studentName != null and studentName != '' ">
+            AND s.name like  '%'||#{studentName}||'%'
+        </if>
+        and t.dorm_flag !='0'
+    </select>
+    <select id="getDormOverplusNumber" parameterType="java.lang.String" resultType="java.lang.String">
+        select  people_number - NOW_NUMBER  as overplus from T_JW_DORM  t
+        WHERE 1 = 1
+        and t.id = #{dormId}
+    </select>
+    <select id="getDormOriginalNowNumber" parameterType="java.lang.String" resultType="java.lang.String">
+        select   t.now_number    from T_JW_DORM  t
+        WHERE 1 = 1
+        and t.id = #{dormId}
+    </select>
+    <select id="getDormName" parameterType="java.lang.String" resultType="java.lang.String">
+        select   t.dorm_name    from T_JW_DORM  t
+        WHERE 1 = 1
+        and t.id = #{dormId}
+    </select>
+    <select id="getDormType" parameterType="java.lang.String" resultType="java.lang.String">
+        select   t.dorm_type    from T_JW_DORM  t
+        WHERE 1 = 1
+        and t.id = #{dormId}
+    </select>
+    <update id="updateDormAdjustResult" parameterType="com.goisan.studentwork.dormitory.bean.DormAdjustResult">
+        update T_XG_DORM_ADJUST_RESULT
+        set dorm_id=#{dormId},
+        dorm_flag=#{dormFlag},
+        changer=#{changer},
+        change_dept=#{changeDept},
+        change_time=sysdate
+        where student_id =#{studentId}
+
+    </update>
+
+    <update id="updateDormAdjustLog" parameterType="com.goisan.studentwork.dormitory.bean.DormAdjustLog">
+        update T_XG_DORM_ADJUST_LOG
+        set dorm_id=#{dormId},
+        log_type=#{logType},
+        log_time=sysdate,
+        changer=#{changer},
+        change_dept=#{changeDept},
+        change_time=sysdate
+        where student_id = #{studentId}
+
+    </update>
+
+    <select id="autoCompleteStudentClassDorm" resultType="com.goisan.system.bean.AutoComplete">
+       SELECT
+       t.STUDENT_ID || ',' || c.class_id || ',' || a.dorm_id || ',' || t.sex as "value",
+       t.name || '---' || c.class_name || '---' || d.dorm_name  as "label"
+           FROM t_xg_student t, T_XG_STUDENT_CLASS r, T_XG_CLASS c,T_XG_DORM_ADJUST_RESULT a,T_JW_DORM d
+          WHERE 1 = 1
+            AND r.student_id = t.student_id
+            and r.class_id = c.class_id
+            and a.student_id=t.student_id
+            and d.id=a.dorm_id
+
+    </select>
+    <delete id="delDormAdjustResultById" parameterType="java.lang.String">
+        delete from T_XG_DORM_ADJUST_RESULT where student_id in (${ids})
+    </delete>
+    <select id="selectDormAdjustResultByStudentId" parameterType="java.lang.String" resultType="com.goisan.studentwork.dormitory.bean.DormAdjustResult">
+        SELECT
+        t.student_id,t.class_id,t.dorm_id,s.name studentName
+        FROM T_XG_DORM_ADJUST_RESULT t, T_XG_STUDENT s
+        WHERE 1 = 1  AND t.student_id = s.student_id
+
+        AND   t.student_id in (${ids})
+    </select>
+    <select id="getLogList" parameterType="com.goisan.studentwork.dormitory.bean.DormAdjustLog"
+            resultType="com.goisan.studentwork.dormitory.bean.DormAdjustLog">
+        SELECT
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','student_id','name') as  studentName,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','class_id','class_name') classShow,
+        FUNC_GET_DICVALUE(t.log_type,'FQRZZT') as  logTypeShow,
+         to_char(t.log_time,'yyyy-mm-dd hh24:mi') logTime,
+         t.content content
+        FROM T_XG_DORM_ADJUST_LOG t
+        WHERE 1 = 1
+        AND t.dorm_id = #{id}
+    </select>
+    <select id="getClassIdByStudentId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+        t.class_id
+        FROM T_XG_DORM_ADJUST_RESULT t
+        WHERE 1 = 1  AND  t.student_id = #{id}
+    </select>
+
+    <select id="getAwayList" parameterType="com.goisan.studentwork.dormitory.bean.DormAway" resultType="com.goisan.studentwork.dormitory.bean.DormAway">
+        SELECT
+        t.id id,
+        t.student_id studentId,
+        t.dorm_id dormId,
+        t.departments_id departmentsId,
+        t.major_code majorCode,
+        t.training_level trainingLevel,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentShow,
+        FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' || FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC')  majorShow,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','class_id','class_name') classShow,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','student_id','name') studentName,
+        FUNC_GET_TABLEVALUE(t.dorm_id,'T_JW_DORM','ID','DORM_NAME') dormName,
+        to_char(t.away_time,'yyyy-mm-dd')  awayTime,
+        t.away_reason awayReason,
+        t.create_time createTime
+        FROM T_XG_DORM_AWAY t
+
+        WHERE 1 = 1
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' ">
+            AND t.training_level= #{trainingLevel}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t.class_id= #{classId}
+        </if>
+        <if test="dormId != null and dormId != '' ">
+            AND t.dorm_id= #{dormId}
+        </if>
+        <if test="awayTime != null and awayTime != '' ">
+            AND  to_char(t.away_time,'yyyy-mm-dd') LIKE '%'|| #{awayTime} ||'%'
+        </if>
+        <if test="studentName != null and studentName != '' ">
+            AND FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','student_id','name') like  '%'||#{studentName}||'%'
+        </if>
+    </select>
+
+    <select id="autoCompleteStudentByAway" resultType="com.goisan.system.bean.AutoComplete" parameterType="java.lang.String">
+        SELECT
+        t.STUDENT_ID || ',' || c.class_id || ',' || a.dorm_id  as "value",
+        t.name || '---' || c.class_name || '---' || d.dorm_name  as "label"
+        FROM t_xg_student t, T_XG_STUDENT_CLASS r, T_XG_CLASS c,T_XG_DORM_ADJUST_RESULT a,T_JW_DORM d
+        WHERE 1 = 1
+        AND r.student_id = t.student_id
+        and r.class_id = c.class_id
+        and a.student_id=t.student_id
+        and d.id=a.dorm_id
+        <if test="classId != null and classId != '' ">
+            AND c.class_id = #{classId}
+        </if>
+    </select>
+    <insert id="saveAwayDorm" parameterType="com.goisan.studentwork.dormitory.bean.DormAdjustResult">
+        insert into T_XG_DORM_AWAY (
+        id,
+        departments_id,
+        major_code,
+        training_level,
+        dorm_id,
+        student_id,
+        class_id,
+        away_time,
+        away_reason,
+        creator,
+        create_dept,
+        create_time)
+        values (
+        FUNC_GET_UUID,
+        #{departmentsId},
+        #{majorCode},
+        #{trainingLevel},
+        #{dormId},
+        #{studentId},
+        #{classId},
+        to_date('${awayTime}','yyyy-mm-dd'),
+        #{awayReason},
+        #{creator},
+        #{createDept},
+        sysdate)
+    </insert>
+
+</mapper>

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.teach.dao.TeachClassDao">
+    <select id="getCourseTime" parameterType="com.goisan.teach.bean.CourseTime"
+            resultType="com.goisan.teach.bean.CourseTime">
+        select *
+        from T_KQ_COURSE_TIME
+        where 1 = 1
+        <if test="name != null and name != ''">
+            and NAME = #{name}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            and START_TIME = #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            and END_TIME = #{endTime}
+        </if>
+    </select>
+
+    <select id="getCourseTimeById" parameterType="string"
+            resultType="com.goisan.teach.bean.CourseTime">
+        select *
+        from T_KQ_COURSE_TIME t
+        where ID = #{id}
+    </select>
+
+    <insert id="saveCourseTime" parameterType="com.goisan.teach.bean.CourseTime">
+        INSERT INTO T_KQ_COURSE_TIME (ID, NAME, START_TIME, END_TIME)
+        VALUES (FUNC_GET_UUID(), #{name}, #{startTime}, #{endTime})
+    </insert>
+
+    <update id="updateCourseTime" parameterType="com.goisan.teach.bean.CourseTime">
+        update T_KQ_COURSE_TIME
+        set NAME       = #{name},
+            START_TIME = #{startTime},
+            END_TIME   = #{endTime}
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteCourseTime" parameterType="string">
+        delete
+        from T_KQ_COURSE_TIME
+        where ID = #{id}
+    </delete>
+
+    <select id="getCourseByPerson"  resultType="com.goisan.system.bean.Select2">
+         SELECT distinct  course_id  id,
+          FUNC_GET_TABLEVALUE(course_id,
+                                   'T_JW_COURSE',
+                                   'course_id',
+                                   'course_name') text
+          FROM T_JW_TEACHINGTASK t
+         WHERE semester = #{semester}
+         and  t.teacher_id = #{teacherId}
+    </select>
+
+
+    <select id="getClassByPerson" resultType="com.goisan.system.bean.Tree">
+       SELECT class_info id ,
+        FUNC_GET_TABLEVALUE(class_info,
+                                   'T_XG_CLASS',
+                                   'class_id',
+                                   'class_name') name,
+           '0' pId
+          FROM T_JW_TEACHINGTASK t
+         WHERE semester = #{semester}
+          and  t.teacher_id = #{teacherId}
+          and t.course_id = #{courseId}
+         ORDER BY create_time DESC
+    </select>
+
+    <select id="getTaskByCourseIdAndCourseTime" resultType="com.goisan.teach.bean.Task">
+        select *
+        from T_KQ_TASK
+        where 1 = 1
+          and COURSE_ID = #{task.courseId}
+          and COURSE_TIME_ID = #{task.courseTimeId}
+          and CREATOR = #{task.creator}
+          and to_char(CREATE_TIME, 'yyyy-mm-dd hh24:mi') like '${now}%'
+    </select>
+
+    <select id="getTaskByClassIdAndCourseTime" resultType="com.goisan.teach.bean.Task">
+        select *
+        from T_KQ_TASK t1,
+             T_KQ_TASK_CLASS t2
+        where t1.ID = t2.TASK_ID
+                  and #{task.classId} like '%' || t2.CLASS_ID || '%'
+                  and COURSE_TIME_ID = #{task.courseTimeId}
+                  and to_char(t1.CREATE_TIME, 'yyyy-mm-dd hh24:mi') like '${now}%'
+    </select>
+
+    <insert id="saveTask" parameterType="com.goisan.teach.bean.Task">
+        insert into T_KQ_TASK (id, course_id, course_time_id, creator, create_time,create_dept)
+        values (#{id}, #{courseId}, #{courseTimeId}, #{creator}, sysdate,#{createDept})
+    </insert>
+
+    <insert id="saveTaskClass" parameterType="com.goisan.teach.bean.TaskClass">
+        insert into T_KQ_TASK_CLASS (ID, TASK_ID, CLASS_ID,creator,create_time,create_dept)
+        values (#{id}, #{taskId}, #{classId}, #{creator}, sysdate,#{createDept})
+    </insert>
+
+
+    <!--<select id="getTaskLog" resultType="map">-->
+        <!--select t1.id "id",-->
+        <!--FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') "courseName",-->
+        <!--t3.start_time "startTime",-->
+        <!--t3.end_time "endTime",-->
+        <!--t2.CLASS_ID "classId",-->
+        <!--t2.XZ,-->
+        <!--t2.MAJOR,-->
+        <!--FUNC_GET_USERNAME(t1.CREATOR) "creator",-->
+        <!--FUNC_GET_TABLEVALUE(t2.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') "className",-->
+        <!--t1.CREATE_TIME "createTime",-->
+        <!--(select count(*)-->
+        <!--from T_XG_STUDENT_CLASS t3-->
+        <!--where t2.CLASS_ID = t3.CLASS_ID) "count",-->
+        <!--(select count(*)-->
+        <!--from T_KQ_TASK_LOG t4,-->
+        <!--T_XG_STUDENT_CLASS t5-->
+        <!--where t4.TASK_ID = t1.ID-->
+        <!--and t5.STUDENT_ID = t4.STUDENT_ID-->
+        <!--and t5.CLASS_ID = t2.CLASS_ID) "sum",-->
+        <!--t1.MAJOR "major"-->
+        <!--from T_KQ_TASK t1,-->
+        <!--T_KQ_TASK_CLASS t2,-->
+        <!--T_KQ_COURSE_TIME t3-->
+        <!--where t1.ID = t2.TASK_ID-->
+        <!--and t1.COURSE_TIME_ID = t3.ID-->
+        <!--<if test="name != null and name != ''">-->
+            <!--and FUNC_GET_USERNAME(t1.CREATOR) like '%${name}%'-->
+        <!--</if>-->
+        <!--<if test="courseName != null and courseName != ''">-->
+            <!--and FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') like '%${courseName}%'-->
+        <!--</if>-->
+        <!--<if test="className != null and className != ''">-->
+            <!--and FUNC_GET_TABLEVALUE(t2.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') like '%${className}%'-->
+        <!--</if>-->
+        <!--<if test="data != null and data != ''">-->
+            <!--and to_char(t1.CREATE_TIME, 'yyyy-mm-dd hh24:mi') like '%${data}%'-->
+        <!--</if>-->
+        <!--order by t1.CREATE_TIME desc-->
+    <!--</select>-->
+
+    <!--签课日志查询。 去掉了专业和学制-->
+    <select id="getTaskLog" resultType="map">
+        select t1.id "id",
+        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') "courseName",
+        t3.start_time "startTime",
+        t3.end_time "endTime",
+        t2.CLASS_ID "classId",
+        FUNC_GET_USERNAME(t1.CREATOR) "creator",
+        FUNC_GET_TABLEVALUE(t2.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') "className",
+        t1.CREATE_TIME "createTime",
+        (select count(*)
+        from T_XG_STUDENT_CLASS t3
+        where t2.CLASS_ID = t3.CLASS_ID) "count",
+        (select count(*)
+        from T_KQ_TASK_LOG t4,
+        T_XG_STUDENT_CLASS t5
+        where t4.TASK_ID = t1.ID
+        and t5.STUDENT_ID = t4.STUDENT_ID
+        and t5.CLASS_ID = t2.CLASS_ID) "sum"
+        from T_KQ_TASK t1,
+        T_KQ_TASK_CLASS t2,
+        T_KQ_COURSE_TIME t3
+        where t1.ID = t2.TASK_ID
+        and t1.COURSE_TIME_ID = t3.ID
+        <if test="name != null and name != ''">
+            and FUNC_GET_USERNAME(t1.CREATOR) like '%${name}%'
+        </if>
+        <if test="courseName != null and courseName != ''">
+            and FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') like '%${courseName}%'
+        </if>
+        <if test="className != null and className != ''">
+            and FUNC_GET_TABLEVALUE(t2.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') like '%${className}%'
+        </if>
+        <if test="data != null and data != ''">
+            and to_char(t1.CREATE_TIME, 'yyyy-mm-dd hh24:mi') like '%${data}%'
+        </if>
+        order by t1.CREATE_TIME desc
+    </select>
+
+    <!--<select id="getTaskLogDetails" parameterType="map" resultType="map">-->
+        <!--select t3.NAME,-->
+        <!--to_char(t4.CREATE_TIME, 'yyyy-mm-dd hh24:mi') CREATE_TIME,-->
+        <!--case when t4.CREATE_TIME is null then '0' else '1' end "flag",-->
+        <!--t4.MAC "mac",t4.IP_ADDR "ipAddr"-->
+        <!--from (select t1.NAME, t1.STUDENT_ID-->
+        <!--from T_XG_STUDENT t1,-->
+        <!--T_XG_STUDENT_CLASS t2-->
+        <!--<if test="major != null">-->
+            <!--, T_KQ_TASK_CLASS t5-->
+        <!--</if>-->
+        <!--where t1.STUDENT_ID = t2.STUDENT_ID-->
+        <!--and t2.CLASS_ID = #{classId}-->
+        <!--<if test="major != null">-->
+            <!--and t1.MAJOR = t5.MAJOR-->
+            <!--and t1.EDUCATIONAL_SYSTEM = t5.XZ-->
+            <!--and t5.TASK_ID = #{taskId}-->
+            <!--and t5.CLASS_ID = t2.CLASS_ID-->
+            <!--and t5.MAJOR = #{major}-->
+            <!--and t5.XZ = #{xz}-->
+        <!--</if>-->
+        <!--) t3-->
+        <!--left join T_KQ_TASK_LOG t4-->
+        <!--on t3.STUDENT_ID = t4.STUDENT_ID and t4.TASK_ID = #{taskId}-->
+        <!--where 1 = 1-->
+        <!--<if test="name != null and name != ''">-->
+            <!--and t3.NAME like '%${name}%'-->
+        <!--</if>-->
+        <!--<if test="flag != null and flag != ''">-->
+            <!--and t4.CREATE_TIME ${flag}-->
+        <!--</if>-->
+    <!--</select>-->
+
+    <select id="getTaskLogDetails" parameterType="map" resultType="map">
+        select t3.NAME,
+        to_char(t4.CREATE_TIME, 'yyyy-mm-dd hh24:mi') CREATE_TIME,
+        case when t4.CREATE_TIME is null then '0' else '1' end "flag",
+        t4.MAC "mac",t4.IP_ADDR "ipAddr"
+        from (select t1.NAME, t1.STUDENT_ID
+        from T_XG_STUDENT t1,
+        T_XG_STUDENT_CLASS t2
+        <if test="major != null">
+            , T_KQ_TASK_CLASS t5
+        </if>
+        where t1.STUDENT_ID = t2.STUDENT_ID
+        and t2.CLASS_ID = #{classId}
+            and t5.TASK_ID = #{taskId}
+            and t5.CLASS_ID = t2.CLASS_ID
+        ) t3
+        left join T_KQ_TASK_LOG t4
+        on t3.STUDENT_ID = t4.STUDENT_ID and t4.TASK_ID = #{taskId}
+        where 1 = 1
+        <if test="name != null and name != ''">
+            and t3.NAME like '%${name}%'
+        </if>
+        <if test="flag != null and flag != ''">
+            and t4.CREATE_TIME ${flag}
+        </if>
+    </select>
+
+<!--考勤日志-->
+    <select id="getTaskLogsByTaskIdAndUserId" resultType="com.goisan.teach.bean.TaskLog">
+        select *
+        from T_KQ_TASK_LOG
+        where TASK_ID = #{taskId}
+          and STUDENT_ID = #{personId}
+    </select>
+
+    <!--新增考勤日志-->
+    <insert id="saveTaskLog" parameterType="com.goisan.teach.bean.TaskLog">
+        insert into T_KQ_TASK_LOG (ID, TASK_ID, STUDENT_ID, CREATE_TIME, MAC, IP_ADDR)
+        values (#{id}, #{taskId}, #{studentId}, sysdate, #{mac}, #{ipAddr})
+    </insert>
+</mapper>

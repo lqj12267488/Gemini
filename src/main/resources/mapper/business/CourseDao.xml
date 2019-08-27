@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.course.dao.CourseDao">
+
+    <select id="getCourseByName" parameterType="String" resultType="com.goisan.educational.course.bean.Course">
+        select * from T_JW_COURSE t  where t.course_name=#{courseName}
+        <if test="courseId != null and courseId != ''">
+            AND course_id != #{courseId}
+        </if>
+    </select>
+    <select id="selectList" parameterType="com.goisan.educational.course.bean.Course"
+            resultType="com.goisan.educational.course.bean.Course">
+        SELECT DISTINCT
+        t1.COURSE_ID,
+        t1.COURSE_NAME,
+        FUNC_GET_DICVALUE(t1.COURSE_TYPE, 'KCLX') COURSE_TYPE,
+        t1.create_time createTime,
+        t1.course_code courseCode,
+        FUNC_GET_DICVALUE(t1.COURSE_PROPERTIES,'KCJSSX')  courseProperties,
+        FUNC_GET_DICVALUE(t1.SCHOOL_ENTERPRISE_COOPERATION,'KCSF')  schoolEnterpriseCooperation,
+        FUNC_GET_DICVALUE(t1.CORE_CURRICULUM,'KCSF')  coreCurriculum,
+        FUNC_GET_DICVALUE(t1.EXCELLENT_COURSE,'KCJPKC')  excellentCourse,
+        FUNC_GET_DICVALUE(t1.VENUE,'KCSKDD')  venue,
+        FUNC_GET_DICVALUE(t1.TEST_METHOD,'KCKSKHFF')  testMethod,
+        FUNC_GET_DICVALUE(t1.CLASS_CERTIFIATE,'KCSF')  classCertifiate,
+        t1.PRESCRIBED_PERIODS prescribedPeriods,
+        t1.PRACTICE_CLASS,
+        FUNC_GET_DICVALUE(t1.TEACHING_METHOD,'ZYSKFS')  teachingMethod
+        <if test="courseType != 1">
+            ,FUNC_GET_DEPTNAME(t1.DEPARTMENTS_ID) DEPARTMENTS_ID,
+            t2.MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(t2.TRAINING_LEVEL,'ZXZYPYCC') MAJOR_ID
+        </if>
+        FROM T_JW_COURSE t1
+        <if test="courseType != 1">
+            ,T_XG_MAJOR t2
+        </if>
+        WHERE 1=1
+        <if test="courseName != null and courseName != ''">
+            AND t1.COURSE_NAME LIKE '%${courseName}%'
+        </if>
+        <if test="departmentsId != null and departmentsId != ''">
+            AND t1.DEPARTMENTS_ID = #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' and majorCode != 'undefined'">
+            AND t1.MAJOR_CODE = #{majorCode}
+        </if>
+        <if test="trainingLevel != null and trainingLevel != '' and trainingLevel != 'undefined'">
+            AND t1.TRAINING_LEVEL = #{trainingLevel}
+        </if>
+        <if test="courseType == 1">
+            AND t1.COURSE_TYPE = 1
+        </if>
+        <if test="courseType != 1">
+            AND t1.COURSE_TYPE != 1  AND t1.MAJOR_CODE =
+            t2.MAJOR_CODE
+        </if>
+    </select>
+    <select id="selectList2" parameterType="com.goisan.educational.course.bean.Course"
+            resultType="com.goisan.educational.course.bean.Course">
+        SELECT DISTINCT
+        t1.COURSE_ID,
+        t1.COURSE_NAME,
+        FUNC_GET_DICVALUE(t1.COURSE_TYPE, 'KCLX') COURSE_TYPE,
+        t1.create_time createTime,
+        t1.course_code courseCode,
+        FUNC_GET_DICVALUE(t1.COURSE_PROPERTIES,'KCJSSX')  courseProperties,
+        FUNC_GET_DICVALUE(t1.SCHOOL_ENTERPRISE_COOPERATION,'KCSF')  schoolEnterpriseCooperation,
+        FUNC_GET_DICVALUE(t1.CORE_CURRICULUM,'KCSF')  coreCurriculum,
+        FUNC_GET_DICVALUE(t1.EXCELLENT_COURSE,'KCJPKC')  excellentCourse,
+        FUNC_GET_DICVALUE(t1.VENUE,'KCSKDD')  venue,
+        FUNC_GET_DICVALUE(t1.TEST_METHOD,'KCKSKHFF')  testMethod,
+        FUNC_GET_DICVALUE(t1.CLASS_CERTIFIATE,'KCSF')  classCertifiate,
+        t1.PRESCRIBED_PERIODS prescribedPeriods,
+        t1.PRACTICE_CLASS,
+        FUNC_GET_DICVALUE(t1.TEACHING_METHOD,'ZYSKFS')  teachingMethod
+        FROM T_JW_COURSE t1
+        WHERE 1=1
+        <if test="courseName != null and courseName != ''">
+            AND t1.COURSE_NAME = #{courseName}
+        </if>
+        <if test="departmentsId != null and departmentsId != ''">
+            AND t1.DEPARTMENTS_ID = #{departmentsId}
+        </if>
+        <if test="majorCode != null and majorCode != '' and majorCode != 'undefined'">
+            AND t1.MAJOR_CODE = #{majorCode}
+        </if>
+    </select>
+    <insert id="save" parameterType="com.goisan.educational.course.bean.Course">
+        INSERT INTO T_JW_COURSE (COURSE_ID, COURSE_NAME, COURSE_TYPE, DEPARTMENTS_ID,MAJOR_CODE,TRAINING_LEVEL,course_code, CREATOR, CREATE_TIME, CREATE_DEPT, CHANGER, CHANGE_TIME, CHANGE_DEPT,
+        COURSE_PROPERTIES,PRESCRIBED_PERIODS,PRACTICE_CLASS,CORE_CURRICULUM,SCHOOL_ENTERPRISE_COOPERATION,
+        EXCELLENT_COURSE,VENUE,TEACHING_METHOD,TEST_METHOD,CLASS_CERTIFIATE)
+        VALUES (FUNC_GET_UUID,#{courseName},#{courseType},#{departmentsId},#{majorCode},#{trainingLevel},#{courseCode},#{creator},#{createTime},#{createDept},#{changer},#{changeTime},#{changeDept},
+        #{courseProperties},#{prescribedPeriods},#{practiceClass},#{coreCurriculum},#{schoolEnterpriseCooperation},
+        #{excellentCourse},#{venue},#{teachingMethod},#{testMethod},#{classCertifiate})
+    </insert>
+    <select id="selectById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.course.bean.Course">
+        SELECT
+        COURSE_ID courseId,
+        COURSE_NAME courseName,
+        COURSE_TYPE courseType,
+        DEPARTMENTS_ID departmentsId,
+        course_code courseCode,
+        MAJOR_CODE || ',' || TRAINING_LEVEL majorCode,
+        COURSE_PROPERTIES,
+        PRESCRIBED_PERIODS,
+        PRACTICE_CLASS,
+        CORE_CURRICULUM,
+        SCHOOL_ENTERPRISE_COOPERATION,
+        EXCELLENT_COURSE,
+        VENUE,
+        TEACHING_METHOD,
+        TEST_METHOD,
+        CLASS_CERTIFIATE,
+        FUNC_GET_DICVALUE(TRAINING_LEVEL,'ZXZYPYCC') trainingLevel
+        FROM T_JW_COURSE WHERE COURSE_ID = #{id}
+    </select>
+    <update id="update" parameterType="com.goisan.educational.course.bean.Course">
+        UPDATE T_JW_COURSE
+        SET COURSE_NAME = #{courseName}, COURSE_TYPE = #{courseType}, DEPARTMENTS_ID = #{departmentsId},
+          MAJOR_CODE = #{majorCode},TRAINING_LEVEL = #{trainingLevel}, CHANGER = #{changer}, CHANGE_TIME = #{changeTime},
+          CHANGE_DEPT   = #{changeDept},
+          COURSE_PROPERTIES = #{courseProperties},
+          PRESCRIBED_PERIODS = #{prescribedPeriods},
+          PRACTICE_CLASS = #{practiceClass},
+          CORE_CURRICULUM = #{coreCurriculum},
+          SCHOOL_ENTERPRISE_COOPERATION = #{schoolEnterpriseCooperation},
+          EXCELLENT_COURSE = #{excellentCourse},
+          VENUE = #{venue},
+          TEACHING_METHOD = #{teachingMethod},
+          TEST_METHOD = #{testMethod},
+          CLASS_CERTIFIATE = #{classCertifiate}
+        WHERE COURSE_ID = #{courseId}
+    </update>
+    <delete id="del" parameterType="java.lang.String">
+        DELETE FROM T_JW_COURSE WHERE COURSE_ID = #{id}
+    </delete>
+    <select id="getMajorByDeptId" resultType="com.goisan.system.bean.Select2">
+        SELECT DISTINCT
+        MAJOR_CODE || ',' || TRAINING_LEVEL id,
+        MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') text
+        FROM T_XG_MAJOR
+        WHERE DEPARTMENTS_ID = #{deptId} AND VALID_FLAG = 1
+    </select>
+
+    <!--返回的Select2的id属性值为专业id-->
+    <select id="getMajorByDepId" resultType="com.goisan.system.bean.Select2">
+        SELECT DISTINCT
+        MAJOR_ID id,
+        MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') text
+        FROM T_XG_MAJOR
+        WHERE DEPARTMENTS_ID = #{deptId} AND VALID_FLAG = 1
+    </select>
+    <select id="checkCourseName" parameterType="com.goisan.educational.course.bean.Course"
+            resultType="com.goisan.educational.course.bean.Course">
+        select * from T_JW_COURSE
+        where COURSE_TYPE = #{courseType} AND COURSE_NAME = #{courseName}
+        AND CREATE_DEPT LIKE func_get_range('${createDept}','6')
+        <if test="courseId != null and courseId != ''">
+            AND COURSE_ID != #{courseId}
+        </if>
+        <if test="courseType != 1">
+            AND DEPARTMENTS_ID = #{departmentsId}
+            AND MAJOR_CODE = #{majorCode}
+            AND TRAINING_LEVEL = #{trainingLevel}
+        </if>
+    </select>
+    <select id="getMaxCourseCoding" parameterType="com.goisan.educational.course.bean.Course"
+            resultType="java.lang.String">
+        select max(to_number(COURSE_CODE)) from T_JW_COURSE
+        where  DEPARTMENTS_ID = #{departmentsId}
+         AND MAJOR_CODE = #{majorCode}
+          AND TRAINING_LEVEL = #{trainingLevel}
+
+    </select>
+
+    <select id="getDepartmentMajorList" parameterType="java.lang.String" resultMap="DepartmentMajorMap">
+        SELECT DEPT_ID "id", DEPT_NAME "text" FROM T_SYS_DEPT
+        <if test="type!=null and type!=''">
+            WHERE DEPT_TYPE = #{type}
+        </if>
+    </select>
+    <select id="getMajorCodeByMajorName" parameterType="java.lang.String" resultType="java.lang.String">
+        select DISTINCT t.major_code from T_XG_MAJOR t where t.major_name like '%'||#{majorName}||'%'  AND VALID_FLAG = 1
+    </select>
+    <!-- 获取系部-专业对应关系(关联系部-专业) -->
+    <resultMap id="DepartmentMajorMap" type="com.goisan.system.bean.SelectGroupForExcel">
+        <id column="DEPT_ID" property="id"/>
+        <result column="DEPT_NAME" property="text"/>
+        <collection property="major" ofType="com.goisan.system.bean.Select2" column="{deptId = id}" select="getMajorList"/>
+    </resultMap>
+
+    <!-- 获取系部-专业对应关系(查询专业) -->
+    <select id="getMajorList" parameterType="java.util.HashMap" resultType="java.lang.String">
+        SELECT DISTINCT
+        MAJOR_NAME
+        FROM T_XG_MAJOR
+        WHERE DEPARTMENTS_ID = #{deptId} AND VALID_FLAG = 1
+    </select>
+
+    <select id="getCourseByCourseName" parameterType="java.lang.String" resultType="com.goisan.educational.course.bean.Course">
+        SELECT * FROM T_JW_COURSE WHERE course_name = #{courseName}
+    </select>
+
+    <select id="getMajorClassList" parameterType="java.lang.String" resultMap="DepartmentMajorMap">
+        SELECT major_code "id", major_name "text" FROM T_XG_MAJOR  where VALID_FLAG = 1
+    </select>
+    <!-- 获取专业-班级对应关系(关联专业-班级) -->
+    <resultMap id="MajorClassMap" type="com.goisan.system.bean.SelectGroupForExcel">
+        <id column="MAJOR_CODE" property="id"/>
+        <result column="MAJOR_NAME" property="text"/>
+        <collection property="class" ofType="com.goisan.system.bean.Select2" column="{majorCode = id}" select="getClassList"/>
+    </resultMap>
+    <!-- 获取专业-班级对应关系(查询班级) -->
+    <select id="getClassList" parameterType="java.util.HashMap" resultType="java.lang.String">
+        SELECT DISTINCT
+            class_name
+        FROM T_XG_CLASS
+        WHERE MAJOR_CODE = #{majorCode} AND VALID_FLAG = '1'
+    </select>
+
+    <!--根据课程名查询课程数量-->
+    <select id="selCourseCountByCN" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(t.course_id)  from T_JW_COURSE t where t.course_name=#{courseName}  group by t.course_name
+    </select>
+
+
+</mapper>

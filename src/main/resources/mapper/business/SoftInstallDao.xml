@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.SoftInstallDao">
+    <select id="softAction" resultType="com.goisan.synergy.workflow.bean.SoftInstall"
+            parameterType="com.goisan.synergy.workflow.bean.SoftInstall">
+        SELECT
+        t.id id,
+        t.soft_name softName,
+        FUNC_GET_USERNAME(t.requester)     requester,
+        FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestDate,
+        t.reason reason,
+        t.request_flag requestFlag,
+        t.feedback feedback,
+        t.feedback_flag feedbackFlag,
+        t.creator creator,
+        t.create_time
+        FROM
+        t_bg_softinstall_wf t
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND t.requester LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND t.request_dept LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <!--<if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator = #{softinstall.creator}
+        </if>-->
+     <!--   <if test="sql != null">
+            ${sql}
+        </if>-->
+        AND t.request_flag = '0'
+        ORDER BY t.create_time DESC
+    </select>
+    <delete id="deleteSoftById" parameterType="java.lang.String">
+		DELETE FROM  t_bg_softinstall_wf WHERE id = #{id}
+	</delete>
+    <select id="getSoftById" parameterType="java.lang.String"
+            resultType="com.goisan.synergy.workflow.bean.SoftInstall">
+	 SELECT
+        t.id id,
+        t.soft_name softName,
+        FUNC_GET_USERNAME(t.requester) requester,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+         to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi') as requestDate,
+        t.reason reason
+     FROM
+        t_bg_softinstall_wf t
+      WHERE id = #{id} ORDER BY t.create_time DESC
+	</select>
+    <update id="updateSoftById" parameterType="com.goisan.synergy.workflow.bean.SoftInstall">
+		update
+		 t_bg_softinstall_wf
+		 SET
+		 id = #{id},
+		 soft_name = #{softName},
+         request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+		 reason = #{reason},
+		 changer = #{changer},
+		 change_time = sysdate,
+		 change_dept = #{changeDept}
+         WHERE
+         id = #{id}
+	</update>
+    <insert id="insertSoft" parameterType="com.goisan.synergy.workflow.bean.SoftInstall">
+		insert into
+		t_bg_softinstall_wf
+		(id,soft_name,requester,request_dept,request_date,reason,creator,create_time,create_dept)values
+		 (FUNC_GET_UUID,'${softName}','${requester}','${requestDept}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),'${reason}','${creator}',sysdate,'${createDept}')
+	</insert>
+    <select id="getSoftList" resultType="com.goisan.synergy.workflow.bean.SoftInstall"
+            parameterType="com.goisan.synergy.workflow.bean.SoftInstall">
+        SELECT
+        t.id id,
+        t.soft_name softName,
+        FUNC_GET_USERNAME(t.requester)     requester,
+        FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        t.reason reason,
+        t.request_flag requestFlag,
+        t.feedback feedback,
+        t.feedback_flag feedbackFlag,
+        t.create_time
+        FROM
+        t_bg_softinstall_wf t
+        WHERE
+        1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="softName != null and softName != '' ">
+            AND t.soft_name LIKE #{softName}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND t.request_flag = '0'
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="selectDept" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+       select
+       t.dept_id as "value",
+       t.dept_name as "label"
+       FROM T_SYS_DEPT t
+    </select>
+    <select id="selectPerson" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.AutoComplete">
+      select
+      t.name as "label",
+      t.person_id as "value"
+      FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessSoftList" resultType="com.goisan.synergy.workflow.bean.SoftInstall"
+            parameterType="com.goisan.synergy.workflow.bean.SoftInstall">
+        SELECT
+        t.id id,
+        t.soft_name softName,
+        FUNC_GET_USERNAME(t.requester)     requester,
+        FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestDate,
+        t.reason reason,
+        t.request_flag requestFlag,
+        t.feedback feedback,
+        t.feedback_flag feedbackFlag,
+        t.create_time
+        FROM
+        t_bg_softinstall_wf t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="getCompleteSoftList" resultType="com.goisan.synergy.workflow.bean.SoftInstall"
+            parameterType="com.goisan.synergy.workflow.bean.SoftInstall">
+        SELECT
+        DISTINCT
+        t.id id,
+        t.soft_name softName,
+        FUNC_GET_USERNAME(t.requester)     requester,
+        FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestDate,
+        t.reason reason,
+        func_get_dicvalue(t.request_flag,'GZLLZZT') requestFlag,
+        t.feedback feedback,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.create_time
+        FROM
+        t_bg_softinstall_wf t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE
+        1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+
+</mapper>

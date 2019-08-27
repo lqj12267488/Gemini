@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.competitionguidance.dao.CompetitionGuidanceDao">
+    <select id="getCompetitionGuidanceList"
+            resultType="com.goisan.educational.competitionguidance.bean.CompetitionGuidance"
+            parameterType="com.goisan.educational.competitionguidance.bean.CompetitionGuidance">
+        select
+        create_time,
+        ID id,
+        FUNC_GET_USERNAME(TEACHER_NAME) teacherName,
+        DEPARTMENT_ID departmentId,
+        FUNC_GET_TABLEVALUE(department_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentIdShow,
+        COMPETITION_NAME competitionName,
+        FUNC_GET_DICVALUE(COMPETITION_LEVEL,'JSJB') competitionLevel,
+        COUNSELLING_CONTENT counsellingContent,
+        SEMESTER semester,
+        FUNC_GET_DICVALUE(SEMESTER,'XQ') semesterShow,
+        FUNC_GET_DICVALUE(MAJOR_ID,'ZXZYLX') majorId,
+        CLASS_ID classId,
+        COMPETITION_NUMBER competitionNumber,
+        TRAINING_NUMBER trainingNumber,
+        CLASS_HOURS classHours,
+        PLACE place,
+        COMPETITION_PERFORMANCE competitionPerformance,
+        HOST_UNIT hostUnit,
+        FUNC_GET_DICVALUE(EDUCATIONAL_LEVEL,'XL') educationalLevel,
+        FILE_URL fileUrl,
+        (select count(*) from T_SYS_FILES where BUSINESS_ID=ID) fileNumber
+        from T_JW_COMPETITION_GUIDANCE
+        WHERE 1 = 1
+        <if test="competitionLevel != null and competitionLevel != '' ">
+            AND COMPETITION_LEVEL = #{competitionLevel}
+        </if>
+        <if test="competitionName != null and competitionName != '' ">
+            AND COMPETITION_NAME LIKE '%'||#{competitionName}||'%'
+        </if>
+        <if test="hostUnit != null and hostUnit != '' ">
+            AND HOST_UNIT LIKE '%'||#{hostUnit}||'%'
+        </if>
+        order by create_time desc
+    </select>
+    <select id="getCompetitionGuidanceById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.competitionguidance.bean.CompetitionGuidance">
+        SELECT
+         ID,
+         dept_id,
+         TEACHER_NAME teacherId,
+  FUNC_GET_USERNAME(TEACHER_NAME) || '  ----  ' || FUNC_GET_DEPTNAME(dept_id) teacherName,
+  DEPARTMENT_ID,
+  COMPETITION_NAME,
+  COMPETITION_LEVEL,
+  HOST_UNIT,
+  COUNSELLING_CONTENT,
+  SEMESTER,
+  MAJOR_ID,
+  CLASS_ID,
+  EDUCATIONAL_LEVEL,
+  COMPETITION_NUMBER,
+  TRAINING_NUMBER,
+  CLASS_HOURS,
+  PLACE,
+  COMPETITION_PERFORMANCE,
+  FILE_URL
+        FROM T_JW_COMPETITION_GUIDANCE
+        where id = #{id}
+    </select>
+
+    <insert id="addCompetitionGuidance"
+            parameterType="com.goisan.educational.competitionguidance.bean.CompetitionGuidance">
+        insert into T_JW_COMPETITION_GUIDANCE (ID,
+                                               TEACHER_NAME,
+                                               DEPT_ID,
+                                               DEPARTMENT_ID,
+                                               COMPETITION_NAME,
+                                               COMPETITION_LEVEL,
+                                               COUNSELLING_CONTENT,
+                                               SEMESTER,
+                                               MAJOR_ID,
+                                               CLASS_ID,
+                                               COMPETITION_NUMBER,
+                                               TRAINING_NUMBER,
+                                               CLASS_HOURS,
+                                               PLACE,
+                                               COMPETITION_PERFORMANCE,
+                                               HOST_UNIT,
+                                               EDUCATIONAL_LEVEL,
+                                               CREATOR,
+                                               CREATE_TIME,
+                                               CREATE_DEPT,
+                                               VALID_FLAG
+       )
+        values (#{id},
+                #{teacherName},
+                #{deptId},
+                #{departmentId},
+                #{competitionName},
+                #{competitionLevel},
+                #{counsellingContent},
+                #{semester},
+                #{majorId},
+                #{classId},
+                #{competitionNumber},
+                #{trainingNumber},
+                #{classHours},
+                #{place},
+                #{competitionPerformance},
+                #{hostUnit},
+                #{educationalLevel},
+                '${creator}',
+                sysdate,
+                '${createDept}',
+                '1')
+    </insert>
+
+    <update id="updateCompetitionGuidance"
+            parameterType="com.goisan.educational.competitionguidance.bean.CompetitionGuidance">
+        UPDATE T_JW_COMPETITION_GUIDANCE
+        SET TEACHER_NAME = #{teacherName},
+        DEPT_ID = #{deptId},
+        DEPARTMENT_ID = #{departmentId},
+        COMPETITION_NAME = #{competitionName},
+        COMPETITION_LEVEL = #{competitionLevel},
+        COUNSELLING_CONTENT = #{counsellingContent},
+        SEMESTER = #{semester},
+        MAJOR_ID = #{majorId},
+        CLASS_ID = #{classId},
+        COMPETITION_NUMBER = #{competitionNumber},
+        TRAINING_NUMBER = #{trainingNumber},
+        CLASS_HOURS = #{classHours},
+        PLACE = #{place},
+        COMPETITION_PERFORMANCE = #{competitionPerformance},
+        HOST_UNIT = #{hostUnit},
+        EDUCATIONAL_LEVEL = #{educationalLevel},
+        CHANGE_TIME= sysdate,
+        CHANGER = #{changer},
+        CHANGE_DEPT = #{changeDept}
+        <if test="fileUrl != null and fileUrl != ''">,FILE_URL = #{fileUrl}</if>
+        WHERE id = #{id}
+    </update>
+    <delete id="delCompetitionGuidance" parameterType="java.lang.String">
+        DELETE T_JW_COMPETITION_GUIDANCE
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

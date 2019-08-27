@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.course.dao.CoursehonorDao">
+    <select id="coursehonorAction" resultType="com.goisan.educational.course.bean.Coursehonor"
+            parameterType="com.goisan.educational.course.bean.Coursehonor">
+        select
+        course_honor_id courseHonorId,
+      /*  FUNC_GET_USERDICVALUE(honor_name,'RYMC') honorName,*/
+        FUNC_GET_TABLEVALUE(course_name,'T_JW_COURSE','COURSE_ID','COURSE_NAME') courseName,
+        FUNC_GET_USERNAME(charge_man) chargeMan,
+        honor_member honorMember,
+        create_time   createTime
+        from T_JW_COURSEBUILD_COURSEHONOR
+        WHERE 1 = 1
+        <if test=" courseName != null and  courseName != '' ">
+            AND  course_name =  #{courseName}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="coursehonorManageAction"  parameterType="com.goisan.educational.course.bean.Coursehonor"
+            resultType="com.goisan.educational.course.bean.Coursehonor">
+        SELECT
+        t. course_honor_id courseHonorId,
+        d.id,
+        FUNC_GET_TABLEVALUE(course_name,'T_JW_COURSE','COURSE_ID','COURSE_NAME') courseName,
+        FUNC_GET_USERNAME(charge_man) chargeMan,
+        honor_member honorMember,
+        FUNC_GET_DICVALUE(d.honor_level ,'DJ') honorLevel,
+        to_char(d.own_time,'yyyy-mm-dd') ownTime,
+        d.valid_time validTime,
+        d.course_honor_id coursehonorId,
+        t.create_time   createTime
+        from T_JW_COURSEBUILD_COURSEHONOR t, T_JW_COURSEBUILD_CH_DETAIL d
+        WHERE 1 = 1
+        AND  t.COURSE_HONOR_ID = d.COURSE_HONOR_ID
+        <if test=" courseHonorId != null and  courseHonorId != '' ">
+            AND  d.course_honor_id =  #{courseHonorId}
+        </if>
+        ORDER BY t.create_time DESC
+   </select>
+
+    <select id="coursehonorCheckAction"  parameterType="com.goisan.educational.course.bean.Coursehonor"
+            resultType="com.goisan.educational.course.bean.Coursehonor">
+        SELECT
+        t. course_honor_id courseHonorId,
+        d.id,
+        FUNC_GET_TABLEVALUE(course_name,'T_JW_COURSE','COURSE_ID','COURSE_NAME') courseName,
+        FUNC_GET_USERNAME(charge_man) chargeMan,
+        honor_member honorMember,
+        FUNC_GET_DICVALUE(d.honor_level ,'DJ') honorLevel,
+        to_char(d.own_time,'yyyy-mm-dd') ownTime,
+        d.valid_time validTime,
+        d.course_honor_id coursehonorId,
+        t.create_time   createTime
+        from T_JW_COURSEBUILD_COURSEHONOR t, T_JW_COURSEBUILD_CH_DETAIL d
+        WHERE 1 = 1
+        AND  t.COURSE_HONOR_ID = d.COURSE_HONOR_ID
+        <if test=" courseHonorId != null and  courseHonorId != '' ">
+            AND  d.course_honor_id =  #{courseHonorId}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+
+
+
+
+
+    <insert id="insertCoursehonor" parameterType="com.goisan.educational.course.bean.Coursehonor">
+        INSERT INTO T_JW_COURSEBUILD_COURSEHONOR
+        (
+        course_honor_id,
+        course_name,
+        honor_name,
+        honor_level,
+        charge_man,
+        honor_member,
+        own_time,
+        valid_time,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${courseName}',
+        '${honorName}',
+        '${honorLevel}',
+        '${chargeMan}',
+        '${honorMember}',
+        to_date('${ownTime}','yyyy-mm-dd'),
+        '${validTime}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+
+    <insert id="insertCoursehonorManage" parameterType="com.goisan.educational.course.bean.Coursehonor">
+        INSERT INTO T_JW_COURSEBUILD_CH_DETAIL
+        (id,
+        course_honor_id,
+        honor_level,
+        own_time,
+        valid_time,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (
+         FUNC_GET_UUID,
+        '${courseHonorId}',
+        '${honorLevel}',
+      to_date('${ownTime}','yyyy-mm-dd'),
+        '${validTime}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <select id="getCoursehonorById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.course.bean.Coursehonor">
+        select
+        course_honor_id courseHonorId,
+        course_name courseName,
+        honor_name honorName,
+        honor_level honorLevel,
+        charge_man chargeMan,
+        FUNC_GET_USERNAME(charge_man)  personIdShow,
+        honor_member honorMember,
+        to_char(own_time ,'yyyy-mm-dd') ownTime,
+        valid_time validTime
+        from T_JW_COURSEBUILD_COURSEHONOR
+        WHERE 1 = 1
+        AND course_honor_id =#{id}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getCoursehonorManageById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.course.bean.Coursehonor">
+        select
+        id,
+        course_honor_id courseHonorId,
+        honor_level honorLevel,
+        to_char(own_time ,'yyyy-mm-dd') ownTime,
+        valid_time validTime
+        from T_JW_COURSEBUILD_CH_DETAIL
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+
+
+
+    <update id="updateCoursehonorById" parameterType="com.goisan.educational.course.bean.Coursehonor">
+        UPDATE T_JW_COURSEBUILD_COURSEHONOR SET
+        course_name = #{courseName},
+        honor_name = #{honorName},
+        honor_level = #{honorLevel},
+        charge_man = #{chargeMan},
+        honor_member = #{honorMember},
+        own_time = to_date(#{ownTime},'yyyy-mm-dd'),
+        valid_time = #{validTime},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE course_honor_id = #{courseHonorId}
+    </update>
+
+    <update id="updateCoursehonorManageById" parameterType="com.goisan.educational.course.bean.Coursehonor">
+        UPDATE T_JW_COURSEBUILD_CH_DETAIL SET
+        honor_level = #{honorLevel},
+        own_time = to_date(#{ownTime},'yyyy-mm-dd'),
+        valid_time = #{validTime},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteCoursehonorById" parameterType="java.lang.String">
+        DELETE  T_JW_COURSEBUILD_COURSEHONOR WHERE course_honor_id = #{id}
+    </delete>
+
+    <delete id="deleteCoursehonorManageById" parameterType="java.lang.String">
+        DELETE  T_JW_COURSEBUILD_CH_DETAIL WHERE id = #{id}
+    </delete>
+
+
+
+</mapper>

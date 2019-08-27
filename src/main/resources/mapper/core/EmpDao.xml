@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.EmpDao">
+    <select id="getDeptByDeptIdAndPersonId"
+            resultType="com.goisan.system.bean.EmpDeptRelation">
+        SELECT * FROM t_rs_employee_dept WHERE person_id = #{personId} AND dept_id = #{deptId}
+    </select>
+    <select id="getEmpList" resultType="com.goisan.system.bean.Emp">
+         SELECT
+            e.person_id,
+            e.sex,
+            u.user_account,
+            FUNC_GET_DICVALUE(e.sex,'XB') sexShow,
+            e.name,
+            e.address,
+            e.nation,
+            FUNC_GET_DICVALUE(e.nation,'MZ') nationShow,
+            e.birthday,
+            e.idcard,
+            e.valid_flag,
+            d.dept_id,
+            d.dept_name,
+            e.tel,
+            e.STAFF_STATUS staffStatus ,
+            FUNC_GET_DICVALUE(e.STAFF_STATUS,'JZGZT') staffStatusShow
+        FROM
+            t_rs_employee e,
+            t_sys_dept d,
+            t_rs_employee_dept ed,
+            t_sys_user u
+        WHERE
+                e.person_id = ed.person_id
+            AND
+                ed.dept_id = d.dept_id
+            AND
+                u.user_id = e.person_id
+            AND
+                e.valid_flag = '1'
+        <if test="deptId!='' and deptId!=null">
+            and d.dept_id = '${deptId}'
+        </if>
+            ORDER BY u.USER_ACCOUNT
+    </select>
+    <select id="getEmpListByName" resultType="com.goisan.system.bean.Emp">
+        SELECT
+        e.person_id,
+        e.sex,
+        u.user_account,
+        FUNC_GET_DICVALUE(e.sex,'XB') sexShow,
+        e.name,
+        e.address,
+        e.nation,
+        FUNC_GET_DICVALUE(e.nation,'MZ') nationShow,
+        e.birthday,
+        e.idcard,
+        e.valid_flag,
+        d.dept_id,
+        d.dept_name,
+        e.tel
+        FROM
+        t_rs_employee e,
+        t_sys_dept d,
+        t_rs_employee_dept ed,
+        t_sys_user u
+        WHERE
+        e.person_id = ed.person_id
+        AND
+        ed.dept_id = d.dept_id
+        AND
+        u.user_id = e.person_id
+        AND
+        e.valid_flag = '1'
+        AND e.NAME like #{NAME}
+        ORDER BY u.USER_ACCOUNT
+    </select>
+    <select id="getEmpListByDeptId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Emp">
+        SELECT
+        e.person_id,
+        e.sex,
+        u.user_account,
+        FUNC_GET_DICVALUE(e.sex,'XB') sexShow,
+        e.name,
+        e.address,
+        e.nation,
+        FUNC_GET_DICVALUE(e.nation,'MZ') nationShow,
+        e.birthday,
+        e.idcard,
+        e.valid_flag,
+        d.dept_id,
+        d.dept_name deptName,
+        e.tel,
+        e.STAFF_STATUS staffStatus ,
+        FUNC_GET_DICVALUE(e.STAFF_STATUS,'JZGZT') staffStatusShow
+        FROM
+        t_rs_employee e,
+        t_sys_dept d,
+        t_rs_employee_dept ed,
+        t_sys_user u
+        WHERE
+        e.person_id = ed.person_id
+        AND
+        ed.dept_id = d.dept_id
+        AND
+        u.user_id = e.person_id
+        <if test="deptId != null and deptId != ''">
+            AND
+            d.dept_id like '${deptId}%'
+        </if>
+        <if test="name != null and name != ''">
+            AND
+            e.name like '%${name}%'
+        </if>
+        AND
+        e.valid_flag = '1'
+    </select>
+    <select id="getEmpByEmpId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Emp">
+        SELECT
+            e.person_id,
+            e.sex,
+            e.name,
+            e.address,
+            e.nation,
+            e.birthday,
+            e.staff_id,
+            e.idcard,
+            e.valid_flag,
+            e.tel
+        FROM
+            t_rs_employee e
+        WHERE
+            e.person_id = #{person_id}
+    </select>
+    <select id="getEmpByDeptIdAndPersonId" resultType="com.goisan.system.bean.Emp">
+        SELECT
+            e.person_id,
+            e.sex,
+            /*FUNC_GET_DICVALUE(e.sex,'XB') sexShow,*/
+            e.name,
+            e.address,
+            e.nation,
+            /*FUNC_GET_DICVALUE(e.nation,'MZ') nationShow,*/
+            e.birthday,
+            e.idcard,
+            e.valid_flag,
+            d.dept_id,
+            d.dept_name,
+            e.tel,
+
+            e.nationality,
+            /*FUNC_GET_DICVALUE(e.nationality,'GJ') nationalityShow,*/
+            e.staff_id staffId,
+            e.used_name usedName,
+            e.id_type idType,
+            /*FUNC_GET_DICVALUE(e.id_type,'SFZJLX') idTypeShow,*/
+            e.native_place_province nativePlaceProvince,
+            e.native_place_city nativePlaceCity,
+            e.native_place_county nativePlaceCounty,
+            e.birth_place birthPlace,
+            e.political_status politicalStatus,
+            /*FUNC_GET_DICVALUE(e.political_status,'ZZMM') politicalStatusShow,*/
+            e.marital_status maritalStatus,
+           /* FUNC_GET_DICVALUE(e.marital_status,'HYZK') maritalStatusShow,*/
+            e.health_status healthStatus,
+           /* FUNC_GET_DICVALUE(e.health_status,'JKZK') healthStatusShow,*/
+            e.work_time workTime,
+            e.to_school_time toSchoolTime,
+            e.staff_source staffSource,
+            decode(e.staff_belongs,1,FUNC_GET_DICVALUE(e.staff_source,'JZGLY2')
+                             ,2,FUNC_GET_DICVALUE(e.staff_source,'JZGLY')) staffSourceShow,
+            e.staff_type staffType,
+            /*FUNC_GET_DICVALUE(e.staff_type,'JZGLB') staffTypeShow,*/
+            e.staff_flag staffFlag,
+            /*FUNC_GET_DICVALUE(e.staff_flag,'SF') staffFlagShow,*/
+            e.employe_form employeForm,
+            /*FUNC_GET_DICVALUE(e.employe_form,'YRXS') employeFormShow,*/
+            e.contract_type contractType,
+            /*FUNC_GET_DICVALUE(e.contract_type,'QDHTQK') contractTypeShow,*/
+            e.technical_skills technicalSkills,
+            /*FUNC_GET_DICVALUE(e.technical_skills,'XXJSYYNL') technicalSkillsShow,*/
+            e.double_type_flag doubleTypeFlag,
+          /*  FUNC_GET_DICVALUE(e.double_type_flag,'SF') doubleTypeFlagShow,*/
+            e.credentials_flag credentialsFlag,
+            /*FUNC_GET_DICVALUE(e.credentials_flag,'SF') credentialsFlagShow,*/
+            e.stunt_teacher_flag stuntTeacherFlag,
+           /* FUNC_GET_DICVALUE(e.stunt_teacher_flag,'SF') stuntTeacherFlagShow,*/
+            e.work_year workYear,
+          /*  FUNC_GET_DICVALUE(e.work_year,'QYGZSC') workYearShow,*/
+            e.staff_status staffStatus,
+            FUNC_GET_DICVALUE(e.staff_status,'JZGZT') staffStatusShow,
+            e.staff_belongs staffBelongs ,
+          /*  FUNC_GET_DICVALUE(e.staff_status,'JZGSS') staffBelongsShow ,*/
+            u.ID_CARD_PHOTO_URL photoUrl
+        FROM
+            t_rs_employee e,
+            t_sys_dept d,
+            t_rs_employee_dept ed,
+            T_SYS_USER u
+        WHERE
+                e.person_id = u.user_id
+            AND
+                e.person_id = ed.person_id
+            AND
+                ed.dept_id = d.dept_id
+            AND
+                d.dept_id = #{deptId}
+            AND
+                e.person_id = #{personId}
+    </select>
+    <insert id="saveEmp" parameterType="com.goisan.system.bean.Emp">
+        INSERT INTO
+            t_rs_employee (
+                person_id,name,sex,idcard,
+                birthday,address,nation,creator,
+                create_time,create_dept,valid_flag,
+                tel,
+                nationality,staff_id,used_name,id_type,
+                native_place_province,native_place_city,native_place_county,
+                birth_place,political_status,marital_status,health_status,
+                work_time,to_school_time,staff_source,staff_type,
+                staff_flag,contract_type,technical_skills,double_type_flag,
+                credentials_flag,stunt_teacher_flag,work_year,
+                staff_status,staff_belongs,employe_form
+            )
+        VALUES (
+                #{personId},#{name},#{sex},#{idCard},
+                to_date('${birthday}','yyyy-mm-dd'),#{address},#{nation},#{creator},
+                 sysdate,#{createDept},#{validFlag},
+                #{tel},
+                #{nationality},#{staffId},#{usedName},#{idType},
+                #{nativePlaceProvince},#{nativePlaceCity},#{nativePlaceCounty},
+                #{birthPlace},#{politicalStatus},#{maritalStatus},#{healthStatus},
+                to_date('${workTime}','yyyy-mm-dd'),to_date('${toSchoolTime}','yyyy-mm-dd'),#{staffSource},#{staffType},
+                #{staffFlag},#{contractType},#{technicalSkills},#{doubleTypeFlag},
+                #{credentialsFlag},#{stuntTeacherFlag},#{workYear},
+                #{staffStatus},#{staffBelongs},#{employeForm}
+            )
+    </insert>
+    <insert id="saveEmpDeptRelation"
+            parameterType="com.goisan.system.bean.EmpDeptRelation">
+        INSERT INTO
+            t_rs_employee_dept (
+                id,
+                person_id,
+                dept_id,
+                person_order,
+                creator,
+                create_time,
+                create_dept,
+                valid_flag
+            )
+        VALUES (
+                #{id},
+                #{personId},
+                #{deptId},
+                #{personOrder},
+                #{creator},
+                sysdate,
+                #{createDept},
+                #{validFlag}
+            )
+    </insert>
+    <update id="updateEmp" parameterType="com.goisan.system.bean.Emp">
+        UPDATE t_rs_employee SET
+        <if test="sex != null and sex != '' ">
+            sex=#{sex},
+        </if>
+        <if test="address != null and address != '' ">
+            address=#{address},
+        </if>
+        <if test="name != null and name != '' ">
+            name=#{name},
+        </if>
+        <if test="idCard != null and idCard != '' ">
+            idcard=#{idCard},
+        </if>
+        <if test="nation != null and nation != '' ">
+            nation = #{nation},
+        </if>
+        <if test="birthday != null  ">
+            birthday = to_date('${birthday}','yyyy-mm-dd'),
+        </if>
+        <if test="tel != null and tel != '' ">
+            tel=#{tel},
+        </if>
+        <if test="changeDept != null and changeDept != '' ">
+            change_dept=#{changeDept},
+        </if>
+        <if test="nationality != null and nationality != '' ">
+            nationality=#{nationality},
+        </if>
+        <if test="staffId != null and staffId != '' ">
+            staff_id=#{staffId},
+        </if>
+        <if test="usedName != null and usedName != '' ">
+            used_name=#{usedName},
+        </if>
+        <if test="idType != null and idType != '' ">
+            id_type=#{idType},
+        </if>
+        <if test="nativePlaceProvince != null and nativePlaceProvince != '' ">
+            native_place_province=#{nativePlaceProvince},
+        </if>
+        <if test="nativePlaceCity != null and nativePlaceCity != '' ">
+            native_place_city=#{nativePlaceCity},
+        </if>
+        <if test="nativePlaceCounty != null and nativePlaceCounty != '' ">
+            native_place_county=#{nativePlaceCounty},
+        </if>
+        <if test="birthPlace != null and birthPlace != '' ">
+            birth_place=#{birthPlace},
+        </if>
+        <if test="politicalStatus != null and politicalStatus != '' ">
+            political_status=#{politicalStatus},
+        </if>
+        <if test="maritalStatus != null and maritalStatus != '' ">
+            marital_status=#{maritalStatus},
+        </if>
+        <if test="healthStatus != null and healthStatus != '' ">
+            health_status=#{healthStatus},
+        </if>
+        <if test="workTime != null ">
+            work_time=#{workTime},
+        </if>
+        <if test="toSchoolTime != null ">
+            to_school_time=#{toSchoolTime},
+        </if>
+        <if test="staffSource != null and staffSource != '' ">
+            staff_source=#{staffSource},
+        </if>
+        <if test="staffType != null and staffType != '' ">
+            staff_type=#{staffType},
+        </if>
+        <if test="staffFlag != null and staffFlag != '' ">
+            staff_flag=#{staffFlag},
+        </if>
+        <if test="contractType != null and contractType != '' ">
+            contract_type=#{contractType},
+        </if>
+        <if test="technicalSkills != null and technicalSkills != '' ">
+            technical_skills=#{technicalSkills},
+        </if>
+        <if test="doubleTypeFlag != null and doubleTypeFlag != '' ">
+            double_type_flag=#{doubleTypeFlag},
+        </if>
+        <if test="credentialsFlag != null and credentialsFlag != '' ">
+            credentials_flag=#{credentialsFlag},
+        </if>
+        <if test="stuntTeacherFlag != null and stuntTeacherFlag != '' ">
+            stunt_teacher_flag=#{stuntTeacherFlag},
+        </if>
+        <if test="workYear != null and workYear != '' ">
+            work_year=#{workYear},
+        </if>
+        <if test="staffStatus != null and staffStatus != '' ">
+            staff_status=#{staffStatus},
+        </if>
+        <if test="staffBelongs != null and staffBelongs != '' ">
+            staff_belongs=#{staffBelongs},
+        </if>
+        <if test="employeForm != null and employeForm != '' ">
+            employe_form=#{employeForm},
+        </if>
+        change_time=sysdate,
+        changer=#{changer}
+        WHERE person_id = #{personId}
+    </update>
+    <update id="deleteEmp" parameterType="java.lang.String">
+        UPDATE t_rs_employee SET valid_flag = '0' WHERE person_id = #{personId}
+    </update>
+    <update id="deleteEmpDeptRelation" parameterType="java.lang.String">
+        UPDATE t_rs_employee_dept SET valid_flag = '0' WHERE person_id = #{personId}
+        <if test="deptId != null and deptId != '' ">
+            and dept_id = #{deptId}
+        </if>
+    </update>
+    <select id="getDeptByPersonId" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT dept_id FROM t_rs_employee_dept WHERE person_id = #{personId}
+    </select>
+    <delete id="deleteEmpDept" parameterType="java.lang.String">
+        DELETE FROM t_rs_employee_dept WHERE person_id = #{personId}
+    </delete>
+    <select id="getPhotoByPersonid" parameterType="java.lang.String" resultType="java.sql.Blob">
+        SELECT phone FROM t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="GroupEmpByDept" resultType="com.goisan.system.bean.Emp">
+        SELECT FUNC_GET_DEPTNAME(dept_id) as deptId , COUNT (1) as personOrder
+            FROM T_RS_EMPLOYEE_DEPT t  WHERE valid_flag = '1' and t.dept_id like func_get_range(#{dept},'6')
+        GROUP BY t.dept_id
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getPersonNameById1" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT distinct
+               FUNC_GET_USERNAME(e.PERSON_ID) personName
+            FROM T_ZW_REPAIR_EXECUTE e
+            where e.id= #{repairId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <select id="getEmpRole" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT edr.role_id
+        FROM t_rs_employee e, t_rs_employee_dept_role edr
+        WHERE e.person_id = edr.person_id AND e.person_id = #{personId} AND edr.dept_id = #{deptId}
+    </select>
+    <select id="getPersonLevel" parameterType="String" resultType="String">
+        SELECT u.user_level as "level" FROM T_SYS_USER u WHERE u.USER_ID = #{personId}
+    </select>
+    <select id="getLevels" parameterType="java.lang.Integer" resultType="com.goisan.system.bean.Select2">
+        SELECT
+        DIC_CODE id,
+        DIC_NAME text
+        FROM T_SYS_DIC
+        WHERE PARENT_ID = (SELECT ID
+                            FROM T_SYS_DIC
+                            WHERE DIC_CODE = 'TYJB')
+    </select>
+    <update id="updateLevel" parameterType="com.goisan.system.bean.LoginUser">
+        UPDATE T_SYS_USER SET user_level = #{level} WHERE USER_ID = #{personId}
+    </update>
+    <select id="getRoleList" resultType="com.goisan.system.bean.Tree">
+        SELECT role_id id,0 pid,role_name name
+        FROM t_sys_role
+    </select>
+    <delete id="deleteRoleByPersonIdAndDeptId">
+        DELETE FROM t_rs_employee_dept_role WHERE person_id = #{personId} AND dept_id = #{deptId}
+    </delete>
+    <select id="getEmpByIdCard" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Emp">
+        SELECT * FROM t_rs_employee WHERE idcard = #{idCard}
+    </select>
+    <select id="getEmpByIdCardStaffId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Emp">
+        SELECT * FROM t_rs_employee WHERE idcard = #{idCard}
+    </select>
+    <select id="getEmpByPersonId" parameterType="java.lang.String" resultType="com.goisan.system.bean.LoginUser">
+        SELECT * FROM T_SYS_USER WHERE USER_ID = #{personId}
+    </select>
+    <select id="getDeletedEmpList" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Emp">
+        SELECT
+        e.person_id,
+        e.sex,
+        u.user_account,
+        FUNC_GET_DICVALUE(e.sex,'XB') sexShow,
+        e.name,
+        e.address,
+        e.nation,
+        FUNC_GET_DICVALUE(e.nation,'MZ') nationShow,
+        e.birthday,
+        e.idcard,
+        e.valid_flag,
+        d.dept_id,
+        d.dept_name deptName,
+        e.tel,
+        e.STAFF_STATUS staffStatus ,
+        FUNC_GET_DICVALUE(e.STAFF_STATUS,'JZGZT') staffStatusShow
+        FROM
+        t_rs_employee e,
+        t_sys_dept d,
+        t_rs_employee_dept ed,
+        t_sys_user u
+        WHERE
+        e.person_id = ed.person_id
+        AND
+        ed.dept_id = d.dept_id
+        AND
+        u.user_id = e.person_id
+        <if test="deptId != null and deptId != ''">
+            AND
+            d.dept_id like '${deptId}%'
+        </if>
+        <if test="staffId != null and staffId != ''">
+            AND
+            e.staff_id like '%${staffId}%'
+        </if>
+        <if test="name != null and name != ''">
+            AND
+            e.name like '%${name}%'
+        </if>
+        <if test="idCard != null and idCard != ''">
+            AND
+            e.idcard like '%${idCard}%'
+        </if>
+        <if test="sex != null and sex != ''">
+            AND
+            e.sex like '%${sex}%'
+        </if>
+        AND e.valid_flag='0'
+    </select>
+    <update id="recoveryEmp" parameterType="java.lang.String">
+        UPDATE t_rs_employee SET staff_status = '100', valid_flag = '1' WHERE person_id = #{personId}
+    </update>
+    <select id="getStaffId" parameterType="com.goisan.system.bean.Emp" resultType="com.goisan.system.bean.Emp">
+        SELECT * FROM t_rs_employee WHERE staff_id = #{staffId}
+    </select>
+    <select id="getEmpStaffId" parameterType="java.lang.String" resultType="com.goisan.system.bean.Emp">
+        SELECT * FROM t_rs_employee WHERE staff_id = #{staffId}
+    </select>
+    <select id="getStaffIdByPersonId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT STAFF_ID FROM t_rs_employee WHERE PERSON_ID = #{personId}
+    </select>
+
+    <select id="selEmpCountByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(t.PERSON_ID) from T_RS_EMPLOYEE t where t.name = #{teacherName} group by t.name
+    </select>
+</mapper>

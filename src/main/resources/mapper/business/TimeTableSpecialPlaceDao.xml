@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.timetable.dao.TimeTableSpecialPlaceDao">
+
+    <select id="getTimeTableSpecialPlaceList" resultType="com.goisan.educational.timetable.bean.TimeTableSpecialPlace"
+            parameterType="com.goisan.educational.timetable.bean.TimeTableSpecialPlace">
+        select t.ID,
+        t.SPECIAL_FLAG,
+        t.SPECIAL_PLACE
+        from T_JW_TIMETABLE_SPECIAL_PLACE t
+    </select>
+
+    <insert id="saveTimeTableSpecialPlace" parameterType="com.goisan.educational.timetable.bean.TimeTableSpecialPlace">
+        insert into T_JW_TIMETABLE_SPECIAL_PLACE (ID, SPECIAL_FLAG, SPECIAL_PLACE)
+        values (#{id}, #{specialFlag}, #{specialPlace})
+    </insert>
+
+    <update id="updateTimeTableSpecialPlace" parameterType="com.goisan.educational.timetable.bean.TimeTableSpecialPlace">
+        update T_JW_TIMETABLE_SPECIAL_PLACE
+        set SPECIAL_PLACE=#{specialPlace},
+            SPECIAL_FLAG=#{specialFlag}
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteTimeTableSpecialPlace" parameterType="String">
+        delete
+        from T_JW_TIMETABLE_SPECIAL_PLACE
+        where ID = #{id}
+    </delete>
+
+    <select id="getTimeTableSpecialPlaceById" resultType="com.goisan.educational.timetable.bean.TimeTableSpecialPlace" parameterType="String">
+        select id,
+               SPECIAL_PLACE,
+               SPECIAL_FLAG
+        from T_JW_TIMETABLE_SPECIAL_PLACE
+        where id = #{id}
+    </select>
+
+
+    <select id="getTimeTableSpecialPlaceList4Select" resultType="com.goisan.system.bean.Select2" >
+        select id id,
+               SPECIAL_PLACE text
+        from T_JW_TIMETABLE_SPECIAL_PLACE
+    </select>
+
+</mapper>

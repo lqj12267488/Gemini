@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.timetable.dao.TimeTableDepartmentDao">
+
+    <select id="getTimeTableDepartmentList" resultType="com.goisan.educational.timetable.bean.TimeTableDepartment"
+            parameterType="com.goisan.educational.timetable.bean.TimeTableDepartment">
+        select id,
+        (SELECT DEPT_NAME FROM T_SYS_DEPT WHERE DEPT_ID = department_id) departmentId,
+        (select MAJOR_NAME from T_XG_MAJOR where T_XG_MAJOR.MAJOR_CODE = T_JW_TIMETABLE_DEPARTMENT.MAJOR_ID) majorId,
+        (select CLASS_NAME from T_XG_CLASS where T_XG_CLASS.CLASS_ID = T_JW_TIMETABLE_DEPARTMENT.CLASS_ID) classId,
+        people_number,
+        (select class_room_name from T_JW_CLASSROOM where id = class_rom) classRom
+        from T_JW_TIMETABLE_DEPARTMENT
+        <if test="timeTableId != null and timeTableId != '' ">
+            where TIME_TABLE_ID= #{timeTableId}
+        </if>
+
+        <if test="departmentId != null and departmentId != '' ">
+            and DEPARTMENT_ID=#{departmentId}
+        </if>
+    </select>
+
+    <insert id="saveTimeTableDepartment" parameterType="com.goisan.educational.timetable.bean.TimeTableDepartment">
+        insert into T_JW_TIMETABLE_DEPARTMENT (ID, TIME_TABLE_ID, DEPARTMENT_ID, MAJOR_ID, CLASS_ID, PEOPLE_NUMBER,
+                                               CLASS_ROM)
+        values (#{id}, #{timeTableId}, #{departmentId}, #{majorId}, #{classId}, #{peopleNumber}, #{classRom})
+    </insert>
+
+    <update id="updateTimeTableDepartment" parameterType="com.goisan.educational.timetable.bean.TimeTableDepartment">
+        update T_JW_TIMETABLE_DEPARTMENT
+        set DEPARTMENT_ID=#{departmentId},
+            MAJOR_ID=#{majorId},
+            CLASS_ID=#{classId},
+            PEOPLE_NUMBER=#{peopleNumber},
+            CLASS_ROM=#{classRom}
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteTimeTableDepartment" parameterType="String">
+        delete
+        from T_JW_TIMETABLE_DEPARTMENT
+        where ID = #{id}
+    </delete>
+
+    <select id="getTimeTableDepartmentById" resultType="com.goisan.educational.timetable.bean.TimeTableDepartment"
+            parameterType="String">
+        select id,
+               TIME_TABLE_ID,
+               DEPARTMENT_ID departmentId,
+               MAJOR_ID      majorId,
+               CLASS_ID      classId,
+               people_number,
+               class_rom
+        from T_JW_TIMETABLE_DEPARTMENT
+        where id = #{id}
+    </select>
+
+    <select id="getMajorCodeByDeptId" resultType="com.goisan.system.bean.Select2"
+            parameterType="String">
+        select MAJOR_CODE id,MAJOR_NAME text
+        from T_XG_MAJOR
+        where DEPARTMENTS_ID = #{id}
+    </select>
+
+
+    <select id="getClassIdByMajorCode" resultType="com.goisan.system.bean.Select2"
+            parameterType="String">
+        select CLASS_ID id,CLASS_NAME text
+        from T_XG_CLASS
+        where MAJOR_CODE = #{id}
+    </select>
+
+
+</mapper>

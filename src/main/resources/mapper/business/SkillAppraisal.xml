@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.skillappraisal.dao.SkillAppraisalDao">
+    <select id="getMajorClassesName" resultMap="majorClassesName">
+        select t.major_code "id",t.major_name "text" from t_xg_major t
+    </select>
+    <resultMap id="majorClassesName" type="com.goisan.system.bean.SelectGroupForExcel">
+        <id column="MAJOR_CODE" property="id"/>
+        <result column="MAJOR_NAME" property="text"/>
+        <collection property="major" ofType="String" column="{majorCode = id}" select="getClassesList"/>
+    </resultMap>
+    <select id="getClassesList" parameterType="java.util.HashMap" resultType="String">
+        select t.class_name "text" from t_xg_class t where t.major_code =#{majorCode}
+    </select>
+    <select id="getSchoolSystem" resultType="String">
+        select t.dic_name text from t_sys_dic t inner join (select * from t_sys_dic t1 where t1.dic_code='ZXZYXZ') t2 on t2.id =t.parent_id
+    </select>
+    <select id="checkIsImport" resultType="String">
+        select wm_concat(major_name) major_name
+        from (select m.major_name, count(c.class_id)
+        from t_xg_major m
+        left join t_xg_class c on m.major_code=c.major_code
+        group by m.major_name having count(c.class_id)=0)
+    </select>
+
+    <select id="skillAppraisal" resultType="com.goisan.educational.skillappraisal.bean.SkillAppraisal"
+            parameterType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
+        select
+            id,
+            major        major,
+            FUNC_GET_TABLEVALUE(MAJOR, 't_xg_major', 'major_code', 'major_name') majorShow,
+            grade        grade,
+            FUNC_GET_TABLEVALUE(GRADE, 'T_XG_CLASS', 'class_id', 'class_name') gradeShow,
+            to_char(entrance_date ,'yyyy-mm') as entranceDate,
+            school_system  schoolSystem,
+            func_get_dicvalue(t.school_system,'ZXZYXZ') schoolSystemShow,
+            pre_app_profession  preAppProfession,
+            FUNC_GET_TABLEVALUE(pre_app_profession, 'T_JW_SKILL', 'ID', 'PROJECT_NAME') preAppProfessionShow,
+            profession_level   professionLevel,
+            student_name   studentName,
+            /*t.student_name studentNameShow,*/
+           FUNC_GET_TABLEVALUE(student_name, 't_xg_student', 'student_id', 'NAME') studentNameShow,
+            create_time   createTime,
+            to_char(pre_app_date ,'yyyy-mm-dd') as preAppDate,
+            PROJECT_LEVEL projectLevel,
+            ISSUING_OFFICE issuingOffice
+        from T_JW_SKILLAPPRAISAL  t
+        WHERE 1 = 1
+        ORDER BY create_time DESC
+    </select>
+    <select id="skillAppraisalCount" resultType="com.goisan.educational.skillappraisal.bean.SkillAppraisal"
+            parameterType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
+        select
+            FUNC_GET_TABLEVALUE(MAJOR, 't_xg_major', 'major_code', 'major_name')        major,
+            FUNC_GET_TABLEVALUE(GRADE, 'T_XG_CLASS', 'class_id', 'class_name')        grade,
+            to_char(entrance_date ,'yyyy-mm') as entranceDate,
+            func_get_dicvalue(t.school_system,'XZ') schoolSystemShow,
+            school_system  schoolSystem,
+            FUNC_GET_TABLEVALUE(pre_app_profession, 'T_JW_SKILL', 'ID', 'PROJECT_NAME')  preAppProfession,
+            profession_level   professionLevel,
+            to_char(pre_app_date ,'yyyy-mm-dd') as preAppDate,
+            count(student_name) peoplenumber,
+            PROJECT_LEVEL projectLevel,
+            ISSUING_OFFICE issuingOffice
+         from T_JW_SKILLAPPRAISAL t
+         group by major, grade, entrance_date, school_system, pre_app_profession,profession_level, pre_app_date,PROJECT_LEVEL,ISSUING_OFFICE
+    </select>
+    <select id="scoreSituation" resultType="com.goisan.educational.skillappraisal.bean.SkillAppraisal"
+            parameterType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
+        select
+            id,
+            FUNC_GET_TABLEVALUE(MAJOR, 't_xg_major', 'major_code', 'major_name')        major,
+            FUNC_GET_TABLEVALUE(GRADE, 'T_XG_CLASS', 'class_id', 'class_name')        grade,
+            to_char(entrance_date ,'yyyy-mm') as entranceDate,
+            school_system  schoolSystem,
+            func_get_dicvalue(t.school_system,'XZ') schoolSystemShow,
+            FUNC_GET_TABLEVALUE(pre_app_profession, 'T_JW_SKILL', 'ID', 'PROJECT_NAME')  preAppProfession,
+            profession_level   professionLevel,
+            student_name   studentName,
+            create_time   createTime,
+            func_get_dicvalue(t.score,'CJQK') scoreShow,
+            to_char(pre_app_date ,'yyyy-mm-dd') as preAppDate,
+            PROJECT_LEVEL projectLevel,
+            ISSUING_OFFICE issuingOffice,
+            nvl(score,0) as score,
+            (select count(*) from T_SYS_FILES where TABLENAME = 'T_JW_SKILLAPPRAISAL' and BUSINESS_ID = id) "count"
+        from T_JW_SKILLAPPRAISAL t
+        WHERE 1 = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <insert id="insertSkillAppraisal" parameterType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
+        INSERT INTO T_JW_SKILLAPPRAISAL
+        (
+        id,
+        major,
+        grade,
+        entrance_date,
+        school_system,
+        pre_app_profession,
+        profession_level,
+        student_name,
+        pre_app_date,
+        creator,
+        create_time,
+        create_dept,
+        PROJECT_LEVEL,
+        ISSUING_OFFICE,
+        valid_flag)
+        VALUES
+        (
+        FUNC_GET_UUID,
+        '${major}',
+        '${grade}',
+        to_date('${entranceDate}','yyyy-mm'),
+        '${schoolSystem}',
+        '${preAppProfession}',
+        '${professionLevel}',
+        '${studentName}',
+         to_date('${preAppDate}','yyyy-mm-dd'),
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '${projectLevel}',
+        '${issuingOffice}',
+        '1')
+    </insert>
+    <select id="getSkillAppraisalById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
+        select
+           id,
+            major        major,
+            grade        grade,
+             FUNC_GET_TABLEVALUE(MAJOR, 't_xg_major', 'major_code', 'major_name') majorShow,
+            FUNC_GET_TABLEVALUE(GRADE, 'T_XG_CLASS', 'class_id', 'class_name') gradeShow,
+            to_char(entrance_date ,'yyyy-mm') as entranceDate,
+            school_system  schoolSystem,
+            pre_app_profession  preAppProfession,
+            profession_level   professionLevel,
+            student_name   studentName,
+             FUNC_GET_TABLEVALUE(student_name, 't_xg_student', 'student_id', 'NAME') studentNameShow,
+            create_time   createTime,
+            to_char(pre_app_date ,'yyyy-mm-dd') as preAppDate,
+            ISSUING_OFFICE issuingOffice,
+            PROJECT_LEVEL projectLevel
+        FROM T_JW_SKILLAPPRAISAL
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateSkillApprraisalById" parameterType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
+        UPDATE T_JW_SKILLAPPRAISAL SET
+        major                = #{major},
+        grade                = #{grade},
+        entrance_date        = to_date(#{entranceDate},'yyyy-mm'),
+        school_system        = #{schoolSystem},
+        pre_app_profession   = #{preAppProfession},
+        profession_level     = #{professionLevel},
+        student_name         = #{studentName},
+        pre_app_date         = to_date(#{preAppDate},'yyyy-mm-dd'),
+        PROJECT_LEVEL        = #{projectLevel},
+        ISSUING_OFFICE       = #{issuingOffice}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteSkillAppraisalById" parameterType="java.lang.String">
+        DELETE  T_JW_SKILLAPPRAISAL WHERE id = #{id}
+    </delete>
+    <update id="updateScoreSituationById" parameterType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
+        UPDATE T_JW_SKILLAPPRAISAL SET
+        <if test="score != null and score != '' ">
+            score = #{score},
+        </if>
+        <if test="changer != null and changer != '' ">
+            changer = #{changer},
+        </if>
+        <if test="changeDept != null and changeDept != '' ">
+            change_dept = #{changeDept},
+        </if>
+        change_time =sysdate
+        WHERE id = #{id}
+    </update>
+
+
+
+</mapper>

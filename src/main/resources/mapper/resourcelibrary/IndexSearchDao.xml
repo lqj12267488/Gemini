@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.indexsearch.dao.IndexSearchDao">
+   <select id="searchResourceList" parameterType="com.goisan.indexsearch.bean.ResourceView"
+           resultType="com.goisan.indexsearch.bean.ResourceView">
+       select * from (
+       SELECT t1.* ,  rownum ro from (
+           SELECT t.resource_id resourceId,t.resource_name resourceName,t.resource_type resourceType,
+              FUNC_GET_DICVALUE(resource_type, 'ZYK_ZYLX') resourceTypeShow,
+              t.resource_subject_id resourceSubjectId, t.resource_major_id resourceMajorId,
+              t.resource_course_id resourceCourseId, t.resource_format resourceFormat,
+              FUNC_GET_DICVALUE(t.resource_format,'ZYK_ZYGS') AS resourceFormatShow,
+              t.public_person_id publicPersonId, FUNC_GET_USERNAME(t.public_person_id) publicPersonShow,
+              t.public_dept_id publicDeptId, to_char(t.public_time,'yyyy-mm-dd') publicTime,
+              t.remark remark,
+              z.file_name fileName,
+              z.file_url fileUrl,  z.file_type fileType,
+              z.file_size fileSize, z.cover_url coverUrl, z.cover_type coverType,
+              decode(s.VIEW_COUNT,'','0',s.VIEW_COUNT) AS viewCount,
+              decode(s.DOWN_COUNT,'','0',s.DOWN_COUNT) AS downCount
+            FROM ZYK_RESOURCE_PUBLIC t ,ZYK_FILES z , ZYK_LOG_STATISTICS s
+           WHERE t.resource_id = z.business_id(+) AND t.resource_id = s.resource_id(+) and t.valid_flag='1'
+                <if test="resourceName!='' and resourceName!=null">
+                   AND t.resource_name LIKE '%${resourceName}%'
+                </if>
+                <if test= "resourceType!='' and resourceType!=null">
+                    AND t.resource_type = '${resourceType}'
+                </if>
+                <if test= "resourceSubjectId!='' and resourceSubjectId!=null">
+                    AND t.resource_subject_id = '${resourceSubjectId}'
+                </if>
+                <if test= "resourceMajorId!='' and resourceMajorId!=null">
+                    AND t.resource_major_id = '${resourceMajorId}'
+                </if>
+                <if test="resourceCourseId!='' and resourceCourseId!=null">
+                    AND t.resource_course_id = '${resourceCourseId}'
+                </if>
+                <if test="resourceFormat!='' and resourceFormat!=null">
+                    AND t.resource_format = '${resourceFormat}'
+                </if>
+                <if test="publicPersonId!='' and publicPersonId!=null">
+                    AND t.public_person_id = '${publicPersonId}'
+                </if>
+       ) t1
+       <if test="orderBy!='' and orderBy!=null">
+           order by ${orderBy} DESC
+       </if>
+       )
+       WHERE 1 = 1
+       <if test="endCount!='' and endCount!=null and startCount!='' and startCount!=null">
+           AND ro BETWEEN ${startCount} AND ${endCount}
+       </if>
+
+   </select>
+   <select id="searchResourceById" parameterType="com.goisan.indexsearch.bean.ResourceView" resultType="com.goisan.indexsearch.bean.ResourceView">
+      select
+           t.resource_id resourceId,
+           t.resource_name resourceName,
+           t.resource_type resourceType,
+           FUNC_GET_DICVALUE(resource_type, 'ZYK_ZYLX') resourceTypeShow,
+           t.resource_subject_id resourceSubjectId,
+           t.resource_major_id resourceMajorId,
+           t.resource_course_id resourceCourseId,
+           t.resource_format resourceFormat,
+           t.public_person_id publicPersonId,
+           FUNC_GET_USERNAME(t.public_person_id) publicPersonShow,
+           t.public_dept_id publicDeptId,
+           t.public_time publicTime,
+           t.remark remark,
+           z.file_url fileUrl,
+           z.file_type fileType,
+           z.file_size fileSize,
+           z.cover_url coverUrl,
+           z.cover_type coverType,
+           s.VIEW_COUNT AS viewCount ,
+              s.DOWN_COUNT as downCount
+           from ZYK_RESOURCE_PUBLIC t ,ZYK_FILES z, ZYK_LOG_STATISTICS s
+        where t.resource_id = z.business_id AND t.resource_id = s.resource_id(+)
+            AND t.resource_id = '${resourceId}'
+   </select>
+   <select id="countSearchResource" parameterType="com.goisan.indexsearch.bean.ResourceView" resultType="java.lang.String">
+      select count(resourceId) AS countNum FROM
+       (
+       select
+           t.resource_id resourceId
+           from ZYK_RESOURCE_PUBLIC t ,ZYK_FILES z , ZYK_LOG_STATISTICS s
+       WHERE t.resource_id = z.business_id(+) AND t.resource_id = s.resource_id(+) and t.valid_flag='1'
+       <if test="resourceName!='' and resourceName!=null">
+           AND t.resource_name LIKE '%${resourceName}%'
+       </if>
+       <if test="resourceType!='' and resourceType!=null">
+           AND t.resource_type = '${resourceType}'
+       </if>
+       <if test="resourceSubjectId!='' and resourceSubjectId!=null">
+           AND t.resource_subject_id = '${resourceSubjectId}'
+       </if>
+       <if test="resourceMajorId!='' and resourceMajorId!=null">
+           AND t.resource_major_id = '${resourceMajorId}'
+       </if>
+       <if test="resourceCourseId!='' and resourceCourseId!=null">
+           AND t.resource_course_id = '${resourceCourseId}'
+       </if>
+       <if test="resourceFormat!='' and resourceFormat!=null">
+           AND t.resource_format = '${resourceFormat}'
+       </if>
+       <if test="publicPersonId!='' and publicPersonId!=null">
+           AND t.public_person_id = '${publicPersonId}'
+       </if>
+       )
+   </select>
+   <select id="getCountResource" parameterType="com.goisan.indexsearch.bean.ResourceView"
+           resultType="com.goisan.indexsearch.bean.ResourceView">
+       select
+           count(t.resource_id) AS numCount , sum(f.file_size) AS fileSize
+           from ZYK_RESOURCE_PUBLIC t , ZYK_FILES f
+           where 1 = 1
+           AND  t.resource_id = f.business_id
+           AND  t.VALID_FLAG = '1'
+           <if test="resourceName!='' and resourceName!=null">
+               AND t.resource_name LIKE '%${resourceName}%'
+           </if>
+           <if test="resourceType!='' and resourceType!=null">
+               AND t.resource_type = '${resourceType}'
+           </if>
+           <if test="resourceSubjectId!='' and resourceSubjectId!=null">
+               AND t.resource_subject_id = '${resourceSubjectId}'
+           </if>
+           <if test="resourceMajorId!='' and resourceMajorId!=null">
+               AND t.resource_major_id = '${resourceMajorId}'
+           </if>
+           <if test="resourceCourseId!='' and resourceCourseId!=null">
+               AND t.resource_course_id = '${resourceCourseId}'
+           </if>
+           <if test="resourceFormat!='' and resourceFormat!=null">
+               AND t.resource_format = '${resourceFormat}'
+           </if>
+           <if test="publicPersonId!='' and publicPersonId!=null">
+               AND t.public_person_id = '${publicPersonId}'
+           </if>
+   </select>
+   <select id="searchResourceContribution" parameterType="com.goisan.indexsearch.bean.ResourceView" resultType="com.goisan.indexsearch.bean.ResourceView">
+      SELECT FUNC_GET_USERNAME(public_person_id) AS resourceName, public_person_id AS publicPersonId, countNum AS viewCount
+      FROM (
+        SELECT public_person_id, COUNT(public_person_id) AS countNum
+          FROM ZYK_RESOURCE_PUBLIC t
+          GROUP BY t.public_person_id
+        )
+      where 1 = 1
+      <if test="endCount!='' and endCount!=null">
+          AND rownum &lt; ${endCount}
+      </if>
+      <if test="orderBy!='' and orderBy!=null">
+          order by ${orderBy}
+       </if>
+   </select>
+   <select id="searchMajorContribution" parameterType="com.goisan.indexsearch.bean.ResourceView" resultType="com.goisan.indexsearch.bean.ResourceView">
+       SELECT
+                FUNC_GET_TABLEVALUE(resource_major_id, 'ZYK_TYPE_MAJOR',
+                    'RESOURCE_MAJOR_ID', 'RESOURCE_MAJOR_NAME')  AS resourceName ,
+                countNum AS numCount
+       FROM (
+          SELECT resource_major_id, COUNT(resource_major_id) AS countNum
+           FROM ZYK_RESOURCE_PUBLIC t
+           GROUP BY t.resource_major_id
+            )
+       where  1 = 1
+       <if test="endCount!='' and endCount!=null">
+           AND rownum &lt; ${endCount}
+       </if>
+       <if test="orderBy!='' and orderBy!=null">
+           order by ${orderBy}
+       </if>
+   </select>
+
+</mapper>

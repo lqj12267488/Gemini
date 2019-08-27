@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.workflow.dao.NodeDao">
+    <insert id="saveNode" parameterType="com.goisan.workflow.bean.Node">
+        INSERT INTO t_sys_workflow_node (node_id, node_name, workflow_id, handle_role, node_order,node_type,
+        creator, create_time, create_dept,role_range,start_flag)
+        VALUES (#{nodeId},#{nodeName},#{workflowId},#{handleRole},#{nodeOrder},#{nodeType},#{creator},
+        #{createTime},#{createDept},#{roleRange},#{startFlag})
+    </insert>
+    <delete id="deleteNode" parameterType="java.lang.String">
+        DELETE FROM t_sys_workflow_node WHERE node_id = #{nodeId}
+    </delete>
+    <select id="getNodeById" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Node">
+        SELECT * FROM t_sys_workflow_node WHERE node_id = #{nodeId}
+    </select>
+    <update id="updateNode" parameterType="com.goisan.workflow.bean.Node">
+        UPDATE t_sys_workflow_node SET
+        node_name=#{nodeName},handle_role=#{handleRole},start_flag=#{startFlag},role_range=#{roleRange},node_type=#{nodeType},
+        node_order=#{nodeOrder},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept}
+        WHERE node_id = #{nodeId}
+    </update>
+    <select id="getNextNodeList" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Select2">
+        SELECT
+          node_id   id,
+          node_name text
+        FROM t_sys_workflow_node n
+        WHERE workflow_id = #{workflowId} AND node_id NOT IN (
+          select next_node_id
+          from t_sys_workflow_definition
+          where workflow_id = #{workflowId} AND node_id = #{nodeId})
+        AND node_id != #{nodeId}
+        ORDER BY node_order
+    </select>
+    <select id="check" parameterType="String" resultType="com.goisan.workflow.bean.Definition">
+        SELECT * FROM T_SYS_WORKFLOW_DEFINITION WHERE NODE_ID = #{nodeId} OR NEXT_NODE_ID = #{nodeId}
+    </select>
+</mapper>

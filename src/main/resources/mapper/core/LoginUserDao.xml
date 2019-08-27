@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.LoginUserDao">
+
+    <select id="getLoginUserByLoginId" parameterType="String"
+            resultType="com.goisan.system.bean.LoginUser">
+        SELECT user_account,user_id person_id ,password,question,answer, user_type,default_dept
+         default_dept_id ,valid_flag,user_level as "level"
+        FROM t_sys_user WHERE user_account = #{id} AND valid_flag = '1'
+    </select>
+
+    <select id="getLoginUserById" parameterType="String"
+            resultType="com.goisan.system.bean.LoginUser">
+        SELECT user_account,user_id person_id ,password,question,answer, user_type,default_dept
+        default_dept_id ,valid_flag,NAME,user_level
+        FROM t_sys_user WHERE USER_ID = #{id} AND valid_flag = '1'
+    </select>
+
+    <select id="getLoginUserRolesByLoginId" parameterType="String"
+            resultMap="loginUser">
+        SELECT
+          u.user_account,
+          u.password,
+          u.question,
+          u.answer,
+          u.user_type,
+          u.default_dept,
+          e.name,
+          e.person_id,
+          t.role_id,
+          t.resource_url,
+          t.dept_id,
+          u.photo_url,
+          u.user_level,
+          CASE WHEN t.SYSTEM IS NOT NULL
+            THEN 'SYS:' || t.SYSTEM END AS "system"
+        FROM t_rs_employee e, t_sys_user u
+          LEFT JOIN (SELECT
+                       r.role_id,
+                       re.resource_url,
+                       ed.person_id,
+                       edr.dept_id,
+                       re.SYSTEM
+                     FROM t_sys_role r,
+                       t_sys_resource re,
+                       t_rs_employee_dept ed,
+                       t_sys_role_resource rs,
+                       t_rs_employee_dept_role edr
+                     WHERE edr.dept_id = ed.dept_id AND edr.PERSON_ID = ed.PERSON_ID
+                           AND edr.role_id = r.role_id
+                           AND rs.role_id = edr.role_id
+                           AND re.RESOURCE_TYPE = '0'
+                           AND re.resource_id = rs.resource_id) t
+            ON t.person_id = u.user_id
+               AND t.dept_id = u.default_dept
+        WHERE e.person_id = u.user_id
+              AND u.valid_flag = '1'
+              AND u.user_account = #{userAccount}
+    </select>
+
+    <select id="upadtedefaultDeptByPersonid" parameterType="String">
+        UPDATE t_sys_user SET default_dept = #{deptId} WHERE user_id = #{personId}
+    </select>
+
+    <update id="upadtedefaultDeptId" parameterType="String">
+        UPDATE t_sys_user SET default_dept = #{deptId} WHERE user_account = #{userAccount}
+    </update>
+
+    <select id="getUserAccount" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT user_account FROM t_sys_user WHERE user_account = #{userAccount}
+    </select>
+
+    <insert id="saveUser" parameterType="com.goisan.system.bean.LoginUser">
+        INSERT INTO T_SYS_USER (
+        id, user_id, user_account, password, user_type,name,
+        creator, create_time, create_dept, default_dept,id_card_photo_url)
+        VALUES (
+        #{id},#{personId},#{userAccount},#{password},#{userType},#{name},
+        #{creator},#{createTime},#{createDept},#{defaultDeptId},#{idCardPhotoUrl})
+    </insert>
+
+    <resultMap id="loginUser" type="com.goisan.system.bean.LoginUser">
+        <result property="photoUrl" column="photo_url"/>
+        <result property="userAccount" column="user_account"/>
+        <result property="password" column="password"/>
+        <result property="question" column="question"/>
+        <result property="answer" column="answer"/>
+        <result property="userType" column="user_type"/>
+        <result property="defaultDeptId" column="default_dept"/>
+        <result property="name" column="name"/>
+        <result property="level" column="user_level"/>
+        <result property="personId" column="person_id"/>
+        <collection property="roles" ofType="java.lang.String">
+            <result column="role_id" javaType="java.lang.String"/>
+        </collection>
+        <collection property="permissions" ofType="java.lang.String">
+            <result column="system" javaType="java.lang.String"/>
+        </collection>
+        <collection property="deptId" ofType="java.lang.String">
+            <result column="dept_id" javaType="java.lang.String"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="student" type="com.goisan.system.bean.LoginUser">
+        <result property="photoUrl" column="photo_url"/>
+        <result property="userAccount" column="user_account"/>
+        <result property="password" column="password"/>
+        <result property="question" column="question"/>
+        <result property="answer" column="answer"/>
+        <result property="userType" column="user_type"/>
+        <result property="defaultDeptId" column="default_dept"/>
+        <result property="name" column="name"/>
+        <result property="personId" column="person_id"/>
+        <result property="level" column="user_level"/>
+        <collection property="roles" ofType="java.lang.String">
+            <result column="role_id" javaType="java.lang.String"/>
+        </collection>
+        <collection property="permissions" ofType="java.lang.String">
+            <result column="system" javaType="java.lang.String"/>
+        </collection>
+    </resultMap>
+
+    <update id="upadtedeLoginUser" parameterType="com.goisan.system.bean.LoginUser">
+        UPDATE t_sys_user SET
+        <if test="userAccount != null and userAccount != '' ">
+            user_account = #{userAccount},
+        </if>
+        <if test="password != null and password != '' ">
+            password = #{password},
+        </if>
+        <if test="question != null and question != '' ">
+            question = #{question},
+        </if>
+        <if test="answer != null and answer != '' ">
+            answer = #{answer},
+        </if>
+        <if test="name != null and name != '' ">
+            name = #{name},
+        </if>
+        change_time =sysdate
+        WHERE user_id = #{personId}
+    </update>
+
+    <delete id="deleteloginUser" parameterType="java.lang.String">
+        UPDATE t_sys_user SET valid_flag = '0' WHERE user_id = #{personId}
+    </delete>
+
+    <delete id="deleteUser" parameterType="java.lang.String">
+        DELETE FROM  t_sys_user   WHERE user_id = #{personId}
+    </delete>
+
+    <select id="getStudentRolesByLoginId" parameterType="java.lang.String" resultMap="student">
+        SELECT
+        u.user_account,
+        u.password,
+        u.question,
+        u.answer,
+        u.user_type,
+        u.default_dept,
+        u.photo_url,
+        s.name,
+        s.student_id                     person_id,
+        t.role_id,
+        t.resource_url,
+        CASE WHEN t.SYSTEM IS NOT NULL
+        THEN 'SYS:' || t.SYSTEM END AS "system"
+
+        FROM t_xg_student s, t_sys_user u
+        LEFT JOIN (SELECT
+        scr.role_id,
+        re.resource_url,
+        sc.student_id,
+        scr.class_id,
+        re.SYSTEM
+        FROM t_sys_resource re,
+        t_xg_student_class sc,
+        t_sys_role_resource rs,
+        t_xg_student_class_role scr
+        WHERE scr.class_id = sc.class_id
+        AND scr.role_id = rs.role_id
+        AND re.RESOURCE_TYPE = '0'
+        AND re.resource_id = rs.resource_id
+        AND sc.student_id = scr.student_id) t
+        ON t.student_id = u.user_id AND t.class_id = u.default_dept
+        WHERE s.student_id = u.user_id
+        AND u.user_account = #{userAccount}
+        AND u.valid_flag = '1'
+    </select>
+
+    <update id="savePhoto" parameterType="com.goisan.system.bean.LoginUser">
+        UPDATE T_SYS_USER SET
+        PHOTO_NAME = #{photoName},
+        photo_url = #{photoUrl},
+        photo_type = #{photoType}
+        WHERE USER_ID = #{personId}
+    </update>
+
+    <delete id="deleteStudentUserAcountByStudentId" parameterType="java.lang.String">
+        delete from t_sys_user   where user_account = #{studentId}
+    </delete>
+
+    <select id="getParentStudentUserRolesByLoginId" parameterType="String"
+            resultMap="loginUser">
+        SELECT
+        u.user_account,
+        u.password,
+        u.question,
+        u.answer,
+        u.user_type,
+        u.default_dept,
+        p.parent_name                 AS name,
+        p.parent_id                   AS person_id,
+        t.role_id,
+        t.resource_url,
+        t.dept_id,
+        u.photo_url,
+        CASE WHEN t.SYSTEM IS NOT NULL
+        THEN 'SYS:' || t.SYSTEM END AS "system"
+        FROM T_XG_PARENT p, t_sys_user u
+        LEFT JOIN (SELECT
+        r.role_id,
+        re.resource_url,
+        ps.student_id AS dept_id,
+        ps.parent_id,
+        re.SYSTEM
+        FROM t_sys_role r,
+        t_sys_resource re,
+        T_XG_PARENT_STUDENT ps,
+        t_sys_role_resource rs,
+        T_XG_PARENT_STUDENT_ROLE sr
+        WHERE sr.student_id = ps.student_id
+        AND re.RESOURCE_TYPE = '0'
+        AND sr.role_id = r.role_id
+        AND rs.role_id = r.role_id
+        AND re.resource_id = rs.resource_id
+        AND sr.parent_id = ps.parent_id) t
+        ON t.parent_id = u.user_id
+        AND t.dept_id = u.default_dept
+        WHERE p.parent_id = u.user_id
+        AND u.user_account = #{userAccount}
+        AND u.valid_flag = '1'
+    </select>
+
+    <insert id="updateTheme">
+        insert into T_SYS_USER_SITE_CUSTOM (ID, USER_ID, DEPT_ID, SYSTEM, SITE_BACKGROUND, SITE_CONTAINER)
+        values (FUNC_GET_UUID(),#{user.personId},#{user.defaultDeptId},#{system},#{user.siteBackground},#{user.siteContainer})
+    </insert>
+    <delete id="delTheme">
+        delete from T_SYS_USER_SITE_CUSTOM where USER_ID = #{user.personId} and DEPT_ID = #{user.defaultDeptId} and SYSTEM = #{system}
+    </delete>
+    <select id="getTheme" parameterType="string" resultType="String">
+        SELECT SITE_BACKGROUND || ','  || SITE_CONTAINER FROM T_SYS_USER_SITE_CUSTOM WHERE USER_ID = #{user.personId} and DEPT_ID = #{user.defaultDeptId} and SYSTEM = #{system}
+    </select>
+    <delete id="recoveryLoginUser" parameterType="java.lang.String">
+        UPDATE t_sys_user SET valid_flag = '1' WHERE user_id = #{personId}
+    </delete>
+
+</mapper>

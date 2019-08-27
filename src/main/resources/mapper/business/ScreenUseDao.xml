@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.synergy.workflow.dao.ScreenUseDao">
+    <!--菜单首页-->
+    <select id="screenUseAction" parameterType="com.goisan.synergy.workflow.bean.ScreenUse"
+            resultType="com.goisan.synergy.workflow.bean.ScreenUse">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_USERDICVALUE(t.screen,'DPM') screenShow,
+        t.screen screen,
+        t.content content,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.feedback feedback,
+        t.feedback_flag feedbackFlag,
+        t.creator creator,
+        t.create_time createTime,
+        t.create_dept createDept,
+        to_char(t.using_time,'yyyy-mm-dd hh24:mi') usingTime,
+        t.valid_flag
+        FROM
+        T_BG_SCREENUSE_WF t
+        WHERE  1 = 1
+        <if test="creator != 'sa' and creator != null and creator != ''">
+            AND t.creator = #{creator}
+        </if>
+        <if test="requestDate != null and requestDate != ''">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != ''">
+            AND t.create_dept = #{createDept}
+        </if>
+        <if test="usingTime != null and usingTime != ''">
+            AND to_char(t.using_time, 'yyyy-mm-dd') LIKE #{usingTime}
+        </if>
+        AND t.request_flag = '0'
+        ORDER BY t.create_time DESC
+    </select>
+    <!--自动获取人员名称-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name FROM t_rs_employee WHERE person_id = #{personID}
+    </select>
+    <!--自动获取部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name FROM t_sys_dept WHERE dept_id = #{deptId}
+    </select>
+    <!--通过ById获取修改页面的ID-->
+    <select id="getScreenUseById" parameterType="java.lang.String"
+            resultType="com.goisan.synergy.workflow.bean.ScreenUse">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi') as requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  as requestTime,
+        FUNC_GET_USERDICVALUE(t.screen, 'DPM') screenShow,
+        t.screen screen,
+        t.content content,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.creator creator,
+        t.create_time createTime,
+        t.create_dept createDept,
+        to_char(t.using_time,'yyyy-mm-dd') || 'T' || to_char(t.using_time,'hh24:mi') as usingTime
+        FROM
+        T_BG_SCREENUSE_WF t
+        WHERE
+        id = #{id}
+        ORDER  BY t.create_time DESC
+    </select>
+    <!--新增数据-->
+    <insert id="insertScreenUse" parameterType="com.goisan.synergy.workflow.bean.ScreenUse">
+        INSERT INTO
+        T_BG_SCREENUSE_WF
+        (id,requester,request_dept,request_date,screen,content,remark,request_flag,feedback,feedback_flag,creator,create_time,create_dept,using_time)
+        VALUES
+        (FUNC_GET_UUID,'${requester}','${requestDept}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),'${screen}','${content}','${remark}','0','${feedback}','${feedbackFlag}','${creator}',sysdate,'${createDept}',to_date('${usingTime}','yyyy-mm-dd hh24:mi'))
+    </insert>
+    <update id="updateScreenUse" parameterType="com.goisan.synergy.workflow.bean.ScreenUse">
+        UPDATE
+        T_BG_SCREENUSE_WF
+        SET
+        id = #{id},
+        requester = #{requester},
+        request_dept = #{requestDept},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        screen = #{screen},
+        content = #{content},
+        remark = #{remark},
+        changer = #{changer},
+        change_time = sysdate,
+        change_dept = #{changeDept},
+        using_time = to_date(#{usingTime},'yyyy-mm-dd hh24:mi')
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteScreenUseById" parameterType="java.lang.String">
+        DELETE
+        T_BG_SCREENUSE_WF
+        WHERE
+        id = #{id}
+    </delete>
+    <!--获取部门自动框-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM
+        t_sys_dept t
+    </select>
+    <!--获取人名自动框-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        t.name as "label",
+        t.person_id as "value"
+        FROM
+        t_rs_employee t
+    </select>
+    <select id="getScreenUseListProcess" resultType="com.goisan.synergy.workflow.bean.ScreenUse" parameterType="com.goisan.synergy.workflow.bean.ScreenUse">
+        SELECT
+        t.id ,
+        FUNC_GET_USERDICVALUE(t.screen,'DPM') screenShow,
+        t.screen screen,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') as requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        t.content,
+        t.remark,
+        t.request_flag requestFlag,
+        t.feedback,
+        t.feedback_flag feedbackFlag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag,
+        to_char(t.using_time,'yyyy-mm-dd hh24:mi') as usingTime
+        FROM
+        T_BG_SCREENUSE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        WHERE 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="usingTime != null and usingTime != '' ">
+            AND to_char(t.usingTime, 'yyyy-mm-dd') LIKE #{usingTime}
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="getScreenUseListComplete" resultType="com.goisan.synergy.workflow.bean.ScreenUse" parameterType="com.goisan.synergy.workflow.bean.ScreenUse">
+        SELECT
+        DISTINCT
+        t.id ,
+        FUNC_GET_USERDICVALUE(t.screen,'DPM') screenShow,
+        t.screen screen,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        t.content,
+        t.remark,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT')  requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.valid_flag,
+        to_char(t.using_time,'yyyy-mm-dd hh24:mi') usingTime
+        FROM
+        T_BG_SCREENUSE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        WHERE 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept LIKE #{createDept}
+        </if>
+        <if test="usingTime != null and usingTime != '' ">
+            AND to_char(t.usingTime, 'yyyy-mm-dd') LIKE #{usingTime}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+</mapper>

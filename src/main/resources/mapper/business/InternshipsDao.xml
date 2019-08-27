@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.internships.dao.InternshipsDao">
+    <select id="InternshipsAction" parameterType="com.goisan.studentwork.internships.bean.Internships"
+            resultType="com.goisan.studentwork.internships.bean.Internships">
+        SELECT
+        internship_unit_id  internshipUnitId,
+        internship_unit_name  internshipUnitName,
+        area area,
+        address address,
+        contact_person contactPerson,
+        contact_number contactNumber,
+        internship_whether_retention   internshipWhetherRetention,
+        cooperation_time  cooperationTime,
+        enterprise_person_number  enterprisePersonNumber,
+        registered_capital  registeredCapital,
+        enterprise_nature enterpriseNature,
+        legal_person legalPerson,
+        enterprise_scale enterpriseScale,
+        FUNC_GET_DICVALUE(enterprise_scale, 'QYGM') enterpriseScaleShow,
+        FUNC_GET_DICVALUE(cooperation_time, 'HZSJ') cooperationTimeShow,
+        FUNC_GET_DICVALUE(enterprise_nature, 'QYXZ') enterpriseNatureShow,
+        FUNC_GET_DICVALUE(internship_whether_retention, 'SFLY') internshipWhetherRetentionShow,
+        create_time createTime
+        FROM
+        T_XG_INTERNSHIP_UNIT
+        WHERE  1 = 1 AND valid_flag = 1
+        <if test="internshipUnitName != null and internshipUnitName != '' ">
+            AND internship_unit_name LIKE #{internshipUnitName}
+        </if>
+        order by create_time desc
+    </select>
+    <select id="InternshipsActionList" parameterType="com.goisan.studentwork.internships.bean.Internships"
+            resultType="com.goisan.studentwork.internships.bean.Internships">
+        SELECT
+        internship_unit_id  internshipUnitId,
+        internship_unit_name  internshipUnitName,
+        area area,
+        address address,
+        contact_person contactPerson,
+        contact_number contactNumber,
+        internship_whether_retention   internshipWhetherRetention,
+        cooperation_time  cooperationTime,
+        enterprise_person_number  enterprisePersonNumber,
+        registered_capital  registeredCapital,
+        enterprise_nature enterpriseNature,
+        legal_person legalPerson,
+        enterprise_scale enterpriseScale,
+        FUNC_GET_DICVALUE(enterprise_scale, 'QYGM') enterpriseScaleShow,
+        FUNC_GET_DICVALUE(cooperation_time, 'HZSJ') cooperationTimeShow,
+        FUNC_GET_DICVALUE(enterprise_nature, 'QYXZ') enterpriseNatureShow,
+        FUNC_GET_DICVALUE(internship_whether_retention, 'SFLY') internshipWhetherRetentionShow,
+        create_time createTime
+        FROM
+        T_XG_INTERNSHIP_UNIT
+        WHERE  1 = 1 AND valid_flag = 1 AND internship_unit_id NOT IN
+        (SELECT
+        employment_unit_id
+        FROM
+        t_xg_employment_unit
+        WHERE
+        internship_unit_name is NOT NULL)
+        <if test="internshipUnitName != null and internshipUnitName != '' ">
+            AND internship_unit_name = #{internshipUnitName}
+        </if>
+        order by create_time desc
+    </select>
+    <select id="selectInternshipId" parameterType="com.goisan.studentwork.internships.bean.Internships"
+        resultType="com.goisan.studentwork.employments.bean.Employments">
+        SELECT
+        internship_unit_id
+        FROM
+        t_xg_employment_unit
+        WHERE
+        internship_unit_name IS NOT NULL
+    </select>
+    <select id="selectOne" parameterType="java.lang.String" resultType="com.goisan.studentwork.internships.bean.Internships">
+        SELECT
+        internship_unit_id  internshipUnitId,
+        internship_unit_name  internshipUnitName,
+        area area,
+        address address,
+        contact_person contactPerson,
+        internship_whether_retention   internshipWhetherRetention,
+        cooperation_time  cooperationTime,
+        enterprise_person_number  enterprisePersonNumber,
+        registered_capital  registeredCapital,
+        enterprise_nature enterpriseNature,
+        legal_person legalPerson,
+        enterprise_scale enterpriseScale,
+        FUNC_GET_DICVALUE(enterprise_scale, 'QYGM') enterpriseScaleShow,
+        FUNC_GET_DICVALUE(cooperation_time, 'HZSJ') cooperationTimeShow,
+        FUNC_GET_DICVALUE(enterprise_nature, 'QYXZ') enterpriseNatureShow,
+        FUNC_GET_DICVALUE(internship_whether_retention, 'SFLY') internshipWhetherRetentionShow,
+        contact_number contactNumber
+        FROM
+        T_XG_INTERNSHIP_UNIT
+        WHERE  1 = 1 AND valid_flag = 1 AND internship_unit_id = #{internshipUnitId}
+    </select>
+    <select id="selectAll" parameterType="com.goisan.studentwork.internships.bean.Internships"
+            resultType="com.goisan.studentwork.internships.bean.Internships">
+        SELECT
+        t.id id,
+        t.internship_unit_id,
+        t.departments_id,
+        t.receive_number receiveNumber,
+        t.salary,
+        FUNC_GET_TABLEVALUE(t.internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow,
+        FUNC_GET_TABLEVALUE(t.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_DICVALUE(t.salary, 'GZSRSP') salaryShow,
+        x.area area,
+        x.address address,
+        x.contact_person contactPerson,
+        x.contact_number contactNumber,
+        x.internship_whether_retention   internshipWhetherRetention,
+        x.cooperation_time  cooperationTime,
+        x.enterprise_person_number  enterprisePersonNumber,
+        x.registered_capital  registeredCapital,
+        x.enterprise_nature enterpriseNature,
+        x.legal_person legalPerson,
+        x.enterprise_scale enterpriseScale,
+        FUNC_GET_DICVALUE(x.enterprise_scale, 'QYGM') enterpriseScaleShow,
+        FUNC_GET_DICVALUE(x.cooperation_time, 'HZSJ') cooperationTimeShow,
+        FUNC_GET_DICVALUE(x.enterprise_nature, 'QYXZ') enterpriseNatureShow,
+        FUNC_GET_DICVALUE(x.internship_whether_retention, 'SFLY') internshipWhetherRetentionShow,
+        t.create_time createTime
+        FROM
+        T_XG_INTERNSHIP_UNIT_EXT t,T_XG_INTERNSHIP_UNIT x
+        WHERE 1 = 1 AND t.id=#{id} AND t.internship_unit_id=x.internship_unit_id
+        order by t.create_time desc
+    </select>
+    <select id="getInternshipsById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.internships.bean.Internships">
+        SELECT
+        internship_unit_id  internshipUnitId,
+        internship_unit_name  internshipUnitName,
+        area area,
+        address address,
+        contact_person contactPerson,
+        contact_number contactNumber,
+        internship_whether_retention   internshipWhetherRetention,
+        cooperation_time  cooperationTime,
+        enterprise_person_number  enterprisePersonNumber,
+        registered_capital  registeredCapital,
+        enterprise_nature enterpriseNature,
+        legal_person legalPerson,
+        enterprise_scale enterpriseScale,
+        FUNC_GET_DICVALUE(enterprise_scale, 'QYGM') enterpriseScaleShow,
+        FUNC_GET_DICVALUE(cooperation_time, 'HZSJ') cooperationTimeShow,
+        FUNC_GET_DICVALUE(enterprise_nature, 'QYXZ') enterpriseNatureShow,
+        FUNC_GET_DICVALUE(internship_whether_retention, 'SFLY') internshipWhetherRetentionShow,
+        create_time createTime
+        FROM
+        T_XG_INTERNSHIP_UNIT
+        WHERE internship_unit_id = #{internshipUnitId}
+    </select>
+    <insert id="insertInternships" parameterType="com.goisan.studentwork.internships.bean.Internships">
+        INSERT INTO  T_XG_INTERNSHIP_UNIT
+        (internship_unit_id,internship_unit_name,area,address,contact_person,contact_number,
+        internship_whether_retention,cooperation_time,enterprise_person_number,
+        registered_capital,enterprise_nature,legal_person,enterprise_scale,
+        creator,create_time,create_dept,valid_flag)
+        VALUES
+        (func_get_uuid,'${internshipUnitName}','${area}','${address}','${contactPerson}','${contactNumber}',
+        '${internshipWhetherRetention}','${cooperationTime}','${enterprisePersonNumber}',
+         '${registeredCapital}','${enterpriseNature}','${legalPerson}','${enterpriseScale}'
+        ,'${creator}',sysdate,'${createDept}',1 )
+    </insert>
+    <update id="updateInternshipsById" parameterType="com.goisan.studentwork.internships.bean.Internships">
+        UPDATE T_XG_INTERNSHIP_UNIT SET
+        internship_unit_name = #{internshipUnitName},
+        area  = #{area},
+        address = #{address},
+        contact_person = #{contactPerson},
+        contact_number= #{contactNumber},
+        internship_whether_retention = #{internshipWhetherRetention},
+        cooperation_time = #{cooperationTime},
+        enterprise_person_number = #{enterprisePersonNumber},
+        registered_capital = #{registeredCapital},
+        enterprise_nature= #{enterpriseNature},
+        legal_person = #{legalPerson},
+        enterprise_scale = #{enterpriseScale}
+        WHERE internship_unit_id = #{internshipUnitId}
+    </update>
+    <delete id="deleteInternshipsById" parameterType="java.lang.String">
+        DELETE FROM T_XG_INTERNSHIP_UNIT  WHERE internship_unit_id = #{internshipUnitId}
+    </delete>
+    <select id="selectId" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.internships.bean.Internships">
+        SELECT internship_unit_id internshipUnitId FROM T_XG_INTERNSHIP_UNIT WHERE internship_unit_id = #{internshipUnitId}
+    </select>
+    <select id="getInternshipsByInternshipUnitName" parameterType="java.lang.String"
+        resultType="com.goisan.studentwork.internships.bean.InternshipManage">
+        SELECT
+        internship_id internshipId,
+        FUNC_GET_DICVALUE(sex, 'XB') sexShow,
+        idcard idcard,
+        FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentIdShow ,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classIdShow,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCodeShow,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevelShow,
+        FUNC_GET_TABLEVALUE(internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow ,
+        internship_positions internshipPositions,
+        to_char(posts_time,'yyyy-mm-dd') as postsTime,
+        area area,
+        FUNC_GET_DICVALUE(internship_type, 'SXXS') internshipTypeShow,
+        FUNC_GET_DICVALUE(major_match_flag, 'SF') majorMatchFlagShow,
+        FUNC_GET_DICVALUE(salary, 'GZSRSP') salaryShow,
+        FUNC_GET_DICVALUE(internship_change_flag,'SXBDQK') internshipChangeFlagShow,
+        internship_score internshipScore,
+        FUNC_GET_DICVALUE(internship_evaluation, 'SXPJ') internshipEvaluationShow,
+        tel tel,
+        parent_tel parentTel,
+        student_number   studentNumber,
+        create_time createTime
+        FROM
+        T_XG_INTERNSHIP_STUDENT
+        WHERE  1 = 1
+        AND FUNC_GET_TABLEVALUE(internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') = #{internshipUnitName}
+    </select>
+</mapper>

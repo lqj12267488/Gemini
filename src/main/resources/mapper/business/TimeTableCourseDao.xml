@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.timetable.dao.TimeTableCourseDao">
+
+    <select id="getTimeTableCourseList" resultType="com.goisan.educational.timetable.bean.TimeTableCourse"
+            parameterType="com.goisan.educational.timetable.bean.TimeTableCourse">
+        select  t.id             id,
+                t.TIME_TABLE_DEPARTMENT_ID  timeTableDepartmentId,
+                t.WEEKS          weeks,
+               t.COURSE_NUM     courseNum,
+               t.COURSE_NAME    courseName,
+               t.COURSE_TEACHER courseTeacher,
+                t.COURSE_TEACHER_ID  courseTeacherId,
+               (select s.SPECIAL_PLACE from T_JW_TIMETABLE_SPECIAL_PLACE  s where t.SPECIAL_PLACE =s.ID  )specialPlace
+        from T_JW_TIMETABLE_COURSE t
+        where TIME_TABLE_DEPARTMENT_ID = #{timeTableDepartmentId}
+    </select>
+
+    <insert id="saveTimeTableCourse" parameterType="com.goisan.educational.timetable.bean.TimeTableCourse">
+        insert into T_JW_TIMETABLE_COURSE (ID, TIME_TABLE_DEPARTMENT_ID, WEEKS, COURSE_NUM, COURSE_NAME, COURSE_TEACHER,COURSE_TEACHER_ID,
+                                           SPECIAL_PLACE,START_WEEK,END_WEEK)
+        values (#{id}, #{timeTableDepartmentId}, #{weeks}, #{courseNum}, #{courseName}, #{courseTeacher},#{courseTeacherId}, #{specialPlace},#{startWeek},#{endWeek})
+    </insert>
+
+    <update id="updateTimeTableCourse" parameterType="com.goisan.educational.timetable.bean.TimeTableCourse">
+        update T_JW_TIMETABLE_COURSE
+        set id             = #{id},
+            WEEKS          = #{weeks},
+            COURSE_NUM     = #{courseNum},
+            COURSE_NAME    = #{courseName},
+            COURSE_TEACHER = #{courseTeacher},
+            COURSE_TEACHER_ID = #{courseTeacherId},
+            SPECIAL_PLACE  = #{specialPlace},
+            START_WEEK     = #{startWeek},
+            END_WEEK       = #{endWeek}
+            where ID = #{id}
+    </update>
+
+    <delete id="deleteTimeTableCourse" parameterType="String">
+        delete
+        from T_JW_TIMETABLE_COURSE
+        where ID = #{id}
+    </delete>
+
+    <select id="getTimeTableCourseById" resultType="com.goisan.educational.timetable.bean.TimeTableCourse"
+            parameterType="String">
+        select id             id,
+               TIME_TABLE_DEPARTMENT_ID  timeTableDepartmentId,
+               WEEKS          weeks,
+               COURSE_NUM     courseNum,
+               COURSE_NAME    courseName,
+               COURSE_TEACHER courseTeacher,
+               COURSE_TEACHER_ID courseTeacherId,
+               SPECIAL_PLACE  specialPlace,
+               START_WEEK,
+               END_WEEK
+        from T_JW_TIMETABLE_COURSE
+        where id = #{id}
+    </select>
+
+
+</mapper>

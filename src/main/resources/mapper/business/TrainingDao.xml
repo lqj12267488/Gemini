@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.personnel.training.dao.TrainingDao">
+    <select id="getDepartmentTrainingList"
+            parameterType="com.goisan.personnel.training.bean.Training"
+            resultType="com.goisan.personnel.training.bean.Training">
+        select
+        id id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(request_date,'yyyy-mm-dd')  requestDate,
+        to_char(training_date,'yyyy-mm-dd')  trainingDate,
+        training_days trainingDays,
+        training_place trainingPlace,
+        training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(training_type,'PXLB') AS trainingTypeShow,
+        FUNC_GET_DICVALUE(training_form,'PXXS') AS trainingFormShow,
+        training_project trainingProject,
+        training_project_name trainingProjectName,
+        training_purpose trainingPurpose,
+        training_fee trainingFee,
+        training_people_number trainingPeopleNumber,
+        case when training_apply_number is  null then 0 else training_apply_number end trainingApplyNumber
+        from T_RS_TRAINING_WF
+        where 1 = 1  and training_form='1'
+        <if test="requestFlag != null and requestFlag != '' ">
+            AND request_flag= #{requestFlag}
+        </if>
+        <if test="trainingType != null and trainingType != '' ">
+            AND training_type= #{trainingType}
+        </if>
+        <if test="requester !='sa' and requester !='' and requester !=null" >
+            AND requester='${requester}'
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(request_date,'yyyy-mm-dd')  like '%'|| #{requestDate} ||'%'
+        </if>
+    </select>
+    <select id="upGetDepartmentTrainingList"
+            parameterType="com.goisan.personnel.training.bean.Training"
+            resultType="com.goisan.personnel.training.bean.Training">
+        select
+        id id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(request_date,'yyyy-mm-dd')  requestDate,
+        to_char(training_date,'yyyy-mm-dd')  trainingDate,
+        training_days trainingDays,
+        training_place trainingPlace,
+        training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(training_type,'PXLB') AS trainingTypeShow,
+        FUNC_GET_DICVALUE(training_form,'PXXS') AS trainingFormShow,
+        training_project trainingProject,
+        training_project_name trainingProjectName,
+        training_purpose trainingPurpose,
+        training_fee trainingFee,
+        training_people_number trainingPeopleNumber,
+        case when training_apply_number is  null then 0 else training_apply_number end trainingApplyNumber
+        from T_RS_TRAINING_WF
+        where 1 = 1  and training_form='1'
+        <if test="requestFlag != null and requestFlag != '' ">
+            AND request_flag= #{requestFlag}
+        </if>
+        <if test="trainingType != null and trainingType != '' ">
+            AND training_type= #{trainingType}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND   to_char(request_date,'yyyy-mm-dd')  like '%'|| #{requestDate} ||'%'
+        </if>
+    </select>
+    <insert id="saveDepartmentTraining" parameterType="com.goisan.personnel.training.bean.Training">
+        insert into t_rs_training_wf (id,request_dept,requester,request_date,training_date,training_days,training_place,training_organizers,training_type,training_project,training_project_name,training_purpose,training_fee,training_people_number,training_apply_number,training_form,creator,create_time,create_dept) values (#{id},#{requestDept},#{requester},to_date('${requestDate}','yyyy-mm-dd'),to_date('${trainingDate}','yyyy-mm-dd'),#{trainingDays},#{trainingPlace},#{trainingOrganizers},#{trainingType},#{trainingProject},#{trainingProjectName},#{trainingPurpose},#{trainingFee},#{trainingPeopleNumber},#{trainingApplyNumber},#{trainingForm},#{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getDepartmentTrainingById" parameterType="java.lang.String"
+            resultType="com.goisan.personnel.training.bean.Training">
+        select
+        id id,
+         FUNC_GET_DEPTNAME(request_dept) requestDept,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(request_date,'yyyy-mm-dd')  requestDate,
+        to_char(training_date,'yyyy-mm-dd')  trainingDate,
+        training_days trainingDays,
+        training_place trainingPlace,
+        training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(training_type,'PXLB') AS trainingTypeShow,
+        training_project trainingProject,
+        training_project_name trainingProjectName,
+        training_purpose trainingPurpose,
+        training_fee trainingFee,
+        training_form trainingForm,
+        training_type trainingType,
+        training_people_number trainingPeopleNumber,
+        training_apply_number  trainingApplyNumber
+
+         from T_RS_TRAINING_WF where id = #{id}
+    </select>
+    <update id="updateDepartmentTraining" parameterType="com.goisan.personnel.training.bean.Training">
+        update t_rs_training_wf
+        set
+        request_date = to_date(#{requestDate},'yyyy-mm-dd'),
+        training_date = to_date(#{trainingDate},'yyyy-mm-dd'),
+        training_days=#{trainingDays},
+        training_place=#{trainingPlace},
+        training_organizers=#{trainingOrganizers},
+        training_type=#{trainingType},
+        training_project=#{trainingProject},
+        training_project_name=#{trainingProjectName},
+        training_purpose=#{trainingPurpose},
+        training_fee=#{trainingFee},
+        training_people_number=#{trainingPeopleNumber},
+        changer=#{changer},
+        change_time=#{changeTime},
+        change_dept=#{changeDept}
+        where id = #{id}
+    </update>
+    <delete id="delDepartmentTraining" parameterType="java.lang.String">
+        delete from T_RS_TRAINING_WF where id = #{id}
+    </delete>
+
+    <select id="getDepartmentAuditList" resultType="com.goisan.personnel.training.bean.Training" parameterType="com.goisan.personnel.training.bean.Training">
+        SELECT
+        t.id id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.request_date,'yyyy-mm-dd')  requestDate,
+        to_char(t.training_date,'yyyy-mm-dd')  trainingDate,
+        t.training_days trainingDays,
+        t.training_place trainingPlace,
+        t.training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(t.training_type,'PXLB') AS trainingTypeShow,
+        t.training_project trainingProject,
+        t.training_project_name trainingProjectName,
+        t.training_purpose trainingPurpose,
+        t.training_fee trainingFee,
+        t.training_type trainingType,
+        t.training_people_number trainingPeopleNumber,
+        t.training_apply_number trainingApplyNumber
+        FROM
+        T_RS_TRAINING_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1 and training_form='1'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="trainingType != null and trainingType != '' ">
+            AND t.training_type = #{trainingType}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="trainingDate != null and trainingDate != '' ">
+            AND to_char(t.training_date,'yyyy-mm-dd') LIKE  '%'||#{trainingDate}||'%'
+        </if>
+
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getDepartmentSearchList" resultType="com.goisan.personnel.training.bean.Training" parameterType="com.goisan.personnel.training.bean.Training">
+        SELECT
+        DISTINCT
+        t.id id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.request_date,'yyyy-mm-dd')  requestDate,
+        to_char(t.training_date,'yyyy-mm-dd')  trainingDate,
+        t.training_days trainingDays,
+        t.training_place trainingPlace,
+        t.training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(t.training_type,'PXLB') AS trainingTypeShow,
+        t.training_project trainingProject,
+        t.training_project_name trainingProjectName,
+        t.training_purpose trainingPurpose,
+        t.training_fee trainingFee,
+        t.training_type trainingType,
+        t.training_people_number trainingPeopleNumber,
+        t.training_apply_number trainingApplyNumber
+        FROM
+        T_RS_TRAINING_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1 and training_form='1'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="trainingType != null and trainingType != '' ">
+            AND t.training_type = #{trainingType}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="trainingDate != null and trainingDate != '' ">
+            AND to_char(t.training_date,'yyyy-mm-dd') LIKE  '%'||#{trainingDate}||'%'
+        </if>
+
+
+        AND (r.state='2'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id
+    </select>
+    <select id="getPersonalTrainingList"
+            parameterType="com.goisan.personnel.training.bean.Training"
+            resultType="com.goisan.personnel.training.bean.Training">
+        select
+        id id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(request_date,'yyyy-mm-dd')  requestDate,
+        to_char(training_date,'yyyy-mm-dd')  trainingDate,
+        training_days trainingDays,
+        training_place trainingPlace,
+        training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(training_type,'PXLB') AS trainingTypeShow,
+        FUNC_GET_DICVALUE(training_form,'PXXS') AS trainingFormShow,
+        training_project trainingProject,
+        training_project_name trainingProjectName,
+        training_purpose trainingPurpose,
+        training_fee trainingFee,
+        training_people_number trainingPeopleNumber,
+        training_apply_number trainingApplyNumber
+        from T_RS_TRAINING_WF
+        where 1 = 1 AND request_flag = '0' and training_form='2'
+        <if test="trainingType != null and trainingType != '' ">
+            AND training_type= #{trainingType}
+        </if>
+        <if test="requester !='sa' and requester!='' and requester!=null">
+            AND requester =#{requester}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+                AND   to_char(request_date,'yyyy-mm-dd')  like '%'|| #{requestDate} ||'%'
+        </if>
+    </select>
+    <insert id="savePersonalTraining" parameterType="com.goisan.personnel.training.bean.Training">
+        insert into t_rs_training_wf (id,request_dept,requester,request_date,training_date,training_days,training_place,training_organizers,training_type,training_project,training_project_name,training_purpose,training_fee,training_people_number,training_apply_number,training_form,creator,create_time,create_dept) values (#{id},#{requestDept},#{requester},to_date('${requestDate}','yyyy-mm-dd'),to_date('${trainingDate}','yyyy-mm-dd'),#{trainingDays},#{trainingPlace},#{trainingOrganizers},#{trainingType},#{trainingProject},#{trainingProjectName},#{trainingPurpose},#{trainingFee},#{trainingPeopleNumber},#{trainingApplyNumber},#{trainingForm},#{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getPersonalTrainingById" parameterType="java.lang.String"
+            resultType="com.goisan.personnel.training.bean.Training">
+        select
+        id id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(request_date,'yyyy-mm-dd')  requestDate,
+        to_char(training_date,'yyyy-mm-dd')  trainingDate,
+        training_days trainingDays,
+        training_place trainingPlace,
+        training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(training_type,'PXLB') AS trainingTypeShow,
+        training_project trainingProject,
+        training_project_name trainingProjectName,
+        training_purpose trainingPurpose,
+        training_fee trainingFee,
+        training_type trainingType,
+        training_people_number trainingPeopleNumber,
+        training_apply_number trainingApplyNumber
+        from T_RS_TRAINING_WF where id = #{id}
+    </select>
+    <update id="updatePersonalTraining" parameterType="com.goisan.personnel.training.bean.Training">
+        update t_rs_training_wf
+        set
+        request_date = to_date(#{requestDate},'yyyy-mm-dd'),
+        training_date = to_date(#{trainingDate},'yyyy-mm-dd'),
+        training_days=#{trainingDays},
+        training_place=#{trainingPlace},
+        training_organizers=#{trainingOrganizers},
+        training_type=#{trainingType},
+        training_project=#{trainingProject},
+        training_project_name=#{trainingProjectName},
+        training_purpose=#{trainingPurpose},
+        training_fee=#{trainingFee},
+        training_people_number=#{trainingPeopleNumber},
+        changer=#{changer},
+        change_time=#{changeTime},
+        change_dept=#{changeDept}
+        where id = #{id}
+    </update>
+    <delete id="delPersonalTraining" parameterType="java.lang.String">
+        delete from T_RS_TRAINING_WF where id = #{id}
+    </delete>
+    <select id="getPersonalAuditList" resultType="com.goisan.personnel.training.bean.Training" parameterType="com.goisan.personnel.training.bean.Training">
+        SELECT
+        t.id id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.request_date,'yyyy-mm-dd')  requestDate,
+        to_char(t.training_date,'yyyy-mm-dd')  trainingDate,
+        t.training_days trainingDays,
+        t.training_place trainingPlace,
+        t.training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(t.training_type,'PXLB') AS trainingTypeShow,
+        t.training_project trainingProject,
+        t.training_project_name trainingProjectName,
+        t.training_purpose trainingPurpose,
+        t.training_fee trainingFee,
+        t.training_type trainingType,
+        t.training_people_number trainingPeopleNumber,
+        t.training_apply_number trainingApplyNumber
+        FROM
+        T_RS_TRAINING_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1 and training_form='2'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="trainingType != null and trainingType != '' ">
+            AND t.training_type = #{trainingType}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="trainingDate != null and trainingDate != '' ">
+            AND to_char(t.training_date,'yyyy-mm-dd') LIKE  '%'||#{trainingDate}||'%'
+        </if>
+
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonalSearchList" resultType="com.goisan.personnel.training.bean.Training" parameterType="com.goisan.personnel.training.bean.Training">
+        SELECT
+        DISTINCT
+        t.id id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.request_date,'yyyy-mm-dd')  requestDate,
+        to_char(t.training_date,'yyyy-mm-dd')  trainingDate,
+        t.training_days trainingDays,
+        t.training_place trainingPlace,
+        t.training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(t.training_type,'PXLB') AS trainingTypeShow,
+        t.training_project trainingProject,
+        t.training_project_name trainingProjectName,
+        t.training_purpose trainingPurpose,
+        t.training_fee trainingFee,
+        t.training_type trainingType,
+        t.training_people_number trainingPeopleNumber,
+        t.training_apply_number trainingApplyNumber
+        FROM
+        T_RS_TRAINING_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1 and training_form='2'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="trainingType != null and trainingType != '' ">
+            AND t.training_type = #{trainingType}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="trainingDate != null and trainingDate != '' ">
+            AND to_char(t.training_date,'yyyy-mm-dd') LIKE  '%'||#{trainingDate}||'%'
+        </if>
+
+
+        AND (r.state='2'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id
+    </select>
+    <select id="getGroupTrainingList"
+            parameterType="com.goisan.personnel.training.bean.Training"
+            resultType="com.goisan.personnel.training.bean.Training">
+        select
+        id id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(request_date,'yyyy-mm-dd')  requestDate,
+        to_char(training_date,'yyyy-mm-dd')  trainingDate,
+        training_days trainingDays,
+        training_place trainingPlace,
+        training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(training_type,'PXLB') AS trainingTypeShow,
+        FUNC_GET_DICVALUE(training_form,'PXXS') AS trainingFormShow,
+        training_project trainingProject,
+        training_project_name trainingProjectName,
+        training_purpose trainingPurpose,
+        training_fee trainingFee,
+        training_people_number trainingPeopleNumber,
+        case when training_apply_number is  null then 0 else training_apply_number end trainingApplyNumber
+        from T_RS_TRAINING_WF
+        where 1 = 1 AND  training_form='3'
+        <if test="trainingType != null and trainingType != '' ">
+            AND training_type= #{trainingType}
+        </if>
+        <if test="requestFlag != null and requestFlag != '' ">
+            AND request_flag= #{requestFlag}
+        </if>
+        <if test="requester !='sa' and requester!=null and requester!=''">
+            AND requester=#{requester}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND   to_char(request_date,'yyyy-mm-dd') like '%'|| #{requestDate} ||'%'
+        </if>
+    </select>
+    <select id="upGetGroupTrainingList"
+            parameterType="com.goisan.personnel.training.bean.Training"
+            resultType="com.goisan.personnel.training.bean.Training">
+        select
+        id id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(request_date,'yyyy-mm-dd')  requestDate,
+        to_char(training_date,'yyyy-mm-dd')  trainingDate,
+        training_days trainingDays,
+        training_place trainingPlace,
+        training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(training_type,'PXLB') AS trainingTypeShow,
+        FUNC_GET_DICVALUE(training_form,'PXXS') AS trainingFormShow,
+        training_project trainingProject,
+        training_project_name trainingProjectName,
+        training_purpose trainingPurpose,
+        training_fee trainingFee,
+        training_people_number trainingPeopleNumber,
+        case when training_apply_number is  null then 0 else training_apply_number end trainingApplyNumber
+        from T_RS_TRAINING_WF
+        where 1 = 1 AND  training_form='3'
+        <if test="trainingType != null and trainingType != '' ">
+            AND training_type= #{trainingType}
+        </if>
+        <if test="requestFlag != null and requestFlag != '' ">
+            AND request_flag= #{requestFlag}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND   to_char(request_date,'yyyy-mm-dd') like '%'|| #{requestDate} ||'%'
+        </if>
+    </select>
+    <insert id="saveGroupTraining" parameterType="com.goisan.personnel.training.bean.Training">
+        insert into t_rs_training_wf (id,request_dept,requester,request_date,training_date,training_days,training_place,training_organizers,training_type,training_project,training_project_name,training_purpose,training_fee,training_people_number,training_apply_number,training_form,creator,create_time,create_dept) values (#{id},#{requestDept},#{requester},to_date('${requestDate}','yyyy-mm-dd'),to_date('${trainingDate}','yyyy-mm-dd'),#{trainingDays},#{trainingPlace},#{trainingOrganizers},#{trainingType},#{trainingProject},#{trainingProjectName},#{trainingPurpose},#{trainingFee},#{trainingPeopleNumber},#{trainingApplyNumber},#{trainingForm},#{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getGroupTrainingById" parameterType="java.lang.String"
+            resultType="com.goisan.personnel.training.bean.Training">
+        select
+        id id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        FUNC_GET_USERNAME(requester) requester,
+        to_char(request_date,'yyyy-mm-dd')  requestDate,
+        to_char(training_date,'yyyy-mm-dd')  trainingDate,
+        training_days trainingDays,
+        training_place trainingPlace,
+        training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(training_type,'PXLB') AS trainingTypeShow,
+        training_project trainingProject,
+        training_project_name trainingProjectName,
+        training_purpose trainingPurpose,
+        training_fee trainingFee,
+        training_type trainingType,
+        training_people_number trainingPeopleNumber,
+        training_apply_number trainingApplyNumber
+        from T_RS_TRAINING_WF where id = #{id}
+    </select>
+    <update id="updateGroupTraining" parameterType="com.goisan.personnel.training.bean.Training">
+        update t_rs_training_wf
+        set
+        request_date = to_date(#{requestDate},'yyyy-mm-dd'),
+        training_date = to_date(#{trainingDate},'yyyy-mm-dd'),
+        training_days=#{trainingDays},
+        training_place=#{trainingPlace},
+        training_organizers=#{trainingOrganizers},
+        training_type=#{trainingType},
+        training_project=#{trainingProject},
+        training_project_name=#{trainingProjectName},
+        training_purpose=#{trainingPurpose},
+        training_fee=#{trainingFee},
+        training_people_number=#{trainingPeopleNumber},
+        changer=#{changer},
+        change_time=#{changeTime},
+        change_dept=#{changeDept}
+        where id = #{id}
+    </update>
+
+    <delete id="delGroupTraining" parameterType="java.lang.String">
+        delete from T_RS_TRAINING_WF where id = #{id}
+    </delete>
+    <select id="getGroupAuditList" resultType="com.goisan.personnel.training.bean.Training" parameterType="com.goisan.personnel.training.bean.Training">
+        SELECT
+        t.id id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.request_date,'yyyy-mm-dd')  requestDate,
+        to_char(t.training_date,'yyyy-mm-dd')  trainingDate,
+        t.training_days trainingDays,
+        t.training_place trainingPlace,
+        t.training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(t.training_type,'PXLB') AS trainingTypeShow,
+        t.training_project trainingProject,
+        t.training_project_name trainingProjectName,
+        t.training_purpose trainingPurpose,
+        t.training_fee trainingFee,
+        t.training_type trainingType,
+        t.training_people_number trainingPeopleNumber,
+        t.training_apply_number trainingApplyNumber
+        FROM
+        T_RS_TRAINING_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1 and training_form='3'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="trainingType != null and trainingType != '' ">
+            AND t.training_type = #{trainingType}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="trainingDate != null and trainingDate != '' ">
+            AND to_char(t.training_date,'yyyy-mm-dd') LIKE  '%'||#{trainingDate}||'%'
+        </if>
+
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getGroupSearchList" resultType="com.goisan.personnel.training.bean.Training" parameterType="com.goisan.personnel.training.bean.Training">
+        SELECT
+        DISTINCT
+        t.id id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.request_date,'yyyy-mm-dd')  requestDate,
+        to_char(t.training_date,'yyyy-mm-dd')  trainingDate,
+        t.training_days trainingDays,
+        t.training_place trainingPlace,
+        t.training_organizers trainingOrganizers,
+        FUNC_GET_DICVALUE(t.training_type,'PXLB') AS trainingTypeShow,
+        t.training_project trainingProject,
+        t.training_project_name trainingProjectName,
+        t.training_purpose trainingPurpose,
+        t.training_fee trainingFee,
+        t.training_type trainingType,
+        t.training_people_number trainingPeopleNumber,
+        t.training_apply_number trainingApplyNumber
+        FROM
+        T_RS_TRAINING_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1 and training_form='3'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="trainingType != null and trainingType != '' ">
+            AND t.training_type = #{trainingType}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="trainingDate != null and trainingDate != '' ">
+            AND to_char(t.training_date,'yyyy-mm-dd') LIKE  '%'||#{trainingDate}||'%'
+        </if>
+
+
+        AND (r.state='2'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id
+    </select>
+    <select id="getEmpTreeByDeptId" resultType="com.goisan.system.bean.Tree">
+        SELECT
+        d.dept_id        id,
+        d.dept_name      name,
+        d.parent_dept_id pid
+        FROM t_sys_dept d
+        where d.parent_dept_id !=0
+        and d.dept_id= #{deptId}
+        UNION
+        SELECT
+        e.person_id id,
+        e.name,
+        ed.dept_id  pid
+        FROM t_rs_employee e, t_rs_employee_dept ed
+        WHERE e.person_id = ed.person_id
+          and ed.dept_id= #{deptId}
+           and  ed.person_id not  in  (select
+            m.person_id
+            from T_RS_TRAINING_MEMBER m
+            where
+             m.dept_id =#{deptId} and m.training_id=#{id} )
+
+    </select>
+    <select id="getSelectedEmpByDeptId" parameterType="java.lang.String" resultType="com.goisan.personnel.training.bean.TrainingMember">
+
+          select
+        *
+        from T_RS_TRAINING_MEMBER
+        where
+        dept_id=#{deptId}
+
+    </select>
+    <select id="getReportMemberList"
+            parameterType="com.goisan.personnel.training.bean.TrainingMember"
+            resultType="com.goisan.personnel.training.bean.TrainingMember">
+        select
+        member_id memberId,
+        dept_id deptId,
+        person_id personId,
+        FUNC_GET_DEPTNAME(dept_id) deptShow,
+        FUNC_GET_USERNAME(person_id) personShow,
+        FUNC_GET_TABLEVALUE(TRAINING_ID, 'T_RS_TRAINING_WF', 'ID', 'TRAINING_PROJECT_NAME') trainingShow
+        from T_RS_TRAINING_MEMBER
+        where 1 = 1
+        <if test="deptId != null and deptId != '' ">
+            AND dept_id= #{deptId}
+        </if>
+        <if test="trainingId != null and trainingId != '' ">
+            AND training_id= #{trainingId}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND FUNC_GET_USERNAME(person_id) like  '%'||#{personId}||'%'
+        </if>
+    </select>
+    <insert id="saveTrainingMember" parameterType="com.goisan.personnel.training.bean.TrainingMember">
+        insert into t_rs_training_member (member_id,training_id,person_id,dept_id,creator,create_time,create_dept) values (#{memberId},#{trainingId},#{personId},#{deptId},#{creator},#{createTime},#{createDept})
+    </insert>
+    <update id="updateTraining" parameterType="com.goisan.personnel.training.bean.Training">
+        update t_rs_training_wf
+        set
+        training_apply_number=#{trainingApplyNumber},
+        changer=#{changer},
+        change_time=#{changeTime},
+        change_dept=#{changeDept}
+        where id = #{id}
+    </update>
+    <select id="getTrainingOverPlusApplyNumber" parameterType="java.lang.String" resultType="java.lang.String">
+      select  TRAINING_PEOPLE_NUMBER - TRAINING_APPLY_NUMBER  as overplus
+      from T_RS_TRAINING_WF
+        where
+        id=#{id}
+
+    </select>
+    <delete id="delReportTeacher" parameterType="java.lang.String" >
+        delete from T_RS_TRAINING_MEMBER where member_id = #{memberId}
+    </delete>
+
+</mapper>

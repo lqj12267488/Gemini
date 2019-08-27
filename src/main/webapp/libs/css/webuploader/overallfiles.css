@@ -1,0 +1,43 @@
+
+.test4{
+    float: left;
+    margin-right: 1%;
+}
+.fileNameContent{
+    font-size: 10px;
+    text-align: center;
+    margin-top: 3px;
+}
+.FilesTable{
+    border: 2px solid #8dc0f5;
+    width: 100%;
+    text-align: center;
+}
+.FilesTable td{
+    border: 2px solid #ffffff;
+    font-size: 10px;
+    margin-right: 2%;
+    padding-right: 2%;
+}
+.pContent{
+    margin: 1px;
+}
+
+.border2{
+    width: 110px;
+    height: 110px;
+    float: left;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    margin-right: 8px;
+}
+.file_img{
+    width: 100%;
+    height:100%;
+}
+
+.test3{
+    font-size: 10px;
+    text-align: center;
+    margin-top: 3px;
+}

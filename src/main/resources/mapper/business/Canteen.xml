@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--create by wq
+    2017/09/20-->
+<mapper namespace="com.goisan.logistics.canteen.dao.CanteenDao">
+
+<!--学生宿委会初始化方法-->
+    <select id="getCanteenList" parameterType="com.goisan.logistics.canteen.bean.Canteen"
+            resultType="com.goisan.logistics.canteen.bean.Canteen">
+        SELECT
+        id ,
+        name ,
+        address ,
+        t.person_name personName,
+        t.person_idcard personidCard,
+        t.person_tel personTel,
+        t.start_time startTime,
+        t.end_time endTime,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_ZW_Canteen t
+        WHERE
+        t.valid_flag = '1'
+        AND
+        1 = 1
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="name !=null and name !=''">
+            AND t.name like '%'||'${name}'||'%'
+        </if>
+        AND t.create_dept like func_get_range('${createDept}', '${level}')
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+
+    <select id="getCanteenById" parameterType="com.goisan.logistics.canteen.bean.Canteen"
+            resultType="com.goisan.logistics.canteen.bean.Canteen">
+        SELECT
+        id ,
+        name ,
+        address ,
+        t.person_name personName,
+        t.person_idcard personidCard,
+        t.person_tel personTel,
+        t.start_time startTime,
+        t.end_time endTime,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM
+        T_ZW_Canteen t
+        WHERE t.id = '${id}'
+    </select>
+    <insert id="insertCanteen" parameterType="com.goisan.logistics.canteen.bean.Canteen">
+        insert into T_ZW_Canteen
+        (ID,NAME ,ADDRESS,PERSON_NAME,PERSON_IDCARD,PERSON_TEL,START_TIME,END_TIME,CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,
+        '${name}',
+        '${address}',
+        '${personName}',
+        '${personidCard}',
+        '${personTel}',
+        '${startTime}',
+        '${endTime}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <update id="updateCanteenById" parameterType="com.goisan.logistics.canteen.bean.Canteen">
+        update
+        T_ZW_Canteen
+        SET
+        NAME ='${name}',
+        ADDRESS='${address}',
+        person_name = '${personName}',
+        person_tel = '${personTel}',
+        person_idcard = '${personidCard}',
+        start_time = '${startTime}',
+        end_time = '${endTime}',
+        changer='${changer}',
+        change_time=sysdate,
+        change_dept='${changeDept}'
+        WHERE  id = '${id}'
+    </update>
+    <delete id="deleteCanteenById" parameterType="com.goisan.logistics.canteen.bean.Canteen">
+        DELETE FROM
+       T_ZW_Canteen t
+        WHERE  id = '${id}'
+    </delete>
+
+    <select id="getCanteenStaffList" parameterType="com.goisan.logistics.canteen.bean.Canteen"
+            resultType="com.goisan.logistics.canteen.bean.Canteen">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.Canteen_id,'T_ZW_CANTEEN','id','name') name,
+        FUNC_GET_TABLEVALUE(t.Canteen_id,'T_ZW_CANTEEN','id','person_name') personName,
+        t.Canteen_id canteenId,
+        t.staff_name staffName,
+        t.staff_idcard staffidCard,
+        t.staff_sex staffSex,
+        t.staff_tel staffTel,
+        t.staff_address staffAddress,
+        func_get_dicvalue(t.staff_age,'SF') staffAge,
+        func_get_dicvalue(t.isjob,'SF') isjob,
+        t.STAFF_POST staffPost,
+        t.creator,
+        t.create_time,
+        t.create_dept
+        FROM T_ZW_Canteen_STAFF t
+        WHERE
+        t.valid_flag = '1'
+        AND
+        1 = 1
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="staffName !=null and staffName !=''">
+            AND t.staff_name like '%'||'${staffName}'||'%'
+        </if>
+        AND t.create_dept like func_get_range('${createDept}', '${level}')
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <insert id="insertCanteenStaff" parameterType="com.goisan.logistics.canteen.bean.Canteen">
+        insert into T_ZW_Canteen_STAFF
+        (ID,staff_name ,staff_address,staff_post,staff_tel,staff_idcard,staff_sex,Canteen_id,CREATOR,CREATE_TIME,CREATE_DEPT)
+        values
+        (FUNC_GET_UUID,
+        '${staffName}',
+        '${staffAddress}',
+        '${staffPost}',
+        '${staffTel}',
+        '${staffidCard}',
+        '${staffSex}',
+        '${canteenId}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getCanteenStaffById" parameterType="com.goisan.logistics.canteen.bean.Canteen"
+            resultType="com.goisan.logistics.canteen.bean.Canteen">
+        SELECT
+        t.id,
+        t.Canteen_id canteenId,
+        t.staff_name staffName,
+        t.staff_idcard staffidCard,
+        t.staff_sex staffSex,
+        t.staff_tel staffTel,
+        t.staff_address staffAddress,
+        t.STAFF_POST staffPost
+        FROM
+        T_ZW_Canteen_STAFF t
+        WHERE t.id = '${id}'
+    </select>
+    <update id="updateCanteenStaffById" parameterType="com.goisan.logistics.canteen.bean.Canteen">
+        update
+        T_ZW_Canteen_STAFF
+        SET
+        Canteen_id ='${canteenId}',
+        staff_address='${staffAddress}',
+        staff_name = '${staffName}',
+        staff_tel = '${staffTel}',
+        staff_idcard = '${staffidCard}',
+        staff_sex = '${staffSex}',
+        staff_post = '${staffPost}',
+        changer='${changer}',
+        change_time=sysdate,
+        change_dept='${changeDept}'
+        WHERE  id = '${id}'
+    </update>
+    <update id="deleteCanteenStaffById" parameterType="com.goisan.logistics.canteen.bean.Canteen">
+        UPDATE
+        T_ZW_Canteen_STAFF t
+        SET
+        t.valid_flag = '0'
+        WHERE  id = '${id}'
+    </update>
+    <select id="checkCanteenStaffById" parameterType="com.goisan.logistics.canteen.bean.Canteen"
+            resultType="com.goisan.logistics.canteen.bean.Canteen">
+        SELECT * FROM T_ZW_Canteen_STAFF t WHERE t.canteen_id = '${id}'and t.valid_flag = '1'
+    </select>
+</mapper>
+
+

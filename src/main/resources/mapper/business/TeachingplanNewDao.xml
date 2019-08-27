@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.teachingplan.dao.TeachingplanNewDao">
+
+    <!--<select id="getTeachingplanNewList"-->
+            <!--parameterType="com.goisan.educational.teachingplan.bean.TeachingplanNew"-->
+            <!--resultType="com.goisan.educational.teachingplan.bean.TeachingplanNew">-->
+        <!--select-->
+        <!--id,-->
+        <!--FUNC_GET_DICVALUE(term, 'XQ') term,-->
+        <!--FUNC_GET_USERNAME(user_id) user_id,-->
+        <!--FUNC_GET_USERNAME(user_id) person,-->
+        <!--FUNC_GET_TABLEVALUE(dept_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') dept_id,-->
+        <!--FUNC_GET_TABLEVALUE(departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departments_id,-->
+        <!--FUNC_GET_TABLEVALUE(substr(major_id,1,instr(major_id,',',-1)-1), 'T_XG_MAJOR', ' MAJOR_CODE', 'MAJOR_NAME') || '&#45;&#45;' || FUNC_GET_DICVALUE(substr(major_id,instr(major_id,',',-1)+1), 'ZXZYPYCC') majorId,-->
+        <!--FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') course_id,-->
+        <!--FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') class_id,-->
+        <!--period,-->
+        <!--status,-->
+        <!--opinion,-->
+        <!--(select FILE_URL from T_SYS_FILES where BUSINESS_ID = T_JW_TEACHING_PLAN.ID) url-->
+        <!--from T_JW_TEACHING_PLAN-->
+        <!--where 1=1 and -->
+        <!--<if test="userId != null and userId != ''">-->
+            <!--and USER_ID = #{userId}-->
+        <!--</if>-->
+        <!--<if test="person != null and person != ''">-->
+            <!--and FUNC_GET_USERNAME(user_id) like  '%'||#{person}||'%'-->
+        <!--</if>-->
+        <!--<if test="departmentsId != null and departmentsId != ''">-->
+            <!--and departments_id = #{departmentsId}-->
+        <!--</if>-->
+        <!--<if test="majorId != null and majorId  != ''">-->
+            <!--and major_id = #{majorId}-->
+        <!--</if>-->
+        <!--<if test="classId != null and classId != ''">-->
+            <!--and class_id = #{classId}-->
+        <!--</if>-->
+        <!--<if test=" status != null and  status != ''">-->
+            <!--and  status = #{status}-->
+        <!--</if>-->
+        <!--<if test="term != null and term != ''">-->
+            <!--and term = #{term}-->
+        <!--</if>-->
+    <!--</select>-->
+
+    <select id="getTeachingplanNewList"
+            parameterType="com.goisan.educational.teachingplan.bean.TeachingplanNew"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingplanNew">
+        select
+        id,
+        FUNC_GET_DICVALUE(term, 'XQ') term,
+        FUNC_GET_USERNAME(user_id) user_id,
+        FUNC_GET_USERNAME(user_id) person,
+        FUNC_GET_TABLEVALUE(dept_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') dept_id,
+        FUNC_GET_TABLEVALUE(departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departments_id,
+        FUNC_GET_TABLEVALUE(substr(major_id,1,instr(major_id,',',-1)-1), 'T_XG_MAJOR', ' MAJOR_CODE', 'MAJOR_NAME') || '--' || FUNC_GET_DICVALUE(substr(major_id,instr(major_id,',',-1)+1), 'ZXZYPYCC') majorId,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') course_id,
+        FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') class_id,
+        period,
+        status,
+        opinion,
+        (select FILE_URL from T_SYS_FILES where BUSINESS_ID = t.ID) url
+        from T_JW_TEACHING_PLAN t
+        where 1=1
+        and (t.user_id = #{requester}
+        <if test="isDeptBoss">
+            or (t.dept_id= #{requestDept} and  t.status in ('2','3'))
+        </if>
+        <if test="isOffice">
+            or t.status in ('2','3')
+        </if>
+        )
+        <if test="userId != null and userId != ''">
+            and USER_ID = #{userId}
+        </if>
+        <if test="person != null and person != ''">
+            and FUNC_GET_USERNAME(user_id) like  '%'||#{person}||'%'
+        </if>
+        <if test="departmentsId != null and departmentsId != ''">
+            and departments_id = #{departmentsId}
+        </if>
+        <if test="majorId != null and majorId  != ''">
+            and major_id = #{majorId}
+        </if>
+        <if test="classId != null and classId != ''">
+            and class_id = #{classId}
+        </if>
+        <if test=" status != null and  status != ''">
+            and  status = #{status}
+        </if>
+        <if test="term != null and term != ''">
+            and term = #{term}
+        </if>
+    </select>
+
+    <insert id="saveTeachingplanNew" parameterType="com.goisan.educational.teachingplan.bean.TeachingplanNew">
+        insert into t_jw_teaching_plan (id,term,user_id,dept_id,departments_id,major_id,course_id,class_id,period)
+        values (#{id},#{term},#{userId},#{deptId},#{departmentsId},#{majorId},#{courseId},#{classId},#{period})
+    </insert>
+
+    <select id="getTeachingplanNewById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.teachingplan.bean.TeachingplanNew">
+        select * from T_JW_TEACHING_PLAN where id = #{id}
+    </select>
+
+    <update id="updateTeachingplanNew" parameterType="com.goisan.educational.teachingplan.bean.TeachingplanNew">
+        update t_jw_teaching_plan
+        set term=#{term},
+            user_id=#{userId},
+            dept_id=#{deptId},
+            departments_id=#{departmentsId},
+            major_id=#{majorId},
+            course_id=#{courseId},
+            class_id=#{classId},
+            period=#{period},
+            opinion=#{opinion}
+        where id = #{id}
+    </update>
+
+    <delete id="delTeachingplanNew" parameterType="java.lang.String">
+        delete from T_JW_TEACHING_PLAN where id = #{id}
+    </delete>
+
+    <update id="changeTeachingplanNewStatus">
+        update T_JW_TEACHING_PLAN set STATUS = #{status} where ID = #{id}
+    </update>
+
+    <update id="audit" parameterType="com.goisan.educational.teachingplan.bean.TeachingplanNew">
+        update T_JW_TEACHING_PLAN set STATUS = #{status},OPINION = #{opinion} where ID = #{id}
+    </update>
+
+    <select id="getTimeTableSelect" resultType="com.goisan.system.bean.Select2">
+        SELECT id,TIME_TABLE_NAME text from T_JW_TIMETABLE
+    </select>
+
+    <select id="getCourseById" resultType="map">
+        SELECT (select distinct MAJOR_CODE || ',' || TRAINING_LEVEL from T_XG_MAJOR where MAJOR_CODE = t1.MAJOR_ID) "majorId",
+               CLASS_ID                                                                                             "classId",
+               DEPARTMENT_ID                                                                                        "departmentsId",
+               (select user_id from T_SYS_USER where T_SYS_USER.USER_ID = t2.COURSE_TEACHER_ID)                  "userId",
+               (select COURSE_ID from T_JW_COURSE where T_JW_COURSE.COURSE_NAME = t2.COURSE_NAME)          "courseId",
+               START_WEEK                                                                                           "startWeek",
+               END_WEEK                                                                                             "endWeek",
+               count(*)                                                                                             "sum"
+        from T_JW_TIMETABLE_DEPARTMENT t1,
+             T_JW_TIMETABLE_COURSE t2
+        where t1.ID = t2.TIME_TABLE_DEPARTMENT_ID
+          and TIME_TABLE_ID = #{id}
+          and (select user_id from T_SYS_USER where T_SYS_USER.USER_ID = t2.COURSE_TEACHER_ID) = #{personId}
+        group by department_id, major_id, class_id, course_name, course_teacher, start_week, end_week,course_teacher_id
+
+    </select>
+
+</mapper>

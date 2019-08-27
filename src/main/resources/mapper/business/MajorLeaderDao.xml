@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.major.dao.MajorLeaderDao">
+
+    <select id="getTeacherById" parameterType="String" resultType="java.util.Map">
+        select t.PERSON_ID,to_char(t.birthday,'yyyy-MM-dd') birthday,t.sex teacherSex,t.STAFF_ID teacherNum from T_RS_EMPLOYEE t
+        where t.person_id = #{tid}
+    </select>
+    <delete id="deleteAllMembersByTeamId" parameterType="java.lang.String">
+        delete t_jw_teaching_team_member t where t.team_id = #{teamId}
+    </delete>
+    <select id="getTeamTeachByTeamId" parameterType="java.lang.String" resultType="com.goisan.educational.major.bean.TeachingTeamMember">
+        select
+         t.id,
+         t.person_id personId,
+         t.member_type memberType,
+         (select t1.name from T_RS_EMPLOYEE t1 where t1.person_id=t.person_id) name,
+         t.dept_id deptId
+         from t_jw_teaching_team_member t where t.team_id = #{teamId} and t.member_type = '1'
+    </select>
+
+    <select id="findTeachingTeamMemberByTeamId" parameterType="java.lang.String" resultType="com.goisan.educational.major.bean.TeachingTeamMember">
+        select
+         t.id,
+         t.person_id personId,
+         t.member_type memberType,
+         (select t1.name from T_RS_EMPLOYEE t1 where t1.person_id=t.person_id) name,
+         t.dept_id deptId
+         from t_jw_teaching_team_member t where t.team_id = #{teamId} and t.member_type = '2'
+    </select>
+    <select id="getTableMembersColumn" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select max(count(*)) from t_jw_teaching_team_member t, t_jw_teaching_team t1
+        where 1=1
+        <if test="planName != null">
+           and t1.team_name like '%${planName}%'
+        </if>
+        and t.team_id=t1.id and t.member_type = '2'
+        group by t.team_id
+    </select>
+    <select id="getMajorLeaderList" parameterType="com.goisan.educational.major.bean.MajorLeader"
+            resultType="com.goisan.educational.major.bean.MajorLeader">
+        select id,
+            PERSON_ID,
+            DEPARTMENTS_ID,
+            MAJOR_ID,
+            FUNC_GET_DICVALUE(EDUCATION, 'XL') EDUCATION,
+            FUNC_GET_DICVALUE(DEGREE, 'XW') DEGREE,
+            SEX,
+            BIRTHDAY,
+            MAJOR_CODE,
+            POSITION,
+            POSITION_NAME,
+            POSITION_LEAVE,
+            OFFICE,
+            POSITION_DATE,
+            EMAIL,
+            TEACHERCATEGORY,
+            TEACHER_NUM,
+            WORK_DEPT,
+            GUHUA,
+            ZY_WORKDATE,
+            creator,
+            create_time,
+            create_dept,
+            person_type,
+            FUNC_GET_DEPTNAME(DEPARTMENTS_ID) departmentsIdShow,
+            FUNC_GET_TABLEVALUE(MAJOR_ID, 'T_XG_MAJOR', 'major_ID', 'major_name') majorIdShow,
+            to_char(BIRTHDAY, 'yyyy-mm-dd') birthdayShow,
+            to_char(POSITION_DATE, 'yyyy-mm') positionDate,
+            FUNC_GET_DICVALUE(TEACHERCATEGORY, 'JSLB') teacherCategoryShow,
+            FUNC_GET_USERNAME(PERSON_ID) personIdShow,
+            FUNC_GET_DICVALUE(sex, 'XB') sexShow
+        from T_JW_MAJOR_LEADER
+        WHERE 1 = 1
+        and valid_flag = '1'
+        <if test="personIdShow !=null and personIdShow != ''">
+            and FUNC_GET_USERNAME(PERSON_ID) like '%' || #{personIdShow} || '%'
+        </if>
+        <if test="departmentsId !=null and departmentsId != ''">
+            and DEPARTMENTS_ID=#{departmentsId}
+        </if>
+        <if test="majorId !=null and majorId != ''">
+            and major_id=#{majorId}
+        </if>
+        and PERSON_TYPE=#{personType}
+        order by create_time desc
+    </select>
+    <delete id="deleteResearchResultByMajorLeaderId" parameterType="java.lang.String">
+        delete t_jw_research_result t where t.major_leader_id =#{majorLeaderId}
+    </delete>
+    <select id="getMajorLeaderById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.major.bean.MajorLeader">
+        select id,
+               DEPARTMENTS_ID,
+               FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID)                                     departmentsIdShow,
+               MAJOR_ID                                                                majorId,
+               FUNC_GET_TABLEVALUE(t.MAJOR_ID, 'T_XG_MAJOR', 'major_ID', 'major_name') majorIdShow,
+               t.person_id                                                             personId,
+               FUNC_GET_USERNAME(t.PERSON_ID)                                          personIdShow,
+               MAJOR_CODE                                                              majorCode,
+               SEX,
+               FUNC_GET_DICVALUE(t.sex, 'XB')                                          sexShow,
+               to_char(t.BIRTHDAY, 'yyyy-mm-dd')                                       birthday,
+               EDUCATION,
+               DEGREE,
+               t.POSITION,
+               POSITION_NAME                                                           positionName,
+               POSITION_LEAVE                                                          positionLeave,
+               OFFICE,
+               to_char(t.POSITION_DATE, 'yyyy-mm')                                     positionDate,
+               EMAIL,
+               TEACHERCATEGORY                                                         TEACHERCATEGORY,
+               FUNC_GET_DICVALUE(t.TEACHERCATEGORY, 'JSLB')                            teacherCategoryShow,
+               TEACHER_NUM                                                             teacherNum,
+               work_dept                                                               workDept,
+               guhua                                                                   guHua,
+               ZY_WORKDATE                                                             zyWorkDate
+        from T_JW_MAJOR_LEADER t
+        WHERE id = #{id}
+    </select>
+    <insert id="insertResearchResult" parameterType="com.goisan.educational.major.bean.ResearchResult">
+        insert into
+            T_JW_RESEARCH_RESULT
+            (id, major_leader_id, name,get_prize_class, detail, get_date, cooperation_detail,creator,create_time,
+                 create_dept)
+        values
+            (#{id}, #{majorLeaderId}, #{name}, #{getPrizeClass}, #{detail}, #{getDate}, #{cooperationDetail},#{creator},
+                sysdate, #{createDept})
+    </insert>
+    <select id="getResearchResultsByMajorLeaderId" parameterType="java.lang.String" resultType="com.goisan.educational.major.bean.ResearchResult">
+        select t.id,
+            t.major_leader_id majorLeaderId,
+            t.name,
+            t.get_prize_class getPrizeClass,
+            t.detail,
+            t.get_date getDate,
+            t.cooperation_detail cooperationDetail,
+            t.creator,
+            t.create_dept createDept,
+            t.changer,
+            t.change_time changeTime,
+            t.change_dept changeDept,
+            t.valid_flag calidFlag
+        from t_jw_research_result t
+        where t.major_leader_id = #{majorLeaderId}
+    </select>
+    <insert id="insertMajorLeader" parameterType="com.goisan.educational.major.bean.MajorLeader">
+        INSERT INTO T_JW_MAJOR_LEADER
+        (id, PERSON_ID, DEPARTMENTS_ID, MAJOR_ID, EDUCATION, DEGREE, SEX, BIRTHDAY, MAJOR_CODE, POSITION, POSITION_NAME,
+         POSITION_LEAVE, OFFICE, POSITION_DATE, EMAIL, TEACHERCATEGORY, TEACHER_NUM, WORK_DEPT, GUHUA, ZY_WORKDATE,
+         creator, create_time, create_dept, person_type)
+        VALUES
+        ('${id}', '${personId}', '${departmentsId}', '${majorId}', '${education}', '${degree}', '${sex}', to_date('${birthday}', 'yyyy-mm-dd'),
+         '${majorCode}', '${position}', '${positionName}', '${positionLeave}', '${office}', to_date('${positionDate}', 'yyyy-mm'),
+         '${email}', '${teacherCategory}', '${teacherNum}', '${workDept}', '${guHua}', '${zyWorkDate}', '${creator}', sysdate, '${createDept}', '${personType}')
+    </insert>
+    <update id="updateMajorLeader" parameterType="com.goisan.educational.major.bean.MajorLeader">
+        UPDATE T_JW_MAJOR_LEADER
+        set
+            PERSON_ID = #{personId},
+            DEPARTMENTS_ID = #{departmentsId},
+            MAJOR_ID = #{majorId},
+            MAJOR_CODE = #{majorCode},
+            sex = #{sex},
+            BIRTHDAY = to_date('${birthday}', 'yyyy-mm-dd'),
+            EDUCATION = #{education},
+            DEGREE = #{degree},
+            POSITION = #{position},
+            POSITION_NAME = #{positionName},
+            POSITION_LEAVE = #{positionLeave},
+            OFFICE = #{office},
+            POSITION_DATE = to_date('${positionDate}', 'yyyy-mm'),
+            email = #{email},
+            TEACHERCATEGORY=#{teacherCategory},
+            teacher_num=#{teacherNum},
+            work_dept=#{workDept},
+            guhua=#{guHua},
+            ZY_WORKDATE=#{zyWorkDate},
+            change_time = sysdate,
+            change_dept = #{changeDept},
+            changer = #{changer}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteMajorLeader" parameterType="java.lang.String">
+        delete
+        from T_JW_MAJOR_LEADER
+        where id = #{id}
+    </delete>
+    <select id="getTeachingTeamList" parameterType="com.goisan.educational.major.bean.TalentTrain"
+            resultType="com.goisan.educational.major.bean.TalentTrain">
+        select id,
+        team_name planName,
+        to_char(getdate,'yyyy-mm') getDate,
+        getname getName,
+        team_teacher teamTeacher,
+        team_person teamPerson,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentsIdShow,
+        t2.major_code majorCode,
+        t2.major_name majorIdShow,
+        TEAM_LEVEL_CODE teamLevelCode,
+        FUNC_GET_DICVALUE(TEAM_LEVEL_CODE, 'TDDJ') teamLevelShow,
+        (SELECT COUNT(1) FROM T_JW_TEACHING_TEAM_MEMBER T1 WHERE T1.TEAM_ID = T.ID AND T1.MEMBER_TYPE = '1') leaderNum,
+        (SELECT COUNT(1) FROM T_JW_TEACHING_TEAM_MEMBER T1 WHERE T1.TEAM_ID = T.ID AND T1.MEMBER_TYPE = '2') memberNum
+        from T_JW_TEACHING_TEAM t left join t_xg_major t2 on t2.major_id = t.major_id
+        WHERE 1 = 1
+        and t.valid_flag = '1'
+        <if test="planName !=null and planName != ''">
+            and t.team_name like '%' || #{planName} || '%'
+        </if>
+        <if test="departmentsId !=null and departmentsId != ''">
+            and DEPARTMENTS_ID=#{departmentsId}
+        </if>
+        <if test="majorId !=null and majorId != ''">
+            and major_id=#{majorId}
+        </if>
+        order by t.create_time desc
+    </select>
+    <select id="getTeachingTeamMemberByTeamId" parameterType="java.lang.String" resultType="java.util.Map">
+        select
+            (select t1.name from T_RS_EMPLOYEE t1 where t.person_id = t1.person_id) name
+        from T_JW_TEACHING_TEAM_MEMBER t where t.team_id=#{teamId} and t.member_type = '2'
+    </select>
+
+    <select id="getTeachingTeamMemberById" parameterType="java.lang.String" resultType="com.goisan.educational.major.bean.TeachingTeamMember">
+        select
+           t1.name,
+           t1.sex,
+           t1.birthday birth,
+           t2.work_unit workUnit,
+           t2.position post,
+           t2.thetitle title
+       from t_jw_teaching_team_member t
+       left join T_RS_EMPLOYEE t1 on t1.person_id = t.person_id
+       left join T_XG_MAJOR_BUILDING_CMTE t2 on t2.person_id = t.person_id
+       where t.team_id = #{teamId} and t.member_type='2'
+    </select>
+    <!--获得数据不包括成员-->
+    <select id="getTeachingTeamMap" parameterType="com.goisan.educational.major.bean.TalentTrain" resultType="java.util.Map">
+        select  t.id,
+        t.team_name planName,
+        to_char(t.getdate,'yyyy-mm') approvalTime,
+        t.MAJOR_ID majorId,
+        t1.major_name majorName,
+        t1.major_code majorCode,
+        (select t3.name from T_RS_EMPLOYEE t3 where t3.person_id = t2.person_id) chargePerson,
+        TEAM_LEVEL_CODE teamlevel,
+        FUNC_GET_DICVALUE(TEAM_LEVEL_CODE, 'TDDJ') levelName
+        from T_JW_TEACHING_TEAM t
+        left join t_xg_major t1 on t1.major_id = t.major_id
+        left join t_jw_teaching_team_member t2 on t.id = t2.team_id and t2.member_type = '1'
+        where 1=1
+        and t.valid_flag = '1'
+        <if test="planName !=null and planName != ''">
+            and t.team_name like '%' || #{planName} || '%'
+        </if>
+        <if test="departmentsId !=null and departmentsId != ''">
+            and DEPARTMENTS_ID=#{departmentsId}
+        </if>
+        <if test="majorId !=null and majorId != ''">
+            and major_id=#{majorId}
+        </if>
+        order by t.team_level_code asc
+    </select>
+
+
+
+    <select id="getTeachingTeamById" parameterType="com.goisan.educational.major.bean.TalentTrain"
+            resultType="com.goisan.educational.major.bean.TalentTrain">
+        select id,
+               team_name                                                                                            planName,
+               to_char(getdate, 'yyyy-mm')                                                                          getDate,
+               getname                                                                                              getName,
+               team_teacher                                                                                         teamTeacher,
+               team_person                                                                                          teamPerson,
+               departments_id                                                                                       departmentsId,
+               t.major_id                                                                                           majorId,
+               t.training_level                                                                                     trainingLevel,
+               FUNC_GET_TABLEVALUE(t.MAJOR_ID, 'T_XG_MAJOR', 'major_ID', 'major_name')                              majorIdShow,
+               TEAM_LEVEL_CODE                                                                                      teamLevelCode,
+               FUNC_GET_DICVALUE(TEAM_LEVEL_CODE, 'TDDJ')                                                           teamLevelShow,
+               (SELECT COUNT(1) FROM T_JW_TEACHING_TEAM_MEMBER T1 WHERE T1.TEAM_ID = T.ID AND T1.MEMBER_TYPE = '1') leaderNum,
+               (SELECT COUNT(1) FROM T_JW_TEACHING_TEAM_MEMBER T1 WHERE T1.TEAM_ID = T.ID AND T1.MEMBER_TYPE = '2') memberNum
+        from T_JW_TEACHING_TEAM t
+        where
+            t.valid_flag = '1'
+          and id = #{id}
+        order by t.create_time desc
+    </select>
+    <insert id="insertTeachingTeam" parameterType="com.goisan.educational.major.bean.TalentTrain">
+        INSERT INTO T_JW_TEACHING_TEAM
+            (id, TEAM_NAME, GETDATE, GETNAME, TEAM_TEACHER, TEAM_PERSON, creator, create_time, create_dept, TEAM_LEVEL_CODE, MAJOR_ID, TRAINING_LEVEL, DEPARTMENTS_ID)
+        VALUES
+        (func_get_uuid, '${planName}', to_date('${getDate}', 'yyyy-mm'), '${getName}', '${teamTeacher}',
+         '${teamPerson}', '${creator}', sysdate, '${createDept}', '${teamLevelCode}', '${majorId}', '${trainingLevel}', '${departmentsId}')
+    </insert>
+
+    <!--插入已有id数据-->
+    <insert id="insertTeachTeam" parameterType="com.goisan.educational.major.bean.TalentTrain">
+        INSERT INTO T_JW_TEACHING_TEAM
+            (id, TEAM_NAME, GETDATE, GETNAME, TEAM_TEACHER, TEAM_PERSON, creator, create_time, create_dept, TEAM_LEVEL_CODE, MAJOR_ID, TRAINING_LEVEL, DEPARTMENTS_ID)
+        VALUES
+        ('${id}', '${planName}', to_date('${getDate}', 'yyyy-mm'), '${getName}', '${teamTeacher}',
+         '${teamPerson}', '${creator}', sysdate, '${createDept}', '${teamLevelCode}', '${majorId}', '${trainingLevel}', '${departmentsId}')
+    </insert>
+    <update id="updateTeachingTeam" parameterType="com.goisan.educational.major.bean.TalentTrain">
+
+        UPDATE T_JW_TEACHING_TEAM
+        set
+            DEPARTMENTS_ID=#{departmentsId},
+            TRAINING_LEVEL=#{trainingLevel},
+            TEAM_NAME = #{planName},
+            GETDATE = to_date('${getDate}', 'yyyy-mm'),
+            GETNAME=#{getName},
+            TEAM_TEACHER = #{teamTeacher},
+            TEAM_PERSON=#{teamPerson},
+            change_time = sysdate,
+            change_dept = #{changeDept},
+            changer = #{changer},
+            TEAM_LEVEL_CODE = #{teamLevelCode},
+            MAJOR_ID = #{majorId}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTeachingTeam" parameterType="java.lang.String">
+        delete
+        from T_JW_TEACHING_TEAM
+        where id = #{id}
+    </delete>
+    <select id="getTalentTrainByPlanName" parameterType="java.lang.String" resultType="com.goisan.educational.major.bean.TalentTrain">
+    select t.id,
+               team_name                                                                                            planName,
+               to_char(getdate, 'yyyy-mm')                                                                          getDate,
+               getname                                                                                              getName,
+               team_teacher                                                                                         teamTeacher,
+               team_person                                                                                          teamPerson,
+               departments_id                                                                                       departmentsId,
+               t.major_id                                                                                           majorId,
+               t.training_level                                                                                     trainingLevel,
+               FUNC_GET_TABLEVALUE(t.MAJOR_ID, 'T_XG_MAJOR', 'major_ID', 'major_name')                              majorIdShow,
+               TEAM_LEVEL_CODE                                                                                      teamLevelCode,
+               FUNC_GET_DICVALUE(TEAM_LEVEL_CODE, 'TDDJ')                                                           teamLevelShow,
+               (SELECT COUNT(1) FROM T_JW_TEACHING_TEAM_MEMBER T1 WHERE T1.TEAM_ID = T.ID AND T1.MEMBER_TYPE = '1') leaderNum,
+               (SELECT COUNT(1) FROM T_JW_TEACHING_TEAM_MEMBER T1 WHERE T1.TEAM_ID = T.ID AND T1.MEMBER_TYPE = '2') memberNum
+    from T_JW_TEACHING_TEAM t where t.team_name = #{planName}
+        <if test="id !=null and id != ''">
+            and t.id != #{id}
+        </if>
+    </select>
+    <select id="getDeptAndPersonTree" resultType="com.goisan.system.bean.EmpDeptTree"
+            parameterType="com.goisan.educational.major.bean.TeachingTeamMember">
+        SELECT
+            id,
+            name,
+            pid,
+            isper1   AS isper,
+            checked1 AS checked
+        FROM
+            (
+                SELECT
+                    dept_id             id,
+                    dept_name || '(部门)' name,
+                    parent_dept_id      pid,
+                    'false' AS          isper1,
+                    'false' AS          checked1
+                FROM t_sys_dept
+                WHERE VALID_FLAG = '1'
+                UNION ALL
+                (SELECT
+                     t.*,
+                     nvl2(t3.id, 'true', 'false') AS checked1
+                 FROM
+                     (SELECT
+                          t1.person_id id,
+                          t1.name      name,
+                          t2.dept_id   pid,
+                          'true' AS    isper1
+                      FROM T_RS_EMPLOYEE t1,
+                           T_RS_EMPLOYEE_DEPT t2,
+                           t_sys_dept d
+                      WHERE t1.person_id = t2.person_id
+                        AND t1.VALID_FLAG = '1'
+                        AND d.VALID_FLAG = '1'
+                        AND t2.dept_id = d.dept_id
+                      ORDER BY t2.person_order
+                     ) t
+                         LEFT JOIN T_JW_TEACHING_TEAM_MEMBER t3 ON t.id = t3.PERSON_ID AND t.pid = t3.dept_id
+                         AND t3.TEAM_ID = #{teamId} and t3.MEMBER_TYPE = #{memberType}
+                )
+            )
+    </select>
+    <delete id="delLeaderEmpDeptByArchivesId" parameterType="java.lang.String">
+        DELETE
+        T_JW_TEACHING_TEAM_MEMBER
+        WHERE
+        team_id
+        =
+        #{teamId}
+        AND
+        MEMBER_TYPE
+        =
+        #{memberType}
+    </delete>
+    <insert id="insertLeaderEmpDept" parameterType="com.goisan.educational.major.bean.TeachingTeamMember">
+        INSERT INTO T_JW_TEACHING_TEAM_MEMBER
+            (ID, PERSON_ID, DEPT_ID, CREATOR, CREATE_TIME, CREATE_DEPT, TEAM_ID, MEMBER_TYPE)
+        values
+            (#{id}, #{personId}, #{deptId}, #{creator}, sysdate, #{createDept}, #{teamId}, #{memberType})
+    </insert>
+
+
+    <select id="getMajorResponsibleById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.major.bean.MajorResponsible">
+        select
+            id,
+            FUNC_GET_USERNAME(t.PERSON_ID)         personIdShow,
+            person_Id,
+            sex,
+            to_char(t.BIRTHDAY, 'yyyy-mm-dd')      birthday,
+            education,
+            degree,
+            work_Dept,
+            departments_Id,
+            major_Id,
+            major_Code,
+            teacherCategory,
+            teacher_Num,
+            position,
+            guhua,
+            zy_Workdate,
+            email,
+            position_Leave,
+            position_Name,
+            office,
+            to_char(t.POSITION_DATE, 'yyyy-mm-dd') positionDate,
+            creator,
+            create_time,
+            create_dept
+        from T_JW_MAJOR_RESPONSIBLE t
+        WHERE id = #{id}
+    </select>
+
+
+    <insert id="insertMajorResponsible" parameterType="com.goisan.educational.major.bean.MajorResponsible">
+        INSERT INTO T_JW_MAJOR_RESPONSIBLE
+        (id,
+         person_Id,
+         sex,
+         birthday,
+         education,
+         degree,
+         work_Dept,
+         departments_Id,
+         major_Id,
+         major_Code,
+         teacherCategory,
+         teacher_Num,
+         position,
+         guhua,
+         zy_Workdate,
+         email,
+         position_Leave,
+         position_Name,
+         office,
+         position_Date,
+         creator,
+         create_time,
+         create_dept)
+        VALUES
+        (func_get_uuid,
+         '${personId}',
+         '${sex}',
+         to_date('${birthday}', 'yyyy-mm-dd'),
+         '${education}',
+         '${degree}',
+         '${workDept}',
+         '${departmentsId}',
+         '${majorId}',
+         '${majorCode}',
+         '${teacherCategory}',
+         '${teacherNum}',
+         '${position}',
+         '${guhua}',
+         '${zyWorkdate}',
+         '${email}',
+         '${positionLeave}',
+         '${positionName}',
+         '${office}',
+         to_date('${positionDate}', 'yyyy-mm-dd'),
+         '${creator}',
+         sysdate,
+         '${createDept}')
+
+    </insert>
+    <update id="updateMajorResponsible" parameterType="com.goisan.educational.major.bean.MajorResponsible">
+        UPDATE T_JW_MAJOR_RESPONSIBLE
+        set
+            person_Id= #{personId},
+            sex= #{sex},
+            birthday= to_date('${birthday}', 'yyyy-mm-dd'),
+            education = #{education},
+            degree=#{degree},
+            work_Dept= #{workDept}, /*to_date('${birthday}','yyyy-mm-dd'),*/
+            departments_Id = #{departmentsId},
+            major_Id = #{majorId},
+            major_Code = #{majorCode},
+            teacherCategory = #{teacherCategory},
+            teacher_Num = #{teacherNum},
+            position = #{position},
+            guhua = #{guhua},
+            zy_Workdate= #{zyWorkdate},
+            email = #{email},
+            position_Leave = #{positionLeave}, /*to_date('${positionDate}','yyyy-mm-dd'),*/
+            position_Name= #{positionName},
+            office = #{office},
+            position_Date= to_date('${positionDate}', 'yyyy-mm-dd'),
+            change_time = sysdate,
+            change_dept = #{changeDept},
+            changer = #{changer}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getMajorResponsibleList" parameterType="com.goisan.educational.major.bean.MajorResponsible"
+            resultType="com.goisan.educational.major.bean.MajorResponsible">
+        select t.*,FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID) departmentsIdShow,
+        FUNC_GET_TABLEVALUE(t.MAJOR_ID,'T_XG_MAJOR','major_ID','major_name') majorIdShow,
+        to_char(t.BIRTHDAY,'yyyy-mm-dd') birthdayShow,
+        to_char(t.POSITION_DATE,'yyyy-mm') positionDate,
+        to_char(t.RESEARCH_DATE,'yyyy-mm') researchDate,
+        FUNC_GET_DICVALUE(t.TEACHERCATEGORY,'JSLB') teacherCategoryShow,
+        FUNC_GET_DICVALUE(t.education,'XL') educationShow,
+        FUNC_GET_DICVALUE(t.degree,'XW') degreeShow,
+        FUNC_GET_USERNAME(t.PERSON_ID) personIdShow,
+        FUNC_GET_DICVALUE(t.sex,'XB') sexShow
+        from T_JW_MAJOR_Responsible t
+        WHERE 1 = 1
+        and t.valid_flag = '1'
+        <if test="personIdShow !=null and personIdShow != ''">
+            and FUNC_GET_USERNAME(t.PERSON_ID) like '%' || #{personIdShow} || '%'
+        </if>
+        <if test="departmentsId !=null and departmentsId != ''">
+            and DEPARTMENTS_ID=#{departmentsId}
+        </if>
+        <if test="majorId !=null and majorId != ''">
+            and major_id=#{majorId}
+        </if>
+        order by t.create_time desc
+    </select>
+    <delete id="deleteMajorResponsible" parameterType="java.lang.String">
+        delete
+        from T_JW_MAJOR_RESPONSIBLE
+        where id = #{id}
+    </delete>
+
+    <select id="getDaoChu" parameterType="com.goisan.educational.major.bean.TalentTrain"
+            resultType="com.goisan.educational.major.bean.TalentTrain">
+        select
+            t.id,
+            m.MEMBER_TYPE                                                             ptype,
+            t.MAJOR_ID                                                                majorCode,
+            FUNC_GET_TABLEVALUE(t.MAJOR_ID, 'T_XG_MAJOR', 'major_code', 'major_name') majorIdShow,
+            team_name                                                                 planName,
+            FUNC_GET_DICVALUE(TEAM_LEVEL_CODE, 'TDDJ')                                teamLevelShow,
+            to_char(getdate, 'yyyy-mm')                                               getDate,
+            func_get_username(m.person_id)                                            dname,
+            FUNC_GET_DICVALUE(c.teacher_sex, 'XB')                                    dsex,
+            to_char(c.birthday, 'yyyy-mm-dd')                                         dbirthday,
+            c.title                                                                   dzhicheng,
+            c.XZ_POSITION                                                             dzhiwu,
+            c.work_dept                                                               dworkdept
+        from T_JW_TEACHING_TEAM t,
+             T_JW_TEACHING_TEAM_MEMBER m,
+             T_JW_TEACHER_CONDITION c
+        where m.team_id = t.id
+          and m.PERSON_ID = c.name(+)
+        order by t.create_time desc
+    </select>
+
+</mapper>

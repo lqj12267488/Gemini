@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.timetable.dao.TimeTableDao">
+
+
+    <select id="getTimeTableByName" parameterType="String" resultType="com.goisan.educational.timetable.bean.TimeTable">
+        select *from T_JW_TIMETABLE t where t.time_table_name=#{name}
+        <if test="id != null and id != '' ">
+            and  id != #{id}
+        </if>
+    </select>
+
+    <select id="getTimeTableList" resultType="com.goisan.educational.timetable.bean.TimeTable"
+            parameterType="com.goisan.educational.timetable.bean.TimeTable">
+        SELECT t.*
+        <if test="createDept != 1">,a.total,a."sum"</if>
+        from T_JW_TIMETABLE t
+        <if test="createDept != 1">,
+            (select t1.TIME_TABLE_ID,
+            (select count(*)
+            from T_JW_TEACHING_PLAN t3
+            where t3.CLASS_ID = t1.CLASS_ID
+            and FUNC_GET_TABLEVALUE(t3.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') = t2.COURSE_NAME
+            and FUNC_GET_USERNAME(t3.USER_ID) = t2.COURSE_TEACHER
+            and STATUS = '3') "sum",
+            (select count(*)
+            from T_JW_TEACHING_PLAN t3
+            where t3.CLASS_ID = t1.CLASS_ID
+            and FUNC_GET_TABLEVALUE(t3.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') = t2.COURSE_NAME
+            and FUNC_GET_USERNAME(t3.USER_ID) = t2.COURSE_TEACHER) total
+            from T_JW_TIMETABLE_DEPARTMENT t1,
+            T_JW_TIMETABLE_COURSE t2
+            where FUNC_GET_USERNAME('${creator}') = t2.COURSE_TEACHER
+            group by t1.TIME_TABLE_ID,t1.CLASS_ID,t2.COURSE_TEACHER,t2.COURSE_NAME) a
+            where a.TIME_TABLE_ID = t.ID
+        </if>
+        <if test="timeTableName != null and timeTableName != '' ">
+            where TIME_TABLE_NAME like '%'||#{timeTableName}||'%'
+        </if>
+        order by t.EXECUTION_DATE desc
+    </select>
+
+    <insert id="saveTimeTable" parameterType="com.goisan.educational.timetable.bean.TimeTable">
+        insert into T_JW_TIMETABLE (ID, TIME_TABLE_NAME, EXECUTION_DATE)
+        values (#{id}, #{timeTableName}, #{executionDate})
+    </insert>
+
+    <update id="updateTimeTable" parameterType="com.goisan.educational.timetable.bean.TimeTable">
+        update T_JW_TIMETABLE
+        set TIME_TABLE_NAME=#{timeTableName},
+            EXECUTION_DATE=#{executionDate}
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteTimeTable" parameterType="String">
+        delete
+        from T_JW_TIMETABLE
+        where ID = #{id}
+    </delete>
+
+    <select id="getTimeTableById" resultType="com.goisan.educational.timetable.bean.TimeTable" parameterType="String">
+        select id,
+               time_table_name,
+               EXECUTION_DATE
+        from T_JW_TIMETABLE
+        where id = #{id}
+    </select>
+
+
+    <select id="getTimeTableExcelList" resultType="com.goisan.educational.timetable.bean.TimeTableExcel"
+            parameterType="String">
+        select distinct t.id,
+                        t.time_table_name,
+                        t.EXECUTION_DATE,
+                        d.department_id,
+                        (SELECT DEPT_NAME FROM T_SYS_DEPT WHERE DEPT_ID = d.department_id)           departmentId,
+                        (select MAJOR_NAME from T_XG_MAJOR where T_XG_MAJOR.MAJOR_CODE = d.MAJOR_ID) majorId,
+                        (select CLASS_NAME from T_XG_CLASS where T_XG_CLASS.CLASS_ID = d.CLASS_ID)   classId,
+                        d.PEOPLE_NUMBER,
+                        FUNC_GET_TABLEVALUE(d.CLASS_ROM, 'T_JW_CLASSROOM', 'id', 'class_room_name') classRom,
+                        c.WEEKS,
+                        c.COURSE_NUM,
+                        c.COURSE_NAME,
+                        c.COURSE_TEACHER,
+                        d.CLASS_ID                                                                   aa,
+                        (select SPECIAL_FLAG
+                         from T_JW_TIMETABLE_SPECIAL_PLACE
+                         where T_JW_TIMETABLE_SPECIAL_PLACE.ID = c.SPECIAL_PLACE)                    specialFlag
+        from T_JW_TIMETABLE t,
+             T_JW_TIMETABLE_DEPARTMENT d,
+             T_JW_TIMETABLE_COURSE c,
+             T_JW_TIMETABLE_SPECIAL_PLACE s
+        where t.id = #{id}
+          and d.TIME_TABLE_ID = t.ID
+          and c.TIME_TABLE_DEPARTMENT_ID = d.ID
+        order by CLASS_ID
+    </select>
+
+
+</mapper>

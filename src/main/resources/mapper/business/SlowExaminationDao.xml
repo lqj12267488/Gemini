@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--协同办公-资产报废管理modify by wq-->
+<mapper namespace="com.goisan.educational.slowexamination.dao.SlowExaminationDao">
+    <!--申请页列表显示和查询-->
+    <select id="getSlowExaminationList" resultType="com.goisan.educational.slowexamination.bean.SlowExamination"
+            parameterType="com.goisan.educational.slowexamination.bean.SlowExamination">
+        SELECT
+        DISTINCT
+        t.id,
+        t.create_time,
+        FUNC_GET_DICVALUE(t.term_id,'XQ') termId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        t.reason,
+        FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME') manager,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        t.remark,
+        t.creator,
+        t.create_dept,
+        t.request_flag
+        FROM
+        T_JW_SLOW_EXAMINATION t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <!--查询id-->
+    <select id="getSlowExaminationById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.slowexamination.bean.SlowExamination">
+        SELECT t.id                                                                               id,
+               FUNC_GET_DEPTNAME(t.request_dept)                                                  requestDept,
+               to_char(t.request_date, 'yyyy-mm-dd') || 'T' || to_char(t.request_date, 'hh24:mi') requestDate,
+               to_char(t.request_date, 'yyyy-mm-dd hh24:mi') as                                   requestTime,
+               t.COURSE_ID,
+               FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')        courseName,
+               FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')            classId,
+               FUNC_GET_TABLEVALUE(t.manager, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')               manager,
+               t.reason                                                                           reason,
+               t.remark                                                                           remark
+        FROM T_JW_SLOW_EXAMINATION t
+        WHERE id = #{id}
+        ORDER BY t.create_time DESC
+    </select>
+    <!--添加-->
+    <insert id="insertSlowExamination" parameterType="com.goisan.educational.slowexamination.bean.SlowExamination">
+        insert into T_JW_SLOW_EXAMINATION t (id,
+                                             request_dept,
+                                             manager,
+                                             course_id,
+                                             class_id,
+                                             term_id,
+                                             request_date,
+                                             reason,
+                                             creator,
+                                             create_time,
+                                             create_dept,
+                                             remark)
+        values (FUNC_GET_UUID,
+                '${requestDept}',
+                '${manager}',
+                '${courseId}',
+                '${classId}',
+                '${termId}',
+                to_date('${requestDate}', 'yyyy-mm-dd hh24:mi'),
+                '${reason}',
+                '${creator}',
+                sysdate,
+                '${createDept}',
+                '${remark}')
+    </insert>
+    <!--删除-->
+    <delete id="deleteSlowExaminationById" parameterType="java.lang.String">
+        DELETE
+        FROM T_JW_SLOW_EXAMINATION
+        WHERE id = #{id}
+    </delete>
+    <!--修改-->
+    <update id="updateSlowExaminationById" parameterType="com.goisan.educational.slowexamination.bean.SlowExamination">
+        update
+                T_JW_SLOW_EXAMINATION t
+        SET t.course_id = #{courseId},
+            t.reason    = #{reason},
+            changer     = #{changer},
+            change_time = sysdate,
+            change_dept = #{changeDept},
+            t.remark    = #{remark}
+        WHERE id = #{id}
+    </update>
+    <select id="getAssetsByDate" parameterType="java.lang.String"
+            resultType="com.goisan.educational.slowexamination.bean.SlowExamination">
+        SELECT t.id,
+               FUNC_GET_DEPTNAME(t.request_dept)                                    requestDept,
+               to_char(t.request_date, 'yyyy-mm-dd hh24:mi')                        requestDate,
+               FUNC_GET_TABLEVALUE(t.manager, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') manager,
+               t.assets_name                                                        assetsName,
+               t.COURSE_ID                                                          courseId,
+               t.reason                                                             reason,
+               t.remark                                                             remark
+        FROM T_JW_SLOW_EXAMINATION t
+        WHERE id = #{DATE}
+        ORDER BY t.create_time DESC
+    </select>
+    <!--待办页列表显示和查询-->
+    <select id="slowExaminationProcessAction" resultType="com.goisan.educational.slowexamination.bean.SlowExamination"
+            parameterType="com.goisan.educational.slowexamination.bean.SlowExamination">
+        SELECT
+        t.id,
+        t.create_time,
+        FUNC_GET_DICVALUE(t.term_id,'XQ') termId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        t.reason,
+        FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME') manager,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        t.remark,
+        t.request_flag requestFlag,
+        t.feedBack feedBack,
+        t.creator,
+        t.create_time
+        FROM
+        T_JW_SLOW_EXAMINATION t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{manager}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag !=
+        '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <!--已办页列表显示和查询-->
+    <select id="slowExaminationCompleteAction" resultType="com.goisan.educational.slowexamination.bean.SlowExamination"
+            parameterType="com.goisan.educational.slowexamination.bean.SlowExamination">
+        SELECT
+        DISTINCT
+        t.id,
+        t.create_time,
+        FUNC_GET_DICVALUE(t.term_id,'XQ') termId,
+        FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        t.reason,
+        FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME') manager,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        t.remark,
+        func_get_dicvalue(t.request_flag,'GZLLZZT') requestFlag,
+        func_get_dicvalue(t.feedBack_flag,'GZLFKZT') feedBackFlag,
+        t.feedBack feedBack
+        FROM
+        T_JW_SLOW_EXAMINATION t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{manager}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--查询所有部门id和名称-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select t.dept_id as "value", t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--查询所有人员id和姓名-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select t.name as "label", t.student_id as "value"
+        FROM t_xg_student t
+    </select>
+    <!--通过人员id查询人员姓名-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name
+        from t_xg_student
+        WHERE student_id = #{personId}
+    </select>
+    <!--通过人员id查询系部名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT d.dept_name
+        from t_sys_dept d,
+             t_xg_student_class s,
+             t_xg_class c
+        WHERE s.class_id = c.class_id
+          and d.dept_id = c.departments_id
+          and s.student_id = #{deptId}
+    </select>
+    <select id="getDeptIdById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT d.dept_id
+        from t_sys_dept d,
+             t_xg_student_class s,
+             t_xg_class c
+        WHERE s.class_id = c.class_id
+          and d.dept_id = c.departments_id
+          and s.student_id = #{deptId}
+    </select>
+    <!--通过人员id查询班级名称-->
+    <select id="getClassNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT c.class_name
+        from t_xg_student_class s,
+             t_xg_class c
+        WHERE c.class_id = s.class_id
+          and s.student_id = #{personId}
+    </select>
+    <select id="getClassIdById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT c.class_Id
+        from t_xg_student_class s,
+             t_xg_class c
+        WHERE c.class_id = s.class_id
+          and s.student_id = #{personId}
+    </select>
+    <!--通过人员id查询当前学生专业-->
+    <select id="getMajorCodeById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT c.major_code
+        from t_xg_student_class s,
+             t_xg_class c
+        WHERE c.class_id = s.class_id
+          and s.student_id = #{personId}
+    </select>
+    <!--新增查重-->
+    <select id="checkCode" resultType="com.goisan.educational.slowexamination.bean.SlowExamination"
+            parameterType="com.goisan.educational.slowexamination.bean.SlowExamination">
+        select * from T_JW_SLOW_EXAMINATION t where t.id = #{diccode}
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </select>
+    <select id="checkName" parameterType="com.goisan.system.bean.UserDic" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic where dic_name = #{dicname}
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </select>
+
+
+    <select id="getCourseSelect" parameterType="com.goisan.educational.slowexamination.bean.SlowExamination"
+            resultType="com.goisan.system.bean.Select2">
+        select COURSE_ID id, COURSE_NAME text
+        from T_JW_COURSE
+        where DEPARTMENTS_ID = (select DEPT_ID from T_SYS_DEPT where DEPT_NAME = #{requestDept})
+
+    </select>
+
+
+</mapper>

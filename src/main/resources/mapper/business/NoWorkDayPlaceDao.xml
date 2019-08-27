@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--协同办公-非工作日学校场所使用管理
+    Created and modify by wq on 2017/7/19.
+-->
+<mapper namespace="com.goisan.synergy.workflow.dao.NoWorkDayPlaceDao">
+    <!--申请页查表-->
+    <select id="getNoWorkDayPlaceList" resultType="com.goisan.synergy.workflow.bean.NoWorkDayPlace"
+            parameterType="com.goisan.synergy.workflow.bean.NoWorkDayPlace">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        FUNC_GET_USERNAME(t.leader) leader,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        t.people_number peopleNumber,
+        t.content content,
+        FUNC_GET_DICVALUE(t.use_place,'SYCS') usePlace,
+        FUNC_GET_DICVALUE(t.use_property,'SYXZ') useProperty,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.creator,
+        t.create_dept,
+        t.create_time
+        FROM
+        T_BG_NOWORKDAYPLACE_WF t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <!--申请添加-->
+    <insert id="insertNoWorkDayPlace" parameterType="com.goisan.synergy.workflow.bean.NoWorkDayPlace">
+        insert into
+        T_BG_NOWORKDAYPLACE_WF t
+        (id,request_dept,requester,request_date,
+        leader,start_time,end_time,
+        people_number,content,
+        use_place,use_property,remark,
+        creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${requestDept}','${requester}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+        '${leader}',to_date('${startTime}','yyyy-mm-dd hh24:mi'),to_date('${endTime}','yyyy-mm-dd hh24:mi'),
+        '${peopleNumber}','${content}',
+        '${usePlace}','${useProperty}','${remark}',
+        '${creator}',sysdate,'${createDept}')
+    </insert>
+    <!--申请删除-->
+    <delete id="deleteNoWorkDayPlace" parameterType="java.lang.String">
+        DELETE FROM T_BG_NOWORKDAYPLACE_WF WHERE id = #{id}
+    </delete>
+    <!--申请修改-->
+    <update id="updateNoWorkDayPlace" parameterType="com.goisan.synergy.workflow.bean.NoWorkDayPlace">
+        update
+        T_BG_NOWORKDAYPLACE_WF
+        SET
+        id=#{id},
+        REQUEST_DEPT =#{requestDept},
+        REQUESTER =#{requester},
+        REQUEST_DATE = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        LEADER=#{leader},
+        START_TIME=to_date(#{startTime},'yyyy-mm-dd hh24:mi'),
+        END_TIME=to_date(#{endTime},'yyyy-mm-dd hh24:mi'),
+        PEOPLE_NUMBER=#{peopleNumber},
+        CONTENT=#{content},
+        use_place=#{usePlace},
+        use_property=#{useProperty},
+        REMARK=#{remark},
+        changer = #{changer},
+        change_time = sysdate,
+        change_dept = #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <!--通过id查询申请-->
+    <select id="getNoWorkDayPlaceById" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.NoWorkDayPlace">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi') requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  as requestTime,
+        t.leader leader,
+        to_char(t.start_time,'yyyy-mm-dd') || 'T' || to_char(t.start_time,'hh24:mi') startTime,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi')  as startDate,
+        to_char(t.end_time,'yyyy-mm-dd') || 'T' || to_char(t.end_time,'hh24:mi') endTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi')  as endDate,
+        t.people_number peopleNumber,
+        t.content content,
+        t.use_place usePlace,
+        t.use_property useProperty,
+        FUNC_GET_DICVALUE(t.use_place,'SYCS') place,
+        FUNC_GET_DICVALUE(t.use_property,'SYXZ') property,
+        t.remark remark,
+        t.request_flag requestFlag,
+        t.creator,
+        t.create_dept,
+        t.create_time
+        FROM
+        T_BG_NOWORKDAYPLACE_WF t
+        WHERE id = #{id} ORDER BY t.create_time DESC
+    </select>
+    <!--待办页查表-->
+    <select id="getNoWorkDayPlaceProcessList" resultType="com.goisan.synergy.workflow.bean.NoWorkDayPlace"
+            parameterType="com.goisan.synergy.workflow.bean.NoWorkDayPlace">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        FUNC_GET_USERNAME(t.leader) leader,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        t.people_number peopleNumber,
+        t.content content,
+        FUNC_GET_DICVALUE(t.use_place,'SYCS') usePlace,
+        FUNC_GET_DICVALUE(t.use_property,'SYXZ') useProperty,
+        t.remark remark,
+        t.creator,
+        t.create_dept,
+        t.create_time,
+        t.feedback feedback
+        FROM
+        T_BG_NOWORKDAYPLACE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <!--已办页查表-->
+    <select id="getNoWorkDayPlaceCompleteList" resultType="com.goisan.synergy.workflow.bean.NoWorkDayPlace"
+            parameterType="com.goisan.synergy.workflow.bean.NoWorkDayPlace">
+        SELECT
+        DISTINCT
+        t.id id,
+        FUNC_GET_USERNAME(t.requester) requester,
+        func_get_deptname(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') requestDate,
+        FUNC_GET_USERNAME(t.leader) leader,
+        to_char(t.start_time,'yyyy-mm-dd hh24:mi') as startTime,
+        to_char(t.end_time,'yyyy-mm-dd hh24:mi') as endTime,
+        t.people_number peopleNumber,
+        t.content content,
+        FUNC_GET_DICVALUE(t.use_place,'SYCS') usePlace,
+        FUNC_GET_DICVALUE(t.use_property,'SYXZ') useProperty,
+        t.remark remark,
+        t.creator,
+        t.create_dept,
+        t.create_time,
+        FUNC_GET_DICVALUE(t.REQUEST_FLAG,'GZLLZZT') requestFlag,
+        func_get_dicvalue(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.FEEDBACK feedback
+        FROM
+        T_BG_NOWORKDAYPLACE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state = '2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+    <!--查询人员表-->
+    <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <!--查询部门表-->
+    <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <!--通过人员id查询人员姓名-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <!--通过部门id查询部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <!--获取所在部门所有人员-->
+    <select id="getDeptPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.Select2">
+        SELECT e.person_id id,e.name text
+        FROM T_RS_EMPLOYEE e,T_RS_EMPLOYEE_DEPT d
+        WHERE e.person_id = d.person_id and dept_id = #{deptId}
+        ORDER BY e.name
+    </select>
+
+    <!--非工作日学校场所使用规范维护-->
+    <select id="getNoWorkDayPlaceStandard" parameterType="java.lang.String" resultType="com.goisan.synergy.workflow.bean.Standard">
+        SELECT
+        t.id id,
+        t.STANDARD_TYPE standardType,
+        t.STANDARD_NAME standardName,
+        t.STANDARD_CONTENT standardContent
+        FROM
+        T_BG_STANDARD_WF t
+        where t.STANDARD_TYPE=#{standardType}
+    </select>
+    <insert id="insertNoWorkDayPlaceStandard" parameterType="com.goisan.synergy.workflow.bean.Standard">
+        insert into
+        T_BG_STANDARD_WF t
+        (id,STANDARD_TYPE,STANDARD_NAME,STANDARD_CONTENT,
+        creator,create_time,create_dept,changer,change_time,change_dept) values
+        (FUNC_GET_UUID,#{standardType},#{standardName},#{standardContent},
+        #{creator},sysdate,#{createDept},#{changer},sysdate,#{changeDept})
+    </insert>
+    <!--申请修改-->
+    <update id="updateNoWorkDayPlaceStandard" parameterType="com.goisan.synergy.workflow.bean.Standard">
+        update
+        T_BG_STANDARD_WF
+        SET
+        STANDARD_TYPE=#{standardType},
+        STANDARD_NAME=#{standardName},
+        STANDARD_CONTENT=#{standardContent},
+        changer = #{changer},
+        change_time = sysdate,
+        change_dept = #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+</mapper>

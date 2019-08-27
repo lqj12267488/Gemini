@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.teachingevent.dao.TeachingEventDao">
+    <select id="getTeachingEventList" resultType="com.goisan.educational.teachingevent.bean.TeachingEvent" parameterType="com.goisan.educational.teachingevent.bean.TeachingEvent">
+        SELECT
+        t.id,
+        t.event_Name  eventName,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_TABLEVALUE(host_id,'T_RS_EMPLOYEE','person_id','name')
+        ||DECODE(host_dept, '', '' ,' ---- ')
+        ||FUNC_GET_TABLEVALUE(host_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') hostIdShow,
+        to_char(t.start_time,'yyyy-mm-dd')  startTime,
+        to_char(t.end_time,'yyyy-mm-dd')  endTime,
+        event_content eventContent,
+        t.event_effect eventEffect
+        FROM
+        t_jw_teachingevent t
+        where 1 = 1 AND departments_id LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+        <if test="eventName != null and eventName != '' ">
+            AND t.event_name LIKE '%'||#{eventName}||'%'
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getTeachingEventById" resultType="com.goisan.educational.teachingevent.bean.TeachingEvent" parameterType="com.goisan.educational.teachingevent.bean.TeachingEvent">
+        SELECT
+        t.id,
+        t.event_Name eventName,
+        t.host_dept hostDept,
+        t.host_id hostId,
+        t.departments_id departmentsId,
+        FUNC_GET_TABLEVALUE(host_id,'T_RS_EMPLOYEE','person_id','name')
+        ||DECODE(host_dept, '', '' ,' ---- ')
+        ||FUNC_GET_TABLEVALUE(host_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') hostIdShow,
+        to_char(t.start_time,'yyyy-mm-dd')  startTime,
+        to_char(t.end_time,'yyyy-mm-dd')  endTime,
+        t.event_content eventContent,
+        t.event_effect eventEffect,
+        FUNC_GET_TABLEVALUE(host_id,'T_RS_EMPLOYEE','person_id','name') hostIdShow
+        FROM
+        t_jw_teachingevent t
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertTeachingEvent" parameterType="com.goisan.educational.teachingevent.bean.TeachingEvent">
+        INSERT INTO
+        t_jw_teachingevent
+        (id,event_Name,departments_id,host_id,host_dept,start_time,end_time,event_content,event_effect,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${eventName}','${departmentsId}','${hostId}','${hostDept}',to_date('${startTime}','yyyy-mm-dd'),to_date('${endTime}','yyyy-mm-dd'),'${eventContent}','${eventEffect}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <delete id="deleteTeachingEventById"  parameterType="java.lang.String">
+        DELETE FROM t_jw_teachingevent WHERE id = #{id}
+    </delete>
+    <update id="updateTeachingEventById" parameterType="com.goisan.educational.teachingevent.bean.TeachingEvent">
+        update
+        t_jw_teachingevent
+        SET
+        id = #{id},
+        event_Name = #{eventName},
+        departments_id = #{departmentsId},
+        host_id = #{hostId},
+        host_dept = #{hostDept},
+        start_time = to_date(#{startTime},'yyyy-mm-dd'),
+        end_time = to_date(#{endTime},'yyyy-mm-dd'),
+        event_content= #{eventContent},
+        event_effect= #{eventEffect},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+
+        WHERE
+        id = #{id}
+    </update>
+    <select id="getTeachingEventCountList" resultType="com.goisan.educational.teachingevent.bean.TeachingEvent" parameterType="com.goisan.educational.teachingevent.bean.TeachingEvent">
+        SELECT
+        t.id,
+        t.event_Name  eventName,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_TABLEVALUE(host_id,'T_RS_EMPLOYEE','person_id','name')
+        ||DECODE(host_dept, '', '' ,' ---- ')
+        ||FUNC_GET_TABLEVALUE(host_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') hostIdShow,
+        to_char(t.start_time,'yyyy-mm-dd')  startTime,
+        to_char(t.end_time,'yyyy-mm-dd')  endTime,
+        event_content eventContent,
+        t.event_effect eventEffect
+        FROM
+        t_jw_teachingevent t
+        where 1 = 1 AND departments_id LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND t.departments_id= #{departmentsId}
+        </if>
+        <if test="eventName != null and eventName != '' ">
+            AND t.event_name LIKE '%'||#{eventName}||'%'
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+
+</mapper>

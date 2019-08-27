@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.survey.dao.SurveyDao">
+    <select id="getSurveyList"
+            parameterType="com.goisan.survey.bean.Survey"
+            resultType="com.goisan.survey.bean.Survey">
+        select survey_id,survey_title,start_time,end_time,
+        check_flag,FUNC_GET_DICVALUE(check_flag, 'SF') checkFlagShow,
+        survey_type,FUNC_GET_DICVALUE(survey_type, 'JSPJRWLX') surveyTypeShow,
+        start_flag,FUNC_GET_DICVALUE(start_flag, 'JSPJQDZT') startFlagShow,
+        remark
+        from T_DC_SURVEY
+        WHERE 1 = 1
+        <if test="surveyTitle != null and surveyTitle != '' ">
+            AND survey_title LIKE '%${surveyTitle}%'
+        </if>
+    </select>
+    <insert id="saveSurvey" parameterType="com.goisan.survey.bean.Survey">
+        insert into t_dc_survey
+        (survey_id,survey_title,start_time,end_time,check_flag,survey_type,start_flag,remark,
+        creator,create_time,create_dept)
+        values (#{surveyId},#{surveyTitle},to_date('${startTime}','yyyy-mm-dd'),to_date('${endTime}','yyyy-mm-dd'),'0',#{surveyType},'0',#{remark},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getSurveyById" parameterType="java.lang.String"
+            resultType="com.goisan.survey.bean.Survey">
+        SELECT
+            survey_id,survey_title,start_time,end_time,
+            check_flag,FUNC_GET_DICVALUE(check_flag, 'SF') checkFlagShow,
+            survey_type,FUNC_GET_DICVALUE(survey_type, 'JSPJRWLX') surveyTypeShow,
+            start_flag,FUNC_GET_DICVALUE(start_flag, 'JSPJQDZT') startFlagShow,
+            remark
+        FROM T_DC_SURVEY
+        WHERE survey_id = #{id}
+    </select>
+    <update id="updateSurvey" parameterType="com.goisan.survey.bean.Survey">
+        update t_dc_survey
+            set survey_title=#{surveyTitle},
+            start_time=to_date('${startTime}','yyyy-mm-dd'),
+            end_time=to_date('${endTime}','yyyy-mm-dd'),
+            survey_type=#{surveyType},
+            remark=#{remark},
+            changer=#{changer},
+            change_time=sysdate,
+            change_dept=#{changeDept}
+        where survey_id = #{surveyId}
+    </update>
+    <update id="updateSurveyFlag" parameterType="com.goisan.survey.bean.Survey">
+        update t_dc_survey
+            set
+            <if test="checkFlag != null and checkFlag != '' ">
+                check_flag=#{checkFlag},
+            </if>
+            <if test="startFlag != null and startFlag != '' ">
+                start_flag=#{startFlag},
+            </if>
+            changer=#{changer},
+            change_time=sysdate,
+            change_dept=#{changeDept}
+        where survey_id = #{surveyId}
+    </update>
+    <delete id="delSurvey" parameterType="java.lang.String">
+        delete from T_DC_SURVEY where survey_id = #{id}
+    </delete>
+    <select id="getSurveyListByPerson"
+            parameterType="com.goisan.survey.bean.Survey"
+            resultType="com.goisan.survey.bean.Survey">
+        select s.survey_id,s.survey_title,s.start_time,s.end_time,
+        s.check_flag,FUNC_GET_DICVALUE(s.check_flag, 'SF') checkFlagShow,
+        s.survey_type,FUNC_GET_DICVALUE(s.survey_type, 'JSPJRWLX') surveyTypeShow,
+        s.start_flag,FUNC_GET_DICVALUE(s.start_flag, 'JSPJQDZT') startFlagShow,
+        s.remark
+        from T_DC_SURVEY  s , T_DC_PERSON p
+        WHERE 1 = 1  and s.survey_id = p.survey_id and p.answer_flag = '0' and s.start_flag = '1'
+        and p.person_id  =#{creator} and p.person_dept = #{createDept}
+        <if test="surveyTitle != null and surveyTitle != '' ">
+            AND survey_title LIKE '%${surveyTitle}%'
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.system.dao.FilesDao">
+    <select id="getFilesByFilesId" parameterType="java.lang.String" resultType="com.goisan.system.bean.Files">
+        select t.file_id fileId,
+            t.file_name fileName,
+            t.file_url fileUrl,
+            t.file_type fileType,
+            t.tablename tableName,
+            t.business_id businessId,
+            t.business_type businessType,
+            t.creator creator,
+            t.create_time createTime,
+            t.create_dept createDept
+            FROM
+          T_SYS_FILES t
+        WHERE
+          t.FILE_ID = #{id}
+        ORDER BY
+          t.create_time DESC
+    </select>
+    <insert id="insertFiles" parameterType="com.goisan.system.bean.Files">
+        INSERT INTO
+        T_SYS_FILES
+        (file_id,file_name,file_url,file_type,tablename,business_id,business_type,creator,create_time,create_dept)
+        VALUES
+        ('${fileId}','${fileName}','${fileUrl}','${fileType}','${tableName}','${businessId}','${businessType}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <select id="getFilesById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Files">
+        SELECT
+            t.file_id fileId,
+            t.file_name fileName,
+            t.file_url fileUrl,
+            t.file_type fileType,
+            t.tablename tableName,
+            t.business_id businessId,
+            t.business_type businessType,
+            t.creator creator,
+            t.create_time createTime,
+            t.create_dept createDept
+        FROM
+          T_SYS_FILES t
+        WHERE
+          t.FILE_ID = #{id}
+        ORDER BY
+          t.create_time DESC
+    </select>
+    <select id="getDownloadFilesUrl" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+        t.file_url fileUrl
+        FROM
+        T_SYS_FILES t
+        WHERE
+        t.file_id = #{id}
+    </select>
+    <select id="getFilesByBusinessId" parameterType="String"
+            resultType="com.goisan.system.bean.Files">
+        SELECT * FROM T_SYS_FILES WHERE BUSINESS_ID = #{businessId}
+    </select>
+    <select id="getFilesByBusinessIdCompetition" parameterType="String"
+            resultType="com.goisan.system.bean.Files">
+        select rownum rn,t.* from (SELECT * FROM T_SYS_FILES WHERE BUSINESS_ID = #{businessId} order by CREATE_TIME desc) t where rownum &lt;= 1
+    </select>
+    <select id="getFilesByBusinessIdTraining" parameterType="String"
+            resultType="com.goisan.system.bean.Files">
+        select rownum rn,t.* from (SELECT * FROM T_SYS_FILES WHERE BUSINESS_ID = #{businessId} order by CREATE_TIME desc) t where rownum &lt;= 1
+    </select>
+    <delete id="delFilesById" parameterType="string">
+        DELETE FROM T_SYS_FILES WHERE FILE_ID = #{id}
+    </delete>
+    <delete id="delFilesByBusinessId" parameterType="string">
+        DELETE FROM T_SYS_FILES WHERE BUSINESS_ID = #{businessId}
+    </delete>
+</mapper>

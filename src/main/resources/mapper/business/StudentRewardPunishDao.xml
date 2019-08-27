@@ -1,0 +1,1130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--create by wq
+    2017/09/20-->
+<mapper namespace="com.goisan.studentwork.studentrewardpunish.dao.StudentRewardPunishDao">
+<!--公共方法-->
+    <select id="getRoleByCurrentLogin" resultType="com.goisan.system.bean.Role" parameterType="java.lang.String">
+        SELECT
+        *
+        FROM T_SYS_ROLE
+        WHERE  role_id IN (${roleId}) AND ROLE_NAME like '%系统管理员%'
+    </select>
+    <!--通过学生id获取性别和身份证号-->
+    <select id="getStudentSexIdcard" resultType="com.goisan.system.bean.Student"
+            parameterType="java.lang.String">
+        SELECT
+        FUNC_GET_DICVALUE(SEX,'XB') sexShow,sex,idcard
+        FROM T_XG_STUDENT
+        WHERE student_id=#{studengId}
+    </select>
+    <!--通过惩处周期-->
+    <select id="getStudentCancelTime" parameterType="java.lang.String" resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish">
+        select to_char(add_months(to_date(#{punish_time},'yyyy-mm-dd'),6),'yyyy-mm-dd') as cancelTime from dual
+    </select>
+    <select id="getStudentCancelTime1" parameterType="java.lang.String" resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish">
+        select to_char(add_months(to_date(#{punish_time},'yyyy-mm-dd'),12),'yyyy-mm-dd') as cancelTime from dual
+    </select>
+<!--学校奖学金信息维护 2017/09/20-->
+    <select id="getSchoolBurseList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+          ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+          ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        FUNC_GET_DICVALUE(t.TITLE, 'XJXJCH') title,
+        t.BURSE_SUM burseSum,
+        t.GRANT_UNIT grantUnit,
+        FUNC_GET_DICVALUE(t.GRANT_TIME, 'XQ') grantTime,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTREWARD_SCHOOLBURSE t
+        WHERE 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+        </if>
+        <if test="title != null and title != '' ">
+            AND t.TITLE= #{title}
+        </if>
+        <if test="grantTime != null and grantTime != '' ">
+            AND t.GRANT_TIME= #{grantTime}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getSchoolBurseById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse">
+        SELECT
+        t.ID id,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.TITLE title,
+        t.BURSE_SUM burseSum,
+        t.GRANT_UNIT grantUnit,
+        t.GRANT_TIME grantTime
+        FROM
+        T_XG_STUDENTREWARD_SCHOOLBURSE t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertSchoolBurse" parameterType="com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse">
+        insert into T_XG_STUDENTREWARD_SCHOOLBURSE
+        (ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        SEX,IDCARD,TITLE,BURSE_SUM,GRANT_UNIT,GRANT_TIME,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{studentId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},
+        #{sex},#{idcard},#{title},#{burseSum},#{grantUnit},#{grantTime},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateSchoolBurseById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse">
+        update
+        T_XG_STUDENTREWARD_SCHOOLBURSE
+        SET
+        STUDENT_ID=#{studentId},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        SEX=#{sex},
+        IDCARD=#{idcard},
+        TITLE= #{title},
+        BURSE_SUM= #{burseSum},
+        GRANT_UNIT= #{grantUnit},
+        GRANT_TIME= #{grantTime},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteSchoolBurseById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTREWARD_SCHOOLBURSE WHERE id = #{id}
+    </delete>
+
+<!--政府奖学金信息维护 2017/09/23-->
+    <select id="getStateBurseList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StateBurse"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.StateBurse">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.BURSE_SUM burseSum,
+        to_char(t.REPORT_TIME,'yyyy-mm-dd') reportTime,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTREWARD_STATEBURSE t
+        WHERE 1 = 1 and t.DEPARTMENTS_ID like  FUNC_GET_RANGE (#{departmentsId},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+        </if>
+        <if test="reportTime != null and reportTime != '' ">
+            AND to_char(t.REPORT_TIME,'yyyy-mm-dd')= #{reportTime}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getStateBurseById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.StateBurse">
+        SELECT
+        t.ID id,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.BURSE_SUM burseSum,
+        to_char(t.REPORT_TIME,'yyyy-mm-dd') reportTime
+        FROM
+        T_XG_STUDENTREWARD_STATEBURSE t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertStateBurse" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StateBurse">
+        insert into T_XG_STUDENTREWARD_STATEBURSE
+        (ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        SEX,IDCARD,BURSE_SUM,REPORT_TIME,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{studentId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},
+        #{sex},#{idcard},#{burseSum},to_date(#{reportTime},'yyyy-mm-dd'),
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateStateBurseById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StateBurse">
+        update
+        T_XG_STUDENTREWARD_STATEBURSE
+        SET
+        STUDENT_ID=#{studentId},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        SEX=#{sex},
+        IDCARD=#{idcard},
+        BURSE_SUM= #{burseSum},
+        REPORT_TIME= to_date(#{reportTime},'yyyy-mm-dd'),
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteStateBurseById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTREWARD_STATEBURSE WHERE id = #{id}
+    </delete>
+
+    <!--全日制奖学金信息维护 2017/09/23-->
+    <select id="getFullBurseList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.FullBurse"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.FullBurse">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        FUNC_GET_DICVALUE(t.BURSE_PROGRAM, 'JXJXM') burseProgram,
+        FUNC_GET_DICVALUE(t.BURSE_GRADE, 'JXJDJ') burseGrade,
+        t.BURSE_SUM burseSum,
+        FUNC_GET_DICVALUE(t.GRANT_TIME, 'XQ') grantTime,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTREWARD_FULLBURSE t
+        WHERE 1 = 1 and t.DEPARTMENTS_ID like  FUNC_GET_RANGE (#{departmentsId},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+        </if>
+        <if test="burseProgram != null and burseProgram != '' ">
+            AND t.BURSE_PROGRAM= #{burseProgram}
+        </if>
+        <if test="grantTime != null and grantTime != '' ">
+            AND t.GRANT_TIME= #{grantTime}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getFullBurseById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.FullBurse">
+        SELECT
+        t.ID id,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.BURSE_PROGRAM burseProgram,
+        t.BURSE_GRADE burseGrade,
+        t.BURSE_SUM burseSum,
+        t.GRANT_TIME grantTime
+        FROM
+        T_XG_STUDENTREWARD_FULLBURSE t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertFullBurse" parameterType="com.goisan.studentwork.studentrewardpunish.bean.FullBurse">
+        insert into T_XG_STUDENTREWARD_FULLBURSE
+        (ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        SEX,IDCARD,BURSE_PROGRAM,BURSE_GRADE,BURSE_SUM,GRANT_TIME,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{studentId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},
+        #{sex},#{idcard},#{burseProgram},#{burseGrade},#{burseSum},#{grantTime},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateFullBurseById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.FullBurse">
+        update
+        T_XG_STUDENTREWARD_FULLBURSE
+        SET
+        STUDENT_ID=#{studentId},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        SEX=#{sex},
+        IDCARD=#{idcard},
+        BURSE_PROGRAM= #{burseProgram},
+        BURSE_GRADE= #{burseGrade},
+        BURSE_SUM= #{burseSum},
+        GRANT_TIME= #{grantTime},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteFullBurseById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTREWARD_FULLBURSE WHERE id = #{id}
+    </delete>
+
+    <!--免学费信息维护 2017/09/23-->
+    <select id="getTuitionFreeList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.TuitionFree"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.TuitionFree">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.FREE_SUM freeSum,
+        FUNC_GET_DICVALUE(t.FREE_YEAR, 'JMND') freeYear,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTREWARD_TUITIONFREE t
+        WHERE 1 = 1 and t.DEPARTMENTS_ID like  FUNC_GET_RANGE (#{departmentsId},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+        </if>
+        <if test="freeYear != null and freeYear != '' ">
+            AND t.FREE_YEAR= #{freeYear}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getTuitionFreeById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.TuitionFree">
+        SELECT
+        t.ID id,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.FREE_SUM freeSum,
+        t.FREE_YEAR freeYear
+        FROM
+        T_XG_STUDENTREWARD_TUITIONFREE t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertTuitionFree" parameterType="com.goisan.studentwork.studentrewardpunish.bean.TuitionFree">
+        insert into T_XG_STUDENTREWARD_TUITIONFREE
+        (ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        SEX,IDCARD,FREE_SUM,FREE_YEAR,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{studentId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},
+        #{sex},#{idcard},#{freeSum},#{freeYear},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateTuitionFreeById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.TuitionFree">
+        update
+        T_XG_STUDENTREWARD_TUITIONFREE
+        SET
+        STUDENT_ID=#{studentId},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        SEX=#{sex},
+        IDCARD=#{idcard},
+        FREE_SUM= #{freeSum},
+        FREE_YEAR= #{freeYear},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteTuitionFreeById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTREWARD_TUITIONFREE WHERE id = #{id}
+    </delete>
+
+    <!--助学金信息维护 2017/09/20-->
+    <select id="getGrantsList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.Grants"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.Grants">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        FUNC_GET_DICVALUE(t.GRANT_TYPE, 'ZXJLB') grantType,
+        t.GRANT_SUM grantSum,
+        FUNC_GET_DICVALUE(t.REPORT_TERM, 'XQ') reportTerm,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTREWARD_GRANTS t
+        WHERE 1 = 1 and t.DEPARTMENTS_ID like  FUNC_GET_RANGE (#{departmentsId},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+        </if>
+        <if test="grantType != null and grantType != '' ">
+            AND t.GRANT_TYPE= #{grantType}
+        </if>
+        <if test="reportTerm != null and reportTerm != '' ">
+            AND t.REPORT_TERM= #{reportTerm}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getGrantsById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.Grants">
+        SELECT
+        t.ID id,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.GRANT_TYPE grantType,
+        t.GRANT_SUM grantSum,
+        t.REPORT_TERM reportTerm
+        FROM
+        T_XG_STUDENTREWARD_GRANTS t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertGrants" parameterType="com.goisan.studentwork.studentrewardpunish.bean.Grants">
+        insert into T_XG_STUDENTREWARD_GRANTS
+        (ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        SEX,IDCARD,GRANT_TYPE,GRANT_SUM,REPORT_TERM,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{studentId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},
+        #{sex},#{idcard},#{grantType},#{grantSum},#{reportTerm},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateGrantsById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.Grants">
+        update
+        T_XG_STUDENTREWARD_GRANTS
+        SET
+        STUDENT_ID=#{studentId},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        SEX=#{sex},
+        IDCARD=#{idcard},
+        GRANT_TYPE= #{grantType},
+        GRANT_SUM= #{grantSum},
+        REPORT_TERM= #{reportTerm},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteGrantsById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTREWARD_GRANTS WHERE id = #{id}
+    </delete>
+
+    <!--助学贷款信息维护 2017/09/20-->
+    <select id="getStudentLoanList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentLoan"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentLoan">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.LOAN_SUM loanSum,
+        t.LOAN_YEAR loanYear,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTREWARD_LOAN t
+        WHERE 1 = 1 and t.DEPARTMENTS_ID like  FUNC_GET_RANGE (#{departmentsId},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+        </if>
+        <if test="loanYear != null and loanYear != '' ">
+            AND t.LOAN_YEAR= #{loanYear}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getStudentLoanById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentLoan">
+        SELECT
+        t.ID id,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.LOAN_SUM loanSum,
+        t.LOAN_YEAR loanYear
+        FROM
+        T_XG_STUDENTREWARD_LOAN t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertStudentLoan" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentLoan">
+        insert into T_XG_STUDENTREWARD_LOAN
+        (ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        SEX,IDCARD,LOAN_SUM,LOAN_YEAR,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{studentId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},
+        #{sex},#{idcard},#{loanSum},#{loanYear},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateStudentLoanById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentLoan">
+        update
+        T_XG_STUDENTREWARD_LOAN
+        SET
+        STUDENT_ID=#{studentId},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        SEX=#{sex},
+        IDCARD=#{idcard},
+        LOAN_SUM= #{loanSum},
+        LOAN_YEAR= #{loanYear},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteStudentLoanById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTREWARD_LOAN WHERE id = #{id}
+    </delete>
+
+    <!--优秀学生干部信息维护 2017/09/20-->
+    <select id="getStudentCadresList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentCadres"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentCadres">
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        FUNC_GET_DICVALUE(t.TITLE, 'XSGBCH') title,
+        t.BURSE_SUM burseSum,
+        t.GRANT_UNIT grantUnit,
+        FUNC_GET_DICVALUE(t.GRANT_TIME, 'XQ') grantTime,
+        t.VALID_FLAG validFlag,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTREWARD_CADRES t
+        WHERE 1 = 1  and t.DEPARTMENTS_ID like  FUNC_GET_RANGE (#{departmentsId},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+        </if>
+        <if test="title != null and title != '' ">
+            AND t.TITLE= #{title}
+        </if>
+        <if test="grantTime != null and grantTime != '' ">
+            AND t.GRANT_TIME= #{grantTime}
+        </if>
+        ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getStudentCadresById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentCadres">
+        SELECT
+        t.ID id,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.TITLE title,
+        t.BURSE_SUM burseSum,
+        t.GRANT_UNIT grantUnit,
+        t.GRANT_TIME grantTime
+        FROM
+        T_XG_STUDENTREWARD_CADRES t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertStudentCadres" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentCadres">
+        insert into T_XG_STUDENTREWARD_CADRES
+        (ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        SEX,IDCARD,TITLE,BURSE_SUM,GRANT_UNIT,GRANT_TIME,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{studentId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},
+        #{sex},#{idcard},#{title},#{burseSum},#{grantUnit},#{grantTime},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateStudentCadresById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentCadres">
+        update
+        T_XG_STUDENTREWARD_CADRES
+        SET
+        STUDENT_ID=#{studentId},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        SEX=#{sex},
+        IDCARD=#{idcard},
+        TITLE= #{title},
+        BURSE_SUM= #{burseSum},
+        GRANT_UNIT= #{grantUnit},
+        GRANT_TIME= #{grantTime},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteStudentCadresById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTREWARD_CADRES WHERE id = #{id}
+    </delete>
+
+    <!--市三好班级信息维护 2017/09/20-->
+    <select id="getMiyoshiClassList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.MiyoshiClass"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.MiyoshiClass">
+        select
+        t.id,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_USERNAME(t.HEAD_TEACHER)||' -- '||FUNC_GET_DEPTNAME(t.HEAD_TEACHER_DEPT) headTeacher,
+        t.TITLE title,
+        t.GRANT_UNIT grantUnit,
+        t.GRANT_TIME grantTime,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        from T_XG_STUDENTREWARD_CLASS t
+        WHERE 1=1 and t.DEPARTMENTS_ID like  FUNC_GET_RANGE (#{departmentsId},#{level})
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.CREATOR= #{creator}
+        </if>
+        <if test="createTime != null and createTime != '' ">
+            AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') LIKE #{classId}
+        </if>
+        <if test="headTeacher != null and headTeacher != '' ">
+            AND FUNC_GET_USERNAME(t.HEAD_TEACHER) LIKE #{headTeacher}
+        </if>
+        <if test="grantTime != null and grantTime != '' ">
+            AND t.GRANT_TIME= #{grantTime}
+        </if>
+    </select>
+    <select id="getMiyoshiClassById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.MiyoshiClass">
+        SELECT
+        t.ID id,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.HEAD_TEACHER headTeacher,
+        FUNC_GET_USERNAME(t.HEAD_TEACHER) headTeacherShow,
+        t.HEAD_TEACHER_DEPT headTeacherDept,
+        FUNC_GET_DEPTNAME(t.HEAD_TEACHER_DEPT) headTeacherDeptShow,
+        t.TITLE title,
+        t.GRANT_UNIT grantUnit,
+        t.GRANT_TIME grantTime
+        FROM
+        T_XG_STUDENTREWARD_CLASS t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertMiyoshiClass" parameterType="com.goisan.studentwork.studentrewardpunish.bean.MiyoshiClass">
+        insert into T_XG_STUDENTREWARD_CLASS
+        (ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,
+        HEAD_TEACHER,HEAD_TEACHER_DEPT,TITLE,GRANT_UNIT,GRANT_TIME,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},
+        #{headTeacher},#{headTeacherDept},#{title},#{grantUnit},#{grantTime},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateMiyoshiClassById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.MiyoshiClass">
+        update
+        T_XG_STUDENTREWARD_CLASS
+        SET
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        HEAD_TEACHER=#{headTeacher},
+        HEAD_TEACHER_DEPT=#{headTeacherDept},
+        TITLE= #{title},
+        GRANT_UNIT= #{grantUnit},
+        GRANT_TIME= #{grantTime},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteMiyoshiClassById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTREWARD_CLASS WHERE id = #{id}
+    </delete>
+    <select id="getHeadTeacherByClassId" parameterType="java.lang.String"
+    resultType="com.goisan.studentwork.studentrewardpunish.bean.MiyoshiClass">
+        SELECT HEAD_TEACHER headTeacher,
+        HEAD_TEACHER_DEPT headTeacherDept,
+        FUNC_GET_USERNAME(HEAD_TEACHER) headTeacherShow,
+        FUNC_GET_DEPTNAME(HEAD_TEACHER_DEPT) headTeacherDeptShow
+        FROM T_XG_CLASS WHERE CLASS_ID=#{classId}
+    </select>
+
+    <!--学生惩处信息维护-->
+    <select id="getStudentPunishList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish"
+                           resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish">
+    SELECT
+    t.id,
+    FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+    FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+    FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+    FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+    FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+    FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+    ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+    ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+    FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+    FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+    t.IDCARD idcard,
+    t.punish_name as punishName,
+    to_char(t.punish_time,'yyyy-mm-dd') punishTime,
+    FUNC_GET_DICVALUE(t.punish_level, 'JSCCJB') as punishLevel,
+    FUNC_GET_DICVALUE(t.punishing_cycle,'CCZQ')  punishingCycle,
+    t.punish_reason as punishReason,
+    t.punish_content as punishContent,
+    t.punish_term as punishTerm,
+    t.cancel_reason as cancelReason,
+    t.cancel_document_number as cancelDocumentNumber,
+    t.punish_document_number as punishDocumentNumber,
+    to_char(t.cancel_time,'yyyy-mm-dd') cancelTime,
+    FUNC_GET_DICVALUE(t.punish_status, 'JSCCZT') as punishStatus,
+    t.remark as remark,
+    t.CREATOR creator,
+    t.CREATE_TIME createTime
+    FROM T_XG_STUDENTPUNISH t
+    WHERE 1 = 1  and t.DEPARTMENTS_ID like  FUNC_GET_RANGE (#{departmentsId},#{level})
+    <if test="creator != 'sa'  and creator != null and creator != '' ">
+        AND t.CREATOR= #{creator}
+    </if>
+    <if test="createTime != null and createTime != '' ">
+        AND to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'||'${createTime}'||'%'
+    </if>
+    <if test="createDept != null and createDept != '' ">
+        AND t.CREATE_DEPT= #{createDept}
+    </if>
+    <if test="studentId != null and studentId != '' ">
+        AND FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+    </if>
+    <if test="punishLevel != null and punishLevel != '' ">
+        AND t.punish_level= #{punishLevel}
+    </if>
+    <if test="punishTime != null and punishTime != '' ">
+        AND to_char(t.punish_time,'yyyy-mm-dd')= #{punishTime}
+    </if>
+    ORDER BY t.CREATE_TIME DESC
+    </select>
+    <select id="getStudentPunishById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish">
+        SELECT
+        t.ID id,
+        t.STUDENT_ID studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        t.MAJOR_CODE || ','|| major_direction|| ',' || training_level majorShow,
+        t.CLASS_ID classId,
+        t.punishing_cycle  punishingCycle,
+        FUNC_GET_DICVALUE(t.punishing_cycle,'CCZQ') punishingCycleShow,
+        t.SEX sex,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.punish_name as punishName,
+        to_char(t.punish_time,'yyyy-mm-dd') punishTime,
+        t.punish_level as punishLevel,
+        t.punish_reason as punishReason,
+        t.punish_content as punishContent,
+        t.punish_term as punishTerm,
+        t.cancel_reason as cancelReason,
+        t.cancel_document_number as cancelDocumentNumber,
+        t.punish_document_number as punishDocumentNumber,
+        to_char(t.cancel_time,'yyyy-mm-dd') cancelTime,
+        t.punish_status as punishStatus,
+        t.remark as remark
+        FROM
+        T_XG_STUDENTPUNISH t
+        WHERE t.ID = #{id}
+    </select>
+    <insert id="insertStudentPunish" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish">
+        insert into T_XG_STUDENTPUNISH
+        (ID,STUDENT_ID,DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL,CLASS_ID,SEX,IDCARD,
+        punish_name,punish_time,punish_reason,punish_content,
+        punish_document_number,punish_term,punish_level,punishing_cycle,
+        cancel_reason,cancel_document_number,cancel_time,punish_status,remark,
+        CREATOR,CREATE_TIME,CREATE_DEPT)
+        values (FUNC_GET_UUID,#{studentId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},#{sex},#{idcard},
+        #{punishName},to_date(#{punishTime},'yyyy-mm-dd'),#{punishReason},#{punishContent},
+        #{punishDocumentNumber},#{punishTerm},#{punishLevel},#{punishingCycle},#{cancelReason},#{cancelDocumentNumber},to_date(#{cancelTime},'yyyy-mm-dd'),#{punishStatus},#{remark},
+        #{creator},sysdate,#{createDept})
+    </insert>
+    <update id="updateStudentPunishById" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish">
+        update
+        T_XG_STUDENTPUNISH
+        SET
+        STUDENT_ID=#{studentId},
+        DEPARTMENTS_ID=#{departmentsId},
+        MAJOR_CODE=#{majorCode},
+        MAJOR_DIRECTION=#{majorDirection},
+        TRAINING_LEVEL=#{trainingLevel},
+        CLASS_ID=#{classId},
+        SEX=#{sex},
+        IDCARD=#{idcard},
+        punish_name=#{punishName},
+        punish_time = to_date(#{punishTime},'yyyy-mm-dd'),
+        punish_reason=#{punishReason},
+        punish_content=#{punishContent},
+        punish_document_number=#{punishDocumentNumber},
+        punish_term=#{punishTerm},
+        punish_level=#{punishLevel},
+        cancel_reason=#{cancelReason},
+        cancel_document_number=#{cancelDocumentNumber},
+        cancel_time=to_date(#{cancelTime},'yyyy-mm-dd'),
+        punish_status=#{punishStatus},
+        punishing_cycle = #{punishingCycle},
+        remark=#{remark},
+        changer=#{changer},
+        change_time=sysdate,
+        change_dept=#{changeDept}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteStudentPunishById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENTPUNISH WHERE id = #{id}
+    </delete>
+    <!--学生惩处信息查询-->
+    <select id="getSelectStudentPunishList" parameterType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish"
+            resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish">
+        SELECT
+        id,
+        studentId,
+        departmentsId,
+        majorCode,
+        majorDirection,
+        trainingLevel,
+        majorShow,
+        classId,
+        sexShow,
+        idcard,
+        punishName,
+        punishTime,
+        punishLevel,
+        punishingCycle,
+        punishReason,
+        punishContent,
+        punishTerm,
+        cancelReason,
+        cancelDocumentNumber,
+        punishDocumentNumber,
+        cancelTime,
+        restTime,
+        restDay,
+        punishStatus,
+        remark,
+        creator,
+        createTime
+         FROM
+        (
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.punish_name as punishName,
+        to_char(t.punish_time,'yyyy-mm-dd') punishTime,
+        t.PUNISH_LEVEL punishLevel,
+        FUNC_GET_DICVALUE(t.punish_level, 'JSCCJB') as punishLevelShow,
+        FUNC_GET_DICVALUE(t.punishing_cycle,'CCZQ')  punishingCycle,
+        t.punish_reason as punishReason,
+        t.punish_content as punishContent,
+        t.punish_term as punishTerm,
+        t.cancel_reason as cancelReason,
+        t.cancel_document_number as cancelDocumentNumber,
+        t.punish_document_number as punishDocumentNumber,
+        to_char(t.cancel_time,'yyyy-mm-dd') cancelTime,
+        to_char(add_months(t.punish_time,6),'yyyy-mm-dd') as restTime,
+        (select to_date(to_char(add_months(t.punish_time,6),'yyyy-mm-dd'),'yyyy-mm-dd')-to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')   from dual) restDay,
+        FUNC_GET_DICVALUE(t.punish_status, 'JSCCZT') as punishStatus,
+        t.remark as remark,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTPUNISH t
+        WHERE 1 = 1
+        and id in
+          (
+          select
+          id
+          FROM T_XG_STUDENTPUNISH t
+          WHERE 1 = 1 and t.valid_flag = '1' and t.punish_status = '2' and  punishing_cycle='1'
+          )
+
+        UNION ALL
+        SELECT
+        t.id,
+        FUNC_GET_TABLEVALUE(t.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') majorCode,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION,'ZXZYFX') majorDirection,
+        FUNC_GET_DICVALUE(t.TRAINING_LEVEL,'ZXZYPYCC') trainingLevel,
+        FUNC_GET_TABLEVALUE(t.MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(t.TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(t.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(t.SEX,'XB') sexShow,
+        t.IDCARD idcard,
+        t.punish_name as punishName,
+        to_char(t.punish_time,'yyyy-mm-dd') punishTime,
+        t.PUNISH_LEVEL punishLevel,
+        FUNC_GET_DICVALUE(t.punish_level, 'JSCCJB') as punishLevelShow,
+        FUNC_GET_DICVALUE(t.punishing_cycle,'CCZQ')  punishingCycle,
+        t.punish_reason as punishReason,
+        t.punish_content as punishContent,
+        t.punish_term as punishTerm,
+        t.cancel_reason as cancelReason,
+        t.cancel_document_number as cancelDocumentNumber,
+        t.punish_document_number as punishDocumentNumber,
+        to_char(t.cancel_time,'yyyy-mm-dd') cancelTime,
+        to_char(add_months(t.punish_time,12),'yyyy-mm-dd') as restTime,
+        (select to_date(to_char(add_months(t.punish_time,12),'yyyy-mm-dd'),'yyyy-mm-dd')-to_date(to_char(sysdate,'yyyy-mm-dd'),'yyyy-mm-dd')   from dual) restDay,
+        FUNC_GET_DICVALUE(t.punish_status, 'JSCCZT') as punishStatus,
+        t.remark as remark,
+        t.CREATOR creator,
+        t.CREATE_TIME createTime
+        FROM T_XG_STUDENTPUNISH t
+        WHERE 1 = 1
+        and id in
+          (
+          select
+          id
+          FROM T_XG_STUDENTPUNISH t
+          WHERE 1 = 1 and t.valid_flag = '1' and t.punish_status = '2' and  punishing_cycle='2'
+          )
+        )
+        WHERE 1=1  and restDay &lt;31
+        <if test="studentId != null and studentId != '' ">
+            AND studentId LIKE #{studentId}
+        </if>
+        <if test="punishLevel != null and punishLevel != '' ">
+            AND punishLevel = #{punishLevel}
+        </if>
+        <if test="punishTime != null and punishTime != '' ">
+            AND punishTime = #{punishTime}
+        </if>
+        order by restDay desc
+    </select>
+    <!--学生奖惩信息统计-->
+    <select id="getRewardPunishCountList" parameterType="java.lang.String" resultType="com.goisan.studentwork.studentrewardpunish.bean.StudentPunish">
+        select
+        id,
+        FUNC_GET_TABLEVALUE(STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsId,
+        FUNC_GET_TABLEVALUE(MAJOR_CODE, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')||
+        ' -- '|| FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') ||
+        ' -- '|| FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC') majorShow,
+        FUNC_GET_TABLEVALUE(CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_DICVALUE(SEX,'XB') sexShow,
+        IDCARD idcard,
+        REWARDPUNISH_TYPE rewardpunishType,
+        FUNC_GET_DICVALUE(REWARDPUNISH_TYPE,'XSJCLX') TypeShow
+        FROM
+        (select id id,
+        STUDENT_ID,CLASS_ID,SEX,IDCARD,REWARDPUNISH_TYPE,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL
+        from T_XG_STUDENTPUNISH
+        UNION ALL
+        select id id,
+        STUDENT_ID,CLASS_ID,SEX,IDCARD,REWARDPUNISH_TYPE,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL
+        from T_XG_STUDENTREWARD_SCHOOLBURSE
+        UNION ALL
+        select id id,
+        STUDENT_ID,CLASS_ID,SEX,IDCARD,REWARDPUNISH_TYPE,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL
+        from T_XG_STUDENTREWARD_STATEBURSE
+        UNION ALL
+        select id id,
+        STUDENT_ID,CLASS_ID,SEX,IDCARD,REWARDPUNISH_TYPE,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL
+        from T_XG_STUDENTREWARD_FULLBURSE
+        UNION ALL
+        select id id,
+        STUDENT_ID,CLASS_ID,SEX,IDCARD,REWARDPUNISH_TYPE,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL
+        from T_XG_STUDENTREWARD_TUITIONFREE
+        UNION ALL
+        select id id,
+        STUDENT_ID,CLASS_ID,SEX,IDCARD,REWARDPUNISH_TYPE,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL
+        from T_XG_STUDENTREWARD_GRANTS
+        UNION ALL
+        select id id,
+        STUDENT_ID,CLASS_ID,SEX,IDCARD,REWARDPUNISH_TYPE,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL
+        from T_XG_STUDENTREWARD_LOAN
+        UNION ALL
+        select id id,STUDENT_ID,CLASS_ID,SEX,IDCARD,REWARDPUNISH_TYPE,
+        DEPARTMENTS_ID,MAJOR_CODE,MAJOR_DIRECTION,TRAINING_LEVEL
+        from T_XG_STUDENTREWARD_CADRES
+        UNION ALL
+        select sc.ID id,s.STUDENT_ID,t.CLASS_ID,s.SEX,s.IDCARD,sc.REWARDPUNISH_TYPE,
+        t.DEPARTMENTS_ID,t.MAJOR_CODE,t.MAJOR_DIRECTION,t.TRAINING_LEVEL
+        from T_XG_STUDENT s,T_XG_CLASS t,T_XG_STUDENTREWARD_CLASS sc
+        where s.class_name = t.class_name
+        and t.class_name = FUNC_GET_TABLEVALUE(sc.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME')
+        and s.class_name IN (SELECT CLASS_NAME FROM T_XG_CLASS WHERE CLASS_ID IN (select CLASS_ID from T_XG_STUDENTREWARD_CLASS))
+        )
+        WHERE 1=1
+        <if test="studentId != null and studentId != '' ">
+            AND FUNC_GET_TABLEVALUE(STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{studentId}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND FUNC_GET_TABLEVALUE(CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') LIKE #{classId}
+        </if>
+        <if test="rewardpunishType != null and rewardpunishType != ''">
+            AND REWARDPUNISH_TYPE = #{rewardpunishType}
+        </if>
+    </select>
+</mapper>
+
+

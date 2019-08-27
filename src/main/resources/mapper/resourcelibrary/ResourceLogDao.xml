@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.log.dao.ResourceLogDao">
+    <select id="getResourceLogList"
+            parameterType="com.goisan.log.bean.ResourceLog"
+            resultType="com.goisan.log.bean.ResourceLog">
+        select DISTINCT log_id,
+        resource_id,
+        resourceName,
+        person_id,
+        dept_id,
+        operateTypeShow,
+        personIdShow,
+        operateTime
+        from (select log_id,
+        resource_id,
+        FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_RESOURCE_PUBLIC',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') resourceName,
+        person_id,
+        dept_id,
+        decode(person_id,
+        '',
+        '',
+        FUNC_GET_USERNAME(person_id) || '- ' ||
+        FUNC_GET_DEPTNAME(dept_id)) personIdShow,
+        func_get_dicvalue(operate_type, 'ZYK_CZLX') operateTypeShow,
+        to_char(operate_time, 'yyyy-mm-dd') operateTime
+        from ZYK_LOG
+        where FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_RESOURCE_PUBLIC',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') is not null
+        union
+        select log_id,
+        resource_id,
+        FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_RESOURCE_PRIVATE',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') resourceName,
+        person_id,
+        dept_id,
+        decode(person_id,
+        '',
+        '',
+        FUNC_GET_USERNAME(person_id) || '- ' ||
+        FUNC_GET_DEPTNAME(dept_id)) personIdShow,
+        func_get_dicvalue(operate_type, 'ZYK_CZLX') operateTypeShow,
+        to_char(operate_time, 'yyyy-mm-dd') operateTime
+        from ZYK_LOG
+        where FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_RESOURCE_PRIVATE',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') is not null
+        union
+        select log_id,
+        resource_id,
+        FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_APPROVAL',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') resourceName,
+        person_id,
+        dept_id,
+        decode(person_id,
+        '',
+        '',
+        FUNC_GET_USERNAME(person_id) || '- ' ||
+        FUNC_GET_DEPTNAME(dept_id)) personIdShow,
+        func_get_dicvalue(operate_type, 'ZYK_CZLX') operateTypeShow,
+        to_char(operate_time, 'yyyy-mm-dd') operateTime
+        from ZYK_LOG
+        where FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_APPROVAL',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') is not null
+        union
+        select log_id,
+        resource_id,
+        FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_RESOURCE_PUBLIC',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') resourceName,
+        person_id,
+        dept_id,
+        decode(person_id,
+        '',
+        '',
+        FUNC_GET_USERNAME(person_id) || '- ' ||
+        FUNC_GET_DEPTNAME(dept_id)) personIdShow,
+        func_get_dicvalue(operate_type, 'ZYK_OPERAT') operateTypeShow,
+        to_char(operate_time, 'yyyy-mm-dd') operateTime
+        from ZYK_OPERATE_LOG
+        where (operate_type = '1' or operate_type = '3')
+        and FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_RESOURCE_PUBLIC',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') is not null
+        union
+        select log_id,
+        resource_id,
+        FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_APPROVAL',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') resourceName,
+        person_id,
+        dept_id,
+        decode(person_id,
+        '',
+        '',
+        FUNC_GET_USERNAME(person_id) || '- ' ||
+        FUNC_GET_DEPTNAME(dept_id)) personIdShow,
+        func_get_dicvalue(operate_type, 'ZYK_OPERAT') operateTypeShow,
+        to_char(operate_time, 'yyyy-mm-dd') operateTime
+        from ZYK_OPERATE_LOG
+        where (operate_type = '1' or operate_type = '3')
+        and FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_APPROVAL',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') is not null
+        union
+        select log_id,
+        resource_id,
+        FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_RESOURCE_PRIVATE',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') resourceName,
+        person_id,
+        dept_id,
+        decode(person_id,
+        '',
+        '',
+        FUNC_GET_USERNAME(person_id) || '- ' ||
+        FUNC_GET_DEPTNAME(dept_id)) personIdShow,
+        func_get_dicvalue(operate_type, 'ZYK_OPERAT') operateTypeShow,
+        to_char(operate_time, 'yyyy-mm-dd') operateTime
+        from ZYK_OPERATE_LOG
+        where (operate_type = '1' or operate_type = '3')
+        and FUNC_GET_TABLEVALUE(resource_id,
+        'ZYK_RESOURCE_PRIVATE',
+        'RESOURCE_ID',
+        'RESOURCE_NAME') is not null)
+        WHERE  1=1
+        <if test="personId != null and personId != ''">
+            AND person_id = #{personId}
+        </if>
+        <if test="operateTypeShow != null and operateTypeShow != ''">
+            AND operateTypeShow like '${operateTypeShow}'
+        </if>
+        ORDER BY operateTime DESC
+    </select>
+    <select id="getPrivateResourceLogList"
+            parameterType="com.goisan.log.bean.ResourceLog"
+            resultType="com.goisan.log.bean.ResourceLog">
+        SELECT t.resource_id,
+        p.resource_name resourceName,
+        p.public_person_id as publicPersonId ,
+        t.operate_type operateType,
+        func_get_dicvalue(operate_type,'ZYK_CZLX')operateTypeShow,
+        PERSON_ID AS personId, OPERATE_TIME AS operateTime
+        FROM (
+            SELECT resource_id,
+            operate_type,
+            PERSON_ID,
+            OPERATE_TIME,
+            ROW_NUMBER() OVER(PARTITION BY resource_id, operate_type, PERSON_ID ORDER BY OPERATE_TIME DESC) num
+            FROM ZYK_LOG
+            WHERE  1 = 1
+            <if test="personId != null and personId != ''">
+                AND person_id = #{personId}
+            </if>
+            <if test="operateType != null and operateType != ''">
+                AND operate_type = #{operateType}
+            </if>
+        ) t, ZYK_RESOURCE_PUBLIC p
+        WHERE 1 = 1 and t.resource_id = p.resource_id and t.num = 1 and p.valid_flag='1'
+    </select>
+    <insert id="saveResourceLog" parameterType="com.goisan.log.bean.ResourceLog">
+        insert into zyk_log
+        (log_id,resource_id,person_id,dept_id,
+        operate_type,operate_time,creator,create_time,create_dept)
+        values
+        (#{logId},#{resourceId},#{personId},#{deptId},
+        #{operateType},sysdate,#{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getResourceLogById" parameterType="java.lang.String"
+            resultType="com.goisan.log.bean.ResourceLog">
+        select
+        log_id,resource_id,person_id,dept_id,
+            decode(person_id ,'','', FUNC_GET_USERNAME(person_id)||'- '|| FUNC_GET_DEPTNAME(dept_id)) personIdShow,
+            operate_type,
+            func_get_dicvalue(operate_type,'ZYK_CZLX')operateTypeShow,to_char(operate_time,'yyyy-mm-dd') operateTime
+        from ZYK_LOG where log_id = #{id}
+    </select>
+    <update id="updateResourceLog" parameterType="com.goisan.log.bean.ResourceLog">
+        update zyk_log set
+            resource_id=#{resourceId},
+            person_id=#{personId},
+            dept_id=#{deptId},
+            operate_type=#{operateType},
+            operate_time=#{operateTime},
+            changer=#{changer},
+            change_time= sysdate ,
+            change_dept=#{changeDept}
+        where log_id = #{log_id}
+    </update>
+    <delete id="delResourceLog" parameterType="java.lang.String">
+        delete from ZYK_LOG where log_id= #{id}
+    </delete>
+    <delete id="delStatistics" >
+        delete from ZYK_LOG_STATISTICS
+    </delete>
+    <insert id="insertStatistics" >
+        INSERT INTO ZYK_LOG_STATISTICS
+        (RESOURCE_NAME , RESOURCE_ID,VIEW_COUNT,DOWN_COUNT ,COLLECTION_COUNT,CREATE_TIME)
+        SELECT p.resource_name,p.resource_id,
+        decode(v.VIEW_COUNT,'','0',v.VIEW_COUNT) AS VIEW_COUNT,
+        decode(d.DOWN_COUNT,'','0',d.DOWN_COUNT) AS DOWN_COUNT,
+        decode(c.COLLECTION_COUNT,'','0',c.COLLECTION_COUNT) AS COLLECTION_COUNT,
+        sysdate AS CREATE_TIME
+        FROM
+            zyk_resource_public p ,
+            (SELECT resource_id ,count(1) as VIEW_COUNT FROM Zyk_Log l
+                          WHERE OPERATE_TYPE = '1' group by resource_id) v ,
+            (SELECT resource_id ,count(1) as DOWN_COUNT FROM Zyk_Log l
+                          WHERE OPERATE_TYPE = '3' group by resource_id) d ,
+            (SELECT resource_id , count(1)as COLLECTION_COUNT  FROM ZYK_COLLECTION GROUP BY resource_id) c
+        WHERE p.resource_id = v.resource_id(+)
+                AND p.resource_id = d.resource_id(+)
+                AND p.resource_id = c.resource_id(+)
+    </insert>
+
+</mapper>

@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.partybuilding.party.dao.PartyDao">
+    <select id="partyAction" parameterType="com.goisan.partybuilding.party.bean.Party"
+            resultType="com.goisan.partybuilding.party.bean.Party">
+        SELECT id,
+        FUNC_GET_DICVALUE(t.person_type,'TYDXLX') as personType,
+        FUNC_GET_DICVALUE(t.person_source,'DYLY') as personSource,
+        decode(t.person_type ,'0',(FUNC_GET_USERNAME(t.person_id)||'----'|| FUNC_GET_DEPTNAME(t.dept_id)),
+        '1',FUNC_GET_TABLEVALUE(t.person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'----'||
+        FUNC_GET_TABLEVALUE(t.dept_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') ) as personId,
+        FUNC_GET_TABLEVALUE(t.branch_id,'T_DT_PARTYBRANCH','ID','BRANCH_NAME') branchId,
+        FUNC_GET_DICVALUE(t.member_roles,'DYJS') as memberRoles,
+        FUNC_GET_DICVALUE(t.member_roles+'1','DYJS') as peopleRoles,
+        decode(t.firstcultivate_people_id,'','',(FUNC_GET_USERNAME(t.firstcultivate_people_id)||'----'||
+        FUNC_GET_DEPTNAME(t.firstcultivate_people_dept_id)) )as
+        firstCultivatePeopleId,
+        decode(t.secondcultivate_people_id,'','', (FUNC_GET_USERNAME(t.secondcultivate_people_id)||'----'||
+        FUNC_GET_DEPTNAME(t.secondcultivate_people_dept_id)))
+        as secondCultivatePeopleId,
+        apply_time as applyTime,
+        activemolecular_time as activemolecularTime,
+        development_time as developmentTime,
+        prepare_time as prepareTime,
+        joinparty_time as joinPartyTime,
+        remark,
+        FUNC_GET_DICVALUE(t.relationship_change_type,'DZZBGLX') as relationshipChangeType,
+        relationship_change_type as changeType,
+        relationship_change_time as relationshipChangeTime,
+        RELATIONSHIP_REMARK as relationshipRemark,
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.create_time as createTime
+        FROM T_DT_PARTYMEMBERS t
+        WHERE 1 = 1
+        AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="branchId != null and branchId != '' ">
+            AND t.branch_id = #{branchId}
+        </if>
+        <if test="personType != null and personType != '' ">
+            AND t.person_type = #{personType}
+        </if>
+        <if test="personId != null and personId != '' ">
+            AND ( FUNC_GET_TABLEVALUE(t.person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') LIKE '%'||#{personId}||'%'
+            or FUNC_GET_USERNAME(t.person_id) LIKE '%'||#{personId}||'%'
+            )
+        </if>
+        <if test="memberRoles != null and memberRoles != '' ">
+            AND t.member_roles = #{memberRoles}
+        </if>
+        <if test="relationshipChangeType != null and relationshipChangeType != '' ">
+            AND t.relationship_change_type != #{relationshipChangeType}
+        </if>
+        ORDER BY createTime DESC
+    </select>
+    <insert id="insertParty" parameterType="com.goisan.partybuilding.party.bean.Party">
+        INSERT INTO T_DT_PARTYMEMBERS(
+        id,
+        PERSON_TYPE,
+        PERSON_SOURCE,
+        PERSON_ID,
+        DEPT_ID,
+        BRANCH_ID,
+        MEMBER_ROLES,
+        FIRSTCULTIVATE_PEOPLE_ID,
+        FIRSTCULTIVATE_PEOPLE_DEPT_ID,
+        SECONDCULTIVATE_PEOPLE_ID,
+        SECONDCULTIVATE_PEOPLE_DEPT_ID,
+        APPLY_TIME,
+        ACTIVEMOLECULAR_TIME,
+        DEVELOPMENT_TIME,
+        PREPARE_TIME,
+        JOINPARTY_TIME,
+        REMARK,
+        CREATOR,
+        CREATE_TIME,
+        CREATE_DEPT,
+        RELATIONSHIP_CHANGE_TYPE
+        )VALUES(
+        FUNC_GET_UUID,
+        #{personType},
+        #{personSource},
+        #{personId},
+        #{deptId},
+        #{branchId},
+        #{memberRoles},
+        #{firstCultivatePeopleId},
+        #{firstCultivatePeopleDeptId},
+        #{secondCultivatePeopleId},
+        #{secondCultivatePeopleDeptId},
+        to_date('${applyTime}','yyyy-mm-dd'),
+        to_date('${activeMolecularTime}','yyyy-mm-dd'),
+        to_date('${developmentTime}','yyyy-mm-dd'),
+        to_date('${prepareTime}','yyyy-mm-dd'),
+        to_date('${joinPartyTime}','yyyy-mm-dd'),
+        #{remark},
+        #{creator},
+        sysdate,
+        #{createDept},
+        '0')
+    </insert>
+    <delete id="deletePartyById" parameterType="com.goisan.partybuilding.party.bean.Party">
+        DELETE T_DT_PARTYMEMBERS WHERE id = #{id}
+    </delete>
+    <select id="checkName" parameterType="com.goisan.partybuilding.party.bean.Party"
+            resultType="com.goisan.partybuilding.party.bean.PartyBranch">
+        SELECT
+        t.id as id,
+        t.person_id as personId
+        FROM
+        T_DT_PARTYMEMBERS t
+        WHERE 1 = 1
+        AND t.person_id = #{personId}
+        <if test="id != null and id != '' ">
+            AND t.id != #{id}
+        </if>
+    </select>
+    <select id="getPartyById" parameterType="com.goisan.partybuilding.party.bean.Party"
+            resultType="com.goisan.partybuilding.party.bean.Party">
+        SELECT id,
+       t.person_type personType,
+       t.person_source as personSource,
+       decode(t.person_type ,'0',(FUNC_GET_USERNAME(t.person_id)||'----'|| FUNC_GET_DEPTNAME(t.dept_id)),
+                        '1',FUNC_GET_TABLEVALUE(t.person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'----'||
+                      FUNC_GET_TABLEVALUE(t.dept_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') ) as personIdDept,
+       t.person_id as personId,
+       t.dept_id as deptId,
+       t.branch_id as branchId,
+       t.member_roles as memberRoles,
+       decode(t.firstcultivate_people_id,'','',(FUNC_GET_USERNAME(t.firstcultivate_people_id)||'----'|| FUNC_GET_DEPTNAME(t.firstcultivate_people_dept_id)) ) as firstCultivatePeopleIdDept,
+       t.firstcultivate_people_id as firstCultivatePeopleId,
+       t.firstcultivate_people_dept_id as firstCultivatePeopleDeptId,
+       decode(t.secondcultivate_people_id,'','', (FUNC_GET_USERNAME(t.secondcultivate_people_id)||'----'|| FUNC_GET_DEPTNAME(t.secondcultivate_people_dept_id))) as secondCultivatePeopleIdDept,
+       t.secondcultivate_people_id as secondCultivatePeopleId,
+       t.secondcultivate_people_dept_id as secondCultivatePeopleDeptId,
+       to_char(t.apply_time,'yyyy-mm-dd') as applyTime,
+       to_char(t.activemolecular_time,'yyyy-mm-dd') as activemolecularTime,
+       to_char(t.development_time,'yyyy-mm-dd') as developmentTime,
+       to_char(t.prepare_time,'yyyy-mm-dd') as prepareTime,
+       to_char(t.joinparty_time,'yyyy-mm-dd') as joinPartyTime,
+       remark,
+       FUNC_GET_USERNAME(t.creator) as creator,
+       t.create_time as createTime
+       FROM T_DT_PARTYMEMBERS t
+       WHERE 1 = 1
+       AND id = #{id}
+    </select>
+    <update id="updateParty" parameterType="com.goisan.partybuilding.party.bean.Party">
+       UPDATE
+        T_DT_PARTYMEMBERS
+        SET
+        person_type=#{personType},
+        person_source=#{personSource},
+        person_id=#{personId},
+        dept_id=#{deptId},
+        branch_id=#{branchId},
+        member_roles=#{memberRoles},
+        firstcultivate_people_id=#{firstCultivatePeopleId},
+        firstcultivate_people_dept_id=#{firstCultivatePeopleDeptId},
+        secondcultivate_people_id=#{secondCultivatePeopleId},
+        secondcultivate_people_dept_id=#{secondCultivatePeopleDeptId},
+        apply_time=to_date('${applyTime}','yyyy-mm-dd'),
+        activemolecular_time=to_date('${activeMolecularTime}','yyyy-mm-dd'),
+        development_time=to_date('${developmentTime}','yyyy-mm-dd'),
+        prepare_time=to_date('${prepareTime}','yyyy-mm-dd'),
+        joinparty_time=to_date('${joinPartyTime}','yyyy-mm-dd'),
+        remark= #{remark},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <update id="updatePartyRolesById" parameterType="com.goisan.partybuilding.party.bean.Party">
+        UPDATE
+        T_DT_PARTYMEMBERS
+        SET
+        member_roles=member_roles+'1',
+        <if test="activeMolecularTime != null and activeMolecularTime != '' ">
+            activemolecular_time=to_date('${activeMolecularTime}','yyyy-mm-dd'),
+        </if>
+        <if test="developmentTime != null and developmentTime != '' ">
+            development_time=to_date('${developmentTime}','yyyy-mm-dd'),
+        </if>
+        <if test="prepareTime != null and prepareTime != '' ">
+            prepare_time=to_date('${prepareTime}','yyyy-mm-dd'),
+        </if>
+        <if test="joinPartyTime != null and joinPartyTime != '' ">
+            joinparty_time=to_date('${joinPartyTime}','yyyy-mm-dd'),
+        </if>
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <update id="backPartyRolesById" parameterType="com.goisan.partybuilding.party.bean.Party">
+        UPDATE
+        T_DT_PARTYMEMBERS
+        SET
+        ${peopleRoles} ='',
+        member_roles=member_roles-'1'
+        WHERE id = #{id}
+    </update>
+    <select id="selectPartyRolesById" parameterType="com.goisan.partybuilding.party.bean.Party"
+            resultType="com.goisan.partybuilding.party.bean.Party">
+        SELECT id,
+       t.member_roles as memberRoles,
+       FUNC_GET_DICVALUE(t.member_roles+'1','DYJS') as peopleRoles
+       FROM T_DT_PARTYMEMBERS t
+       WHERE 1 = 1
+       AND id = #{id}
+    </select>
+    <select id="getPartyByIds" parameterType="java.lang.String"
+            resultType="com.goisan.partybuilding.party.bean.Party">
+        SELECT
+        id,
+        person_id,
+        FUNC_GET_USERNAME(t.person_id) personId,
+        member_roles as memberRoles,
+        FUNC_GET_DICVALUE(t.member_roles+'1','DYJS') as peopleRoles,
+        FUNC_GET_DICVALUE(t.member_roles-'1','DYJS') as personRoles,
+        relationship_change_type as relationshipChangeType,
+        relationship_change_time as relationshipChangeTime,
+        RELATIONSHIP_REMARK as relationshipRemark
+        FROM T_DT_PARTYMEMBERS t
+        WHERE id IN (${ids})
+    </select>
+    <select id="getMembersRolesByIds" parameterType="java.lang.String"
+            resultType="com.goisan.partybuilding.party.bean.Party">
+        SELECT t.member_roles
+        FROM T_DT_PARTYMEMBERS t
+        WHERE id IN (${ids})
+        GROUP BY t.member_roles
+    </select>
+    <update id="updateRelationshipByIds" parameterType="com.goisan.partybuilding.party.bean.Party">
+        UPDATE
+        T_DT_PARTYMEMBERS t
+        SET
+        t.relationship_change_type=#{relationshipChangeType},
+        <if test="branchId != null and branchId != '' ">
+            t.branch_id=#{branchId},
+        </if>
+        t.relationship_remark=#{relationshipRemark},
+        t.relationship_change_time= sysdate,
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <select id="getPartyDetailedById" parameterType="com.goisan.partybuilding.party.bean.Party"
+            resultType="com.goisan.partybuilding.party.bean.Party">
+        SELECT id,
+        FUNC_GET_DICVALUE(t.person_type,'TYDXLX') as  personType,
+        FUNC_GET_DICVALUE(t.person_source,'DYLY') as personSource,
+        decode(t.person_type ,'0',(FUNC_GET_USERNAME(t.person_id)||'----'|| FUNC_GET_DEPTNAME(t.dept_id)),
+        '1',FUNC_GET_TABLEVALUE(t.person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'----'||
+        FUNC_GET_TABLEVALUE(t.dept_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') ) as personIdDept,
+        t.person_id as personId,
+        t.dept_id as deptId,
+        FUNC_GET_TABLEVALUE(t.branch_id,'T_DT_PARTYBRANCH','ID','BRANCH_NAME') branchId,
+        FUNC_GET_DICVALUE(t.member_roles,'DYJS') as memberRoles,
+        decode(t.firstcultivate_people_id,'','',(FUNC_GET_USERNAME(t.firstcultivate_people_id)||'----'|| FUNC_GET_DEPTNAME(t.firstcultivate_people_dept_id)) )as
+        firstCultivatePeopleId,
+        decode(t.secondcultivate_people_id,'','', (FUNC_GET_USERNAME(t.secondcultivate_people_id)||'----'|| FUNC_GET_DEPTNAME(t.secondcultivate_people_dept_id)))
+        as secondCultivatePeopleId,
+        to_char(t.apply_time,'yyyy-mm-dd') as applyTime,
+        to_char(t.activemolecular_time,'yyyy-mm-dd') as activemolecularTime,
+        to_char(t.development_time,'yyyy-mm-dd') as developmentTime,
+        to_char(t.prepare_time,'yyyy-mm-dd') as prepareTime,
+        to_char(t.joinparty_time,'yyyy-mm-dd') as joinPartyTime,
+        remark,
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.create_time as createTime
+        FROM T_DT_PARTYMEMBERS t
+        WHERE 1 = 1
+        AND id = #{id}
+    </select>
+    <select id="selectPartyById" parameterType="com.goisan.partybuilding.party.bean.Party"
+            resultType="com.goisan.partybuilding.party.bean.Party">
+        SELECT id,
+        t.person_type as  personType,
+        t.person_id as personId,
+        t.dept_id as deptId,
+        decode(t.person_type ,'0',(FUNC_GET_USERNAME(t.person_id)||'----'|| FUNC_GET_DEPTNAME(t.dept_id)),
+        '1',FUNC_GET_TABLEVALUE(t.person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'----'||
+        FUNC_GET_TABLEVALUE(t.dept_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') ) as personIdDept,
+        t.branch_id as branchId,
+        FUNC_GET_TABLEVALUE(t.branch_id,'T_DT_PARTYBRANCH','ID','BRANCH_NAME') remark,
+        FUNC_GET_DICVALUE(t.member_roles,'DYJS') as peopleRoles,
+        FUNC_GET_DICVALUE( t.relationship_change_type,'DZZBGLX') as relationshipChangeType
+        FROM T_DT_PARTYMEMBERS t
+        WHERE 1 = 1
+        AND id = #{id}
+    </select>
+    <insert id="insertPartyMemberLog" parameterType="com.goisan.partybuilding.party.bean.PartyMemberLog">
+        INSERT INTO T_DT_PARTYMEMBER_LOG(
+        id,
+        PERSON_TYPE,
+        PERSON_ID,
+        DEPT_ID,
+        BRANCH_ID,
+        LOG_TYPE,
+        LOG_REMARK,
+        LOG_TIME,
+        CREATOR,
+        CREATE_TIME,
+        CREATE_DEPT
+        )VALUES(
+        FUNC_GET_UUID,
+        #{personType},
+        #{personId},
+        #{deptId},
+        #{branchId},
+        #{logType},
+        #{logRemark},
+        sysdate,
+        #{creator},
+        sysdate,
+        #{createDept})
+    </insert>
+    <select id="getPartyLogByPersonId" parameterType="com.goisan.partybuilding.party.bean.PartyMemberLog"
+            resultType="com.goisan.partybuilding.party.bean.PartyMemberLog">
+        SELECT id,
+        FUNC_GET_DICVALUE(t.person_type,'TYDXLX') as  personType,
+        decode(t.person_type ,'0',(FUNC_GET_USERNAME(t.person_id)||'----'|| FUNC_GET_DEPTNAME(t.dept_id)),
+        '1',FUNC_GET_TABLEVALUE(t.person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'----'||
+        FUNC_GET_TABLEVALUE(t.dept_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') ) as personId,
+        FUNC_GET_TABLEVALUE(t.branch_id,'T_DT_PARTYBRANCH','ID','BRANCH_NAME') branchId,
+        FUNC_GET_DICVALUE(t.log_type,'DYRZLX') as  logType,
+        t.log_remark as logRemark,
+        FUNC_GET_USERNAME(t.creator) as creator
+        FROM T_DT_PARTYMEMBER_LOG t
+        WHERE 1 = 1
+        AND t.person_id = #{id}
+        AND t.log_type != '5'
+    </select>
+</mapper>

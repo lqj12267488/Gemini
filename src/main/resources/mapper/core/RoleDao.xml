@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.RoleDao">
+    <select id="getRoleList" resultType="com.goisan.system.bean.Role" parameterType="com.goisan.system.bean.Role">
+        SELECT
+          t.role_id roleid ,
+          t.role_name rolename ,
+          t.role_description roledescription ,
+          t.role_type roletype,
+          FUNC_GET_DICVALUE(t.role_type,'TYJB') roletypeshow
+        FROM
+          T_SYS_ROLE t
+        WHERE
+          1 = 1
+        <if test="rolename != null and rolename != '' ">
+            AND role_name LIKE #{rolename}
+        </if>
+        <if test="roledescription != null and roledescription != '' ">
+            AND role_description LIKE #{roledescription}
+        </if>
+        <if test="roletype != null and roletype != '' ">
+            AND role_type = #{roletype}
+        </if>
+    </select>
+
+    <update id="updateRole" parameterType="com.goisan.system.bean.Role">
+        UPDATE T_SYS_ROLE SET
+        role_name = #{rolename},
+        role_description = #{roledescription},
+        role_type = #{roletype},
+        change_time = #{changeTime},
+        change_dept = #{changeDept},
+        changer = #{changer}
+        WHERE role_id = #{roleid}
+    </update>
+    <insert id="insertRole" parameterType="com.goisan.system.bean.Role">
+        INSERT INTO
+          T_SYS_ROLE
+        (role_id,role_name,role_description,role_type,creator,create_time,create_dept) values
+        ('${roleid}','${rolename}','${roledescription}','${roletype}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <delete id="deleteRoleById"  parameterType="java.lang.String">
+        DELETE  T_SYS_ROLE WHERE role_id = #{id}
+    </delete>
+    <select id="getRoleById"  parameterType="java.lang.String" resultType="com.goisan.system.bean.Role">
+        SELECT
+          t.role_id roleid ,
+          t.role_name rolename ,
+          t.role_description roledescription ,
+          t.role_type roletype
+        FROM
+          T_SYS_ROLE t
+        WHERE role_id = #{id}
+    </select>
+    <select id="getRoleMenuRelationByRole" parameterType="java.lang.String" resultType="com.goisan.system.bean.RoleResRelation">
+        SELECT
+        DISTINCT resource_id resourceid
+        FROM
+        T_SYS_ROLE_RESOURCE
+        WHERE
+        resource_type ='0' AND role_id = #{roleid}
+    </select>
+    <delete id="deleteRoleResourceByRoleid" parameterType="java.lang.String">
+        DELETE T_SYS_ROLE_RESOURCE WHERE role_id = #{roleid}
+    </delete>
+
+    <insert id="updateRoleResRelation" parameterType="com.goisan.system.bean.RoleResRelation">
+        INSERT INTO
+          T_SYS_ROLE_RESOURCE (id,role_id,resource_id,resource_type,creator,create_time,create_dept) values
+            (func_get_uuid,'${roleid}','${resourceid}','${resourcetype}','${creator}',sysdate,'${createDept}' )
+    </insert>
+    <insert id="updateRoleResRel" >
+      INSERT INTO
+        T_SYS_ROLE_RESOURCE (id,role_id,resource_id,resource_type,creator,create_time,create_dept)
+        SELECT
+        func_get_uuid as id,
+        ''||'${roleid}'||'' role_id,
+        resource_id resourceid,
+        '0' resource_type,
+        ''||'${creator}'||'' creator,sysdate create_time,
+        ''||'${createDept}'||'' create_dept
+        FROM T_SYS_RESOURCE
+        WHERE resource_id in
+        <foreach collection="resource" item="item" open="(" separator="," close=")">
+            ''||'${item}'||''
+        </foreach>
+    </insert>
+
+    <select id="getEmpDeptByRole" parameterType="java.lang.String" resultType="com.goisan.system.bean.RoleEmpDeptRelation">
+        SELECT
+        id, role_id roleid, person_id person, dept_id deptid
+        FROM
+        t_rs_employee_dept_role
+        WHERE role_id = #{roleid}
+    </select>
+    <delete id="delRoleEmpDeptRelationByRoleid"  parameterType="java.lang.String">
+        DELETE T_RS_EMPLOYEE_DEPT_ROLE WHERE role_id = #{id}
+    </delete>
+    <insert id="insertRoleEmpDeptRelation" parameterType="com.goisan.system.bean.RoleEmpDeptRelation">
+        INSERT INTO t_rs_employee_dept_role
+            (ID ,PERSON_ID ,DEPT_ID, creator,create_time,create_dept,ROLE_ID )
+            values
+            (func_get_uuid,#{personid},#{deptid},#{creator},sysdate,#{createDept} ,#{roleid})
+    </insert>
+
+    <insert id="insertRoleStuClassRelation" parameterType="com.goisan.system.bean.RoleStuClassRelation">
+        INSERT INTO T_XG_STUDENT_CLASS_ROLE
+            (ID ,role_id ,student_id,class_id , creator,create_time,create_dept )
+            values
+            (func_get_uuid ,#{roleId},#{studentId},#{classId},#{creator},sysdate,#{createDept})
+    </insert>
+    <delete id="delRoleStuClassRelationByRoleid" parameterType="java.lang.String">
+        DELETE T_XG_STUDENT_CLASS_ROLE WHERE role_id = #{roleId}
+    </delete>
+    <delete id="delRoleParStuRelationByRoleid" parameterType="java.lang.String">
+        DELETE T_XG_PARENT_STUDENT_ROLE WHERE role_id = #{roleId}
+    </delete>
+    <insert id="insertRoleParStuRelation" parameterType="com.goisan.system.bean.RoleParentStuRelation">
+        INSERT INTO T_XG_PARENT_STUDENT_ROLE
+        (ID ,role_id ,student_id,parent_id , creator,create_time,create_dept )
+        values
+        (func_get_uuid ,#{roleId},#{studentId},#{parentId},#{creator},sysdate,#{createDept})
+    </insert>
+
+    <!--根据roleId、PersonId查询RoleParentStuRelation-->
+    <select id="getEmpDeptByRoleIdAndPersonId" parameterType="java.lang.String" resultType="com.goisan.system.bean.RoleEmpDeptRelation">
+        select id, role_id roleid, person_id personid, dept_id deptid
+        from T_RS_EMPLOYEE_DEPT_ROLE t
+        where
+         t.role_id = #{roleId}
+         and
+         t.person_id =  #{personId}
+    </select>
+
+</mapper>

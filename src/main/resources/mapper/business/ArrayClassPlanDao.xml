@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.arrayclass.dao.ArrayClassPlanDao">
+    <select id="getArrayclassArrayList"
+            parameterType="com.goisan.educational.arrayclass.bean.ArrayclassArray"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassArray">
+        SELECT
+        array_id,
+        arrayclass_id,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departments_id,
+        FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') major_code,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','class_id','class_name') class_id,
+        FUNC_GET_DICVALUE(COURSE_TYPE, 'KCLX') COURSE_TYPE,
+        FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') course_id,
+        FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME') room_id,
+        FUNC_GET_USERNAME(teacher_person_id) teacher_person_id,
+        FUNC_GET_DEPTNAME(teacher_dept_id) teacher_dept_id,
+        FUNC_GET_DICVALUE(week_type,'XZLX') week_type,
+        start_week,
+        end_week,
+        week_hours,
+        connect_hours,
+        FUNC_GET_DICVALUE(merge_flag,'HBFZ')
+        FROM T_JW_ARRAYCLASS_ARRAY
+        WHERE ARRAYCLASS_ID = #{arrayclassId}
+        <if test="classId != null and classId != ''">
+            AND CLASS_ID = #{classId}
+        </if>
+        <if test="teacherPersonId != null and teacherPersonId != ''">
+            AND TEACHER_PERSON_ID = #{teacherPersonId}
+        </if>
+    </select>
+    <insert id="saveArrayclassArray"
+            parameterType="com.goisan.educational.arrayclass.bean.ArrayclassArray">
+        insert into t_jw_arrayclass_array (array_id,arrayclass_id,departments_id,major_code,major_direction,training_level,class_id,course_type,course_id,room_id,teacher_person_id,teacher_dept_id,week_type,start_week,end_week,week_hours,connect_hours,merge_flag,creator,create_time,create_dept) values (#{arrayId},#{arrayclassId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},#{courseType},#{courseId},#{roomId},#{teacherPersonId},#{teacherDeptId},#{weekType},#{startWeek},#{endWeek},#{weekHours},#{connectHours},#{mergeFlag},#{creator},#{createTime},#{createDept})
+    </insert>
+    <select id="getArrayclassArrayById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassArray">
+        select * from T_JW_ARRAYCLASS_ARRAY where array_id = #{id}
+    </select>
+    <update id="updateArrayclassArray"
+            parameterType="com.goisan.educational.arrayclass.bean.ArrayclassArray">
+        update t_jw_arrayclass_array set arrayclass_id=#{arrayclassId},departments_id=#{departmentsId},major_code=#{majorCode},major_direction=#{majorDirection},training_level=#{trainingLevel},class_id=#{classId},course_type=#{courseType},course_id=#{courseId},room_id=#{roomId},teacher_person_id=#{teacherPersonId},teacher_dept_id=#{teacherDeptId},week_type=#{weekType},start_week=#{startWeek},end_week=#{endWeek},week_hours=#{weekHours},connect_hours=#{connectHours},merge_flag=#{mergeFlag},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept} where array_id = #{arrayId}
+    </update>
+    <delete id="delArrayclassArray" parameterType="java.lang.String">
+        delete from T_JW_ARRAYCLASS_ARRAY where array_id = #{id}
+    </delete>
+    <select id="getResultClassListById" parameterType="String"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        SELECT * FROM T_JW_ARRAYCLASS_RESULT_CLASS WHERE ARRAYCLASS_ID = #{arrayclassId}
+    </select>
+    <select id="getArrayclassArrayListByArrayclassId" parameterType="String"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayclassArray">
+        SELECT * FROM T_JW_ARRAYCLASS_ARRAY WHERE ARRAYCLASS_ID = #{arrayclassId}
+    </select>
+    <select id="getArrayClassTeacherCoursesByArrayclassId" parameterType="String"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClassTeacherCourse">
+        SELECT * FROM T_JW_ARRAYCLASS_TEACHER_COURSE WHERE ARRAYCLASS_ID = #{arrayclassId}
+    </select>
+    <select id="getArrayClassById" parameterType="String"
+            resultType="com.goisan.educational.arrayclass.bean.ArrayClass">
+        SELECT * FROM T_JW_ARRAYCLASS WHERE ARRAYCLASS_ID = #{arrayClassId}
+    </select>
+    <update id="savaArrayClassResultClass"
+            parameterType="com.goisan.educational.arrayclass.bean.ArrayclassResultClass">
+        INSERT INTO T_JW_ARRAYCLASS_RESULT_CLASS (id, arrayclass_id, array_id, departments_id, major_code, major_direction, training_level, class_id, course_type, course_id, room_id, teacher_person_id, teacher_dept_id, week_type, start_week, end_week, connect_hours, merge_flag, week, hours_type, hours_code, creator, create_time, create_dept)
+        VALUES (#{id},#{arrayclassId},#{arrayId},#{departmentsId},#{majorCode},#{majorDirection},#{trainingLevel},#{classId},#{courseType},#{courseId},#{roomId},#{teacherPersonId},#{teacherDeptId},#{weekType},#{startWeek},#{endWeek},#{connectHours},#{mergeFlag},#{week},#{hoursType},#{hoursCode},#{creator},#{createTime},#{createDept})
+    </update>
+    <update id="updateArrayclass" parameterType="string">
+        UPDATE T_JW_ARRAYCLASS SET ARRAYCLASS_FLAG = '1' WHERE ARRAYCLASS_ID = #{arrayclassId}
+    </update>
+</mapper>

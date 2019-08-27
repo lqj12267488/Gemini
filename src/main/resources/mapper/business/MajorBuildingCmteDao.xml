@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.major.dao.MajorBuildingCmteDao">
+    <!-- 字段映射关系 start -->
+    <resultMap id="majorBuildingCmteMap"
+               type="com.goisan.educational.major.bean.MajorBuildingCmte">
+        <id column="ID" property="id"/>
+        <result column="MAJOR_ID" property="majorId"/>
+        <result column="CMTE_POST" property="cmtePost"/>
+        <result column="PERSON_ID" property="personId"/>
+        <result column="WORK_UNIT" property="workUnit"/>
+        <result column="TELEPHONE" property="telephone"/>
+        <!-- 通用字段 -->
+        <result column="CREATOR" property="creator"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="CREATE_DEPT" property="createDept"/>
+        <result column="CHANGER" property="changer"/>
+        <result column="CHANGE_TIME" property="changeTime"/>
+        <result column="CHANGE_DEPT" property="changeDept"/>
+        <result column="VALID_FLAG" property="validFlag"/>
+    </resultMap>
+    <!-- 字段映射关系 end -->
+
+    <!-- 基本查询字段 start -->
+    <sql id="majorBuildingCmteColumns">
+        T1.ID,
+        T1.DEPARTMENTS_ID,
+		T1.MAJOR_ID,
+		FUNC_GET_TABLEVALUE(T1.MAJOR_ID, 'T_XG_MAJOR', 'MAJOR_ID', 'MAJOR_NAME') majorShow,
+		T1.CMTE_POST,
+		T1.PERSON_ID,
+        FUNC_GET_USERNAME(T1.PERSON_ID) teacherName,
+        T1.WORK_UNIT,
+        T1.TELEPHONE,
+        T1.CREATOR,
+        T1.CREATE_TIME,
+        T1.CREATE_DEPT,
+        T1.CHANGER,
+        T1.CHANGE_TIME,
+        T1.CHANGE_DEPT,
+        T1.VALID_FLAG,
+        T1.position teacherPost,
+        T1.theTitle teacherTitle
+	</sql>
+    <!-- 基本查询字段 end -->
+
+    <!-- 查询条件 start -->
+    <sql id="Example_Where_Clause">
+        WHERE 1=1
+        <if test="majorShow!=null and majorShow!=''">
+            AND T1.MAJOR_ID IN(
+                SELECT T2.MAJOR_ID FROM T_XG_MAJOR T2 WHERE T2.MAJOR_NAME LIKE '%'||#{majorShow}||'%'
+            )
+        </if>
+        <if test="cmtePost!=null and cmtePost!=''">
+            AND T1.CMTE_POST LIKE '%'||#{cmtePost}||'%'
+        </if>
+        <if test="teacherName!=null and teacherName!=''">
+            AND T1.PERSON_ID IN(
+                SELECT T3.PERSON_ID FROM T_RS_EMPLOYEE T3 WHERE T3.NAME LIKE '%'||#{teacherName}||'%'
+            )
+        </if>
+        <!-- 预留查询条件:职务 -->
+        <if test="teacherPost!=null and teacherPost!=''">
+            AND T1.PERSON_ID IN(
+                SELECT T3.PERSON_ID FROM T_RS_EMPLOYEE T3 WHERE T3.STAFF_TYPE = #{teacherPost}
+            )
+        </if>
+        <!-- 预留查询条件:职称 -->
+        <if test="teacherTitle!=null and teacherTitle!=''">
+            AND T1.PERSON_ID IN(
+                SELECT T4.NAME FROM T_JW_TEACHER_CONDITION T4 WHERE T4.TITLE LIKE '%'||#{title}||'%'
+            )
+        </if>
+    </sql>
+    <!-- 查询条件 end -->
+
+    <!-- 新增成员 start -->
+    <select id="insert"
+            parameterType="com.goisan.educational.major.bean.MajorBuildingCmte"
+            resultMap="majorBuildingCmteMap">
+        INSERT INTO T_XG_MAJOR_BUILDING_CMTE(
+            ID,
+            DEPARTMENTS_ID,
+            MAJOR_ID,
+            CMTE_POST,
+            PERSON_ID,
+            WORK_UNIT,
+            TELEPHONE,
+            POSITION,
+            THETITLE,
+            CREATOR,
+            CREATE_TIME,
+            CREATE_DEPT,
+            VALID_FLAG
+        ) VALUES (
+            FUNC_GET_UUID(),
+            #{departmentsId},
+            #{majorId},
+            #{cmtePost},
+            #{personId},
+            #{workUnit},
+            #{telephone},
+            #{teacherPost},
+            #{teacherTitle},
+            #{creator},
+            SYSDATE,
+            #{createDept},
+            '0'
+        )
+    </select>
+    <!-- 新增成员 end -->
+
+    <!-- 修改成员 start -->
+    <select id="update"
+            parameterType="com.goisan.educational.major.bean.MajorBuildingCmte">
+        UPDATE T_XG_MAJOR_BUILDING_CMTE SET
+          MAJOR_ID = #{majorId},
+          DEPARTMENTS_ID = #{departmentsId},
+          CMTE_POST = #{cmtePost},
+          PERSON_ID = #{personId},
+          WORK_UNIT = #{workUnit},
+          TELEPHONE = #{telephone},
+          VALID_FLAG = #{validFlag},
+          POSITION=#{teacherPost},
+          THETITLE=#{teacherTitle},
+          CHANGER	= #{changer},
+          CHANGE_TIME = SYSDATE,
+          CHANGE_DEPT = #{changeDept}
+        where id=#{id}
+    </select>
+    <!-- 修改成员 end -->
+
+    <!-- 删除成员 start -->
+    <delete id="delete"
+            parameterType="java.lang.String">
+        DELETE FROM T_XG_MAJOR_BUILDING_CMTE WHERE ID = #{id}
+    </delete>
+    <!-- 删除成员 end -->
+
+    <!-- 按id查找成员 start -->
+    <select id="getById"
+            parameterType="java.lang.String"
+            resultMap="majorBuildingCmteMap">
+        SELECT
+        <include refid="majorBuildingCmteColumns"/>
+        FROM T_XG_MAJOR_BUILDING_CMTE T1
+        WHERE t1.ID = #{id}
+    </select>
+    <!-- 按id查找成员 end -->
+
+    <!-- 按条件查找成员表 start -->
+    <select id="getList"
+            parameterType="com.goisan.educational.major.bean.MajorBuildingCmte"
+            resultMap="majorBuildingCmteMap">
+        SELECT
+        <include refid="majorBuildingCmteColumns"/>
+        FROM  T_XG_MAJOR_BUILDING_CMTE T1
+        <include refid="Example_Where_Clause" />
+    </select>
+    <!-- 按条件查找成员表 end -->
+
+    <!-- 按人员id匹配部分信息 start -->
+    <select id="matchingInfoByPersonId"
+            parameterType="java.lang.String"
+            resultMap="majorBuildingCmteMap">
+        SELECT * FROM T_XG_MAJOR_BUILDING_CMTE
+    </select>
+    <!-- 按人员id匹配部分信息 end -->
+
+    <!-- 查询专业表 start -->
+    <select id="getMajorList"
+            resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+            MAJOR_NAME "label",
+            MAJOR_ID "value"
+        FROM T_XG_MAJOR
+        where major_name is not null
+    </select>
+    <!-- 查询专业表 end -->
+
+    <!-- 查询教师人员表 start -->
+    <select id="getTeacherList"
+            resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+            decode(DEPT_NAME,'', T.NAME , T.NAME||'  ----  '||DEPT_NAME) as "label",
+            decode(DEPT_ID,'', T.PERSON_ID , T.PERSON_ID )  as "value"
+        FROM T_RS_EMPLOYEE T
+        LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID FROM T_RS_EMPLOYEE_DEPT R,T_SYS_DEPT D WHERE R.DEPT_ID = D.DEPT_ID)
+        ON T.PERSON_ID = PERSON WHERE VALID_FLAG = '1'
+    </select>
+    <!-- 查询教师人员表 end -->
+
+    <!-- 每个专业导出一个成员表 start -->
+    <select id="getCmteListGroupByMajor" resultMap="cmteListGroupByMajorMap">
+        SELECT T1.MAJOR_ID majorId, FUNC_GET_TABLEVALUE(T1.MAJOR_ID, 'T_XG_MAJOR', 'MAJOR_ID', 'MAJOR_NAME') majorName
+        FROM T_XG_MAJOR_BUILDING_CMTE T1
+        GROUP BY T1.MAJOR_ID
+    </select>
+
+    <resultMap id="cmteListGroupByMajorMap"
+               type="com.goisan.educational.major.bean.MajorBuliedingExcel">
+        <id column="MAJOR_ID" property="majorId"/>
+        <collection property="cmteList"
+                    ofType="com.goisan.educational.major.bean.MajorBuildingCmte"
+                    column="{majorId = majorId}"
+                    select="getCmteListByMajorId"/>
+    </resultMap>
+
+    <select id="getCmteListByMajorId" parameterType="java.util.HashMap" resultType="com.goisan.educational.major.bean.MajorBuildingCmte">
+        SELECT
+        <include refid="majorBuildingCmteColumns"/>
+        FROM  T_XG_MAJOR_BUILDING_CMTE T1
+        ORDER BY T1.CREATE_TIME ASC
+    </select>
+    <!-- 每个专业导出一个成员表 end -->
+
+    <!-- 由专业名获取专业id start -->
+    <select id="getMajorIdByMajorName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT MAJOR_ID FROM T_XG_MAJOR WHERE MAJOR_NAME = #{majorName}
+    </select>
+    <!-- 由专业名获取专业id end -->
+
+    <!-- 由姓名获取人员id start -->
+    <select id="getPersonIdByName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT PERSON_ID FROM T_RS_EMPLOYEE WHERE NAME = #{name}
+    </select>
+    <!-- 由姓名获取人员id end -->
+    <select id="getMajorIdByUnContainId" parameterType="com.goisan.educational.major.bean.MajorBuildingCmte"
+            resultType="com.goisan.educational.major.bean.MajorBuildingCmte">
+               select t.major_id majorId,
+               t.cmte_post cmtePost,
+               t.person_id personId,
+               t.work_unit workUnit,
+               t.telephone,
+               t.position teacherPost,
+               t.thetitle teacherTitle,
+               t.departments_id departmentsId
+          from T_XG_MAJOR_BUILDING_CMTE t
+         where 1=1
+            <if test="majorId!=null and majorId!=''">
+                and t.major_id = #{majorId}
+            </if><if test="cmtePost!=null and cmtePost!=''">
+                and t.cmte_post = #{cmtePost}
+            </if><if test="personId!=null and personId!=''">
+                and t.person_id = #{personId}
+            </if><if test="workUnit!=null and workUnit!=''">
+                and t.work_unit = #{workUnit}
+            </if><if test="telephone!=null and telephone!=''">
+                and t.telephone = #{telephone}
+            </if><if test="teacherPost!=null and teacherPost!=''">
+                and t.position = #{teacherPost}
+            </if><if test="departmentsId!=null and departmentsId!=''">
+                and t.departments_id = #{departmentsId}
+            </if><if test="teacherTitle!=null and teacherTitle!=''">
+                and t.thetitle = #{teacherTitle}
+            </if>
+    </select>
+</mapper>

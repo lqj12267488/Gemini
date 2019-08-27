@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.internships.dao.InternshipManageDao">
+    <select id="InternshipManageAction" parameterType="com.goisan.studentwork.internships.bean.InternshipManage"
+            resultType="com.goisan.studentwork.internships.bean.InternshipManage">
+        SELECT
+        internship_id internshipId,
+        FUNC_GET_DICVALUE(sex, 'XB') sexShow,
+        idcard idcard,
+        FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentIdShow ,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classIdShow,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCodeShow,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevelShow,
+        FUNC_GET_TABLEVALUE(internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow ,
+        internship_positions internshipPositions,
+        to_char(posts_time,'yyyy-mm-dd') as postsTime,
+        area area,
+        FUNC_GET_DICVALUE(internship_type, 'SXXS') internshipTypeShow,
+        FUNC_GET_DICVALUE(major_match_flag, 'SF') majorMatchFlagShow,
+        FUNC_GET_DICVALUE(salary, 'GZSRSP') salaryShow,
+        FUNC_GET_DICVALUE(internship_change_flag,'SXBDQK') internshipChangeFlagShow,
+        internship_score internshipScore,
+        FUNC_GET_DICVALUE(internship_evaluation, 'SXPJ') internshipEvaluationShow,
+        tel tel,
+        parent_tel parentTel,
+        student_number   studentNumber,
+        create_time createTime
+        FROM
+        T_XG_INTERNSHIP_STUDENT
+        WHERE  1 = 1 AND valid_flag = 1
+        <if test="studentId != null and studentId != '' ">
+            AND  FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE '%'|| #{studentId} ||'%'
+        </if>
+        <if test="studentNumber != null and studentNumber != '' ">
+        AND student_number LIKE '%'||#{studentNumber} ||'%'
+        </if>
+        <if test="internshipUnitId != null and internshipUnitId != '' ">
+            AND internship_unit_id = #{internshipUnitId}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND  FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') LIKE '%'||#{classId}||'%'
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+          AND  departments_id = #{departmentsId}
+        </if>
+        order by create_time desc
+    </select>
+    <select id="selectNewId" parameterType="java.lang.String" resultType="com.goisan.studentwork.internships.bean.InternshipManage">
+        SELECT
+        internship_ id internshipId,
+        new_internship_unit_id newInternshipUnitId
+        FROM T_XG_INTERNSHIP_CHANGE_LOG
+        WHERE internship_id = #{internshipId}
+    </select>
+    <update id="updateInternshipManage" parameterType="com.goisan.studentwork.internships.bean.InternshipManage">
+        UPDATE T_XG_INTERNSHIP_STUDENT  SET
+        internship_change_flag = #{internshipChangeFlag},
+        internship_unit_id = #{internshipUnitId},
+        WHERE internship_id = #{internshipId}
+    </update>
+    <select id="selectNewInternshipUnitId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT new_internship_unit_id FROM T_XG_INTERNSHIP_CHANGE_LOG WHERE internship_id=#{internshipId}
+    </select>
+    <select id="selectId" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.internships.bean.InternshipManage">
+            SELECT
+            internship_id internshipId
+            FROM T_XG_INTERNSHIP_STUDENT
+            WHERE internship_id=#{internshipId}
+    </select>
+    <select id="getInternshipManageById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.internships.bean.InternshipManage">
+        SELECT
+        internship_id internshipId,
+        student_id studentId,
+        class_id classId,
+        sex  sex,
+        idcard idcard,
+        tel tel,
+        major_code majorCode,
+        training_level trainingLevel,
+        departments_id departmentsId,
+        internship_unit_id internshipUnitId,
+        internship_positions internshipPositions,
+        to_char(posts_time,'yyyy-mm-dd') as postsTime,
+        area area,
+        internship_type internshipType,
+        major_match_flag majorMatchFlag,
+        salary salary,
+        internship_change_flag internshipChangeFlag,
+        internship_score internshipScore,
+        internship_evaluation internshipEvaluation,
+        FUNC_GET_DICVALUE(sex, 'XB') sexShow,
+        FUNC_GET_TABLEVALUE(internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow ,
+        FUNC_GET_DICVALUE(internship_type, 'SXXS') internshipTypeShow,
+        FUNC_GET_DICVALUE(major_match_flag, 'SF') majorMatchFlagShow,
+        FUNC_GET_DICVALUE(salary, 'GZSRSP') salaryShow,
+        FUNC_GET_DICVALUE(internship_change_flag,'SXBDQK') internshipChangeFlagShow,
+        FUNC_GET_DICVALUE(internship_evaluation, 'SXPJ') internshipEvaluationShow,
+        FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentIdShow,
+        FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classIdShow,
+        FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCodeShow,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevelShow,
+        student_number   studentNumber,
+        parent_tel parentTel,
+        create_time createTime
+        FROM
+        T_XG_INTERNSHIP_STUDENT
+        WHERE internship_id = #{internshipId}
+
+    </select>
+    <select id="selectInternshipManage" parameterType="com.goisan.studentwork.internships.bean.InternshipManage"
+            resultType="com.goisan.studentwork.internships.bean.InternshipManage">
+        SELECT
+        t.internship_id internshipId,
+        t.student_id,
+        t.class_id,
+        t.old_internship_unit_id,
+        t.new_internship_unit_id,
+        t.reason reason,
+        to_char(t.alert_time,'yyyy-mm-dd') as alertTime,
+        x.departments_id,
+        x.major_code,
+        FUNC_GET_TABLEVALUE(t.old_internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') oldInternshipUnitIdShow,
+        FUNC_GET_TABLEVALUE(t.new_internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') newInternshipUnitIdShow,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentIdShow,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classIdShow,
+        FUNC_GET_TABLEVALUE(x.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+        FUNC_GET_TABLEVALUE(x.major_code,'t_xg_major','major_code','major_name') majorCodeShow,
+        FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevelShow,
+        t.create_time createTime
+        FROM
+        T_XG_INTERNSHIP_CHANGE_LOG t,T_XG_INTERNSHIP_STUDENT x
+        WHERE 1 = 1 AND x.internship_id = #{internship_id} AND x.internship_id = t.internship_id
+
+        order by t.create_time desc
+    </select>
+    <select id="select" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.internships.bean.InternshipManage">
+        SELECT
+        internship_id internshipId,
+        student_id studentId,
+        class_id classId,
+        internship_unit_id internshipUnitId
+        FROM T_XG_INTERNSHIP_STUDENT
+        WHERE internship_id=#{internshipId}
+    </select>
+    <select id="selectInternshipType" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+        internship_type internshipType
+        FROM T_XG_INTERNSHIP_STUDENT
+        WHERE internship_id=#{internshipId}
+    </select>
+    <insert id="insertInternshipManage" parameterType="com.goisan.studentwork.internships.bean.InternshipManage">
+        INSERT INTO  T_XG_INTERNSHIP_STUDENT
+        (internship_id,
+        student_id,
+        class_id,
+        sex,
+        idcard,
+        departments_id,
+        major_code,
+        training_level,
+        internship_unit_id,
+        internship_positions,
+        posts_time,
+        area,
+        internship_type,
+        major_match_flag,
+        salary,
+        internship_change_flag,
+        internship_score,
+        internship_evaluation,
+        tel,
+        parent_tel,
+        student_number,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (func_get_uuid,
+        '${studentId}',
+        '${classId}',
+        '${sex}',
+        '${idcard}',
+        '${departmentsId}',
+        '${majorCode}',
+        '${trainingLevel}',
+        '${internshipUnitId}',
+        '${internshipPositions}',
+        to_date('${postsTime}','yyyy-mm-dd'),
+        '${area}',
+        '${internshipType}',
+        '${majorMatchFlag}',
+        '${salary}',
+        '${internshipChangeFlag}',
+        '${internshipScore}',
+        '${internshipEvaluation}',
+        '${tel}',
+        '${parentTel}',
+        '${studentNumber}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        1 )
+    </insert>
+    <update id="updateInternshipManageById" parameterType="com.goisan.studentwork.internships.bean.InternshipManage">
+        UPDATE T_XG_INTERNSHIP_STUDENT SET
+        student_id = #{studentId},
+        class_id = #{classId},
+        sex = #{sex},
+        idcard = #{idcard},
+        departments_id = #{departmentsId},
+        major_code = #{majorCode},
+        training_level = #{trainingLevel},
+        internship_unit_id = #{internshipUnitId},
+        internship_positions = #{internshipPositions},
+        posts_time = to_date(#{postsTime},'yyyy-mm-dd'),
+        area = #{area},
+        internship_type = #{internshipType},
+        major_match_flag = #{majorMatchFlag},
+        salary = #{salary},
+        internship_score = #{internshipScore},
+        internship_evaluation = #{internshipEvaluation},
+        tel = #{tel},
+        parent_tel = #{parentTel},
+        student_number= #{studentNumber}
+        WHERE internship_id = #{internshipId}
+    </update>
+    <delete id="deleteInternshipManageById" parameterType="java.lang.String">
+        DELETE FROM T_XG_INTERNSHIP_STUDENT  WHERE internship_id = #{internshipId}
+    </delete>
+    <select id="selectStudent" parameterType="java.lang.String" resultType="com.goisan.system.bean.Student">
+        SELECT t.student_id     studentId,
+       t.name,
+       t.sex,
+       t.idcard,
+       t.student_number studentNumber,
+       c.class_id,
+       x.departments_id,
+       x.major_code,
+       x.training_level
+       FROM t_xg_student t,t_xg_student_class c,t_xg_class x
+       where t.student_id=c.student_id AND c.class_id=x.class_id AND t.student_number = #{studentNumber}
+    </select>
+    <select id="selectArea" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+        area
+        FROM T_XG_INTERNSHIP_UNIT
+        WHERE internship_unit_id=#{internshipUnitId}
+    </select>
+</mapper>
+

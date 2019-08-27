@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.system.dao.QuickmenuDao">
+    <select id="getQuickmenuList"
+            parameterType="com.goisan.system.bean.Quickmenu"
+            resultType="com.goisan.system.bean.Quickmenu">
+        SELECT
+            id,user_id,dept_id , resource_id,resource_order
+        FROM t_sys_quickmenu
+        WHERE 1 = 1
+            AND user_id = #{userId} AND dept_id = #{deptId}
+    </select>
+    <select id="getQuickmenuListByUser"
+            parameterType="com.goisan.system.bean.Quickmenu"
+            resultType="com.goisan.system.bean.Quickmenu">
+        SELECT user_id as userId,
+               FUNC_GET_USERNAME(user_id, USER_TYPE) as userName,
+               FUNC_GET_DEPTNAME(dept_id, USER_TYPE)  as deptName,
+               count(id) as count
+        FROM t_sys_quickmenu
+        WHERE USER_TYPE is not null
+        GROUP BY user_id, USER_TYPE ,dept_id
+        UNION
+        SELECT user_id as userId,
+               decode(user_id,'0','教职工','1','学生','2','家长') userName,
+               '' as deptName,
+               count(id) as count
+        FROM t_sys_quickmenu
+        WHERE USER_TYPE is null
+        GROUP BY user_id, USER_TYPE
+    </select>
+    <select id="getQuickmenuByUserId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Quickmenu">
+        SELECT q.user_id,q.resource_id,q.resource_order , r.resource_name , r.resource_url
+        FROM t_sys_quickmenu q , t_sys_resource r
+        WHERE   q.resource_id = r.resource_id
+        AND q.user_id = #{userId}
+        <if test="deptId != null and deptId != ''">
+            AND q.dept_id = #{deptId}
+        </if>
+        ORDER by q.resource_order
+    </select>
+    <select id="getMenuListByUserId" parameterType="com.goisan.system.bean.Quickmenu"
+            resultType="com.goisan.system.bean.Tree">
+        SELECT
+        DISTINCT
+        r.resource_id as id,
+        r.resource_name name,
+        r.parent_resource_id pId,
+        r.RESOURCE_ORDER
+        FROM t_sys_role_resource rr, t_sys_resource r
+        WHERE
+        r.resource_id = rr.resource_id
+        AND r.resource_type = '1'
+        <if test="deptId != null and deptId != '' and userType == 0 ">
+            AND rr.role_id in (
+            SELECT role_id FROM T_RS_EMPLOYEE_DEPT_ROLE edr
+            WHERE edr.person_id = #{userId}
+            AND  edr.dept_id = #{deptId} )
+        </if>
+        <if test="deptId != null and deptId != '' and userType == 1 ">
+            AND rr.role_id in (
+            SELECT role_id FROM T_XG_STUDENT_CLASS_ROLE scr
+            WHERE scr.STUDENT_ID = #{userId}
+            AND  scr.CLASS_ID = #{deptId} )
+        </if>
+        <if test="deptId != null and deptId != '' and userType == 2 ">
+            AND rr.role_id in (
+            SELECT role_id FROM T_XG_PARENT_STUDENT_ROLE psr
+            WHERE psr.PARENT_ID = #{userId}
+            AND  psr.STUDENT_ID = #{deptId} )
+        </if>
+        ORDER BY r.RESOURCE_ORDER
+    </select>
+    <insert id="saveQuickmenu" parameterType="com.goisan.system.bean.Quickmenu">
+        insert into t_sys_quickmenu
+        (id,user_id,dept_id ,resource_id,resource_order,creator,create_time,create_dept)
+         values
+         (FUNC_GET_UUID,#{userId},#{deptId},#{resourceId},#{resourceOrder},#{creator},sysdate,#{createDept})
+    </insert>
+    <select id="getQuickmenuById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Quickmenu">
+        SELECT * FROM t_sys_quickmenu WHERE id = #{id}
+    </select>
+    <update id="updateQuickmenu" parameterType="com.goisan.system.bean.Quickmenu">
+        update t_sys_quickmenu set user_id=#{userId},resource_id=#{resourceId},resource_order=#{resourceOrder},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delQuickmenu" parameterType="java.lang.String">
+        delete from t_sys_quickmenu where user_id = #{id}
+    </delete>
+    <delete id="delQMenu" parameterType="java.lang.String">
+        delete from t_sys_quickmenu
+        where user_id = #{userId}
+        <if test="deptId != null and deptId != ''">
+            AND dept_id = #{deptId}
+        </if>
+    </delete>
+</mapper>

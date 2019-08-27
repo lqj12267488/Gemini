@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--教务管理-寝室信息维护create by wq 170715-->
+<mapper namespace="com.goisan.educational.place.dorm.dao.DormDao">
+    <!--获取数据表并依据Classroom对象查询-->
+    <select id="getDormList" parameterType="com.goisan.educational.place.dorm.bean.Dorm" resultType="com.goisan.educational.place.dorm.bean.Dorm">
+        SELECT
+
+        t.dorm_name dormName,
+        FUNC_GET_TABLEVALUE(t.building_id,'T_JW_BUILDING','ID','BUILDING_NAME') buildingId,
+        t.people_number peopleNumber,
+        lc.dic_name floor,
+        qslx.dic_name dormTypeShow,
+        FUNC_GET_DICVALUE(t.use_status,'SYZT') useStatus,
+        t.remark remark,
+        t.creator creator,
+        t.create_time createTime,
+        t.create_dept createDept,
+        t.changer changer,
+        t.change_time changeTime,
+        t.change_dept changeDept,
+        t.id id,
+        t.valid_flag validFlag
+        FROM
+        T_JW_DORM t
+        left join (SELECT t.dic_name, t.dic_code FROM t_sys_dic t WHERE t.parent_id = (SELECT  s.id FROM t_sys_dic s where s.dic_code = 'QSLX' )) qslx on qslx.dic_code = t.dorm_type
+        left join (SELECT t.dic_name, t.dic_code FROM t_sys_dic t WHERE t.parent_id = (SELECT  s.id FROM t_sys_dic s where s.dic_code = 'LC' )) lc on lc.dic_code = t.floor
+        WHERE 1 = 1
+        <if test="dormName != null and dormName != ''">
+            AND t.dorm_name LIKE #{dormName}
+        </if>
+        <if test="floor != null and floor != ''">
+            AND t.floor LIKE #{floor}
+        </if>
+        <if test="useStatus != null and useStatus != ''">
+            AND t.use_status LIKE #{useStatus}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+    <!--通过ById获取修改页面的id-->
+    <select id="getDormById" parameterType="java.lang.String" resultType="com.goisan.educational.place.dorm.bean.Dorm">
+        SELECT
+        t.id id,
+        t.dorm_name dormName,
+        t.dorm_type dormType,
+        t.building_id buildingId,
+        t.people_number peopleNumber,
+        t.floor floor,
+        t.use_status useStatus,
+        t.remark remark,
+        t.valid_flag validFlag
+        FROM
+        T_JW_DORM t
+        WHERE
+        id = #{id}
+    </select>
+    <!--新增数据-->
+    <insert id="insertDorm" parameterType="com.goisan.educational.place.dorm.bean.Dorm">
+        INSERT INTO
+        T_JW_dorm
+        (id,dorm_name,dorm_type,building_id,people_number,floor,use_status,remark,creator,create_time,create_dept)
+        VALUES
+        (FUNC_GET_UUID,'${dormName}','${dormType}','${buildingId}','${peopleNumber}','${floor}','${useStatus}','${remark}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <update id="updateDorm" parameterType="com.goisan.educational.place.dorm.bean.Dorm">
+        UPDATE
+        T_JW_dorm
+        SET
+        dorm_name = #{dormName},
+        building_id = #{buildingId},
+        dorm_type = #{dormType},
+        people_number = #{peopleNumber},
+        floor = #{floor},
+        use_status = #{useStatus},
+        remark = #{remark},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <delete id="deleteDorm" parameterType="java.lang.String">
+        DELETE
+        T_JW_dorm
+        WHERE
+        id = #{id}
+    </delete>
+    <!--自动获取教室名称-->
+    <select id="selectDorm" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        t.id as "value",
+        t.dorm_name as "label"
+        FROM
+        t_JW_dorm t
+    </select>
+    <!--名称查重-->
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_JW_dorm where dorm_name = #{dormName}
+        <if test="id != null and id != ''">
+            AND id != #{id}
+        </if>
+    </select>
+    <!--自动获取寝室名称-->
+    <select id="selectDormName" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        t.id as "value",
+        t.dorm_name as "label"
+        FROM
+        t_JW_DORM t
+    </select>
+    <!--自动获取人员名称-->
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name FROM t_rs_employee WHERE person_id = #{personId}
+    </select>
+    <!--自动获取部门名称-->
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name FROM t_sys_dept WHERE dept_id = #{deptId}
+    </select>
+    <select id="checkApplyStudent" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT STUDENT_ID FROM T_XG_DORM_ADJUST_RESULT WHERE DORM_ID = #{id}
+    </select>
+</mapper>

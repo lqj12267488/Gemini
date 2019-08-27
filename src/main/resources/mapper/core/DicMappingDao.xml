@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.DicMappingDao" >
+    <select id="dicMappingAction" resultType="com.goisan.system.bean.UserDic" parameterType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.dic_type dictype,
+        t.dic_name dicname,
+        t.dic_url dicurl
+        FROM
+        T_SYS_USERDIC_MAPPING t
+        WHERE
+        1 = 1
+        ORDER BY id DESC
+    </select>
+
+    <insert id="insertDicMapping" parameterType="com.goisan.system.bean.UserDic">
+        INSERT INTO
+        T_SYS_USERDIC_MAPPING
+        (id,dic_type,dic_name,dic_url,creator,create_time,create_dept) values
+        (FUNC_GET_UUID,'${dictype}','${dicname}','${dicurl}','${creator}',sysdate,'${createDept}')
+    </insert>
+
+    <select id="getDicMappingID" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.dic_name dicname,
+        t.dic_type dictype,
+        t.dic_url dicurl
+        FROM
+        T_SYS_USERDIC_MAPPING t
+        WHERE id =#{id}
+    </select>
+
+    <update id="updateDicMapping" parameterType="com.goisan.system.bean.UserDic">
+        UPDATE T_SYS_USERDIC_MAPPING SET
+        dic_name = #{dicname},
+        dic_type = #{dictype},
+        dic_url = #{dicurl},
+        change_time= sysdate,
+        changer = #{changer},
+        change_dept = #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <!--查询列SQL-->
+    <select id="dicMappingSearch" resultType="com.goisan.system.bean.UserDic"
+            parameterType="com.goisan.system.bean.UserDic">
+        SELECT
+        id,
+        dic_name dicname,
+        dic_type dictype,
+        dic_url dicurl
+        FROM
+        T_SYS_USERDIC_MAPPING t
+        WHERE 1 = 1
+        <if test="dicname != null and dicname != '' ">
+            AND t.dic_name LIKE #{dicname}
+        </if>
+        ORDER BY t.id DESC
+    </select>
+    <!--详情查询SQL-->
+    <select id="getDicMapping" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id,
+        t.dic_name dicname,
+        t.dic_code diccode,
+        t.name
+        FROM
+        T_SYS_USERDIC t
+        WHERE t.dic_type=#{dictype} and valid_flag ='1'
+        ORDER BY t.dic_code DESC
+    </select>
+    <!--查找字典ID-->
+    <select id="getDicID" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        SELECT
+        t.id id,
+        t.dic_name dicname,
+        t.dic_type dictype
+        FROM
+        T_SYS_USERDIC t
+        WHERE id =#{id}
+    </select>
+
+    <select id="checkName" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic_mapping where dic_name = #{dicname}
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+
+    <select id="checkType" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic_mapping where dic_type = #{dictype}
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+
+    <select id="checkUrl" parameterType="java.lang.String" resultType="com.goisan.system.bean.UserDic">
+        select * from t_sys_userdic_mapping where dic_url = #{dicurl}
+        <if test="id != null and id !='' ">
+            AND  id != #{id}
+        </if>
+    </select>
+
+    <delete id="deleteDicMapping" parameterType="java.lang.String">
+        DELETE FROM T_SYS_USERDIC_MAPPING WHERE id = #{id}
+    </delete>
+</mapper>

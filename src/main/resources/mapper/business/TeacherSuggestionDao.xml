@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.suggestionbox.dao.TeacherSuggestionDao">
+    <!-- 嵌套查询回复列表映射 start -->
+    <resultMap id="teacherSuggestionMap"
+               type="com.goisan.suggestionbox.bean.TeacherSuggestion">
+        <id column="ID" property="id"/>
+        <result column="CREATE_DEPT" property="createDept"/>
+        <result column="CREATOR" property="creator"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="TITLE" property="title"/>
+        <result column="SUGGESTION" property="suggestion"/>
+        <result column="REPLY_FLAG" property="replyFlag"/>
+        <collection property="replyList"
+                    ofType="com.goisan.suggestionbox.bean.ReplyForSuggestion"
+                    column="{suggestionId = id}"
+                    select="getReplyList"/>
+    </resultMap>
+    <!-- 嵌套查询回复列表映射 end -->
+
+    <!-- 获取回复列表 start -->
+    <select id="getReplyList"
+            parameterType="java.util.HashMap"
+            resultType="com.goisan.suggestionbox.bean.ReplyForSuggestion">
+        SELECT DISTINCT
+        ID,
+        CREATOR,
+        SUGGESTION_ID,
+        FUNC_GET_USERNAME(CREATOR) replierName,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) createDept,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) deptName,
+        CREATE_TIME,
+        TO_CHAR(CREATE_TIME, 'yyyy-mm-dd') suggestDate,
+        REPLY
+        FROM T_YJ_REPLY
+        WHERE SUGGESTION_ID = #{suggestionId}
+    </select>
+
+    <update id="updateViewFlag" parameterType="java.lang.String">
+        update T_YJ_TEACHER_SUGGESTION
+        set VIEW_FLAG = '1'
+        where ID = #{id}
+    </update>
+    <!-- 获取回复列表 end -->
+
+    <!-- 获取教师意见列表 start -->
+    <select id="getList"
+            parameterType="com.goisan.suggestionbox.bean.TeacherSuggestion"
+            resultMap="teacherSuggestionMap">
+        SELECT DISTINCT
+        ID,
+        CREATE_DEPT,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) deptName,
+        CREATOR,
+        CREATE_TIME,
+        TO_CHAR(CREATE_TIME, 'yyyy-mm-dd') suggestDate,
+        FUNC_GET_USERNAME(CREATOR) teacherName,
+        TITLE,
+        SUGGESTION,
+        REPLY_FLAG,
+        FUNC_GET_DICVALUE(REPLY_FLAG, 'YJHFZT') replyFlagShow,
+        VIEW_FLAG viewFlag
+        FROM T_YJ_TEACHER_SUGGESTION
+        WHERE 1=1
+        <if test="replyFlag!=null and replyFlag!=0 and replyFlag!=''">
+            AND REPLY_FLAG = #{replyFlag}
+        </if>
+        <if test="title!=null and title!=''">
+            AND TITLE LIKE '%'||#{title}||'%'
+        </if>
+        <if test="creator!=null and creator!=''">
+            AND CREATOR = #{creator}
+        </if>
+        <if test="createDept!=null and createDept!=''">
+            AND CREATE_DEPT = #{createDept}
+        </if>
+    </select>
+    <!-- 获取教师意见列表 end -->
+
+    <!-- 新增教师意见 start -->
+    <insert id="insert"
+            parameterType="com.goisan.suggestionbox.bean.TeacherSuggestion">
+        INSERT INTO T_YJ_TEACHER_SUGGESTION(
+        ID,
+        TITLE,
+        SUGGESTION,
+        REPLY_FLAG,
+        CREATOR,
+        CREATE_TIME,
+        CREATE_DEPT,
+        VALID_FLAG)
+        VALUES (
+        FUNC_GET_UUID(),
+        #{title},
+        #{suggestion},
+        '1',
+        #{creator},
+        SYSDATE,
+        #{createDept},
+        0)
+    </insert>
+    <!-- 新增教师意见 end -->
+
+    <!-- 更新教师意见 start -->
+    <update id="update"
+            parameterType="com.goisan.suggestionbox.bean.TeacherSuggestion">
+        UPDATE T_YJ_TEACHER_SUGGESTION SET
+        <if test="title!=null and title!=''">
+            TITLE = #{title},
+        </if>
+        <if test="suggestion!=null and suggestion!=''">
+            SUGGESTION = #{suggestion},
+        </if>
+        <if test="validFlag!=null and validFlag!=''">
+            VALID_FLAG = #{validFlag},
+        </if>
+        REPLY_FLAG = '1',
+        CHANGER	= #{changer},
+        CHANGE_TIME = SYSDATE,
+        CHANGE_DEPT = #{changeDept}
+        WHERE ID = #{id}
+    </update>
+    <!-- 更新教师意见 end -->
+
+    <!-- 按id获取教师意见 start -->
+    <select id="getById"
+            parameterType="com.goisan.suggestionbox.bean.TeacherSuggestion"
+            resultMap="teacherSuggestionMap">
+        SELECT DISTINCT
+        ID,
+        CREATE_DEPT,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) deptName,
+        CREATOR,
+        CREATE_TIME,
+        TO_CHAR(CREATE_TIME, 'yyyy-mm-dd') suggestDate,
+        FUNC_GET_USERNAME(CREATOR) teacherName,
+        TITLE,
+        SUGGESTION,
+        REPLY_FLAG,
+        FUNC_GET_DICVALUE(REPLY_FLAG, 'YJHFZT') replyFlagShow
+        FROM T_YJ_TEACHER_SUGGESTION
+        WHERE ID = #{id}
+    </select>
+    <!-- 按id获取教师意见 end -->
+
+    <!-- 删除教师意见 start -->
+    <delete id="del"
+            parameterType="java.lang.String">
+        DELETE FROM T_YJ_TEACHER_SUGGESTION WHERE ID = #{id}
+    </delete>
+    <!-- 删除教师意见 end -->
+
+    <!-- 回复教师意见 start -->
+    <insert id="reply" parameterType="com.goisan.suggestionbox.bean.ReplyForSuggestion">
+        INSERT INTO T_YJ_REPLY (
+        ID,
+        SUGGESTION_ID,
+        REPLY,
+        CREATOR,
+        CREATE_TIME,
+        CREATE_DEPT,
+        VALID_FLAG)
+        VALUES (
+        FUNC_GET_UUID(),
+        #{suggestionId},
+        #{reply},
+        #{creator},
+        SYSDATE,
+        #{createDept},
+        0)
+    </insert>
+    <!-- 回复教师意见 end -->
+
+    <!-- 修改回复标识 start -->
+    <update id="changeFlag">
+        UPDATE T_YJ_TEACHER_SUGGESTION SET
+        REPLY_FLAG = #{replyFlag}
+        WHERE ID = #{id}
+    </update>
+    <!-- 修改回复标识 end -->
+
+    <!-- 按id获取回复 start -->
+    <select id="getReplyById" parameterType="java.lang.String" resultType="com.goisan.suggestionbox.bean.ReplyForSuggestion">
+        SELECT DISTINCT
+        ID,
+        CREATOR,
+        SUGGESTION_ID,
+        FUNC_GET_USERNAME(CREATOR) replierName,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) createDept,
+        FUNC_GET_DEPTNAME(CREATE_DEPT) deptName,
+        CREATE_TIME,
+        TO_CHAR(CREATE_TIME, 'yyyy-mm-dd') suggestDate,
+        REPLY
+        FROM T_YJ_REPLY
+        WHERE ID = #{id}
+    </select>
+    <!-- 按id获取回复 end -->
+
+    <!-- 修改回复 start -->
+    <update id="updateReply" parameterType="com.goisan.suggestionbox.bean.ReplyForSuggestion">
+        UPDATE T_YJ_REPLY SET
+        <if test="reply!=null and reply!=''">
+            REPLY = #{reply},
+        </if>
+        CHANGER	= #{changer},
+        CHANGE_TIME = SYSDATE,
+        CHANGE_DEPT = #{changeDept}
+        WHERE ID = #{id}
+    </update>
+    <!-- 修改回复 end -->
+
+    <!-- 删除回复 start -->
+    <delete id="delReply" parameterType="java.lang.String">
+        DELETE FROM T_YJ_REPLY WHERE ID = #{id}
+    </delete>
+    <!-- 删除回复 end -->
+</mapper>

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.DeviceBorrowDao">
+    <select id="getDeviceBorrowList" resultType="com.goisan.synergy.workflow.bean.DeviceBorrow" parameterType="com.goisan.synergy.workflow.bean.DeviceBorrow">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.borrow_time,'yyyy-mm-dd hh24:mi') borrowTime,
+        to_char(t.revert_time,'yyyy-mm-dd hh24:mi') revertTime,
+        t.device_list deviceList,
+        t.activity_content activityContent,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_bg_deviceborrow_wf t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getDeviceBorrowById" resultType="com.goisan.synergy.workflow.bean.DeviceBorrow" parameterType="com.goisan.synergy.workflow.bean.DeviceBorrow">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.borrow_time,'yyyy-mm-dd')|| 'T' || to_char(t.request_date,'hh24:mi') borrowTime,
+        to_char(t.revert_time,'yyyy-mm-dd')|| 'T' || to_char(t.request_date,'hh24:mi') revertTime,
+        t.device_list deviceList,
+        t.activity_content activityContent,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_bg_deviceborrow_wf t
+        WHERE id = #{id} ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertDeviceBorrow" parameterType="com.goisan.synergy.workflow.bean.DeviceBorrow">
+        INSERT INTO
+        t_bg_deviceborrow_wf
+        (id,request_dept,requester,request_date,borrow_time,revert_time,device_list,activity_content,creator,create_time,create_dept,request_flag) values
+        (FUNC_GET_UUID,'${createDept}','${creator}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),to_date('${borrowTime}','yyyy-mm-dd hh24:mi'),to_date('${revertTime}','yyyy-mm-dd hh24:mi'),'${deviceList}','${activityContent}','${creator}',sysdate,'${createDept}','0')
+    </insert>
+    <delete id="deleteDeviceBorrowById"  parameterType="java.lang.String">
+        DELETE FROM t_bg_deviceborrow_wf WHERE id = #{id}
+    </delete>
+    <update id="updateDeviceBorrowById" parameterType="com.goisan.synergy.workflow.bean.DeviceBorrow">
+        update
+        t_bg_deviceborrow_wf
+        SET
+        id = #{id},
+        request_dept = #{requestDept},
+        requester = #{requester},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        borrow_time = to_date(#{borrowTime},'yyyy-mm-dd hh24:mi'),
+        revert_time = to_date(#{revertTime},'yyyy-mm-dd hh24:mi'),
+        device_list = #{deviceList},
+        activity_content = #{activityContent},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.DeviceBorrow" parameterType="com.goisan.synergy.workflow.bean.DeviceBorrow">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.borrow_time,'yyyy-mm-dd hh24:mi') borrowTime,
+        to_char(t.revert_time,'yyyy-mm-dd hh24:mi') revertTime,
+        t.device_list deviceList,
+        t.activity_content activityContent,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_bg_deviceborrow_wf t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.synergy.workflow.bean.DeviceBorrow" parameterType="com.goisan.synergy.workflow.bean.DeviceBorrow">
+        SELECT
+        DISTINCT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.borrow_time,'yyyy-mm-dd hh24:mi') borrowTime,
+        to_char(t.revert_time,'yyyy-mm-dd hh24:mi') revertTime,
+        t.device_list deviceList,
+        t.activity_content activityContent,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        t_bg_deviceborrow_wf t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+</mapper>

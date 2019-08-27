@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.MealCardHandleDao">
+    <select id="getMealCardHandleList" resultType="com.goisan.synergy.workflow.bean.MealCardHandle" parameterType="com.goisan.synergy.workflow.bean.MealCardHandle">
+        SELECT
+        t.id id,
+
+        FUNC_GET_USERNAME(t.teacher_id)  teacherId,
+        FUNC_GET_DEPTNAME(t.dept_id)  deptId,
+        FUNC_GET_DICVALUE(t.meal_card_type, 'FKLX') mealCardTypeShow,
+        t.meal_card_type mealCardType,
+        to_char(t.meal_card_time,'yyyy-mm-dd')|| ' '|| to_char(t.meal_card_time,'hh24:mi')  mealCardTime,
+       /* to_char(t.meal_card_time,'yyyy-mm-dd hh24:mi') mealCardTime,*/
+        t.remark,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_MEALCARD_HANDLE_WF t
+        where 1 = 1  AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="mealCardTime != null and mealCardTime != '' ">
+            AND  to_char(t.meal_card_time,'yyyy-mm-dd') LIKE #{mealCardTime}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getMealCardHandleById" resultType="com.goisan.synergy.workflow.bean.MealCardHandle" parameterType="com.goisan.synergy.workflow.bean.MealCardHandle">
+        SELECT
+        t.id id,
+        FUNC_GET_USERNAME(t.teacher_id)  teacherId,
+        FUNC_GET_DEPTNAME(t.dept_id)  deptId,
+        FUNC_GET_DICVALUE(t.meal_card_type, 'FKLX') mealCardTypeShow,
+        t.meal_card_type mealCardType,
+        to_char(t.meal_card_time,'yyyy-mm-dd') || 'T' || to_char(t.meal_card_time,'hh24:mi') mealCardTime,
+        to_char(t.meal_card_time,'yyyy-mm-dd hh24:mi') mealCardDate,
+        t.remark,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_MEALCARD_HANDLE_WF t
+        WHERE id = #{id} ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertMealCardHandle" parameterType="com.goisan.synergy.workflow.bean.MealCardHandle">
+        INSERT INTO
+        T_BG_MEALCARD_HANDLE_WF
+        (id,teacher_id,dept_id,meal_card_type,meal_card_time,remark,creator,create_time,create_dept,request_flag) values
+        (FUNC_GET_UUID,'${teacherId}','${deptId}','${mealCardType}',to_date('${mealCardTime}','yyyy-mm-dd hh24:mi'),'${remark}','${creator}',sysdate,'${createDept}','0')
+    </insert>
+    <delete id="deleteMealCardHandleById"  parameterType="java.lang.String">
+        DELETE FROM T_BG_MEALCARD_HANDLE_WF WHERE id = #{id}
+    </delete>
+    <update id="updateMealCardHandleById" parameterType="com.goisan.synergy.workflow.bean.MealCardHandle">
+        update
+        T_BG_MEALCARD_HANDLE_WF
+        SET
+        teacher_id = #{teacherId},
+        dept_id = #{deptId},
+        meal_card_type = #{mealCardType},
+        meal_card_time = to_date(#{mealCardTime},'yyyy-mm-dd hh24:mi'),
+        remark = #{remark},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.MealCardHandle" parameterType="com.goisan.synergy.workflow.bean.MealCardHandle">
+        SELECT
+        t.id id,
+
+        FUNC_GET_USERNAME(t.teacher_id)  teacherId,
+        FUNC_GET_DEPTNAME(t.dept_id)  deptId,
+        FUNC_GET_DICVALUE(t.meal_card_type, 'FKLX') mealCardTypeShow,
+        t.meal_card_type mealCardType,
+        to_char(t.meal_card_time,'yyyy-mm-dd')|| ' '|| to_char(t.meal_card_time,'hh24:mi')  mealCardTime,
+       /* to_char(t.meal_card_time,'yyyy-mm-dd hh24:mi') mealCardTime,*/
+        t.remark,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_MEALCARD_HANDLE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND func_get_deptname(t.dept_id) LIKE #{deptId}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="teacherId != null and teacherId != '' ">
+            AND FUNC_GET_USERNAME(t.teacher_id) LIKE #{teacherId}
+        </if>
+        <if test="mealCardTime != null and mealCardTime != '' ">
+            AND to_char(t.meal_card_time,'yyyy-mm-dd') LIKE   #{mealCardTime}
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.synergy.workflow.bean.MealCardHandle" parameterType="com.goisan.synergy.workflow.bean.MealCardHandle">
+        SELECT
+        DISTINCT
+        t.id id,
+
+        FUNC_GET_USERNAME(t.teacher_id)  teacherId,
+        FUNC_GET_DEPTNAME(t.dept_id)  deptId,
+        FUNC_GET_DICVALUE(t.meal_card_type, 'FKLX') mealCardTypeShow,
+        t.meal_card_type mealCardType,
+        to_char(t.meal_card_time,'yyyy-mm-dd')|| ' '|| to_char(t.meal_card_time,'hh24:mi')  mealCardTime,
+        /*to_char(t.meal_card_time,'yyyy-mm-dd hh24:mi') mealCardTime,*/
+        t.remark,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_MEALCARD_HANDLE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND func_get_deptname(t.dept_id) LIKE #{deptId}
+        </if>
+        <if test="teacherId != null and teacherId != '' ">
+            AND FUNC_GET_USERNAME(t.teacher_id) LIKE #{teacherId}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="mealCardTime != null and mealCardTime != '' ">
+            AND to_char(t.meal_card_time,'yyyy-mm-dd') LIKE #{mealCardTime}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+</mapper>
+

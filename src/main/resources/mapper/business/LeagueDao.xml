@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.leaguebuilding.league.dao.LeagueDao">
+    <select id="leagueAction" parameterType="com.goisan.leaguebuilding.league.bean.League"
+            resultType="com.goisan.leaguebuilding.league.bean.League">
+        SELECT id,
+        t.league_members_number as leagueMembersNumber,
+        FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'---'||
+        FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')  as studentName,
+        t.student_id as studentId,
+        t.class_id as classId,
+        FUNC_GET_TABLEVALUE(t.branch_id,'T_DT_LEAGUEBRANCH','ID','BRANCH_NAME') as branchName,
+        t.branch_id as branchId,
+        t.member_duties as memberDutiesId,
+        FUNC_GET_DICVALUE(t.member_duties,'TNZW') as memberDuties,
+        to_char(t.joinleague_time,'yyyy-mm-dd') as joinleagueTime,
+        t.remark as remark,
+        FUNC_GET_DICVALUE(t.relationship_change_type,'TYBGLX') as relationshipChangeType,
+        t.relationship_change_time as relationshipChangeTime ,
+        t.relationship_remark as relationshipRemark,
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.create_time as createTime
+        FROM T_DT_LEAGUEMEMBERS t
+        WHERE 1 = 1
+        <if test="branchId != null and branchId != '' ">
+            AND t.branch_id LIKE #{branchId}||'%'
+        </if>
+        <if test="studentId != null and studentId != '' ">
+          AND ( FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') LIKE '%'||#{studentId}||'%' )
+        </if>
+        ORDER BY createTime DESC
+    </select>
+    <insert id="insertLeague" parameterType="com.goisan.leaguebuilding.league.bean.League">
+        INSERT INTO T_DT_LEAGUEMEMBERS(
+        id,
+        BRANCH_ID,
+        LEAGUE_MEMBERS_NUMBER,
+        STUDENT_ID,
+        CLASS_ID,
+        MEMBER_DUTIES,
+        JOINLEAGUE_TIME,
+        REMARK,
+        CREATOR,
+        CREATE_TIME,
+        CREATE_DEPT,
+        RELATIONSHIP_CHANGE_TYPE,
+        valid_flag
+        )VALUES(
+        FUNC_GET_UUID,
+        #{branchId},
+        #{membersNumber},
+        #{studentId},
+        #{classId},
+        #{memberDuties},
+        to_date('${joinleagueTime}','yyyy-mm-dd'),
+        #{remark},
+        #{creator},
+        sysdate,
+        #{createDept},
+        '0',
+        '1')
+    </insert>
+    <delete id="deleteLeagueById" parameterType="com.goisan.leaguebuilding.league.bean.League">
+        DELETE T_DT_LEAGUEMEMBERS WHERE id = #{id}
+    </delete>
+    <select id="checkName" parameterType="com.goisan.leaguebuilding.league.bean.League"
+            resultType="com.goisan.leaguebuilding.league.bean.League">
+        SELECT
+        t.id as id,
+        t.student_id as studentId
+        FROM
+        T_DT_LEAGUEMEMBERS t
+        WHERE 1 = 1 and valid_flag ='1'
+        AND t.student_id = #{studentId}
+        <if test="id != null and id != '' ">
+            AND t.id != #{id}
+        </if>
+    </select>
+    <select id="getLeagueById" parameterType="com.goisan.leaguebuilding.league.bean.League"
+            resultType="com.goisan.leaguebuilding.league.bean.League">
+        SELECT id,
+        t.league_members_number as leagueMembersNumber,
+        FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'---'||
+        FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')  as studentName,
+        t.student_id as studentId,
+        t.class_id as classId,
+        FUNC_GET_TABLEVALUE(t.branch_id,'T_DT_LEAGUEBRANCH','ID','BRANCH_NAME') as branchName,
+        t.branch_id as branchId,
+        t.member_duties as memberDutiesId,
+        FUNC_GET_DICVALUE(t.member_duties,'TNZW') as memberDuties,
+        to_char(t.joinleague_time,'yyyy-mm-dd') as joinleagueTime,
+        t.remark as remark,
+        t.relationship_change_type as relationshipChangeType,
+        t.relationship_change_time as relationshipChangeTime ,
+        t.relationship_remark as relationshipRemark,
+        FUNC_GET_USERNAME(t.creator) as creator,
+        t.create_time as createTime
+        FROM T_DT_LEAGUEMEMBERS t
+        WHERE 1 = 1 and valid_flag ='1'
+        AND id = #{id}
+        ORDER BY createTime DESC
+    </select>
+    <update id="updateLeague" parameterType="com.goisan.leaguebuilding.league.bean.League">
+       UPDATE
+        T_DT_LEAGUEMEMBERS
+        SET
+        league_members_number=#{membersNumber},
+        student_id=#{studentId},
+        class_id=#{classId},
+        member_duties=#{memberDuties},
+        joinleague_time=to_date('${joinleagueTime}','yyyy-mm-dd'),
+        remark= #{remark},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <update id="updateRelationshipByIds" parameterType="com.goisan.leaguebuilding.league.bean.League">
+        UPDATE
+        T_DT_LEAGUEMEMBERS t
+        SET
+        t.relationship_change_type=#{relationshipChangeType},
+        <if test="branchId != null and branchId != '' ">
+            t.branch_id=#{branchId},
+        </if>
+        t.relationship_remark=#{relationshipRemark},
+        t.relationship_change_time= sysdate,
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE id = #{id}
+    </update>
+   <select id="selectLeagueById" parameterType="com.goisan.leaguebuilding.league.bean.League"
+           resultType="com.goisan.leaguebuilding.league.bean.League">
+       SELECT id,
+       t.student_id as studentId,
+       t.class_id as class_id,
+       FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'---'||
+       FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')  as studentName,
+       t.branch_id as branchId,
+       FUNC_GET_TABLEVALUE(t.branch_id,'T_DT_LEAGUEBRANCH','ID','BRANCH_NAME') remark,
+       FUNC_GET_DICVALUE( t.relationship_change_type,'TYBGLX') as relationshipChangeType
+       FROM T_DT_LEAGUEMEMBERS t
+       WHERE 1 = 1 and valid_flag ='1'
+       AND id = #{id}
+   </select>
+   <insert id="insertLeagueMemberLog" parameterType="com.goisan.leaguebuilding.league.bean.LeagueMemberLog">
+       INSERT INTO T_DT_LEAGUEMEMBER_LOG(
+       id,
+       STUDENT_ID,
+       CLASS_ID,
+       BRANCH_ID,
+       LOG_TYPE,
+       LOG_REMARK,
+       LOG_TIME,
+       CREATOR,
+       CREATE_TIME,
+       CREATE_DEPT
+       )VALUES(
+       FUNC_GET_UUID,
+       #{studentId},
+       #{classId},
+       #{branchId},
+       #{logType},
+       #{logRemark},
+       sysdate,
+       #{creator},
+       sysdate,
+       #{createDept})
+   </insert>
+   <select id="getLeagueLogByPersonId" parameterType="com.goisan.leaguebuilding.league.bean.LeagueMemberLog"
+           resultType="com.goisan.leaguebuilding.league.bean.LeagueMemberLog">
+       SELECT id,
+       FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') ||'---'||
+       FUNC_GET_TABLEVALUE(t.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')  as studentName,
+       t.student_id AS studentId,
+       FUNC_GET_TABLEVALUE(t.branch_id,'T_DT_LEAGUEBRANCH','ID','BRANCH_NAME') branchId,
+       FUNC_GET_DICVALUE(t.log_type,'TYRZLX') as  logType,
+       t.log_remark as logRemark,
+       FUNC_GET_USERNAME(t.creator) as creator
+       FROM T_DT_LEAGUEMEMBER_LOG t
+       WHERE 1 = 1
+       AND t.student_id = #{id}
+   </select>
+</mapper>

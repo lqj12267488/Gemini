@@ -1,0 +1,166 @@
+/* table  start */
+@import "../icons/font-awesome.min.css";
+
+.modal {
+    display: none;
+    overflow: auto;
+    overflow-y: scroll;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+background: rgba(0,0,0,.4);
+}
+
+.modal.fade .modal-dialog {
+    -webkit-transition: -webkit-transform .3s ease-out;
+    -o-transition: -o-transform .3s ease-out;
+    transition: transform .3s ease-out;
+    -webkit-transform: translate(0, -25%);
+    -ms-transform: translate(0, -25%);
+    -o-transform: translate(0, -25%);
+    transform: translate(0, -25%)
+}
+
+.modal.in .modal-dialog {
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0)
+}
+
+.modal-open .modal {
+    overflow-x: hidden;
+    overflow-y: auto
+}
+
+.modal-dialog {
+    background-color: #fff;
+    position: relative;
+    margin:0 auto;
+    top: 20%;
+    
+}
+.btn.btn-clean{border-color: #111; background: transparent; color: #FFF;}
+.btn {
+    border-color: transparent;
+    font-weight: bold;
+    background: #58c890;
+    border-radius: 5px;
+    color: #FFF;
+    font-size: 15px;
+}
+
+.btn {
+    padding-bottom: 5px;
+    line-height: 16px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.modal-header .close {
+    margin-top: -5px;
+    font-size: 26px;
+}
+
+.modal-header .close {
+    margin-top: -2px;
+}
+
+
+button.close {
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+
+    font-size: 26px;
+    padding: 4px 8px;
+    color:#ddd;
+
+}
+
+.close, .close:hover, .close:focus {
+    color: #fff;
+}
+
+.close {
+    float: right;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+    color: #ddd;
+    
+    filter: alpha(opacity=20);
+}
+
+button, input, select[multiple], textarea {
+    background-image: none;
+}
+
+input, button, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+button, html input[type="button"], input[type="reset"], input[type="submit"] {
+    -webkit-appearance: button;
+    cursor: pointer;
+}
+
+button, select {
+    text-transform: none;
+}
+
+button, input {
+    line-height: normal;
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0;
+}
+
+
+/*-----------------------------*/
+#resourceNameSel{
+    line-height: 20px;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    color:#666;
+    background:#fff;
+}
+
+#resourceTypeSel{height:30px; border:1px solid #ddd;background:#fff;}
+#requestTypeSel{height:30px; border:1px solid #ddd;background:#fff;}
+#requestFlagSel{height:30px; border:1px solid #ddd;background:#fff;}
+#typeName{height:30px; border:1px solid #ddd;background:#fff;}
+
+
+.col-md span{ background:#fff}
+
+
+

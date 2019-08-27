@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.educational.orderwork.dao.OtherWorkloadDao">
+    <select id="otherWorkloadAction" parameterType="com.goisan.educational.orderwork.bean.OtherWorkload"
+            resultType="com.goisan.educational.orderwork.bean.OtherWorkload">
+        select t.id,
+        t.CREATE_TIME,
+        FUNC_GET_USERNAME(t.teacher_id) teacherId,
+        FUNC_GET_DEPTNAME(t.dept_id) deptId,
+        t.work_content workContent,
+        to_char(t.time,'yyyy-mm-dd') || ' ' || to_char(t.time,'hh24:mi') time,
+        t.class_hours classHours,
+        file_url,
+        t.workload workload,
+        (select count(*) from T_SYS_FILES where BUSINESS_ID=ID) fileNumber
+        from T_JW_TEACHER_OTHER_WORKLOAD t
+        WHERE t.valid_flag = '1'
+        <if test="teacherId != null and teacherId != ''">
+            and  FUNC_GET_USERNAME(t.teacher_id) LIKE '%'||#{teacherId}||'%'
+        </if>
+        ORDER BY
+        t.create_time DESC
+    </select>
+    <!--通过ById获取修改页面的id-->
+    <select id="getOtherWorkloadById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.orderwork.bean.OtherWorkload">
+        SELECT
+            t.id,
+            t.teacher_id                                                                  teacherId,
+            t.dept_id                                                                     deptId,
+            FUNC_GET_USERNAME(t.TEACHER_ID) || '  ----  ' || FUNC_GET_DEPTNAME(t.DEPT_ID) nameShow,
+            t.work_content                                                                workContent,
+            to_char(t.time, 'yyyy-mm-dd') || 'T' || to_char(t.time, 'hh24:mi')            time,
+            t.class_hours                                                                 classHours,
+            t.workload                                                                    workload
+        FROM T_JW_TEACHER_OTHER_WORKLOAD t
+        WHERE
+            1 = 1
+            AND
+            id = #{id}
+        ORDER BY
+            t.create_time DESC
+    </select>
+    <!--新增数据-->
+    <insert id="insertOtherWorkload" parameterType="com.goisan.educational.orderwork.bean.OtherWorkload">
+        INSERT INTO
+            T_JW_TEACHER_OTHER_WORKLOAD
+            (id,
+             teacher_id,
+             dept_id,
+             work_content,
+             time,
+             class_hours,
+             workload,
+             creator,
+             create_time,
+             create_dept<if test="fileUrl != null and fileUrl != ''">,file_url</if>)
+        VALUES
+            (#{id},
+             '${teacherId}',
+             '${deptId}',
+             '${workContent}',
+             to_date('${time}', 'yyyy-mm-dd hh24:mi'),
+             '${classHours}',
+             '${workload}',
+             '${creator}',
+             sysdate,
+             '${createDept}'<if test="fileUrl != null and fileUrl != ''">,#{fileUrl}</if>)
+    </insert>
+    <update id="updateOtherWorkloadById" parameterType="com.goisan.educational.orderwork.bean.OtherWorkload">
+        UPDATE
+            T_JW_TEACHER_OTHER_WORKLOAD
+        SET
+            teacher_id   = #{teacherId},
+            dept_id      = #{deptId},
+            work_content = #{workContent},
+            time         = to_date(#{time}, 'yyyy-mm-dd hh24:mi'),
+            class_hours  = #{classHours},
+            workload     = #{workload},
+            change_time  = sysdate,
+            changer      = #{changer},
+            change_dept  = #{changeDept}
+        WHERE
+            id = #{id}
+    </update>
+    <delete id="deleteOtherWorkloadById" parameterType="java.lang.String">
+        DELETE
+            T_JW_TEACHER_OTHER_WORKLOAD
+        WHERE
+            id = #{id}
+    </delete>
+</mapper>

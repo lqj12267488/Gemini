@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.educational.course.dao.TeacherhonorDao">
+    <select id="getTeacherhonorByDeptAndTeacherId" parameterType="String" resultType="com.goisan.educational.course.bean.Teacherhonor">
+        select * from T_JW_COURSEBUILD_TEACHERHONOR t  where t.departments_id=#{deptId} and t.teacher_id=#{teacherId}
+        <if test=" id != null and  id != '' ">
+            AND  t.id != #{id}
+        </if>
+    </select>
+    <select id="teacherhonorAction" resultType="com.goisan.educational.course.bean.Teacherhonor"
+            parameterType="com.goisan.educational.course.bean.Teacherhonor">
+        select
+        id,
+        teacher_id teacherId,
+        departments_id departmentsId,
+        sex,
+        FUNC_GET_DEPTNAME(departments_id) departmentsIdShow,
+        FUNC_GET_USERNAME(teacher_id) teacherIdShow,
+        FUNC_GET_DICVALUE(sex, 'XB') sexShow,
+        create_time createTime
+        from T_JW_COURSEBUILD_TEACHERHONOR
+        WHERE 1 = 1
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="teacherhonorManageAction"  parameterType="com.goisan.educational.course.bean.Teacherhonor"
+            resultType="com.goisan.educational.course.bean.Teacherhonor">
+        SELECT
+        d.id,
+        FUNC_GET_USERDICVALUE(d.honor_name,'RYMC') honorName,
+        to_char(d.own_time ,'yyyy-mm-dd') ownTime,
+        FUNC_GET_DICVALUE(d.honor_level ,'DJ') honorLevel,
+        d.teacher_id teacherId
+        from T_JW_COURSEBUILD_TEACHERHONOR t, T_JW_TEACHERHONOR_DETAIL d
+        WHERE 1 = 1
+        AND  t.TEACHER_ID = d.TEACHER_ID
+        <if test=" teacherId != null and  teacherId != '' ">
+            AND  d.teacher_id =  #{teacherId}
+        </if>
+        ORDER BY t.create_time DESC
+   </select>
+
+    <select id="teacherhonorCheckAction"  parameterType="com.goisan.educational.course.bean.Teacherhonor"
+            resultType="com.goisan.educational.course.bean.Teacherhonor">
+        SELECT
+        d.id,
+        to_char(d.own_time ,'yyyy-mm-dd') ownTime,
+        FUNC_GET_DICVALUE(d.honor_level, 'DJ') honorLevel,
+        FUNC_GET_DEPTNAME(t.departments_id) departmentsIdShow,
+        FUNC_GET_USERNAME(d.teacher_id) teacherIdShow,
+        FUNC_GET_DICVALUE(t.sex, 'XB') sexShow,
+        FUNC_GET_USERDICVALUE(d.honor_name,'RYMC') honorName
+        from T_JW_COURSEBUILD_TEACHERHONOR t, T_JW_TEACHERHONOR_DETAIL d
+        WHERE 1 = 1
+        AND  t.TEACHER_ID = d.TEACHER_ID
+        <if test=" teacherId != null and  teacherId != '' ">
+            AND  d.teacher_id =  #{teacherId}
+        </if>
+        ORDER BY t.create_time DESC
+    </select>
+
+    <insert id="insertTeacherhonor" parameterType="com.goisan.educational.course.bean.Teacherhonor">
+        INSERT INTO T_JW_COURSEBUILD_TEACHERHONOR
+        (id,
+        teacher_id,
+        departments_id,
+        sex,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (FUNC_GET_UUID,
+        '${teacherId}',
+        '${departmentsId}',
+        '${sex}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+
+    <insert id="insertTeacherhonorManage" parameterType="com.goisan.educational.course.bean.Teacherhonor">
+        INSERT INTO T_JW_TEACHERHONOR_DETAIL
+        (id,
+        honor_name,
+        own_time,
+        honor_level,
+        teacher_id,
+        creator,
+        create_time,
+        create_dept,
+        valid_flag)
+        VALUES
+        (
+         FUNC_GET_UUID,
+        '${honorName}',
+       to_date('${ownTime}','yyyy-mm-dd'),
+       '${honorLevel}',
+        '${teacherId}',
+        '${creator}',
+        sysdate,
+        '${createDept}',
+        '1')
+    </insert>
+    <select id="getTeacherhonorById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.course.bean.Teacherhonor">
+        select
+        id,
+        teacher_id  teacherId,
+        departments_id departmentsId,
+        sex,
+        FUNC_GET_USERNAME(teacher_id) teacherIdShow
+        from T_JW_COURSEBUILD_TEACHERHONOR
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="getTeacherhonorManageById" parameterType="java.lang.String"
+            resultType="com.goisan.educational.course.bean.Teacherhonor">
+        select
+        id,
+        honor_name honorName,
+        to_char(own_time ,'yyyy-mm-dd') ownTime,
+        honor_level honorLevel,
+        teacher_id teacherId
+        from T_JW_TEACHERHONOR_DETAIL
+        WHERE 1 = 1
+        AND id =#{id}
+        ORDER BY create_time DESC
+    </select>
+
+
+
+    <update id="updateTeacherhonorById" parameterType="com.goisan.educational.course.bean.Teacherhonor">
+        UPDATE T_JW_COURSEBUILD_TEACHERHONOR SET
+        departments_id = #{departmentsId},
+        sex = #{sex},
+        teacher_id=#{teacherId},
+        changer =#{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateTeacherhonorManageById" parameterType="com.goisan.educational.course.bean.Teacherhonor">
+        UPDATE T_JW_TEACHERHONOR_DETAIL SET
+        honor_name = #{honorName},
+        honor_level = #{honorLevel},
+        own_time = to_date(#{ownTime},'yyyy-mm-dd'),
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteTeacherhonorById" parameterType="java.lang.String">
+        DELETE  T_JW_COURSEBUILD_TEACHERHONOR WHERE  id = #{id}
+    </delete>
+
+    <delete id="deleteTeacherhonorManageById" parameterType="java.lang.String">
+        DELETE  T_JW_TEACHERHONOR_DETAIL WHERE id = #{id}
+    </delete>
+
+
+
+</mapper>
