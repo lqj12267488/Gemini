@@ -1235,4 +1235,16 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
      group by class.class_id
     </select>
 
+    <!--根据idcard 获取学生信息-->
+    <select id="getStudentByIdcard" resultType="com.goisan.system.bean.Student">
+        select t.name,
+        FUNC_GET_DICVALUE(t.sex, 'XB') sexShow ,
+        t.student_number,t.student_id,
+      t.household_register_province || t.household_register_city || t.household_register_county as stuSourceAddr,
+      FUNC_GET_TABLEVALUE(c.class_id, 'T_XG_CLASS', 'class_id', 'class_name') classShow,
+       FUNC_GET_DICVALUE(t.nation,'MZ') nationShow
+        from  T_XG_STUDENT t ,T_XG_STUDENT_CLASS c
+        where t.idcard=#{idcard}
+         and t.student_id = c.student_id
+    </select>
 </mapper>

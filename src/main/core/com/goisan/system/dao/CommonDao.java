@@ -30,6 +30,8 @@ public interface CommonDao {
     List<AutoComplete> getCouresByName(String name);
 
     List<AutoComplete> getClassBean();
+    List<AutoComplete> getIdCard();
+    List<AutoComplete> getDorm();
 
     List<AutoComplete> getClassBeanByDept(String deptId);
 

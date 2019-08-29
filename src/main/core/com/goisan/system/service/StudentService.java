@@ -3,6 +3,7 @@ package com.goisan.system.service;
 import com.goisan.system.bean.ClassStudentRelation;
 import com.goisan.system.bean.Student;
 import com.goisan.system.bean.Tree;
+import org.apache.ibatis.annotations.Param;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.Map;
  */
 public interface StudentService {
     List<Student> getStudentList(Student student);
+
+    Student getStudentByIdcard(String idcard);
 
     Student getStudentById(String studentId);
 

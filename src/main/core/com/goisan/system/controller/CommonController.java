@@ -109,6 +109,18 @@ public class CommonController {
     }
 
     @ResponseBody
+    @RequestMapping("/common/getIdCard")
+    public List<AutoComplete> getIdCard() {
+        return commonService.getIdCard();
+    }
+
+    @ResponseBody
+    @RequestMapping("/common/getDorm")
+    public List<AutoComplete> getDorm() {
+        return commonService.getDorm();
+    }
+
+    @ResponseBody
     @RequestMapping("/common/getPersonDeptByPname")
     public List<AutoComplete> getPersonDeptByPname(String name) {
         return commonService.getPersonDeptByPname(name);

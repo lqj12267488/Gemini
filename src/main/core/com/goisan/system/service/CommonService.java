@@ -12,6 +12,8 @@ import java.util.Map;
  */
 @Service
 public interface CommonService {
+    List<AutoComplete> getIdCard();
+    List<AutoComplete> getDorm();
     List<Select2> getClassByPlan( String majorCode, String trainingLevel, String majorDirection,String term);
     List<AutoComplete> getPersonByName(String name);
     //返回的Select对象的属性id值为字典表的id

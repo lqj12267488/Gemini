@@ -35,6 +35,11 @@ public class StudentServiceImpl implements StudentService {
         return studentDao.getStudentList(student);
     }
 
+    @Override
+    public Student getStudentByIdcard(String idcard) {
+        return studentDao.getStudentByIdcard(idcard);
+    }
+
     public Student getStudentById(String studentId) {
         return studentDao.getStudentById(studentId);
     }

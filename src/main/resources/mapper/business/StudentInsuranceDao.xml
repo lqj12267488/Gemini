@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.studentinsurance.dao.StudentInsuranceDao">
+
+    <select id="getStudentInsuranceList" parameterType="com.goisan.studentwork.studentinsurance.bean.StudentInsurance" resultType="com.goisan.studentwork.studentinsurance.bean.StudentInsurance">
+       select tt.id,
+       student_id,
+       idcard,
+       sexShow,
+       name,
+       student_number,
+       birthday,
+       stuSourceAddr,
+       class_id,
+       classShow,
+        nationShow,
+      d.dorm_name from (
+    SELECT t.id,
+           t.student_id,
+           s.idcard,
+            FUNC_GET_DICVALUE(s.nation,'MZ') nationShow,
+           FUNC_GET_DICVALUE(s.sex, 'XB') sexShow,
+           s.name,
+           s.student_number,
+           to_char(s.birthday, 'yyyy-mm-dd') birthday,
+           s.household_register_province || s.household_register_city ||
+           s.household_register_county AS stuSourceAddr,
+           c.class_id,
+           FUNC_GET_TABLEVALUE(c.class_id,
+                               'T_XG_CLASS',
+                               'class_id',
+                               'class_name') classShow,
+           t.dorm_id
+      FROM T_XG_stu_insurance t,
+           T_XG_STUDENT       s,
+           T_XG_STUDENT_CLASS c
+     WHERE t.student_id = s.student_id
+       AND s.student_id = c.student_id
+       and t.valid_flag = '1'
+        and t.insurance_type= #{insuranceType}
+        <if test='null!=idcard and idcard != "" '>
+            and  s.idcard = #{idcard}
+        </if>
+        <if test='null!=name and name != "" '>
+            and s.name like '%${name}%'
+        </if>
+        <if test='studentNumber!=name and studentNumber != "" '>
+            and s.student_number like '%${studentNumber}%'
+        </if>
+        <if test='null!=classId and classId != "" '>
+            and  c.class_id= #{classId}
+        </if>
+        <if test='null!=dormId and dormId != "" '>
+            and  t.dorm_id= #{dormId}
+        </if>
+       ) tt left join  T_JW_DORM  d on tt.dorm_id = d.id
+    </select>
+
+
+    <select id="getStudentInsuranceById" parameterType="java.lang.String" resultType="com.goisan.studentwork.studentinsurance.bean.StudentInsurance">
+       select tt.id,
+       student_id,
+       idcard,
+       sexShow,
+       name,
+       student_number,
+       birthday,
+       stuSourceAddr,
+       class_id,
+       classShow,
+        nationShow,
+      d.dorm_name from (
+    SELECT t.id,
+           t.student_id,
+           s.idcard,
+            FUNC_GET_DICVALUE(s.nation,'MZ') nationShow,
+           FUNC_GET_DICVALUE(s.sex, 'XB') sexShow,
+           s.name,
+           s.student_number,
+           s.birthday,
+           s.household_register_province || s.household_register_city ||
+           s.household_register_county AS stuSourceAddr,
+           c.class_id,
+           FUNC_GET_TABLEVALUE(c.class_id,
+                               'T_XG_CLASS',
+                               'class_id',
+                               'class_name') classShow,
+           t.dorm_id
+      FROM T_XG_stu_insurance t,
+           T_XG_STUDENT       s,
+           T_XG_STUDENT_CLASS c
+     WHERE t.student_id = s.student_id
+       AND s.student_id = c.student_id
+       and t.valid_flag = '1'
+       AND t.id = #{id}
+       ) tt left join  T_JW_DORM  d on tt.dorm_id = d.id
+    </select>
+
+    <insert id="insertStudentInsurance" parameterType="com.goisan.studentwork.studentinsurance.bean.StudentInsurance">
+        insert into T_XG_stu_insurance (ID,Student_Id,Dorm_Id,Insurance_Type,Creator,Create_Time,Create_Dept,Valid_Flag) values(
+        func_get_uuid,'${studentId}','${dormId}','${insuranceType}','${creator}',sysdate,'${createDept}',1
+        )
+    </insert>
+
+    <delete id="delStudentInsurance" parameterType="com.goisan.studentwork.studentinsurance.bean.StudentInsurance">
+        update T_XG_stu_insurance t set t.valid_flag = '0',
+         changer=#{changer},
+          change_time=sysdate,
+          change_dept=#{changeDept}
+          where t.id=#{id}
+    </delete>
+
+    <update id="updStudentInsurance" parameterType="com.goisan.studentwork.studentinsurance.bean.StudentInsurance">
+           update T_XG_stu_insurance t set t.Student_Id = #{studentId},Dorm_Id = #{dormId} ,changer=#{changer},
+          change_time=sysdate,change_dept=#{changeDept} where t.id=#{id}
+    </update>
+
+
+    <select id="getStudentInsuranceByStudentId" parameterType="com.goisan.studentwork.studentinsurance.bean.StudentInsurance" resultType="com.goisan.studentwork.studentinsurance.bean.StudentInsurance">
+       select * from T_XG_stu_insurance t where t.student_id = #{studentId} and  t.valid_flag = '1'
+       and t.insurance_type= #{insuranceType}
+    </select>
+</mapper>

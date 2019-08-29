@@ -432,4 +432,13 @@
     <select id="getDeptIdByPersonId" parameterType="java.lang.String" resultType="java.lang.String">
         select t.dept_id from T_RS_EMPLOYEE_DEPT t where t.person_id=#{personId} AND rownum=1
     </select>
+
+
+    <select id="getIdCard" resultType="com.goisan.system.bean.AutoComplete">
+        select t.idcard as label,  t.idcard as value from  T_XG_STUDENT t
+    </select>
+
+    <select id="getDorm" resultType="com.goisan.system.bean.AutoComplete">
+        select t.id as value ,t.dorm_name as label  from T_JW_DORM t
+    </select>
 </mapper>

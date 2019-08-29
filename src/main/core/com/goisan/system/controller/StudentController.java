@@ -1835,4 +1835,10 @@ public class StudentController {
         return studentService.getStudentNumByClassId(classId);
     }
 
+
+    @ResponseBody
+    @RequestMapping("/student/getStudentByIdcard")
+    public Student getStudentByIdcard(String idcard){
+        return studentService.getStudentByIdcard(idcard);
+    }
 }

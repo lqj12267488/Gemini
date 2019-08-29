@@ -21,4 +21,5 @@ public interface DormDao {
     List<Dorm> checkName(Dorm dorm);
     List<AutoComplete> selectDormName();
     List<String> checkApplyStudent(String id);
+    String getDormByName(String dormName);
 }

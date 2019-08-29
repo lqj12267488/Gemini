@@ -85,6 +85,16 @@ public class Student extends BaseBean {
     private String MemberTelephoneNumber;
     private String graduationSchool;
 
+    private String stuSourceAddr;
+
+    public String getStuSourceAddr() {
+        return stuSourceAddr;
+    }
+
+    public void setStuSourceAddr(String stuSourceAddr) {
+        this.stuSourceAddr = stuSourceAddr;
+    }
+
     public String getNameOfMember() {
         return nameOfMember;
     }

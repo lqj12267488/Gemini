@@ -101,6 +101,12 @@
             AND id != #{id}
         </if>
     </select>
+
+    <!--通过名查id-->
+    <select id="getDormByName" parameterType="java.lang.String" resultType="java.lang.String">
+        select id from t_JW_dorm t where t.dorm_name = #{dormName}
+    </select>
+
     <!--自动获取寝室名称-->
     <select id="selectDormName" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
         SELECT

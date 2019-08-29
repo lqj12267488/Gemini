@@ -14,6 +14,7 @@ import java.util.Map;
  */
 @Repository
 public interface StudentDao {
+    Student getStudentByIdcard(@Param("idcard") String idcard);
     List<Student> getStudentList(Student student);
 
     Student getStudentById(String studentId);
