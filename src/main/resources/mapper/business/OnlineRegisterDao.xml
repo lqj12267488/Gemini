@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.onlineregister.dao.OnlineRegisterDao">
+    <select id="getOnlineRegisterList"
+            parameterType="com.goisan.studentwork.onlineregister.bean.OnlineRegister"
+            resultType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
+        select id,name,sex,nation,language,idcard,birthday,departments_id,major_code,province,city,county,register_type,register_origin,examination_card_number,exam_score,exam_type,graduated_school,graduation_date,idcard_img,examination_img,score_img,hukou_img,graduated_img,father_tel,mother_tel,remark from T_XG_ONLINE_REGISTER
+    </select>
+    <insert id="saveOnlineRegister" parameterType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
+        insert into t_xg_online_register (id,name,sex,nation,language,idcard,birthday,departments_id,major_code,province,city,county,register_type,register_origin,examination_card_number,exam_score,exam_type,graduated_school,graduation_date,idcard_img,examination_img,score_img,hukou_img,graduated_img,father_tel,mother_tel,remark) values (#{id},#{name},#{sex},#{nation},#{language},#{idcard},#{birthday},#{departmentsId},#{majorCode},#{province},#{city},#{county},#{registerType},#{registerOrigin},#{examinationCardNumber},#{examScore},#{examType},#{graduatedSchool},#{graduationDate},#{idcardImg},#{examinationImg},#{scoreImg},#{hukouImg},#{graduatedImg},#{fatherTel},#{motherTel},#{remark})
+    </insert>
+    <select id="getOnlineRegisterById" parameterType="java.lang.String"
+            resultType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
+        select * from T_XG_ONLINE_REGISTER where id = #{id}
+    </select>
+    <update id="updateOnlineRegister" parameterType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
+        update t_xg_online_register set name=#{name},sex=#{sex},nation=#{nation},language=#{language},idcard=#{idcard},birthday=#{birthday},departments_id=#{departmentsId},major_code=#{majorCode},province=#{province},city=#{city},county=#{county},register_type=#{registerType},register_origin=#{registerOrigin},examination_card_number=#{examinationCardNumber},exam_score=#{examScore},exam_type=#{examType},graduated_school=#{graduatedSchool},graduation_date=#{graduationDate},idcard_img=#{idcardImg},examination_img=#{examinationImg},score_img=#{scoreImg},hukou_img=#{hukouImg},graduated_img=#{graduatedImg},father_tel=#{fatherTel},mother_tel=#{motherTel},remark=#{remark} where id = #{id}
+    </update>
+    <delete id="delOnlineRegister" parameterType="java.lang.String">
+        delete from T_XG_ONLINE_REGISTER where id = #{id}
+    </delete>
+</mapper>

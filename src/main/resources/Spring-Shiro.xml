@@ -124,6 +124,7 @@
         <property name="filterChainDefinitions">
             <value>
                 /enrollment/** = anon
+                /onlineregister/** = anon
                 / = anon
                 /pageoffice/** = anon
                 /login = anon

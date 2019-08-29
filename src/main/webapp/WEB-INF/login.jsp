@@ -36,7 +36,7 @@
 <!--新登录页代码-->
 <div class="con">
     <div class="logo">
-        <img src="<%=request.getContextPath()%>/libs/img/login/logo_bczyjsxx.png"/>
+        <img src="<%=request.getContextPath()%>/libs/img/login/logo_xjxdzyjsxy.png"/>
     </div>
     <div class="nr">
         <div class="dl">
