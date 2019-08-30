@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.graduatearchivesaddress.dao.ArcadDao">
+
+    <select id="getArcadList" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
+        select  t.* ,
+        FUNC_GET_TABLEVALUE(t.arcad_province,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')arcadProvinceShow,
+        FUNC_GET_TABLEVALUE(t.arcad_city, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') arcadCityShow,
+        FUNC_GET_TABLEVALUE(t.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')  arcadCountyShow
+        from T_XG_ARCHIVESADDR t
+        WHERE valid_flag = '1'
+        <if test='null!=arcadProvince and ""!=arcadProvince'>
+            and arcad_province = #{arcadProvince}
+        </if>
+        <if test='null!=arcadCity and ""!=arcadCity'>
+           and arcad_city = #{arcadCity}
+        </if>
+        <if test='null!=arcadCounty and ""!=arcadCounty'>
+            and arcad_county = #{arcadCounty}
+        </if>
+    </select>
+
+    <select id="getArcadById" parameterType="java.lang.String" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
+          select  * from T_XG_ARCHIVESADDR t where t.arcad_id = #{arcadId}
+    </select>
+
+    <insert id="insertArcad" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
+        insert  into T_XG_ARCHIVESADDR t (t.arcad_id,arcad_province,arcad_city,arcad_county,arcad_detail,CREATOR,CREATE_TIME,CREATE_DEPT,VALID_FLAG) values
+       (func_get_uuid,'${arcadProvince}','${arcadCity}','${arcadCounty}','${arcadDetail}',
+       '${creator}',sysdate,'${createDept}',default )
+    </insert>
+    
+    <update id="updateArcadById" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
+      update  T_XG_ARCHIVESADDR t set arcad_province=#{arcadProvince},arcad_city=#{arcadCity},arcad_county = #{arcadCounty},
+      arcad_detail=#{arcadDetail} ,changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+      where t.arcad_id = #{arcadId}
+    </update>
+
+    <delete id="delArcadById" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
+          update T_XG_ARCHIVESADDR t set t.valid_flag = '0',changer=#{changer},
+          change_time=sysdate,
+          change_dept=#{changeDept}
+          where t.arcad_id=#{arcadId}
+    </delete>
+
+</mapper>
