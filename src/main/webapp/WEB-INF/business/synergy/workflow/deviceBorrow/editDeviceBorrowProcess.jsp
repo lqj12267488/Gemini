@@ -106,7 +106,7 @@
         revertTime = revertTime.replace('T','');
         if ($("#f_borrowTime").val() == "" || $("#f_borrowTime").val() == "0") {
             swal({
-                title: "请填写设备清单!",
+                title: "请填写借用时间!",
                 type: "info"
             });
             return;

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.studentwork.studentprove.dao.StudentProveDao">
+    <select id="getStudentProveList" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
+        SELECT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        t.prove_reason proveReason,
+        t.receive_company receiveCompany,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag,
+        t.student_number studentNumber
+        FROM
+        T_XG_STUDENT_PROVE_WF t
+        where 1 = 1  AND t.request_flag = '0'
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="studentId != '' and  studentId != null">
+            AND FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE '%'||#{studentId}||'%'
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="studentNumber != null and studentNumber != '' ">
+            AND t.student_number LIKE '%'||#{studentNumber}||'%'
+        </if>
+        <if test="majorCode != null and majorCode != '' ">
+            AND t.major_code= #{majorCode}
+        </if>
+        <if test="classId != null and classId != '' ">
+            AND t.class_id= #{classId}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+
+    <select id="getLeaveBy" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
+        SELECT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        t.prove_reason proveReason,
+        t.receive_company receiveCompany,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
+        t.student_number studentNumber,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_XG_STUDENT_PROVE_WF t
+        WHERE id = #{id}
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getStudentProveById" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
+        SELECT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+        t.prove_reason proveReason,
+        t.receive_company receiveCompany,
+        t.class_id  classId,
+        t.major_code  majorCode,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag,
+        t.student_number studentNumber,
+        t.student_id studentId
+        FROM
+        T_XG_STUDENT_PROVE_WF t
+        WHERE id = #{id}
+
+        ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertStudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
+        INSERT INTO
+        T_XG_STUDENT_PROVE_WF
+        (id,requester,request_date,prove_reason,receive_company,creator,create_time,create_dept,request_flag,student_number,major_code,class_id,student_id) values
+        (FUNC_GET_UUID,'${studentId}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),'${proveReason}','${receiveCompany}','${creator}',sysdate,'${createDept}','0','${studentNumber}','${majorCode}','${classId}','${studentId}')
+    </insert>
+    <delete id="deleteStudentProveById"  parameterType="java.lang.String">
+        DELETE FROM T_XG_STUDENT_PROVE_WF WHERE id = #{id}
+    </delete>
+    <update id="updateStudentProveById" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
+        update
+        T_XG_STUDENT_PROVE_WF
+        SET
+        prove_reason = #{proveReason},
+        receive_company = #{receiveCompany},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        changer= #{changer},
+        change_time= sysdate
+        WHERE
+        id = #{id}
+    </update>
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+        where t.person_id in(select person_id from t_rs_employee_dept where dept_id like FUNC_GET_SCHOOL_RANGE (#{deptId},#{level}))
+    </select>
+    <select id="getProcessList" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
+        SELECT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
+        t.prove_reason proveReason,
+        t.receive_company receiveCompany,
+        t.student_number studentNumber,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_XG_STUDENT_PROVE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
+        SELECT
+        DISTINCT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
+        t.prove_reason proveReason,
+        t.receive_company receiveCompany,
+        t.student_number studentNumber,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_XG_STUDENT_PROVE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getLeaveCancelList" resultType="com.goisan.personnel.leave.bean.Leave" parameterType="com.goisan.personnel.leave.bean.Leave">
+        SELECT
+        DISTINCT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+        FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
+        t.prove_reason proveReason,
+        t.receive_company receiveCompany,
+        t.student_number studentNumber,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_LEAVE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1 AND feedback_flag = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+    <select id="getStudentByStudentId" parameterType="java.lang.String" resultType="com.goisan.system.bean.Student">
+        SELECT
+            s.name,
+            s.student_id,
+            s.nation,
+            s.idcard,
+            s.sex,
+            s.tel,
+            s.address,
+            s.train_interval,
+            s.student_number,
+            s.household_register_province,
+            s.household_register_city,
+            s.household_register_county,
+            d.CLASS_ID,
+            FUNC_GET_TABLEVALUE(d.CLASS_ID,'T_XG_CLASS','CLASS_ID','MAJOR_CODE')    majorCode
+        FROM T_XG_STUDENT s left join T_XG_STUDENT_CLASS d on s.STUDENT_ID = d.STUDENT_ID
+        WHERE s.student_id = #{studentId}
+    </select>
+</mapper>

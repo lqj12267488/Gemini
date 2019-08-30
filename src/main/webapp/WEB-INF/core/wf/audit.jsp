@@ -172,27 +172,6 @@
                 }
             })
         }
-        $.post("<%=request.getContextPath()%>/files/getFilesByBusinessId", {
-            businessId: '${businessId}',
-        }, function (data) {
-            if (data.data.length == 0) {
-                $("#file").append('<div class="form-row">' +
-                    '<div class="col-md-3 tar"></div>' +
-                    '<div class="col-md-9">' +
-                    '无' +
-                    '</div>' +
-                    '</div>')
-            } else {
-                $.each(data.data, function (i, val) {
-                    $("#file").append('<div class="form-row">' +
-                        '<div class="col-md-3 tar"></div>' +
-                        '<div class="col-md-9">' +
-                        '<a href="' + '<%=request.getContextPath()%>/files/downloadFiles?id='+val.fileId + '" target="_blank">' + val.fileName + '</a>' +
-                        '</div>' +
-                        '</div>');
-                })
-            }
-        })
         $.get("<%=request.getContextPath()%>/getOpinion", function (data) {
             addOption(data, 'opinion');
         })

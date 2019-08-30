@@ -16,6 +16,7 @@ import org.apache.shiro.SecurityUtils;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -454,5 +455,17 @@ public class CommonUtil {
             ip = request.getRemoteAddr();
         }
         return ip;
+    }
+
+    public static String getFormUUIDBySession(HttpServletRequest request){
+
+        HttpSession session = request.getSession();
+
+        if(session != null){
+
+            return (String)session.getAttribute("formToken");
+        }
+
+        return "";
     }
 }

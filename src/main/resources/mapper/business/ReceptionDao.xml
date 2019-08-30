@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.ReceptionDao">
+    <select id="getReceptionList" resultType="com.goisan.synergy.workflow.bean.Reception" parameterType="com.goisan.synergy.workflow.bean.Reception">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.reception_time,'yyyy-mm-dd hh24:mi') receptionTime,
+        t.reception_reason receptionReason,
+        t.tel tel,
+        t.visit_leader  visitLeader,
+        t.visit_number  visitNumber,
+        t.reception_place  receptionPlace,
+        FUNC_GET_USERNAME(t.entourage) entourage,
+        FUNC_GET_DICVALUE(t.is_need_vehicle,'SF') isNeedVehicle,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_RECEPTION_WF t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="requestDate != null and requestDate != '' ">
+            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="receptionTime != null and receptionTime != '' ">
+            AND  to_char(t.reception_time,'yyyy-mm-dd') LIKE #{receptionTime}
+        </if>
+        <if test="receptionReason != null and receptionReason != '' ">
+            AND t.reception_reason like '%'||#{receptionReason}||'%'
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getReceptionById" resultType="com.goisan.synergy.workflow.bean.Reception" parameterType="com.goisan.synergy.workflow.bean.Reception">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.reception_time,'yyyy-mm-dd')|| 'T' || to_char(t.reception_time,'hh24:mi') receptionTime,
+        t.reception_reason receptionReason,
+        t.tel tel,
+        t.visit_leader  visitLeader,
+        t.visit_number  visitNumber,
+        t.reception_place  receptionPlace,
+        t.entourage   entourage,
+        FUNC_GET_USERNAME(t.entourage) entourageShow,
+        FUNC_GET_DICVALUE(t.is_need_vehicle,'SF') isNeedVehicleShow,
+        t.is_need_vehicle  isNeedVehicle,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_RECEPTION_WF t
+        WHERE id = #{id} ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertReception" parameterType="com.goisan.synergy.workflow.bean.Reception">
+        INSERT INTO
+        T_BG_RECEPTION_WF
+        (id,
+         request_dept,
+         requester,
+         request_date,
+         reception_time,
+         reception_reason,
+         tel,
+         visit_leader,
+         visit_number,
+         reception_place,
+         entourage,
+         is_need_vehicle,creator,create_time,create_dept,request_flag) values
+        (FUNC_GET_UUID,
+         '${createDept}',
+         '${creator}',
+         to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+         to_date('${receptionTime}','yyyy-mm-dd hh24:mi'),
+         '${receptionReason}',
+         '${tel}',
+         '${visitLeader}',
+         '${visitNumber}',
+         '${receptionPlace}',
+         '${entourage}',
+         '${isNeedVehicle}',
+         '${creator}',
+         sysdate,
+         '${createDept}',
+         '0')
+    </insert>
+    <delete id="deleteReceptionById"  parameterType="java.lang.String">
+        DELETE FROM T_BG_RECEPTION_WF WHERE id = #{id}
+    </delete>
+    <update id="updateReceptionById" parameterType="com.goisan.synergy.workflow.bean.Reception">
+        update
+        T_BG_RECEPTION_WF
+        SET
+        id = #{id},
+        request_dept = #{requestDept},
+        requester = #{requester},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        reception_time = to_date(#{receptionTime},'yyyy-mm-dd hh24:mi'),
+        reception_reason = #{receptionReason},
+        tel = #{tel},
+        visit_leader  = #{visitLeader},
+        visit_number  = #{visitNumber},
+        reception_place  = #{receptionPlace},
+        entourage   = #{entourage},
+        is_need_vehicle  = #{isNeedVehicle},
+        changer= #{changer},
+        change_time= sysdate,
+        change_dept= #{changeDept}
+        WHERE
+        id = #{id}
+    </update>
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.Reception" parameterType="com.goisan.synergy.workflow.bean.Reception">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.reception_time,'yyyy-mm-dd hh24:mi') receptionTime,
+        t.reception_reason receptionReason,
+        t.tel tel,
+        t.visit_leader  visitLeader,
+        t.visit_number  visitNumber,
+        t.reception_place  receptionPlace,
+        FUNC_GET_USERNAME(t.entourage)   entourage,
+        t.entourage entourageShow,
+        FUNC_GET_DICVALUE(t.is_need_vehicle,'SF')  isNeedVehicle,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_RECEPTION_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.synergy.workflow.bean.Reception" parameterType="com.goisan.synergy.workflow.bean.Reception">
+        SELECT
+        DISTINCT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.reception_time,'yyyy-mm-dd hh24:mi') receptionTime,
+        t.reception_reason receptionReason,
+        t.tel tel,
+        t.visit_leader  visitLeader,
+        t.visit_number  visitNumber,
+        t.reception_place  receptionPlace,
+        FUNC_GET_USERNAME(t.entourage)   entourage,
+        t.entourage entourageShow,
+        FUNC_GET_DICVALUE(t.is_need_vehicle,'SF')  isNeedVehicle,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_RECEPTION_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+</mapper>
