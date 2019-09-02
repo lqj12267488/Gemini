@@ -198,4 +198,6 @@ public interface WorkflowDao {
     void updateHandleStateByNodeIdAndStartIdRole(@Param("startId") String startId, @Param
             ("personId") String personId, @Param("remark") String remark,@Param("handleRole") String handleRole);
 
+    List<Select2> getHeadTeacherByStudentId(@Param
+            ("studentId") String studentId);
 }

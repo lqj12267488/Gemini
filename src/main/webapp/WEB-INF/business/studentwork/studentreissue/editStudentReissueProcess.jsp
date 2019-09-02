@@ -15,139 +15,154 @@
         }
     </style>
 </head>
-<input type="hidden" id="studentReissueid" value="${studentReissue.id}">
 <div id="layout" style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        申请时间
+<form id="dailySignUp" >
+    <input id="studentReissueid" hidden value="${studentReissue.id}">
+    <input type="file" name="file" style="display: none" id="imgFile" onchange="fileChange(this)">
+    <div class="form-row">
+        <div class="col-md-3 tar" style="float: left;">
+            申请时间
+        </div>
+        <div class="col-md-4" style="margin-top: 4px;">
+            <input id="f_requestDate" type="datetime-local" readonly="readonly"
+                   class="validate[required,maxSize[100]] form-control"
+                   value="${studentReissue.requestDate}"/>
+        </div>
+        <div style="float: right;width: 230px;height: 160px;">
+            <div style="width: 160px;height: 160px;margin-top: -4px;">
+                <c:choose>
+                    <c:when test="${studentReissue.img == null}">
+                        <img onclick="showInputFile()"
+                             style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
+                             src="<%=request.getContextPath()%>/libs/img/upload.png"
+                             height="150"
+                             width="110" alt="" id="userImg">
+                    </c:when>
+                    <c:otherwise>
+                        <img onclick="showInputFile()"
+                             style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
+                             src="data:image/png;base64,${studentReissue.img}"
+                             height="150"
+                             width="110" alt="" id="userImg">
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+        <div class="col-md-3 tar" style="float: left;">
+            学生姓名
+        </div>
+        <div class="col-md-4" style="margin-top: 4px;">
+            <select id="studentId" disabled="disabled"
+                    class="validate[required,maxSize[100]] form-control"></select>
+        </div>
+        <div class="col-md-3 tar" style="float: left;">
+            民族
+        </div>
+        <div class="col-md-4" style="margin-top: 4px;">
+            <select id="f_nation" disabled="disabled"
+                    class="validate[required,maxSize[100]] form-control"></select>
+        </div>
+        <div class="col-md-3 tar" style="float: left;">
+            性别
+        </div>
+        <div class="col-md-4" style="margin-top: 4px;">
+            <select id="f_sex" disabled="disabled"
+                    class="validate[required,maxSize[100]] form-control"></select>
+        </div>
+        <div class="col-md-3 tar" style="float: left;">
+            班级
+        </div>
+        <div class="col-md-4" style="margin-top: 4px;">
+            <select id="classIdId" type="text" disabled="disabled"
+                    class="validate[required,maxSize[100]] form-control"></select>
+        </div>
     </div>
-    <div class="col-md-9">
-        <input id="f_requestDate" type="datetime-local" readonly="readonly"
-               class="validate[required,maxSize[100]] form-control"
-               value="${studentReissue.requestDate}"/>
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            专业
+        </div>
+        <div class="col-md-9">
+            <select id="majorCodeId" type="text" disabled="disabled" readonly
+                    class="validate[required,maxSize[100]] form-control"></select>
+        </div>
     </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        学生姓名
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            学号
+        </div>
+        <div class="col-md-9">
+            <input id="studentNumber" type="text" readonly="readonly"
+                   value="${studentReissue.studentNumber}"/>
+        </div>
     </div>
-    <div class="col-md-9">
-        <select id="studentId" disabled="disabled"
-                class="validate[required,maxSize[100]] form-control"></select>
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            身份证号
+        </div>
+        <div class="col-md-9">
+            <input id="f_idcard" type="text" readonly="readonly" value="${studentReissue.idcard}"/>
+        </div>
     </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        民族
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            <span class="iconBtx">*</span>乘车区间
+        </div>
+        <div class="col-md-9">
+            <input id="f_rideZone" maxlength="100" placeholder="最多输入100个字"
+                   style="resize:none;" value="${studentReissue.rideZone}"/>
+        </div>
     </div>
-    <div class="col-md-9">
-        <select id="f_nation" disabled="disabled"
-                class="validate[required,maxSize[100]] form-control"></select>
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            <span class="iconBtx">*</span>家庭地址
+        </div>
+        <div class="col-md-9">
+            <input id="f_familyAddress" maxlength="100" placeholder="最多输入100个字"
+                   style="resize:none;" value="${studentReissue.familyAddress}"/>
+        </div>
     </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        性别
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            <span class="iconBtx">*</span>新疆省
+        </div>
+        <div class="col-md-9">
+            <select id="houseProvince" class="js-example-basic-single"></select>
+        </div>
     </div>
-    <div class="col-md-9">
-        <select id="f_sex" disabled="disabled"
-                class="validate[required,maxSize[100]] form-control"></select>
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            <span class="iconBtx">*</span>地区（州）
+        </div>
+        <div class="col-md-9">
+            <select id="houseCity" class="js-example-basic-single"></select>
+        </div>
     </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        班级
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            <span class="iconBtx">*</span>市（县）
+        </div>
+        <div class="col-md-9">
+            <select id="houseCounty" class="js-example-basic-single"></select>
+        </div>
     </div>
-    <div class="col-md-9">
-        <select id="classIdId" type="text" disabled="disabled"
-                class="validate[required,maxSize[100]] form-control"></select>
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            <span class="iconBtx">*</span>申请项目
+        </div>
+        <div class="col-md-9">
+            <select id="f_requestProject" class="js-example-basic-single"></select>
+        </div>
     </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        专业
+    <div class="form-row">
+        <div class="col-md-3 tar">
+            <span class="iconBtx">*</span>申请理由
+        </div>
+        <div class="col-md-9">
+            <input id="f_requestReason" maxlength="100" placeholder="最多输入100个字"
+                   style="resize:none;" value="${studentReissue.requestReason}"/>
+        </div>
     </div>
-    <div class="col-md-9">
-        <select id="majorCodeId" type="text" disabled="disabled" readonly
-                class="validate[required,maxSize[100]] form-control"></select>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        学号
-    </div>
-    <div class="col-md-9">
-        <input id="studentNumber" type="text" readonly="readonly"
-               value="${studentReissue.studentNumber}"/>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        身份证号
-    </div>
-    <div class="col-md-9">
-        <input id="f_idcard" type="text" readonly="readonly" value="${studentReissue.idcard}"/>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>乘车区间
-    </div>
-    <div class="col-md-9">
-        <input id="f_rideZone" maxlength="100" placeholder="最多输入100个字"
-               style="resize:none;" value="${studentReissue.rideZone}"></input>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>家庭地址
-    </div>
-    <div class="col-md-9">
-        <input id="f_familyAddress" maxlength="100" placeholder="最多输入100个字"
-               style="resize:none;" value="${studentReissue.familyAddress}"/>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>新疆省
-    </div>
-    <div class="col-md-9">
-        <select id="houseProvince" class="js-example-basic-single"></select>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>地区（州）
-    </div>
-    <div class="col-md-9">
-        <select id="houseCity" class="js-example-basic-single"></select>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>市（县）
-    </div>
-    <div class="col-md-9">
-        <select id="houseCounty" class="js-example-basic-single"></select>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>申请项目
-    </div>
-    <div class="col-md-9">
-        <select id="f_requestProject" class="js-example-basic-single"></select>
-    </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>申请理由
-    </div>
-    <div class="col-md-9">
-        <input id="f_requestReason" maxlength="100" placeholder="最多输入100个字"
-               style="resize:none;" value="${studentReissue.requestReason}"/>
-    </div>
-</div>
+</form>
 <input id="workflowCode" hidden>
 <input id="houseProvinceValue" type="hidden" value="${studentReissue.province}"/>
 <input id="houseCityValue" type="hidden" value="${studentReissue.regional}"/>

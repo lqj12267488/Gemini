@@ -22,14 +22,15 @@
                 &times;
             </button>
             <h4 class="modal-title">${head}</h4>
-            <input id="studentReissueid" hidden value="${studentReissue.id}">
-            <input type="file" name="file" style="display: none" id="imgFile" onchange="fileChange(this)">
+
         </div>
         <div class="modal-body clearfix">
             <div id="layout"
                  style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
             <div class="controls">
-                <form id="dailySignUp">
+                <form id="dailySignUp" >
+                    <input id="studentReissueid" hidden value="${studentReissue.id}">
+                    <input type="file" name="file" style="display: none" id="imgFile" onchange="fileChange(this)">
                     <div class="form-row">
                         <div class="col-md-3 tar" style="float: left;">
                             申请时间
@@ -189,7 +190,6 @@
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     $(document).ready(function () {
-        alert('${studentReissue.img == null}')
         var path = "<%=request.getContextPath()%>";
         addAdministrativeDivisions("houseProvince", $("#houseProvinceValue").val(),
             "houseCity", $("#houseCityValue").val(),

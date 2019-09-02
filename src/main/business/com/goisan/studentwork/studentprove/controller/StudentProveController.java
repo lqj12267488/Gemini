@@ -254,15 +254,30 @@ public class StudentProveController {
         ModelAndView mv = new ModelAndView("/business/studentwork/studentprove/printStudentProve");
         String workflowName = workflowService.getWorkflowNameByWorkflowCode("T_XG_STUDENT_PROVE_WF01");
         StudentProve leave = studentProveService.getLeaveBy(id);
-        String requestDate = leave.getRequestDate().replace("T", " ");
-        mv.addObject("requestDate", requestDate);
-        mv.addObject("studentProve", leave);
-        mv.addObject("workflowName", workflowName);
         String state = stampService.getStateById(id);
         List<Handle> list = stampService.getHandlebyId(id);
         int size = list.size();
-        mv.addObject("handleList", list);
-        mv.addObject("size", size);
+        String requestDate = "";
+        String agent = "";
+        String departmentName = "";
+        String departmentNameStudent = "";
+        for (Handle s:list){
+            requestDate = s.getHandleTime();
+            if("经办人".equals(s.getHandleRole())){
+                agent = s.getRemark();
+            }
+            if("部门负责人".equals(s.getHandleRole())){
+                departmentName = s.getRemark();
+            }
+            if("学生处负责人".equals(s.getHandleRole())){
+                departmentNameStudent = s.getRemark();
+            }
+        }
+        mv.addObject("requestDate", requestDate);
+        mv.addObject("agent", agent);
+        mv.addObject("departmentName", departmentName);
+        mv.addObject("departmentNameStudent", departmentNameStudent);
+        mv.addObject("studentProve", leave);
         mv.addObject("state", state);
         final Properties properties = new Properties();
         FileInputStream in = null;

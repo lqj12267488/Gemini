@@ -468,4 +468,17 @@ public class CommonUtil {
 
         return "";
     }
+
+    public static String setFormUUIDToSession(HttpServletRequest request){
+
+        String uuid = getUUID();
+        HttpSession session = request.getSession();
+
+        if(session != null){
+
+            session.setAttribute("formToken",uuid);
+        }
+
+        return uuid;
+    }
 }

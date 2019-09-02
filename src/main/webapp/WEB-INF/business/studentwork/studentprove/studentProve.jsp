@@ -83,7 +83,7 @@
     </div>
 </div>
 <input id="tableName" hidden value="T_XG_STUDENT_PROVE_WF">
-<input id="workflowCode" hidden>
+<input id="workflowCode" hidden value="T_XG_STUDENT_PROVE_WF01">
 <input id="businessId" hidden>
 <input id="studentIdShow" hidden value="${studentProve.studentId}">
 <script>

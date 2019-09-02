@@ -79,7 +79,7 @@
     </div>
     <div class="col-md-9">
         <textarea id="f_reason" readonly="readonly" class="validate[required,maxSize[100]] form-control"
-                  value="${studentProve.reason}">${studentProve.reason}</textarea>
+                  value="${studentProve.proveReason}">${studentProve.proveReason}</textarea>
     </div>
 </div>
 <input id="printFunds" hidden value="<%=request.getContextPath()%>/studentProve/printStudentProve?id=${studentProve.id}">

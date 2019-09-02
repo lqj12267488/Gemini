@@ -367,4 +367,9 @@ public class WorkflowServiceImpl implements WorkflowService {
             ("personId") String personId, @Param("remark") String remark,@Param("handleRole") String handleRole){
         workflowDao.updateHandleStateByNodeIdAndStartIdRole(startId,personId,remark,handleRole);
     }
+
+    public List<Select2> getHeadTeacherByStudentId(@Param
+            ("studentId") String studentId){
+        return workflowDao.getHeadTeacherByStudentId(studentId);
+    }
 }

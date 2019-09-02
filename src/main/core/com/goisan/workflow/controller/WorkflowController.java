@@ -441,21 +441,38 @@ public class WorkflowController {
 
         List<Select2> emps = null;
         if ("1".equals(nextNode.getStartFlag())) {
-            if ("T_JW_SLOW_EXAMINATION".equals(tableName)) {
+            if ("T_JW_SLOW_EXAMINATION".equals(tableName)|| "T_XG_STUDENT_PROVE_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
                 emps = workflowService.getStudentAuditer(tableName, businessId);
             } else {
                 emps = workflowService.getAuditerByCreator(tableName, businessId);
             }
         } else {
-            if ("1".equals(roleRange)) {
-                emps = workflowService.getAuditer(nextNode.getHandleRole());
-            }
-            if ("2".equals(roleRange)) {
-                emps = workflowService.getAuditerByDept(tableName, businessId, nextNode
-                        .getHandleRole());
-            }
-            if ("3".equals(roleRange)) {
-                emps = workflowService.getAuditerByRange(tableName, businessId);
+            if ("2".equals(nextNode.getNodeOrder())) {
+                if ("T_XG_STUDENT_PROVE_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
+                    emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());
+                } else {
+                    if ("1".equals(roleRange)) {
+                        emps = workflowService.getAuditer(nextNode.getHandleRole());
+                    }
+                    if ("2".equals(roleRange)) {
+                        emps = workflowService.getAuditerByDept(tableName, businessId, nextNode
+                                .getHandleRole());
+                    }
+                    if ("3".equals(roleRange)) {
+                        emps = workflowService.getAuditerByRange(tableName, businessId);
+                    }
+                }
+            }else{
+                if ("1".equals(roleRange)) {
+                    emps = workflowService.getAuditer(nextNode.getHandleRole());
+                }
+                if ("2".equals(roleRange)) {
+                    emps = workflowService.getAuditerByDept(tableName, businessId, nextNode
+                            .getHandleRole());
+                }
+                if ("3".equals(roleRange)) {
+                    emps = workflowService.getAuditerByRange(tableName, businessId);
+                }
             }
         }
 

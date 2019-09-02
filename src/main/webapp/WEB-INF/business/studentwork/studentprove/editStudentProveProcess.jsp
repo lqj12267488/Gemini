@@ -7,7 +7,7 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--<jsp:include page="../../../../include.jsp"/>--%>\
+<%--<jsp:include page="../../../../include.jsp"/>--%>
 <head>
     <style type="text/css">
         textarea {
@@ -40,7 +40,7 @@
         学号
     </div>
     <div class="col-md-9">
-        <input id="studentNumber" type="text" readonly="readonly" placeholder="请输入学籍号"/>
+        <input id="studentNumber" type="text" readonly="readonly" value="${studentProve.studentNumber}"/>
     </div>
 </div>
 <div class="form-row">
@@ -128,7 +128,7 @@
             });
             return;
         }
-        $.post("<%=request.getContextPath()%>/studentProve/auditStudentProveEdit", {
+        $.post("<%=request.getContextPath()%>/studentProve/saveStudentProve", {
             id: $("#studentProveid").val(),
             requestDate: date,
             proveReason: $("#f_proveReason").val(),

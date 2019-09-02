@@ -181,7 +181,6 @@
       WHERE s.student_id = sc.student_id
        AND sc.class_id = c.class_id
        AND c.departments_id = d.dept_id
-       AND d.DEPT_ID = b.create_dept
        AND b.id = #{businessId}
        AND s.student_id = b.creator
     </select>
@@ -842,4 +841,15 @@
         SET STATE = '2', HANDLE_TIME = sysdate, remark = #{remark}
         WHERE START_ID = #{startId} AND HANDLE_USER = #{personId} AND STATE != '2' AND HANDLE_ROLE = #{handleRole}
     </update>
+    <select id="getHeadTeacherByStudentId" resultType="com.goisan.system.bean.Select2">
+        SELECT
+            t.head_teacher || ':' || t.HEAD_TEACHER_DEPT id,
+            FUNC_GET_USERNAME(t.head_teacher) || '--' || FUNC_GET_DEPTNAME(t.HEAD_TEACHER_DEPT) text
+
+        FROM T_XG_CLASS t left join t_xg_student_class s
+                                    on t.class_id = s.class_id
+        WHERE  t.valid_flag = 1
+          and s.student_id=#{studentId}
+        order by t.create_time desc
+    </select>
 </mapper>

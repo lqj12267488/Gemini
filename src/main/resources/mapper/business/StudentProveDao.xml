@@ -116,16 +116,15 @@
     </update>
     <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
         select
-        t.dept_id as "value",
-        t.dept_name as "label"
-        FROM T_SYS_DEPT t
+        t.class_id as "value",
+        t.class_name as "label"
+        FROM T_XG_CLASS t
     </select>
     <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
         select
         t.name as "label",
-        t.person_id as "value"
-        FROM T_RS_EMPLOYEE t
-        where t.person_id in(select person_id from t_rs_employee_dept where dept_id like FUNC_GET_SCHOOL_RANGE (#{deptId},#{level}))
+        t.student_id as "value"
+        FROM T_XG_STUDENT t
     </select>
     <select id="getProcessList" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
         SELECT
@@ -151,11 +150,8 @@
         <if test="creator != 'sa'  and creator != null and creator != '' ">
             AND r.handle_user= #{creator}
         </if>
-        <if test="createDept != null and createDept != '' ">
-            AND r.handle_dept= #{createDept}
-        </if>
         <if test="requester != null and requester != '' ">
-            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+            AND FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE #{requester}
         </if>
         <if test="requestDate != null and requestDate != '' ">
             AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}

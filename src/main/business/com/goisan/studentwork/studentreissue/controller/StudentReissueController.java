@@ -78,7 +78,7 @@ public class StudentReissueController {
      * @return
      */
     @RequestMapping("/studentReissue/editStudentReissue")
-    public ModelAndView addStudentReissue() {
+    public ModelAndView addStudentReissue(HttpServletRequest request) {
         ModelAndView mv = new ModelAndView("/business/studentwork/studentreissue/editStudentReissue");
         SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat formatTime = new SimpleDateFormat("HH:mm");
