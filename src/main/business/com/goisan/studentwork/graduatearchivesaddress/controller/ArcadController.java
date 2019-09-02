@@ -162,6 +162,8 @@ public class ArcadController {
             }
         }
 
+
+
         for (String str : listCity) {
             List<String> list1 =   arcadServcie.find(str);
             if (list1.size()==1) {
