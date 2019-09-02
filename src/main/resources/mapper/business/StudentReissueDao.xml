@@ -58,7 +58,7 @@
     <select id="getLeaveBy" resultType="com.goisan.studentwork.studentreissue.bean.StudentReissue" parameterType="com.goisan.studentwork.studentreissue.bean.StudentReissue">
         SELECT
         t.id,
-        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
         t.student_number	    studentNumber,
         FUNC_GET_DICVALUE(t.nation,'MZ')     nation,
         FUNC_GET_DICVALUE(t.sex,'XB')    sex,
@@ -70,6 +70,7 @@
         FUNC_GET_TABLEVALUE(t.province,'t_sys_administrative_divisions','ID','NAME')  province,
         FUNC_GET_TABLEVALUE(t.regional,'t_sys_administrative_divisions','ID','NAME')  regional,
         FUNC_GET_TABLEVALUE(t.city,'t_sys_administrative_divisions','ID','NAME') city,
+        FUNC_GET_TABLEVALUE(t.province,'t_sys_administrative_divisions','ID','NAME')||FUNC_GET_TABLEVALUE(t.regional,'t_sys_administrative_divisions','ID','NAME')||FUNC_GET_TABLEVALUE(t.city,'t_sys_administrative_divisions','ID','NAME') nativePlace,
         FUNC_GET_DICVALUE(t.request_project,'SQXM') 	    requestProject,
         t.request_reason      requestReason,
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
@@ -224,6 +225,7 @@
         FUNC_GET_TABLEVALUE(t.province,'t_sys_administrative_divisions','ID','NAME')  province,
         FUNC_GET_TABLEVALUE(t.regional,'t_sys_administrative_divisions','ID','NAME')  regional,
         FUNC_GET_TABLEVALUE(t.city,'t_sys_administrative_divisions','ID','NAME') city,
+        FUNC_GET_TABLEVALUE(t.province,'t_sys_administrative_divisions','ID','NAME')||FUNC_GET_TABLEVALUE(t.regional,'t_sys_administrative_divisions','ID','NAME')||FUNC_GET_TABLEVALUE(t.city,'t_sys_administrative_divisions','ID','NAME') nativePlace,
         FUNC_GET_DICVALUE(t.request_project,'SQXM') 	    requestProject,
         t.request_reason      requestReason,
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
@@ -242,9 +244,6 @@
         where 1 = 1
         <if test="creator != 'sa'  and creator != null and creator != '' ">
             AND r.handle_user= #{creator}
-        </if>
-        <if test="createDept != null and createDept != '' ">
-            AND r.handle_dept= #{createDept}
         </if>
         <if test="requester != null and requester != '' ">
             AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
@@ -270,6 +269,7 @@
         FUNC_GET_TABLEVALUE(t.province,'t_sys_administrative_divisions','ID','NAME')  province,
         FUNC_GET_TABLEVALUE(t.regional,'t_sys_administrative_divisions','ID','NAME')  regional,
         FUNC_GET_TABLEVALUE(t.city,'t_sys_administrative_divisions','ID','NAME') city,
+        FUNC_GET_TABLEVALUE(t.province,'t_sys_administrative_divisions','ID','NAME')||FUNC_GET_TABLEVALUE(t.regional,'t_sys_administrative_divisions','ID','NAME')||FUNC_GET_TABLEVALUE(t.city,'t_sys_administrative_divisions','ID','NAME') nativePlace,
         FUNC_GET_DICVALUE(t.request_project,'SQXM') 	    requestProject,
         t.request_reason      requestReason,
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
