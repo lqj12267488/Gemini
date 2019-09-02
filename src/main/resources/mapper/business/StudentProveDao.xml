@@ -47,25 +47,35 @@
 
     <select id="getLeaveBy" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
         SELECT
-        t.id,
-        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
-        t.prove_reason proveReason,
-        t.receive_company receiveCompany,
-        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
-        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
-        FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
-        t.student_number studentNumber,
-        t.request_flag,
-        t.creator,
-        t.create_time,
-        t.create_dept,
-        t.changer,
-        t.change_time,
-        t.change_dept,
-        t.valid_flag
+            t.id,
+            to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+            t.prove_reason proveReason,
+            t.receive_company receiveCompany,
+            FUNC_GET_DICVALUE(s.sex,'XB') sex,
+            FUNC_GET_DICVALUE(m.max_year,'XYNX') maxYear,
+            s.NAME studentId,
+            s.idcard idcard,
+            d.CLASS_NAME classId,
+            d.YEAR years,
+            FUNC_GET_TABLEVALUE(d.HEAD_TEACHER,'T_RS_EMPLOYEE','PERSON_ID','TEL') tels,
+            FUNC_GET_USERNAME(d.HEAD_TEACHER) headTeacher,
+            FUNC_GET_DICVALUE(d.CLASS_TYPE,'ZJBJLX') classType,
+            FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
+            t.student_number studentNumber,
+            t.request_flag,
+            t.creator,
+            t.create_time,
+            t.create_dept,
+            t.changer,
+            t.change_time,
+            t.change_dept,
+            cast(d.YEAR as int)+cast((decode(m.MAX_YEAR,'','0','1','2','2','3','3','5')) as int) year,
+            t.valid_flag
         FROM
-        T_XG_STUDENT_PROVE_WF t
-        WHERE id = #{id}
+            T_XG_STUDENT_PROVE_WF t left join T_XG_STUDENT s on t.student_id=s.student_id
+                                    left join  T_XG_STUDENT_CLASS c on s.student_id=c.student_id left join T_XG_CLASS d on
+                d.class_id = c.class_id left join T_XG_MAJOR m on m.major_code = d.major_code
+        WHERE t.id = '637fbaad-167a-4c1d-8c12-1bcc8f85d2e6'
         ORDER BY t.create_time desc
     </select>
     <select id="getStudentProveById" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">

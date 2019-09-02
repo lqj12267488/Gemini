@@ -43,7 +43,7 @@
         }
     </style>
 </head>
-<span class="left">编 号：20190307017</span><br>
+<span class="left">编 号：${number}</span><br>
 <div style="margin-left: 36%;margin-top: 5%;font-size:18pt">
     在读证明（存根）
 </div>
@@ -79,50 +79,50 @@
     <span class="left">学生处负责人签字：</span>
     <span class="right" style="width:500px">${departmentNameStudent}</span>
     <span class="left">日 期：</span>
-    <span>2018年 月 日</span>
+    <span>${requestDate}</span>
 </div>
 <br>
 <br>
 <br>
 <br>
-<span class="left">编 号：20190307017</span>
+<span class="left">编 号：${number}</span>
 <br>
 <div class="clearBoth">
     <div style="margin-left: 42%;font-size:24pt">
         证明
     </div>
     <br>
-    <span class="right" style="margin-left:2%"></span>:
+    <span class="right" style="margin-left:2%">${studentProve.receiveCompany}</span>:
 </div>
 <div class="clearBoth">
     <span class="left">该学生</span>
-    <span class="right" style="width:500px"></span>
-    <span class="left">，性别（女），现我院（专科）</span>
+    <span class="right" style="width:500px">${studentProve.studentId}</span>
+    <span class="left">，性别（${studentProve.sex}），现我院（${studentProve.classType}）</span>
 </div>
 <br>
 <div class="clearBoth">
-    <span class="right" style="margin-left:2%;width:400px"></span>
+    <span class="right" style="margin-left:2%;width:400px">${grade}</span>
     <span class="left">级</span>
-    <span class="right" style="width:360px"></span>
+    <span class="right" style="width:360px">${studentProve.classId}</span>
     <span class="left">班学生</span>
 </div>
 <br>
 <div class="clearBoth">
     <span class="left">学号：</span>
-    <span class="right" style="width:340px"></span>
+    <span class="right" style="width:340px">${studentProve.studentNumber}</span>
     <span class="left">，身份证号：</span>
-    <span class="right" style="width:340px"></span>,
+    <span class="right" style="width:340px">${studentProve.idcard}</span>,
 </div>
 <br>
 <div class="clearBoth">
-    <span class="left">  学制 年，学习期限从20 年 月至20 年 月。</span>
+    <span class="left">  学制${studentProve.maxYear}，学习期限从${studentProve.years}年 月至${studentProve.year}年 月。</span>
 </div>
 <br>
 <div class="clearBoth">
     <span class="left" > 班主任：</span>
-    <span class="right" style="border-bottom:none;width:360px"></span>
+    <span class="right" style="border-bottom:none;width:360px">${studentProve.headTeacher}</span>
     <span class="left">  联系电话：</span>
-    <span class="right" style="border-bottom:none;width:360px"></span>
+    <span class="right" style="border-bottom:none;width:360px">${studentProve.tels}</span>
 </div>
 <br>
 <div class="clearBoth">
@@ -135,5 +135,5 @@
     <span align="right">学 生 处</span>
 </div>
 <div class="clearBoth footTxt" style="width: 220px;">
-    <span align="right">2019年 月 日</span>
+    <span align="right">${newDate}</span>
 </div>

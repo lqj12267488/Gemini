@@ -17,6 +17,14 @@ public class StudentProve extends BaseBean {
     private String studentId;       //学生Id
     private String studentName; //学生姓名
     private String deptId;
+    private String sex;
+    private String years;
+    private String headTeacher;
+    private String classType;
+    private String idcard;
+    private String maxYear;
+    private String tels;
+    private String year;
     public String getId() {
         return id;
     }
@@ -127,5 +135,69 @@ public class StudentProve extends BaseBean {
 
     public void setDeptId(String deptId) {
         this.deptId = deptId;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getYears() {
+        return years;
+    }
+
+    public void setYears(String years) {
+        this.years = years;
+    }
+
+    public String getHeadTeacher() {
+        return headTeacher;
+    }
+
+    public void setHeadTeacher(String headTeacher) {
+        this.headTeacher = headTeacher;
+    }
+
+    public String getClassType() {
+        return classType;
+    }
+
+    public void setClassType(String classType) {
+        this.classType = classType;
+    }
+
+    public String getIdcard() {
+        return idcard;
+    }
+
+    public void setIdcard(String idcard) {
+        this.idcard = idcard;
+    }
+
+    public String getMaxYear() {
+        return maxYear;
+    }
+
+    public void setMaxYear(String maxYear) {
+        this.maxYear = maxYear;
+    }
+
+    public String getTels() {
+        return tels;
+    }
+
+    public void setTels(String tels) {
+        this.tels = tels;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 }

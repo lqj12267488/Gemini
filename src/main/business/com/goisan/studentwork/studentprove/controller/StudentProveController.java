@@ -261,20 +261,43 @@ public class StudentProveController {
         String agent = "";
         String departmentName = "";
         String departmentNameStudent = "";
-        for (Handle s:list){
+        String grade = "";
+        String number = "";
+        grade = leave.getYears().substring(2, 4);
+        for (Handle s : list) {
             requestDate = s.getHandleTime();
-            if("经办人".equals(s.getHandleRole())){
+            if ("经办人".equals(s.getHandleRole())) {
                 agent = s.getRemark();
             }
-            if("部门负责人".equals(s.getHandleRole())){
+            if ("部门负责人".equals(s.getHandleRole())) {
                 departmentName = s.getRemark();
             }
-            if("学生处负责人".equals(s.getHandleRole())){
+            if ("学生处负责人".equals(s.getHandleRole())) {
                 departmentNameStudent = s.getRemark();
             }
         }
+        if ("".equals(requestDate)) {
+
+        } else {
+            requestDate = requestDate.split("-")[0] + "年" + requestDate.split("-")[1] + "月" + requestDate.split("-")[2].split(" ")[0] + "日";
+        }
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+        StudentProve studentProve = new StudentProve();
+        studentProve.setRequestDate(df.format(new Date()) + "");
+        List<StudentProve> list1 = studentProveService.getStudentProveList(studentProve);
+        if (list1.size() < 9) {
+            number = df.format(new Date()).split("-")[0] + df.format(new Date()).split("-")[1] + df.format(new Date()).split("-")[2] + "00" + (list1.size() + 1);
+        } else if (list1.size() < 99) {
+            number = df.format(new Date()).split("-")[0] + df.format(new Date()).split("-")[1] + df.format(new Date()).split("-")[2] + "0" + (list1.size() + 1);
+        } else {
+            number = df.format(new Date()).split("-")[0] + df.format(new Date()).split("-")[1] + df.format(new Date()).split("-")[2] + (list1.size() + 1);
+        }
+        String newDate = df.format(new Date()).split("-")[0] + "年" + df.format(new Date()).split("-")[1] + "月" + df.format(new Date()).split("-")[2] + "日";
+        mv.addObject("newDate", newDate);
         mv.addObject("requestDate", requestDate);
         mv.addObject("agent", agent);
+        mv.addObject("number", number);
+        mv.addObject("grade", grade);
         mv.addObject("departmentName", departmentName);
         mv.addObject("departmentNameStudent", departmentNameStudent);
         mv.addObject("studentProve", leave);
