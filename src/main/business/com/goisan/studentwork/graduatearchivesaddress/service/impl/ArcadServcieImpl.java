@@ -46,4 +46,69 @@ public class ArcadServcieImpl implements ArcadServcie {
     public void delArcadById(Arcad arcad) {
         arcadDao.delArcadById(arcad);
     }
+
+    @Override
+    public List<String> findProvince() {
+        return arcadDao.findProvince();
+    }
+
+    @Override
+    public List<String> findCity(String str) {
+        return arcadDao.findCity(str);
+    }
+
+    @Override
+    public List<String> findCity1(String str) {
+        return arcadDao.findCity1(str);
+    }
+
+    @Override
+    public List<String> findCounty(String str) {
+        return arcadDao.findCounty(str);
+    }
+
+    @Override
+    public List<String> find(String str) {
+        return arcadDao.find(str);
+    }
+
+    @Override
+    public List<String> findCounty1(String str) {
+        return arcadDao.findCounty1(str);
+    }
+
+    @Override
+    public List<String> findAllCity() {
+        return arcadDao.findAllCity();
+    }
+
+    @Override
+    public List<String> findCityOrCounty() {
+        return arcadDao.findCityOrCounty();
+    }
+
+    @Override
+    public List<String> select(String str) {
+        return arcadDao.select(str);
+    }
+
+    @Override
+    public List<String> findBj() {
+        return arcadDao.findBj();
+    }
+
+    @Override
+    public List<String> findTj() {
+        return arcadDao.findTj();
+    }
+
+    @Override
+    public List<String> findSh() {
+        return arcadDao.findSh();
+    }
+
+    @Override
+    public List<String> findCq() {
+        return arcadDao.findCq();
+    }
 }
