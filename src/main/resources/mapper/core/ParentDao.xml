@@ -5,32 +5,70 @@
     <select id="getParentList"
             parameterType="com.goisan.system.bean.Parent"
             resultType="com.goisan.system.bean.Parent">
-        select parent_id,parent_name,idcard,parent_tel from T_XG_PARENT
-        WHERE 1 = 1
-        <if test="parentName != null and parentName != '' ">
-            AND parent_name LIKE '%${parentName}%'
-        </if>
-        <if test="idcard != null and idcard != '' ">
-            AND idcard LIKE '%${idcard}%'
-        </if>
+        select t.parent_id,t.parent_name,t.idcard,t.parent_tel,t.PARENT_NAME_SECOND,
+        t.ID_CARD_TYPE,
+        t.ID_CARD_TYPE_SECOND,
+        t.IDCARD_SECOND,
+        t.PARENT_TEL_SECOND,
+        FUNC_GET_TABLEVALUE(t1.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentName,
+        FUNC_GET_USERDICVALUE(t.id_card_type,'JZZJLX') idCardTypeShow,
+        FUNC_GET_USERDICVALUE(t.id_card_type_second,'JZZJLX') idCardTypeSecondShow,
+        t1.student_id,
+        t2.HOUSEHOLD_REGISTER_PLACE
+        from T_XG_PARENT t,T_XG_PARENT_STUDENT t1,T_XG_STUDENT t2
+        WHERE 1 = 1 and t.PARENT_ID = t1.PARENT_ID and t1.student_id = t2.student_id
+         <if test="parentName != null and parentName != '' ">
+             AND t.parent_name LIKE '%${parentName}%'
+         </if>
+         <if test="parentNameSecond != null and parentNameSecond != '' ">
+             AND t.PARENT_NAME_SECOND LIKE '%${parentNameSecond}%'
+         </if>
 
     </select>
     <insert id="saveParent" parameterType="com.goisan.system.bean.Parent">
         insert into t_xg_parent
-        (parent_id,parent_name,idcard,parent_tel,creator,create_time,create_dept)
+        (parent_id,parent_name,idcard,parent_tel,creator,create_time,create_dept,parent_name_second,id_card_type,
+        id_card_type_second,idcard_second,parent_tel_second)
          values
-         (#{parentId},#{parentName},#{idcard},#{parentTel},#{creator},sysdate,#{createDept})
+         (#{parentId},#{parentName},#{idcard},#{parentTel},#{creator},sysdate,#{createDept},
+         #{parentNameSecond},#{idCardType},#{idCardTypeSecond},#{idcardSecond},#{parentTelSecond})
     </insert>
     <select id="getParentById" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Parent">
-        select * from T_XG_PARENT where parent_id = #{id}
+        select t.parent_id,t.parent_name,t.idcard,t.parent_tel,t.PARENT_NAME_SECOND,
+        t.ID_CARD_TYPE,
+        t.ID_CARD_TYPE_SECOND,
+        t.IDCARD_SECOND,
+        t.PARENT_TEL_SECOND,
+        FUNC_GET_TABLEVALUE(t1.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentName,
+        FUNC_GET_USERDICVALUE(t.id_card_type,'JZZJLX') idCardTypeShow,
+        FUNC_GET_USERDICVALUE(t.id_card_type_second,'JZZJLX') idCardTypeSecondShow,
+        t1.student_id,
+        t2.HOUSEHOLD_REGISTER_PLACE
+        from T_XG_PARENT t,T_XG_PARENT_STUDENT t1,T_XG_STUDENT t2
+        WHERE 1 = 1 and t.PARENT_ID = t1.PARENT_ID and t1.student_id = t2.student_id
+        and t.parent_id = #{id}
     </select>
     <update id="updateParent" parameterType="com.goisan.system.bean.Parent">
-        update t_xg_parent set
-            parent_tel=#{parentTel},
-            changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+          update t_xg_parent  set
+          parent_name=#{parentName},
+          idcard = #{idcard},
+           parent_tel=#{parentTel},
+           parent_name_second = #{parentNameSecond},
+           id_card_type = #{idCardType},
+           id_card_type_second = #{idCardTypeSecond},
+           idcard_second = #{idcardSecond},
+           parent_tel_second = #{parentTelSecond},
+           changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
         where parent_id = #{parentId}
     </update>
+
+    <update id="updateStudentId" parameterType="com.goisan.system.bean.Parent">
+          update T_XG_PARENT_STUDENT  set
+          STUDENT_ID=#{studentId}
+        where parent_id = #{parentId}
+    </update>
+
     <delete id="delParent" parameterType="java.lang.String">
         delete from T_XG_PARENT where parent_id = #{id}
     </delete>
@@ -65,22 +103,23 @@
         )
     </select>
     <select id="getCourseTeacherList" parameterType="java.lang.String" resultType="com.goisan.system.bean.TeacherBean">
-        SELECT array.array_id,array.arrayclass_id,  array.class_id,
-            FUNC_GET_TABLEVALUE(array.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') as className,  array.course_id,
-            FUNC_GET_TABLEVALUE(array.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow ,
-            array.teacher_person_id teacherPersonId,array.teacher_dept_id teacherDeptId,
-            FUNC_GET_USERNAME(array.teacher_person_id) teacherPersonName ,
-            arrClass.arrayclass_name arrayClassName,
-            FUNC_GET_DICVALUE(arrClass.term, 'XQ') termShow, term
+        SELECT array.array_id,array.arrayclass_id, array.class_id,
+        FUNC_GET_TABLEVALUE(array.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') as className, array.course_id,
+        FUNC_GET_TABLEVALUE(array.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow ,
+        array.teacher_person_id teacherPersonId,array.teacher_dept_id teacherDeptId,
+        FUNC_GET_USERNAME(array.teacher_person_id) teacherPersonName ,
+        arrClass.arrayclass_name arrayClassName,
+        FUNC_GET_DICVALUE(arrClass.term, 'XQ') termShow, term
         FROM T_JW_ARRAYCLASS_ARRAY array , t_jw_arrayclass arrClass
-        WHERE 1 = 1  and array.arrayclass_id = arrClass.Arrayclass_Id
+        WHERE 1 = 1 and array.arrayclass_id = arrClass.Arrayclass_Id
         AND array.class_id in
         <foreach collection="ids" item="item" open="(" separator="," close=")">
             ''||'${item}'||''
         </foreach>
-          and arrClass.ARRAYCLASS_FLAG= '1'
+        and arrClass.ARRAYCLASS_FLAG= '1'
     </select>
-    <select id="getCourseListByTeacher" parameterType="java.lang.String" resultType="com.goisan.system.bean.TeacherBean">
+    <select id="getCourseListByTeacher" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.TeacherBean">
         SELECT array.array_id,array.arrayclass_id,  array.class_id,
         FUNC_GET_TABLEVALUE(array.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') as className,  array.course_id,
         FUNC_GET_TABLEVALUE(array.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow ,

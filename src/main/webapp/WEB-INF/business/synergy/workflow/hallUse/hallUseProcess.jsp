@@ -184,16 +184,18 @@
             "columns": [
                 {"data": "id", "visible": false},
                 {"data": "createTime", "visible": false},
-                {"width": "10%", "data": "requestDept", "title": "申请部门"},
-                {"width": "9%", "data": "requester", "title": "申请人"},
-                {"width": "10%", "data": "requestDate", "title": "申请日期"},
-                {"width": "10%", "data": "startTime", "title": "开始时间"},
-                {"width": "10%", "data": "endTime", "title": "结束时间"},
-                {"width": "11%","data": "usedevice", "title": "使用设备"},
-                {"width": "10%", "data": "peopleNumber", "title": "参与人数"},
-                {"width": "10%", "data": "content", "title": "活动内容"},
+                {"width": "8%", "data": "requestDept", "title": "申请部门"},
+                {"width": "8%", "data": "requester", "title": "申请人"},
+                {"width": "8%", "data": "requestDate", "title": "申请日期"},
+                {"width": "8%", "data": "startTime", "title": "开始时间"},
+                {"width": "8%", "data": "endTime", "title": "结束时间"},
+                {"width": "8%","data": "usedevice", "title": "使用设备"},
+                {"width": "8%", "data": "peopleNumber", "title": "参与人数"},
+                {"width": "8%", "data": "content", "title": "会议主题"},
+                {"width": "9%", "data": "meetingSiteShow", "title": "会议地点"},
+                {"width": "9%", "data": "meetingRequestShow", "title": "会议申请"},
                 {"width": "9%", "data": "remark", "title": "备注"},
-                {"width": "6%","title": "操作","render": function () {return "<a id='transact' class='icon-file-text-alt' title='办理'></a>&nbsp;&nbsp;&nbsp;" +
+                {"width": "9%","title": "操作","render": function () {return "<a id='transact' class='icon-file-text-alt' title='办理'></a>&nbsp;&nbsp;&nbsp;" +
                     "<a id='update' class='icon-edit' title='修改'></a>";}}
             ],
             'order' : [1,'desc'],

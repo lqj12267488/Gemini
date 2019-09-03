@@ -397,8 +397,7 @@
                         招生方式
                     </div>
                     <div class="col-md-4">
-                        <input id="admissionsWay" class="js-example-basic-single"
-                               value="${student.admissionsWay}"></input>
+                        <select id="admissionsWaySel" class="js-example-basic-single" value=""></select>
                     </div>
                     <div class="col-md-2 tar">
                         联招合作类型
@@ -463,12 +462,42 @@
                                value="${student.subsectionCulture}"/>
                     </div>
 
+                    <div class="col-md-2 tar">
+                        来自军队
+                    </div>
+                    <div class="col-md-4">
+                        <select id="fromArmySel" class="js-example-basic-single" value=""></select>
+                    </div>
+
                 </div>
 
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        是否常住户口在农村
+                    </div>
+                    <div class="col-md-4">
+                        <select id="ruralHouseholdRegistratioSel" class="js-example-basic-single" value=""></select>
+                    </div>
+
+                    <div class="col-md-2 tar">
+                        是否订单（定向）培养
+                    </div>
+                    <div class="col-md-4">
+                        <select id="orderTrainingSel" class="js-example-basic-single" value=""></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        是否建档立卡贫困家庭
+                    </div>
+                    <div class="col-md-4">
+                        <select id="documentaryLikaPoorFamilieSel" class="js-example-basic-single" value=""></select>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success btn-clean" id="" onclick="testEvent()">读卡</button>
+            <%--<button type="button" class="btn btn-success btn-clean" id="" onclick="testEvent()">读卡</button>--%>
             <button type="button" class="btn btn-success btn-clean" id="saveBtn" onclick="saveClass()">保存</button>
             <button type="button" class="btn btn-default btn-clean" data-dismiss="modal">关闭
             </button>
@@ -496,6 +525,10 @@
 <input id="studentType" type="hidden" value="${student.studentType}"/>
 <input id="year" type="hidden" value="${student.joinYear}"/>
 <input id="month" type="hidden" value="${student.joinMonth}"/>
+<input id="fromArmy" type="hidden" value="${student.fromArmy}"/>
+<input id="ruralHouseholdRegistratio" type="hidden" value="${student.ruralHouseholdRegistratio}"/>
+<input id="orderTraining" type="hidden" value="${student.orderTraining}"/>
+<input id="documentaryLikaPoorFamilie" type="hidden" value="${student.documentaryLikaPoorFamilie}"/>
 <object id="plugin0" type="application/x-syncard" width="0" height="0">
     <param name="onload" value="pluginLoaded"/>
 </object>
@@ -517,7 +550,7 @@
         }
     }
 
-    function testEvent() {
+    /*function testEvent() {
         plugin().SetReadType(0);
         plugin().ReadCard();
         //存参
@@ -533,7 +566,7 @@
             $("#housePlace").val(plugin().Address)
             img = plugin().Base64Photo.replace("data:image/Jpeg;base64,", "");
         }
-        /*var sex1 = plugin().Sex + "/" + plugin().SexL;
+        /!*var sex1 = plugin().Sex + "/" + plugin().SexL;
         var myElement1 = document.getElementById('ts101');
         myElement1.innerText = myElement1.textContent = sex1;
         var nation1 = plugin().Nation + "/" + plugin().NationL;
@@ -562,14 +595,14 @@
         myElement9.innerText = myElement9.textContent = photoname1;
         var photobase = plugin().Base64Photo;
         var myElement10 = document.getElementById("image");
-        myElement10.src = "data:image/jpeg;base64," + photobase;*/
+        myElement10.src = "data:image/jpeg;base64," + photobase;*!/
 
 
-        /*		    var state = plugin().NameL;
+        /!*		    var state = plugin().NameL;
                     var myElement = document.getElementById('ts1001');
                     myElement.innerText = myElement.textContent = state;
-        */
-    }
+        *!/
+    }*/
 
     function pluginLoaded() {
         var CardState;
@@ -657,7 +690,26 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=XSLY", function (data) {
             addOption(data, "source", $("#studentSource").val());
         });
-
+        //招生方式
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZSFS", function (data) {
+            addOption(data, 'admissionsWaySel', "${student.admissionsWay}");
+        });
+        //来自军队
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=LZJD", function (data) {
+            addOption(data, 'fromArmySel', $("#fromArmy").val());
+        });
+        //是否常住户口在农村
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'ruralHouseholdRegistratioSel', $("#ruralHouseholdRegistratio").val());
+        });
+        //是否订单（定向）培养
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'orderTrainingSel', $("#orderTraining").val());
+        });
+        //是否建档立卡贫困家庭
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'documentaryLikaPoorFamilieSel', $("#documentaryLikaPoorFamilie").val());
+        });
         //性别
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=XB", function (data) {
             addOption(data, 'sex', $("#sexSHOW").val());
@@ -817,7 +869,6 @@
         var eductionalSystem = $("#eductionalSystem").val();
         var healthCondition = $("#healthCondition").val();
         var enrollmentTarget = $("#enrollmentTarget").val();
-        var admissionsWay = $("#admissionsWay").val();
         var cooperationType = $("#cooperationType").val();
         var examinationCardNumber = $("#examinationCardNumber").val();
         var candidateNumber = $("#candidateNumber").val();
@@ -827,6 +878,11 @@
         var codeCooperativeEducation = $("#codeCooperativeEducation").val();
         var formCooperativeEducation = $("#formCooperativeEducation").val();
         var subsectionCulture = $("#subsectionCulture").val();
+        var admissionsWay = $("#admissionsWaySel option:selected").val();
+        var fromArmy = $("#fromArmySel option:selected").val();
+        var ruralHouseholdRegistratio = $("#ruralHouseholdRegistratioSel option:selected").val();
+        var orderTraining = $("#orderTrainingSel option:selected").val();
+        var documentaryLikaPoorFamilie = $("#documentaryLikaPoorFamilieSel option:selected").val();
         if ($("#name").val() == "") {
             swal({
                 title: "请填写学生姓名!",
@@ -978,6 +1034,10 @@
             formCooperativeEducation: formCooperativeEducation,
             residenceDivisionCode: residenceDivisionCode,
             codeCooperativeEducation: codeCooperativeEducation,
+            fromArmy: fromArmy,
+            ruralHouseholdRegistratio: ruralHouseholdRegistratio,
+            orderTraining: orderTraining,
+            documentaryLikaPoorFamilie: documentaryLikaPoorFamilie,
 
 
         }, function (msg) {

@@ -65,6 +65,185 @@ public class Emp extends BaseBean {
     private String staffBelongsShow;
     private String education;
     private String educationShow;//小学、初中、高中（职高、中专）大专（高职）、本科、研究生
+    private String jobShow;
+    private String job;
+    private String nativePlace;
+    private Date entryDate;
+    private String permanentResidence;
+    private String permanentResidenceLocal;
+    private String levels;
+    private String educationalLevel;
+    private String educationalLevelShow;
+    private String graduateSchool;
+    private Date graduateTime;
+    private String major;
+    private String positionalTitles;
+    private String positionalLevel;
+    private String examinePolitical;
+    private String examinePoliticalShow;
+    private String educationTechnique;
+    private String remark;
+    private String age;
+    private String educationTechniqueShow;
+    private String entryDateShow;
+    private String graduateTimeShow;
+    private String birthdayShow;
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getEducationTechniqueShow() {
+        return educationTechniqueShow;
+    }
+
+    public void setEducationTechniqueShow(String educationTechniqueShow) {
+        this.educationTechniqueShow = educationTechniqueShow;
+    }
+    public String getEducationalLevelShow() {
+        return educationalLevelShow;
+    }
+
+    public void setEducationalLevelShow(String educationalLevelShow) {
+        this.educationalLevelShow = educationalLevelShow;
+    }
+
+    public String getExaminePoliticalShow() {
+        return examinePoliticalShow;
+    }
+
+    public void setExaminePoliticalShow(String examinePoliticalShow) {
+        this.examinePoliticalShow = examinePoliticalShow;
+    }
+
+    public Date getEntryDate() {
+        return entryDate;
+    }
+
+    public void setEntryDate(Date entryDate) {
+        this.entryDate = entryDate;
+    }
+
+    public Date getGraduateTime() {
+        return graduateTime;
+    }
+
+    public void setGraduateTime(Date graduateTime) {
+        this.graduateTime = graduateTime;
+    }
+
+    public String getEducationTechnique() {
+        return educationTechnique;
+    }
+
+    public void setEducationTechnique(String educationTechnique) {
+        this.educationTechnique = educationTechnique;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getExaminePolitical() {
+        return examinePolitical;
+    }
+
+    public void setExaminePolitical(String examinePolitical) {
+        this.examinePolitical = examinePolitical;
+    }
+
+    public String getPositionalTitles() {
+        return positionalTitles;
+    }
+
+    public void setPositionalTitles(String positionalTitles) {
+        this.positionalTitles = positionalTitles;
+    }
+
+    public String getPositionalLevel() {
+        return positionalLevel;
+    }
+
+    public void setPositionalLevel(String positionalLevel) {
+        this.positionalLevel = positionalLevel;
+    }
+
+    public String getMajor() {
+        return major;
+    }
+
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public String getEducationalLevel() {
+        return educationalLevel;
+    }
+
+    public void setEducationalLevel(String educationalLevel) {
+        this.educationalLevel = educationalLevel;
+    }
+
+    public String getGraduateSchool() {
+        return graduateSchool;
+    }
+
+    public void setGraduateSchool(String graduateSchool) {
+        this.graduateSchool = graduateSchool;
+    }
+
+    public String getLevels() {
+        return levels;
+    }
+
+    public void setLevels(String levels) {
+        this.levels = levels;
+    }
+    public String getPermanentResidenceLocal() {
+        return permanentResidenceLocal;
+    }
+
+    public void setPermanentResidenceLocal(String permanentResidenceLocal) {
+        this.permanentResidenceLocal = permanentResidenceLocal;
+    }
+    public String getPermanentResidence() {
+        return permanentResidence;
+    }
+
+    public void setPermanentResidence(String permanentResidence) {
+        this.permanentResidence = permanentResidence;
+    }
+
+    public String getNativePlace() {
+        return nativePlace;
+    }
+
+    public void setNativePlace(String nativePlace) {
+        this.nativePlace = nativePlace;
+    }
+    public String getJobShow() {
+        return jobShow;
+    }
+
+    public void setJobShow(String jobShow) {
+        this.jobShow = jobShow;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
+    }
 
     public String getUserAccount() {
         return userAccount;
@@ -544,5 +723,29 @@ public class Emp extends BaseBean {
 
     public void setEducationShow(String educationShow) {
         this.educationShow = educationShow;
+    }
+
+    public String getEntryDateShow() {
+        return entryDateShow;
+    }
+
+    public void setEntryDateShow(String entryDateShow) {
+        this.entryDateShow = entryDateShow;
+    }
+
+    public String getGraduateTimeShow() {
+        return graduateTimeShow;
+    }
+
+    public void setGraduateTimeShow(String graduateTimeShow) {
+        this.graduateTimeShow = graduateTimeShow;
+    }
+
+    public String getBirthdayShow() {
+        return birthdayShow;
+    }
+
+    public void setBirthdayShow(String birthdayShow) {
+        this.birthdayShow = birthdayShow;
     }
 }

@@ -23,6 +23,42 @@ public class HallUse extends BaseBean {
     private String feedback;
     private String feedbackFlag;
     private String tableName;
+    private String meetingSite;
+    private String meetingSiteShow;
+    private String meetingRequest;
+    private String meetingRequestShow;
+
+    public String getMeetingRequestShow() {
+        return meetingRequestShow;
+    }
+    public void setMeetingRequestShow(String meetingRequestShow) {
+        this.meetingRequestShow = meetingRequestShow;
+    }
+    public String getMeetingRequest() {
+        return meetingRequest;
+    }
+
+    public void setMeetingRequest(String meetingRequest) {
+        this.meetingRequest = meetingRequest;
+    }
+
+
+
+    public String getMeetingSiteShow() {
+        return meetingSiteShow;
+    }
+
+    public void setMeetingSiteShow(String meetingSiteShow) {
+        this.meetingSiteShow = meetingSiteShow;
+    }
+
+    public String getMeetingSite() {
+        return meetingSite;
+    }
+
+    public void setMeetingSite(String meetingSite) {
+        this.meetingSite = meetingSite;
+    }
 
     public String getId() {
         return id;

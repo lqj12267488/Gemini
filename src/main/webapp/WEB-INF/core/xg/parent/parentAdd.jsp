@@ -21,7 +21,33 @@
             <div class="controls">
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>家长姓名
+                        <span class="iconBtx">*</span> 学生身份证件号码
+                    </div>
+                    <div class="col-md-9">
+                        <input id="studentId" value="${data.studentId}" />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx"></span>学生姓名
+                    </div>
+                    <div class="col-md-9">
+                        <input id="studentName" value="${data.studentName}" readonly/>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx"></span>学生户籍地址（与身份证上一致）
+                    </div>
+                    <div class="col-md-9">
+                        <input id="householdRegisterPlace" value="${data.householdRegisterPlace}" readonly/>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span> 父母或监护人1姓名
                     </div>
                     <div class="col-md-9">
                         <input id="parentName" value="${data.parentName}"/>
@@ -29,7 +55,15 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span> 身份证号
+                        <span class="iconBtx">*</span> 父母或监护人1身份证件类型
+                    </div>
+                    <div class="col-md-9">
+                        <select id="idCardType" value="${data.idCardType}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span> 父母或监护人1身份证件号码
                     </div>
                     <div class="col-md-9">
                         <input id="idcard" value="${data.idcard}"/>
@@ -37,7 +71,7 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>电话
+                        <span class="iconBtx">*</span>父母或监护人1联系方式
                     </div>
                     <div class="col-md-9">
                         <input id="parentTel" value="${data.parentTel}"/>
@@ -45,20 +79,45 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>学生
+                        <span class="iconBtx">*</span> 父母或监护人2姓名
                     </div>
                     <div class="col-md-9">
-                        <input id="studentId" />
+                        <input id="parentNameSecond" value="${data.parentNameSecond}"/>
                     </div>
                 </div>
                 <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span> 父母或监护人2身份证件类型
+                    </div>
+                    <div class="col-md-9">
+                        <select id="idCardTypeSecond" value="${data.idCardTypeSecond}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span> 父母或监护人2身份证件号码
+                    </div>
+                    <div class="col-md-9">
+                        <input id="idcardSecond" value="${data.idcardSecond}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>父母或监护人2联系方式
+                    </div>
+                    <div class="col-md-9">
+                        <input id="parentTelSecond" value="${data.parentTelSecond}"/>
+                    </div>
+                </div>
+               <%-- <div class="form-row">
                     <div class="col-md-3 tar">
                         <span class="iconBtx">*</span>关系
                     </div>
                     <div class="col-md-9">
                         <select id="relation" class="js-example-basic-single"></select>
                     </div>
-                </div>
+                </div>--%>
+
             </div>
         </div>
         <div class="modal-footer">
@@ -73,11 +132,24 @@
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     $(document).ready(function () {
-        $.get("<%=request.getContextPath()%>/common/getSysDict?name=XSJZGX", function (data) {
-            addOption(data, "relation" );
+        $('#studentId').on('input propertychange', function () {
+            if ($("#studentId").val() != "") {
+                $.get("<%=request.getContextPath()%>/core/parent/getStudentByStudentId?studentId=" + $("#studentId").val(),
+                    function (data) {
+                        $("#householdRegisterPlace").val(data.householdRegisterPlace);
+                        $("#studentName").val(data.studentName);
+                    })
+            }
+        })
+
+        $.get("<%=request.getContextPath()%>/common/getUserDict?name=JZZJLX", function (data) {
+            addOption(data, "idCardType" );
         });
 
-        $.get("<%=request.getContextPath()%>/common/getStudentClass", function (data) {
+        $.get("<%=request.getContextPath()%>/common/getUserDict?name=JZZJLX", function (data) {
+            addOption(data, "idCardTypeSecond" );
+        });
+       /* $.get("<%=request.getContextPath()%>/common/getStudentClass", function (data) {
             $("#studentId").autocomplete({
                 source: data,
                 select: function (event, ui) {
@@ -90,35 +162,61 @@
                     .append("<a>" + item.label + "</a>")
                     .appendTo(ul);
             };
-        })
+        })*/
 
     });
 
 
     function save() {
+        var studentName = $("#studentName").val();
         var parentName = $("#parentName").val();
+        var studentId = $("#studentId").val();
         var idcard = $("#idcard").val();
+        var idcardSecond = $("#idcardSecond").val();
         var parentTel = $("#parentTel").val();
+        var parentTelSecond = $("#parentTelSecond").val();
+        var idCardType = $("#idCardType").val();
+        var idCardTypeSecond = $("#idCardTypeSecond").val();
+        var parentNameSecond = $("#parentNameSecond").val();
+        var householdRegisterPlace = $("#householdRegisterPlace").val();
+
+        if (studentId == "" || studentId == undefined || studentId == null) {
+            swal({title: "请填写学生身份证件号码！",type: "info"});
+            return;
+        }
+        if (studentName == "" || studentName == undefined || studentName == null) {
+            swal({title: "此学生身份证件号码不存在！请重新填写",type: "info"});
+            return;
+        }
+
+        var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+        if (reg.test(studentId) == false) {
+            swal({title: "身份证输入不合法",type: "info"});
+            return;
+        }
         if (parentName == "" || parentName == undefined || parentName == null) {
-            swal({title: "请填写家长姓名！",type: "info"});
+            swal({title: "请选择父母或监护人1姓名！",type: "info"});
             return;
         }
         if (parentName.indexOf(" ")>0) {
-            swal({title: "请消除家长姓名中的空格！",type: "info"});
+            swal({title: "请消除父母或监护人1姓名中的空格！",type: "info"});
+            return;
+        }
+        if (idCardType == "" || idCardType == null) {
+            swal({title: "请填写父母或监护人1身份证件类型",type: "info"});
             return;
         }
         if (idcard == "" || idcard == null) {
-            swal({title: "请填写身份证号码",type: "info"});
+            swal({title: "请填写父母或监护人1身份证件号码",type: "info"});
             return;
         }
-        var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
         if (reg.test(idcard) == false) {
             swal({title: "身份证输入不合法",type: "info"});
             return;
         }
 
         if (parentTel == "" || parentTel == null) {
-            swal({title: "请填写电话",type: "info"});
+            swal({title: "请填写父母或监护人1联系方式",type: "info"});
             return;
         }
 
@@ -126,33 +224,74 @@
             var phoneNum = /^1\d{10}$/;
             var telNum = /^0\d{2,3}-?\d{7,8}$/;
             if (phoneNum.test(parentTel) === false && telNum.test(parentTel) === false) {
-                swal({title: "电话不正确",type: "info"});
+                swal({title: "父母或监护人1联系方式不正确！请重新选择",type: "info"});
                 return;
             }
         }
 
-        var studentId =$("#studentId").attr("keycode");
-        var studentName =$("#studentId").val();
-        var relation = $("#relation").val();
+        if (parentNameSecond == "" || parentNameSecond == undefined || parentNameSecond == null) {
+            swal({title: "请填写父母或监护人2姓名！",type: "info"});
+            return;
+        }
 
-        if (studentId == "" || studentId == undefined || studentId == null|| studentId == 'undefined') {
+        if (parentNameSecond.indexOf(" ")>0) {
+            swal({title: "请消除父母或监护人2姓名中的空格！",type: "info"});
+            return;
+        }
+
+        if (idCardTypeSecond == "" || idCardTypeSecond == null) {
+            swal({title: "请填写父母或监护人2身份证件类型",type: "info"});
+            return;
+        }
+
+        if (idcardSecond == "" || idcardSecond == null) {
+            swal({title: "父母或监护人2身份证件号码",type: "info"});
+            return;
+        }
+        if (reg.test(idcardSecond) == false) {
+            swal({title: "身份证输入不合法",type: "info"});
+            return;
+        }
+
+        if (parentTelSecond == "" || parentTelSecond == null) {
+            swal({title: "请填写父母或监护人2联系方式",type: "info"});
+            return;
+        }
+
+        if (parentTelSecond != "") {
+            var phoneNum = /^1\d{10}$/;
+            var telNum = /^0\d{2,3}-?\d{7,8}$/;
+            if (phoneNum.test(parentTelSecond) === false && telNum.test(parentTelSecond) === false) {
+                swal({title: "电话不正确",type: "info"});
+                return;
+            }
+        }
+        /* var studentId =$("#studentId").attr("keycode");
+         var studentName =$("#studentId").val();*/
+        //var relation = $("#relation").val();
+
+        /*if (studentId == "" || studentId == undefined || studentId == null|| studentId == 'undefined') {
             swal({title: "请输入学生姓名后在下拉提示中选择！",type: "info"});;
             return;
         }
         if (relation == "" || relation == undefined || relation == null) {
             swal({title: "请选择关系！",type: "info"});;
             return;
-        }
+        }*/
 	
-        studentId = studentId.split(",")[1];
+        //studentId = studentId.split(",")[1];
         showSaveLoading();
         $.post("<%=request.getContextPath()%>/core/parent/saveParent", {
-            parentName:parentName,
-            idcard:idcard,
-            parentTel:parentTel,
-            studentId:studentId,
-            relationVal:relation,
-            studentName:studentName
+            parentName: parentName,
+            idcard: idcard,
+            idcardSecond: idcardSecond,
+            parentTel: parentTel,
+            parentTelSecond: parentTelSecond,
+            idCardType: idCardType,
+            idCardTypeSecond: idCardTypeSecond,
+            parentNameSecond: parentNameSecond,
+            studentId: studentId,
+            householdRegisterPlace: householdRegisterPlace,
         }, function (msg) {
             hideSaveLoading();
             swal({title: msg.msg,type: msg.result});

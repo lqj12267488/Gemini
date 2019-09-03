@@ -122,4 +122,6 @@ public interface RepairService {
     List<Repair> getRepairExecuteByRepairId(String repairID);
 
     void repairChenXiaoFenPei(Repair repair);
+
+    Repair selectDistributionInfo(String repairID);
 }

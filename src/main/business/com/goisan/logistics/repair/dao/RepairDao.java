@@ -58,7 +58,7 @@ public interface RepairDao {
     void closeRepair(String repairId);
     List<AutoComplete> getItemName();
     void updateRepairResult(Repair repair);
-
+    Repair selectDistributionInfo(String repairID);
     /**
      * 移动端通过报修id获取报修详细信息
      * @param repair

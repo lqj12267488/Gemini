@@ -258,6 +258,7 @@
             s.household_register_province,
             s.household_register_city,
             s.household_register_county,
+            s.household_register_place,
             d.CLASS_ID,
             FUNC_GET_TABLEVALUE(d.CLASS_ID,'T_XG_CLASS','CLASS_ID','MAJOR_CODE')    majorCode
         FROM T_XG_STUDENT s left join T_XG_STUDENT_CLASS d on s.STUDENT_ID = d.STUDENT_ID

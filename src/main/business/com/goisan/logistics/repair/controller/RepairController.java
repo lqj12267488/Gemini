@@ -213,7 +213,6 @@ public class RepairController {
         return repairMap;
     }
 
-
     /*任务分配页*/
     @ResponseBody
     @RequestMapping("/repair/getDistribution")
@@ -1158,5 +1157,51 @@ public class RepairController {
     @RequestMapping("/repair/getItemName")
     public List<AutoComplete> getItemName() {
         return repairService.getItemName();
+    }
+
+    @ResponseBody
+    @RequestMapping("/repair/searchDetils")
+    public ModelAndView searchDetils(String repairID) {
+        ModelAndView mv = new ModelAndView();
+        //UserDic userDic = userDicService.getUserDicById(id, dicType);
+        Repair repair = repairService.selectDistributionInfo(repairID);
+        String name = "";
+        String[] name_id = repair.getItemName().split(",");
+        String newname = "";
+        for (int j = 0; j < name_id.length; j++) {
+            String a = name_id[j];
+            name = userDicService.getDicName(a);
+            if (name != null) {
+                newname = newname + name + ",";
+            }
+        }
+        repair.setItemNameShow(newname);
+
+        repair.setSysName(CommonUtil.getPersonName());
+        mv.setViewName("/business/repair/searchDetils");
+        mv.addObject("repair", repair);
+        return mv;
+    }
+
+    //打印
+    @ResponseBody
+    @RequestMapping("/repair/printDistribution")
+    public ModelAndView printDistribution(String repairID) {
+        Repair repair = repairService.selectDistributionInfo(repairID);
+        String name = "";
+        String[] name_id = repair.getItemName().split(",");
+        String newname = "";
+        for (int j = 0; j < name_id.length; j++) {
+            String a = name_id[j];
+            name = userDicService.getDicName(a);
+            if (name != null) {
+                newname = newname + name + ",";
+            }
+        }
+        repair.setItemNameShow(newname);
+        repair.setSysName(CommonUtil.getPersonName());
+        ModelAndView mv = new ModelAndView("/business/repair/printDistribution");
+        mv.addObject("repair", repair);
+        return mv;
     }
 }

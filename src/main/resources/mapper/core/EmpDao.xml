@@ -13,12 +13,35 @@
             e.sex,
             u.user_account,
             FUNC_GET_DICVALUE(e.sex,'XB') sexShow,
+            FUNC_GET_DICVALUE(e.job,'GW') jobShow,
+            e.entry_date  entryDate,
+            to_char(e.entry_date, 'yyyy-mm-dd') entryDateShow,
+            FUNC_GET_DICVALUE(e.marital_status,'HYZK') maritalStatusShow,
+            e.levels levels,
             e.name,
             e.address,
             e.nation,
             FUNC_GET_DICVALUE(e.nation,'MZ') nationShow,
-            e.birthday,
-            e.idcard,
+            FUNC_GET_DICVALUE(e.sex,'XB') sexShow,
+            FUNC_GET_DICVALUE(e.ID_TYPE,'SFZJLX') idTypeShow,
+            e.IDCARD idCard,
+            e.NATIVE_PLACE nativePlace,
+            e.PERMANENT_RESIDENCE permanentResidence,
+            e.PERMANENT_RESIDENCE_LOCAL permanentResidenceLocal,
+            FUNC_GET_DICVALUE(e.EXAMINE_POLITICAL,'SF') examinePoliticalShow,
+            FUNC_GET_DICVALUE(e.political_status,'ZZMM') politicalStatusShow,
+            FUNC_GET_DICVALUE(e.EDUCATIONAL_LEVEL,'WHCD') educationalLevelShow,
+            FUNC_GET_DICVALUE(e.EDUCATION_TECHNIQUE,'JYFS') educationTechniqueShow,
+            e.GRADUATE_SCHOOL graduateSchool,
+            e.major major,
+            e.GRADUATE_TIME graduateTime,
+            to_char(e.GRADUATE_TIME, 'yyyy-mm-dd') graduateTimeShow,
+            e.POSITIONAL_TITLES positionalTitles,
+            e.POSITIONAL_LEVEL positionalLevel,
+            e.remark remark,
+            e.birthday  birthday,
+            to_char(e.birthday, 'yyyy-mm-dd') birthdayShow,
+            to_char(sysdate,'YYYY')-to_char(e.birthday, 'YYYY') age,
             e.valid_flag,
             d.dept_id,
             d.dept_name,
@@ -87,11 +110,11 @@
         e.nation,
         FUNC_GET_DICVALUE(e.nation,'MZ') nationShow,
         e.birthday,
-        e.idcard,
         e.valid_flag,
         d.dept_id,
         d.dept_name deptName,
         e.tel,
+        e.IDCARD,
         e.STAFF_STATUS staffStatus ,
         FUNC_GET_DICVALUE(e.STAFF_STATUS,'JZGZT') staffStatusShow
         FROM
@@ -112,6 +135,10 @@
         <if test="name != null and name != ''">
             AND
             e.name like '%${name}%'
+        </if>
+        <if test="idCard != null and idCard != ''">
+            AND
+            e.IDCARD like '%${idCard}%'
         </if>
         AND
         e.valid_flag = '1'
@@ -192,6 +219,21 @@
             e.staff_status staffStatus,
             FUNC_GET_DICVALUE(e.staff_status,'JZGZT') staffStatusShow,
             e.staff_belongs staffBelongs ,
+            e.job job,
+             e.NATIVE_PLACE nativePlace,
+             e.ENTRY_DATE entryDate,
+             e.PERMANENT_RESIDENCE permanentResidence,
+             e.PERMANENT_RESIDENCE_LOCAL permanentResidenceLocal,
+             e.LEVELS levels,
+             e.EDUCATIONAL_LEVEL educationalLevel,
+             e.GRADUATE_SCHOOL graduateSchool,
+             e.GRADUATE_TIME graduateTime,
+             e.major major,
+             e.POSITIONAL_TITLES positionalTitles,
+             e.POSITIONAL_LEVEL positionalLevel,
+             e.examine_political examinePolitical,
+             e.education_technique	educationTechnique,
+             e.REMARK remark,
           /*  FUNC_GET_DICVALUE(e.staff_status,'JZGSS') staffBelongsShow ,*/
             u.ID_CARD_PHOTO_URL photoUrl
         FROM
@@ -223,7 +265,10 @@
                 work_time,to_school_time,staff_source,staff_type,
                 staff_flag,contract_type,technical_skills,double_type_flag,
                 credentials_flag,stunt_teacher_flag,work_year,
-                staff_status,staff_belongs,employe_form
+                staff_status,staff_belongs,employe_form,job,native_place,entry_date,
+                permanent_residence,permanent_residence_local,levels,examine_political,
+                educational_level,education_technique,graduate_school,graduate_time,
+                major,positional_titles,positional_level,remark
             )
         VALUES (
                 #{personId},#{name},#{sex},#{idCard},
@@ -236,7 +281,11 @@
                 to_date('${workTime}','yyyy-mm-dd'),to_date('${toSchoolTime}','yyyy-mm-dd'),#{staffSource},#{staffType},
                 #{staffFlag},#{contractType},#{technicalSkills},#{doubleTypeFlag},
                 #{credentialsFlag},#{stuntTeacherFlag},#{workYear},
-                #{staffStatus},#{staffBelongs},#{employeForm}
+                #{staffStatus},#{staffBelongs},#{employeForm},#{job},
+                #{nativePlace},to_date('${entryDate}','yyyy-mm-dd'),
+                #{permanentResidence},#{permanentResidenceLocal},#{levels},#{examinePolitical},
+                #{educationalLevel},#{educationTechnique},#{graduateSchool},to_date('${graduateTime}','yyyy-mm-dd'),
+                #{major},#{positionalTitles},#{positionalLevel},#{remark}
             )
     </insert>
     <insert id="saveEmpDeptRelation"
@@ -322,9 +371,9 @@
         <if test="healthStatus != null and healthStatus != '' ">
             health_status=#{healthStatus},
         </if>
-        <if test="workTime != null ">
+       <!-- <if test="workTime != null ">
             work_time=#{workTime},
-        </if>
+        </if>-->
         <if test="toSchoolTime != null ">
             to_school_time=#{toSchoolTime},
         </if>
@@ -363,6 +412,51 @@
         </if>
         <if test="employeForm != null and employeForm != '' ">
             employe_form=#{employeForm},
+        </if>
+        <if test="job != null and job != '' ">
+            job=#{job},
+        </if>
+        <if test="nativePlace != null and nativePlace != '' ">
+            NATIVE_PLACE=#{nativePlace},
+        </if>
+        <if test="entryDate != null  ">
+            ENTRY_DATE = #{entryDate},
+        </if>
+        <if test="permanentResidence != null and permanentResidence != '' ">
+            PERMANENT_RESIDENCE=#{permanentResidence},
+        </if>
+        <if test="permanentResidenceLocal != null and permanentResidenceLocal != '' ">
+            PERMANENT_RESIDENCE_LOCAL=#{permanentResidenceLocal},
+        </if>
+        <if test="levels != null and levels != '' ">
+            LEVELS=#{levels},
+        </if>
+        <if test="examinePolitical != null and examinePolitical != '' ">
+            EXAMINE_POLITICAL=#{examinePolitical},
+        </if>
+        <if test="educationalLevel != null and educationalLevel != '' ">
+            EDUCATIONAL_LEVEL=#{educationalLevel},
+        </if>
+        <if test="educationTechnique != null and educationTechnique != '' ">
+            EDUCATION_TECHNIQUE=#{educationTechnique},
+        </if>
+        <if test="graduateSchool != null and graduateSchool != '' ">
+            GRADUATE_SCHOOL=#{graduateSchool},
+        </if>
+        <if test="graduateTime != null ">
+            GRADUATE_TIME = #{graduateTime},
+        </if>
+        <if test="major != null and major != '' ">
+            MAJOR=#{major},
+        </if>
+        <if test="positionalTitles != null and positionalTitles != '' ">
+            POSITIONAL_TITLES=#{positionalTitles},
+        </if>
+        <if test="positionalLevel != null and positionalLevel != '' ">
+            POSITIONAL_LEVEL=#{positionalLevel},
+        </if>
+        <if test="remark != null and remark != '' ">
+            remark=#{remark},
         </if>
         change_time=sysdate,
         changer=#{changer}

@@ -896,4 +896,21 @@
         AND e.id = #{repairID}
         ORDER BY t.create_time DESC
     </select>
+
+    <select id="selectDistributionInfo" resultType="com.goisan.logistics.repair.bean.Repair"
+            parameterType="java.lang.String">
+   select
+   FUNC_GET_USERNAME(t.CREATOR) creator,
+       to_char(t.SUBMIT_TIME, 'yyyy-mm-dd hh24:mi') submitTime,
+       t.ITEM_NAME,
+       t.Repair_Address,
+       t.Fault_Description,
+       t.CONTACT_NUMBER,
+       func_get_username(t1.Person_Id)PersonIdShow,
+       to_char(t.create_time, 'yyyy-mm-dd hh24:mi') assignTime,
+       t.REPAIR_ID
+  from T_ZW_REPAIR t, T_ZW_REPAIR_EXECUTE t1
+  where t.repair_id = t1.repair_id
+  and t.repair_id = #{repairID}
+    </select>
 </mapper>

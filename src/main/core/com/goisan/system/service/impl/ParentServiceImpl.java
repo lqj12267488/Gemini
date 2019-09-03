@@ -95,4 +95,11 @@ public class ParentServiceImpl implements ParentService {
         return data;
     }
 
+    @Override
+    public void updateStudentId(Parent baseBean) {
+
+        parentDao.updateStudentId(baseBean);
+    }
+
+
 }
