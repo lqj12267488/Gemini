@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.graduatearchivesaddress.dao.StuArcadDao">
+
+    <select id="getStuArcadList" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+        select distinct t.arcad_id,
+        FUNC_GET_TABLEVALUE(ar.arcad_province,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')arcadProvinceShow,
+        FUNC_GET_TABLEVALUE(ar.arcad_city, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') arcadCityShow,
+        FUNC_GET_TABLEVALUE(ar.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')  arcadCountyShow,
+        ar.arcad_detail
+        from T_XG_STU_ARCHIVESADDR t,T_XG_ARCHIVESADDR ar
+        where ar.arcad_id = t.arcad_id and t.valid_flag = '1'
+        <if test='null!=arcadProvince and ""!=arcadProvince'>
+            and arcad_province = #{arcadProvince}
+        </if>
+        <if test='null!=arcadCity and ""!=arcadCity'>
+            and arcad_city = #{arcadCity}
+        </if>
+        <if test='null!=arcadCounty and ""!=arcadCounty'>
+            and arcad_county = #{arcadCounty}
+        </if>
+    </select>
+
+    <select id="getStuByArcadId" parameterType="java.lang.String" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+          select t.*,FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName
+         from  T_XG_STU_ARCHIVESADDR t
+          where t.arcad_id = #{arcadId} and t.valid_flag = '1'
+    </select>
+
+    <insert id="insertStuArcad" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+        insert  into T_XG_STU_ARCHIVESADDR t (t.id,STUDENT_ID,t.arcad_id,CREATOR,CREATE_TIME,CREATE_DEPT,VALID_FLAG) values
+       (func_get_uuid,'${studentId}','${arcadId}','${creator}',sysdate,'${createDept}',default )
+    </insert>
+
+    <select id="checkStudent" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+        select * from T_XG_STU_ARCHIVESADDR where STUDENT_ID = #{studentId} and valid_flag = '1'
+    </select>
+
+    <delete id="delStuArcadByArcadId" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+          update T_XG_STU_ARCHIVESADDR t set t.valid_flag = '0',changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+          where t.arcad_id=#{arcadId}
+    </delete>
+
+    <update id="updStuArcadById" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+        update T_XG_STU_ARCHIVESADDR t set t.arcad_id=#{arcadId},changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+          where t.id=#{id}
+    </update>
+
+    <!--根据班级获取学生档案信息-->
+
+    <select id="getStuArcadByClass" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+                select t.id,
+        FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
+        FUNC_GET_TABLEVALUE(ar.arcad_province,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')arcadProvinceShow,
+        FUNC_GET_TABLEVALUE(ar.arcad_city, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') arcadCityShow,
+        FUNC_GET_TABLEVALUE(ar.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')  arcadCountyShow,
+        FUNC_GET_TABLEVALUE(c.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') className,
+        ar.arcad_detail
+          from T_XG_STU_ARCHIVESADDR t, T_XG_STUDENT_CLASS c,T_XG_ARCHIVESADDR ar
+         where c.student_id = t.student_id
+         and c.class_id = #{classId}
+         and t.valid_flag = '1' and ar.valid_flag = '1'
+         and  ar.arcad_id = t.arcad_id
+        <if test='null!=arcadProvince and ""!=arcadProvince'>
+            and arcad_province = #{arcadProvince}
+        </if>
+        <if test='null!=arcadCity and ""!=arcadCity'>
+            and arcad_city = #{arcadCity}
+        </if>
+        <if test='null!=arcadCounty and ""!=arcadCounty'>
+            and arcad_county = #{arcadCounty}
+        </if>
+        <if test='null!=studentName and ""!=studentName'>
+          and FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') like '%${studentName}%'
+        </if>
+    </select>
+    
+    <select id="getStuArcadById" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+          select  t.id, t.student_id,t.arcad_id,ar.arcad_province,ar.arcad_city,ar.arcad_county,ar.arcad_detail,FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName
+         from  T_XG_STU_ARCHIVESADDR t,T_XG_ARCHIVESADDR ar
+          where t.id = #{id} and t.valid_flag = '1' and ar.valid_flag = '1'
+          and ar.arcad_id = t.arcad_id
+    </select>
+</mapper>

@@ -10,23 +10,36 @@ import java.util.*;
 
 public class Generate {
     private static String driverClassName = "oracle.jdbc.driver.OracleDriver";
-    private static String url = "jdbc:oracle:thin:@192.168.2.252:1521:orcl";
-    private static String username = "goisan_gemini_bczyjsxx";
-    private static String password = "goisan";
+    private static String url = "jdbc:oracle:thin:@192.168.2.251:1521:orcl";
+    private static String username = "goisan_xjxd";
+    private static String password = "goisan_xjxd";
 
     private static String path = System.getProperty("user.dir");
 
+//    public static void main(String[] args) {
+//        Map<String, Object> data = new HashMap<String, Object>();
+//        data.put("tableName", "T_XG_STU_ARCHIVESADDR");
+//        data.put("beanName", "TeachingplanNew");
+//        data.put("packageName", "com.goisan.educational.teachingplan");
+//        data.put("jspPath", "/teachingplanNew");
+//        data.put("primary", "id");
+//        data.put("moduleName", "business");
+//        data.put("url", "/teachingplanNew");
+//        createFile(data);
+//    }
+
     public static void main(String[] args) {
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("tableName", "T_JW_TEACHING_PLAN");
+        data.put("tableName", "T_XG_STU_ARCHIVESADDR");
         data.put("beanName", "TeachingplanNew");
-        data.put("packageName", "com.goisan.educational.teachingplan");
-        data.put("jspPath", "/teachingplanNew");
+        data.put("packageName", "com.goisan.studentwork.graduatearchivesaddress");
+        data.put("jspPath", "/studentwork/graduatearchivesaddress");
         data.put("primary", "id");
         data.put("moduleName", "business");
-        data.put("url", "/teachingplanNew");
+        data.put("url", "/StuArcad");
         createFile(data);
     }
+
 
     private static void createFile(Map<String, Object> data) {
         Generate generateCode = new Generate();

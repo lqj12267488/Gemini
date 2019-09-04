@@ -16,6 +16,7 @@ public interface ArcadDao {
     void insertArcad(Arcad arcad);
     void updateArcadById(Arcad arcad);
     void delArcadById(Arcad arcad);
+    Arcad checkArcad(Arcad arcad);
     @Select("select name from T_SYS_ADMINISTRATIVE_DIVISIONS where type = '1'")
     List<String> findProvince();
 

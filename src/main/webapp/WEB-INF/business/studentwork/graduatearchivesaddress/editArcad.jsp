@@ -76,7 +76,7 @@
     
     function save() {
         $.post("<%=request.getContextPath()%>/arcad/saveArcad", {
-            arcadId:"${acrad.arcadId}",
+            arcadId:"${arcadEdit.arcadId}",
             arcadProvince: $("#arcadProvinceEdit").val(),
             arcadCity:$("#arcadCityEdit").val(),
             arcadCounty:$("#arcadCountyEdit").val(),

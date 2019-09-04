@@ -4,6 +4,7 @@ import com.goisan.studentwork.graduatearchivesaddress.bean.Arcad;
 import com.goisan.studentwork.graduatearchivesaddress.dao.ArcadDao;
 import com.goisan.studentwork.graduatearchivesaddress.service.ArcadServcie;
 import com.goisan.system.tools.CommonUtil;
+import com.goisan.system.tools.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +30,16 @@ public class ArcadServcieImpl implements ArcadServcie {
     }
 
     @Override
-    public void insertArcad(Arcad arcad) {
-        arcad.setCreator(CommonUtil.getPersonId());
-        arcad.setChangeDept(CommonUtil.getDefaultDept());
-        arcadDao.insertArcad(arcad);
+    public Message  insertArcad(Arcad arcad) {
+        Arcad checkArcad = arcadDao.checkArcad(arcad);
+        if (null==checkArcad) {
+            arcad.setCreator(CommonUtil.getPersonId());
+            arcad.setChangeDept(CommonUtil.getDefaultDept());
+            arcadDao.insertArcad(arcad);
+            return new Message(0,"新增成功",null);
+        }else {
+            return new Message(1,"新增失败，该详情地址已存在",null);
+        }
     }
 
     @Override

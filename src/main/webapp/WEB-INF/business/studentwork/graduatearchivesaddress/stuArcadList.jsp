@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: hanjie
-  Date: 2019/8/29
-  Time: 17:43
+  Date: 2019/8/30
+  Time: 13:58
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -31,15 +31,7 @@
                             <div class="col-md-2">
                                 <select id="arcadCountySel" type="text"/>
                             </div>
-                        </div>
-                        <div class="form-row">
 
-                            <div class="col-md-1 tar">
-                                详细地址：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="arcadDetailSel" type="text"/>
-                            </div>
                             <div class="col-md-2 tar">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                                 <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
@@ -52,11 +44,17 @@
                     <div class="form-row block" style="overflow-y:auto;">
                         <div class="form-row">
                             <button type="button" class="btn btn-default btn-clean"
-                                    onclick="addArcad()">新增
+                                    onclick="addStuArcad()">新增
+                            </button>
+                            <button type="button" class="btn btn-default btn-clean"
+                                    onclick="importArcadTemplate()">下载导入模板
+                            </button>
+                            <button type="button" class="btn btn-default btn-clean"
+                                    onclick="importArcad()">导入
                             </button>
                             <br>
                         </div>
-                        <table id="arcadGrid" cellpadding="0" cellspacing="0" width="100%"
+                        <table id="stuArcadGrid" cellpadding="0" cellspacing="0" width="100%"
                                style="max-height: 50%;min-height: 10%;"
                                class="table table-bordered table-striped sortable_default">
                         </table>
@@ -71,37 +69,38 @@
     var path = '<%=request.getContextPath()%>';
     $(function () {
         addAdministrativeDivisions("arcadProvinceSel", "", "arcadCitySel", "", "arcadCountySel", "", path);
+
         search();
+
     })
 
-    function addArcad() {
-            $("#dialog").load("<%=request.getContextPath()%>/arcad/editArcad");
-            $("#dialog").modal("show");
+    function addStuArcad() {
+        $("#dialog").load("<%=request.getContextPath()%>/stuArcad/editStuArcad");
+        $("#dialog").modal("show");
     }
     function importArcadTemplate() {
         window.location.href = "<%=request.getContextPath()%>/arcad/importArcadTemplate";
     }
     function importArcad() {
-        
+
     }
 
     function search() {
-
-        var table =  $("#arcadGrid").DataTable({
+        var table =  $("#stuArcadGrid").DataTable({
             "processing": true,
             "serverSide": true,
             "ajax": {
                 "type": "post",
-                "url": '<%=request.getContextPath()%>/arcad/getArcadList',
+                "url": '<%=request.getContextPath()%>/stuArcad/getstuArcadList',
                 "data": {
                     arcadProvince: $("#arcadProvinceSel").val(),
                     arcadCity: $("#arcadCitySel").val(),
                     arcadCounty: $("#arcadCountySel").val(),
-                    arcadDetail: $("#arcadDetailSel").val(),
                 }
             },
             "destroy": true,
             "columns": [
+                {"data":"id","visible": false},
                 {"data":"arcadId","visible": false},
                 {"data": "arcadProvinceShow", "title": "省"},
                 {"data": "arcadCityShow", "title": "市"},
@@ -110,8 +109,8 @@
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
-                        return '<span class="icon-edit" title="修改" onclick=edit("' + row.arcadId + '")/>&ensp;&ensp;' +
-                            '<span class="icon-trash" title="删除" onclick=del("' + row.arcadId + '")/>&ensp;&ensp;';
+                        return '<span class="icon-edit" title="修改学生" onclick=edit("' + row.arcadId + '")/>&ensp;&ensp;' +
+                            '<span class="icon-search" title="查看" onclick=see("' + row.arcadId + '")/>&ensp;&ensp;';
                     }
                 }
             ],
@@ -123,36 +122,18 @@
 
     }
 
-    function del(id){
-        swal({
-            title: "您确定要删除本条信息?",
-            text: "删除后将无法恢复，请谨慎操作！",
-            type: "warning",
-            showCancelButton: true,
-            cancelButtonText: "取消",
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "删除",
-            closeOnConfirm: false
-        }, function () {
-            $.post("<%=request.getContextPath()%>/arcad/delArcad",{
-                arcadId:id
-            }, function (msg) {
-                if (msg.status == 1) {
-                    swal({title: msg.msg,type: "success"});
-                    $('#arcadGrid').DataTable().ajax.reload();
-                }
-            })
-        });
+    function edit(id) {
+        $("#dialog").load("<%=request.getContextPath()%>/stuArcad/editStuArcad?arcadId="+id);
+        $("#dialog").modal("show");
     }
 
-    function edit(id) {
-        $("#dialog").load("<%=request.getContextPath()%>/arcad/editArcad?arcadId="+id);
+    function see(id) {
+        $("#dialog").load("<%=request.getContextPath()%>/stuArcad/seeStuArcad?arcadId="+id);
         $("#dialog").modal("show");
     }
     function searchClear(){
         $("#arcadProvinceSel").val("");
         $("#arcadCitySel").val("");
         $("#arcadCountySel").val("");
-        $("#arcadDetailSel").val();
     }
 </script>

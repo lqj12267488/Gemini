@@ -1,7 +1,7 @@
 package com.goisan.studentwork.graduatearchivesaddress.service;
 
 import com.goisan.studentwork.graduatearchivesaddress.bean.Arcad;
-import org.apache.ibatis.annotations.Select;
+import com.goisan.system.tools.Message;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
 public interface ArcadServcie {
     List<Arcad> getArcadList(Arcad arcad);
     Arcad getArcadById(String arcadId);
-    void insertArcad(Arcad arcad);
+    Message insertArcad(Arcad arcad);
     void updateArcadById(Arcad arcad);
     void delArcadById(Arcad arcad);
 

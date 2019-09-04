@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.maintenance.dao.MtRelationDao">
+
+    <select id="getMRClassList" resultType="com.goisan.studentwork.maintenance.bean.MtRelation">
+       select t.id as relId,
+       t.class_room_name as relName,
+        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c,T_JW_CLASSROOM r where c.mt_flag='0' and r.id = c.rel_id  and t.id = r.id and c.valid_flag='1' )  = 0
+          then '已维护'
+           else '未维护'
+             end mtStatus
+       from T_JW_CLASSROOM t
+      left join T_XG_MAINTENANCE_RELATION mr
+     on t.id = mr.rel_id
+    group by t.id, class_room_name
+    </select>
+
+    <select id="getMRDormList" resultType="com.goisan.studentwork.maintenance.bean.MtRelation">
+        select d.id as relId,
+       d.dorm_name as relName,
+        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c,T_JW_DORM r where c.mt_flag='0' and r.id = c.rel_id  and d.id = r.id and c.valid_flag='1')  = 0
+          then '已维护'
+           else '未维护'
+             end mtStatus
+       from T_JW_DORM d
+      left join T_XG_MAINTENANCE_RELATION mr
+      on d.id = mr.rel_id
+    group by d.id, dorm_name
+    </select>
+
+    <select id="getMRListByRelId" parameterType="com.goisan.studentwork.maintenance.bean.MtRelation" resultType="com.goisan.studentwork.maintenance.bean.MtRelation">
+        select t.*,
+          func_get_tablevalue(MT_ID, 'T_XG_MAINTENANCE_TYPE', 'MT_ID', 'MT_NAME') mtName,
+          GOOD_NUM*UNIT_PRICE as goodPrice,
+           FUNC_GET_DICVALUE(t.mt_flag,'ISMT') mtFalgShow
+       from T_XG_MAINTENANCE_RELATION t where rel_id = #{relId} and  valid_flag = '1'
+       <if test='mtId!="" and null != mtId '>
+          and MT_ID = #{mtId}
+       </if>
+        <if test= 'null != goodName and goodName !="" '>
+          and  GOOD_NAME like '%' || #{goodName} || '%'
+        </if>
+    </select>
+
+    <select id="getMRDetailById" parameterType="java.lang.String" resultType="com.goisan.studentwork.maintenance.bean.MtRelation">
+          select   t.*,  GOOD_NUM*UNIT_PRICE as goodPrice from T_XG_MAINTENANCE_RELATION t where valid_flag = '1' and id = #{id}
+    </select>
+
+    <insert id="insertMRDetail" parameterType="com.goisan.studentwork.maintenance.bean.MtRelation">
+        insert into T_XG_MAINTENANCE_RELATION (ID,MT_ID,REL_ID,GOOD_NAME,GOOD_UNIT,GOOD_NUM,GOOD_CASE,GOOD_REMARK,CREATOR,CREATE_TIME,CREATE_DEPT,UNIT_PRICE) values
+       (func_get_uuid,'${mtId}','${relId}','${goodName}','${goodUnit}','${goodNum}','${goodCase}','${goodRemark}','${creator}',sysdate,'${createDept}','${unitPrice}')
+    </insert>
+
+    <update id="updateMRDetailById" parameterType="com.goisan.studentwork.maintenance.bean.MtRelation">
+      update  T_XG_MAINTENANCE_RELATION t set MT_ID=#{mtId},GOOD_NAME=#{goodName}
+      ,GOOD_UNIT=#{goodUnit} ,GOOD_NUM=#{goodNum} ,GOOD_CASE=#{goodCase}
+      ,GOOD_REMARK=#{goodRemark},changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+      where t.MT_ID = #{mtId} and valid_flag = '1'
+    </update>
+
+    <delete id="delMRDetailById" parameterType="com.goisan.studentwork.maintenance.bean.MtRelation">
+          update T_XG_MAINTENANCE_RELATION t set t.valid_flag = '0',changer=#{changer},
+          change_time=sysdate,
+          change_dept=#{changeDept}
+          where id = #{id}
+    </delete>
+
+    <!--维护物品详情-->
+    <update id="mtMRDetailById" parameterType="com.goisan.studentwork.maintenance.bean.MtRelation">
+          update T_XG_MAINTENANCE_RELATION t set MT_FLAG='1',changer=#{changer},
+          change_time=sysdate,
+          change_dept=#{changeDept}
+          where id = #{id}
+    </update>
+</mapper>
