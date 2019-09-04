@@ -7,6 +7,7 @@ import com.goisan.studentwork.studentprove.service.StudentProveService;
 import com.goisan.studentwork.studentreissue.bean.StudentReissue;
 import com.goisan.studentwork.studentreissue.service.StudentReissueService;
 import com.goisan.synergy.workflow.service.StampService;
+import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.LoginUser;
 import com.goisan.system.bean.Student;
 import com.goisan.system.tools.CommonUtil;
@@ -69,6 +70,17 @@ public class StudentReissueController {
         studentReissue.setCreateDept(CommonUtil.getDefaultDept());
         studentReissueMap.put("data", studentReissueService.getStudentReissueList(studentReissue));
         return studentReissueMap;
+    }
+    @ResponseBody
+    @RequestMapping("/studentReissue/autoCompleteDept")
+    public List<AutoComplete> autoCompleteDept() {
+        return studentReissueService.autoCompleteDept();
+    }
+
+    @ResponseBody
+    @RequestMapping("/studentReissue/autoCompleteEmployee")
+    public List<AutoComplete> autoCompleteEmployee() {
+        return studentReissueService.autoCompleteEmployee();
     }
 
     /**

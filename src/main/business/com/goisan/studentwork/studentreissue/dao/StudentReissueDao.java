@@ -27,4 +27,9 @@ public interface StudentReissueDao {
     List<StudentReissue> getCompleteList(StudentReissue studentReissue);
 
     StudentReissue getLeaveBy(String id);
+
+    List<AutoComplete> autoCompleteDept();
+
+    List<AutoComplete> autoCompleteEmployee();
+
 }
