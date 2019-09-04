@@ -24,22 +24,66 @@
                     </div>
                     <div class="form-row">
                         <table class="table table-bordered table-striped table-hover text-center" >
-                            <tr>
-                                <td></td>
-                                <c:forEach items="${optionList}" var="optionItem">
-                                    <td>${optionItem.optionValue}</td>
-                                </c:forEach>
-                            </tr>
                             <c:forEach items="${questionList}" var="questionItem">
                                 <tr>
                                     <td>
-                                        ${questionItem.questionOrder}.${questionItem.questionName}
+                                        <div class="form-row">
+                                            <div class="col-md-4">
+                                                    ${questionItem.questionOrder}.${questionItem.questionName}
+                                            </div>
+                                            <div class="col-md-8" style="text-align:left;">
+                                                <c:choose>
+                                                    <c:when test="${questionItem.questionType == '1' }">
+                                                        <input name="${questionItem.questionId}" type="text">
+                                                    </c:when>
+                                                    <c:when test="${questionItem.questionType == '2' }">
+                                                        <c:forEach items="${questionItem.optionList}" var="option">
+                                                            <div class="checkbox-inline">
+                                                                <label><div class="radio">
+                                                                    <span><input type="radio" name="${option.questionId}" value="${option.optionValue}"/></span>
+                                                                </div> ${option.optionValue}</label>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </c:when>
+                                                    <c:when test="${questionItem.questionType == '3' }">
+                                                        <c:forEach items="${questionItem.optionList}" var="option">
+                                                            <div class="checkbox-inline">
+                                                                <label><div class="checker">
+                                                                    <span><input type="checkbox" name="${option.questionId}" value="${option.optionValue}"/></span>
+                                                                </div> ${option.optionValue}</label>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </c:when>
+                                                    <c:when test="${questionItem.questionType == '4' }">
+                                                        <c:forEach items="${questionItem.optionList}" var="option">
+                                                            <div class="checkbox-inline">
+                                                                <label><div class="radio">
+                                                                    <span><input type="radio" name="${option.questionId}" value="${option.optionCode}"/></span>
+                                                                </div> ${option.optionValue}</label>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </c:when>
+                                                    <c:when test="${questionItem.questionType == '5' }">
+                                                        <c:forEach items="${questionItem.optionList}" var="option">
+                                                            <div class="checkbox-inline">
+                                                                <label><div class="checker">
+                                                                    <span><input type="checkbox" name="${option.questionId}" value="${option.optionCode}"/></span>
+                                                                </div> ${option.optionValue}</label>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </c:when>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+
                                     </td>
+<%--
                                     <c:forEach items="${optionList}" var="optionItem">
                                         <td>
                                             <div id="${questionItem.questionId}-${optionItem.optionId}">0.0%&nbsp;&nbsp;(&nbsp;0&nbsp;)</div>
                                         </td>
                                     </c:forEach>
+--%>
                                 </tr>
                             </c:forEach>
                         </table>

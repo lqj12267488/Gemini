@@ -1,16 +1,19 @@
 package com.goisan.survey.service;
 
+import com.goisan.survey.bean.SurveyQuestion;
 import com.goisan.system.bean.BaseBean;
 
 import java.util.List;
 
 public interface SurveyQuestionService {
 
-    List<BaseBean> getSurveyQuestionList(BaseBean baseBean);
+    List<SurveyQuestion> getSurveyQuestionList(SurveyQuestion surveyQuestion);
+
+    List<SurveyQuestion> getSurveyQuestionBySurveyId(String id);
 
     void saveSurveyQuestion(BaseBean baseBean);
 
-    BaseBean getSurveyQuestionById(String id);
+    SurveyQuestion getSurveyQuestionById(String id);
 
     void updateSurveyQuestion(BaseBean baseBean);
 

@@ -56,6 +56,14 @@ public class ParentServiceImpl implements ParentService {
         return parentDao.getSurveyParsonTree( surveyId);
     }
 
+    public List<Tree> getSurveyTeacherTree(String surveyId){
+        return parentDao.getSurveyTeacherTree(surveyId);
+    }
+
+    public List<Tree> getSurveyStudentTree(String surveyId){
+        return parentDao.getSurveyStudentTree(surveyId);
+    }
+
     public List<TeacherBean> getCourseTeacherList(List ids){
         return parentDao.getCourseTeacherList(ids);
     }

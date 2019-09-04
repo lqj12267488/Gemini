@@ -25,6 +25,10 @@ public interface ParentService {
 
     List<Tree> getSurveyParsonTree(String surveyId);
 
+    List<Tree> getSurveyTeacherTree(String surveyId);
+
+    List<Tree> getSurveyStudentTree(String surveyId);
+
     List<TeacherBean> getCourseTeacherList(List ids);
 
     List<TeacherBean> getCourseListByTeacher(String teacherId);

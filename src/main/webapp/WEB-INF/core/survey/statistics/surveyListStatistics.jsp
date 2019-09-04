@@ -14,6 +14,12 @@
                             <div class="col-md-2">
                                 <input id="surveyTitleSel"/>
                             </div>
+                            <div class="col-md-1 tar">
+                                年份：
+                            </div>
+                            <div class="col-md-2">
+                                <select id="f_year"/>
+                            </div>
                             <div class="col-md-2">
                                 <button type="button" class="btn btn-default btn-clean"
                                         onclick="search()">查询
@@ -26,6 +32,12 @@
                     </div>
                 </div>
                 <div class="block block-drop-shadow content">
+                    <div class="form-row">
+                        <button type="button" class="btn btn-default btn-clean"
+                                onclick="add()">新增
+                        </button>
+                        <br>
+                    </div>
                     <div class="form-row block" style="overflow-y:auto;">
                         <table id="surveytable" cellpadding="0" cellspacing="0"
                                width="100%" style="max-height: 50%;min-height: 10%;"
@@ -40,16 +52,20 @@
 <script>
     var surveytable;
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'f_year');
+        });
         surveytable = $("#surveytable").DataTable({
             "ajax": {
                 "type": "post",
-                "url": '<%=request.getContextPath()%>/survey/answer/getSurveyAnswerList',
+                "url": '<%=request.getContextPath()%>/survey/getSurveyStatisticsList',
             },
             "destroy": true,
             "columns": [
                 {"data": "surveyId", "visible": false},
                 {"data": "surveyType", "visible": false},
                 {"data": "checkFlag", "visible": false},
+                {"data":"yearsShow","title":"年份"},
                 {"data":"surveyTitle","title":"主题"},
                 {"data":"startTime","title":"开始时间"},
                 {"data":"endTime","title":"结束时间"},
@@ -57,8 +73,8 @@
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
-                        var r = '<span class="icon-eye-open" title="填写" onclick=preview("' + row.surveyId + '")></span>&ensp;&ensp;';
-                        return r;
+                        return '<span class="icon-search" title="详情" ' +
+                            'onclick=edit("' + row.surveyId + '")/>&ensp;&ensp;'
                     }
                 }
             ],
@@ -67,20 +83,21 @@
         });
     })
 
-
-    // 预览
-    function preview(id) {
-        $("#right").load("<%=request.getContextPath()%>/survey/answer/toAnswer?id=" + id);
+    // 详情
+    function edit(id) {
+        $("#right").load("<%=request.getContextPath()%>/survey/toSurveyEditStatistics?surveyId=" + id);
     }
 
     function searchclear() {
         $("#surveyTitleSel").val("");
+        $("#f_year").val("");
+        $("#f_year option:selected").val("");
         search();
     }
 
     function search() {
         var surveyTitleSel = $("#surveyTitleSel").val();
-        surveytable.ajax.url("<%=request.getContextPath()%>/survey/answer/getSurveyAnswerList?surveyTitle="+surveyTitleSel ).load();
+        surveytable.ajax.url("<%=request.getContextPath()%>/survey/getSurveyStatisticsList?surveyTitle="+surveyTitleSel+"&years="+$("#f_year option:selected").val()).load();
     }
 
 </script>

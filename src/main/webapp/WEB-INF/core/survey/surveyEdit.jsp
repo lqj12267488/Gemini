@@ -19,9 +19,18 @@
         </div>
         <div class="modal-body clearfix">
             <div class="controls">
+
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        问卷主题
+                        年份
+                    </div>
+                    <div class="col-md-9">
+                        <select id="f_years"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        主题
                     </div>
                     <div class="col-md-9">
                         <input id="surveyTitle" value="${data.surveyTitle}"/>
@@ -45,10 +54,10 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        调查类型
+                        问题类型
                     </div>
                     <div class="col-md-9">
-                        <input id="surveyType" value="${data.surveyType}"/>
+                        <select id="surveyType" />
                     </div>
                 </div>
                 <div class="form-row">
@@ -72,7 +81,13 @@
 
 <script>
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=DCLX", function (data) {
+            addOption(data, 'surveyType','${data.surveyType}');
+        });
 
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'f_years','${data.years}');
+        });
     });
 
 
@@ -83,6 +98,11 @@
         var endTime = $("#endTime").val();
         var surveyType = $("#surveyType").val();
         var remark = $("#remark").val();
+        var years = $("#f_years").val();
+        if (years == "" || years == undefined || years == null) {
+            swal({title: "请选择年份！",type: "info"});
+            return;
+        }
         if (surveyTitle == "" || surveyTitle == undefined || surveyTitle == null) {
             swal({title: "请填写主题！",type: "info"});
             return;
@@ -116,6 +136,7 @@
             endTime:endTime,
             surveyType:surveyType,
             remark:remark,
+            years:years
         }, function (msg) {
             swal({
                 title: msg.msg,

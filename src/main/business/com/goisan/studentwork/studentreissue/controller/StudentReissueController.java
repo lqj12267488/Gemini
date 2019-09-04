@@ -272,7 +272,7 @@ public class StudentReissueController {
         String number = "";
         for (Handle s : list) {
             requestDate = s.getHandleTime();
-            if ("经办人".equals(s.getHandleRole())) {
+            if ("年级组组长".equals(s.getHandleRole())) {
                 agentNames = s.getHandleName();
                 agent = s.getRemark();
                 agentRequestDate =  s.getHandleTime().split(" ")[0].split("-")[0]+"年"+s.getHandleTime().split(" ")[0].split("-")[1]+"月"+s.getHandleTime().split(" ")[0].split("-")[2]+"日";

@@ -23,7 +23,11 @@ public interface ParentDao {
     List<Tree> getParsonStudentTree(String roleId);
 
     List<Tree> getSurveyParsonTree(String surveyId);
-    
+
+    List<Tree> getSurveyTeacherTree(String surveyId);
+
+    List<Tree> getSurveyStudentTree(String surveyId);
+
     List<TeacherBean> getCourseTeacherList( @Param("ids")List ids);
 
     List<TeacherBean> getCourseListByTeacher(String teacherId);

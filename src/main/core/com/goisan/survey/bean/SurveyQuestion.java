@@ -2,6 +2,8 @@ package com.goisan.survey.bean;
 
 import com.goisan.system.bean.BaseBean;
 
+import java.util.List;
+
 public class SurveyQuestion extends BaseBean {
     private String questionId;
     private String surveyId;
@@ -11,6 +13,8 @@ public class SurveyQuestion extends BaseBean {
     private String questionTypeShow;
     private String questionOrder;
     private String remark;
+    private List<SurveyOption> optionList;
+    private List result;
 
     public String getQuestionId() {
         return questionId;
@@ -70,5 +74,21 @@ public class SurveyQuestion extends BaseBean {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public List<SurveyOption> getOptionList() {
+        return optionList;
+    }
+
+    public void setOptionList(List<SurveyOption> optionList) {
+        this.optionList = optionList;
+    }
+
+    public List getResult() {
+        return result;
+    }
+
+    public void setResult(List result) {
+        this.result = result;
     }
 }

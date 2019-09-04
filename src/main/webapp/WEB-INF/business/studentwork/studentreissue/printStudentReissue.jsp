@@ -118,13 +118,13 @@
     </tr>
     <tr>
         <td class="left" align="center" style="text-align:center;width: 140px;">
-            班主任<br>
+            辅导员<br>
             意 见：
         </td>
         <td align="center" class="left1" style="text-align:center;" colspan="6">
             ${departmentName}
             <br>
-            班主任签名：${departmentNames}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${departmentNameRequestDate}
+            辅导员签名：${departmentNames}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${departmentNameRequestDate}
         </td>
     </tr>
     <tr>
@@ -152,9 +152,9 @@
     <tr>
         <td class="left" align="center" style="text-align:center;width: 140px;">办理情况</td>
         <td align="center" class="left1" style="text-align:center;" colspan="6">
-            同学的学生证已于${requestDate}办理完毕，于 发放。特备此表备查。<br>
+            ${studentReissue.studentId} 同学的学生证已于${requestDate}办理完毕，于 发放。特备此表备查。<br>
             20   年    月    日在                   报纸上声明丢失；<br>
-            学生签名：${studentReissue.studentId}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;      ${newDate}
+            学生签名：  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </td>
     </tr>
 </table>

@@ -159,5 +159,44 @@
                and p.SURVEY_ID = #{surveyId}
         )
     </select>
+    <select id="getSurveyTeacherTree" parameterType="java.lang.String" resultType="com.goisan.system.bean.Tree">
+        SELECT t.dept_id id , t.dept_name name,t.parent_dept_id pid,0 checked
+        FROM T_SYS_DEPT t  WHERE VALID_FLAG = '1'
+        UNION ALL
+        SELECT s.person_id  || ',' || s.dept_id as id, s.name, s.dept_id as pid, nvl2(p.id, 1, 0) as checked
+        FROM (SELECT e.name , e.person_id , d.dept_id FROM T_RS_EMPLOYEE e , T_RS_EMPLOYEE_DEPT d
+              WHERE e.person_id = d.person_id AND e.valid_flag ='1'
+             ) s
+                 Left JOIN T_DC_PERSON p
+                           ON p.PERSON_DEPT = s.dept_id AND p.PERSON_TYPE = '1'
+                               AND p.PERSON_ID = s.person_id
+                               AND p.SURVEY_ID = #{surveyId}
+    </select>
 
+
+
+    <select id="getSurveyStudentTree" parameterType="java.lang.String" resultType="com.goisan.system.bean.Tree">
+        SELECT t.dept_id id , t.dept_name name,t.parent_dept_id pid,0 checked
+        FROM T_SYS_DEPT t WHERE t.dept_type &lt; 9
+        UNION ALL
+        SELECT d.major_code id, d.major_name || ' -- '|| FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name ,d.departments_id pid,0 checked
+        FROM T_XG_MAJOR d WHERE d.valid_flag =1
+        UNION ALL
+        SELECT e.class_id id,e.class_name name ,e.major_code pid,0 checked
+        FROM T_XG_CLASS e WHERE e.valid_flag =1
+        UNION ALL(
+            select s.id, s.name, s.pid, nvl2(p.id, 1, 0) as checked
+            from (select s.student_id,
+                         s.name name,
+                         rela.class_id pid,
+                         rela.class_id|| ',' ||s.student_id as id
+                  from t_xg_student        s,
+                       T_XG_STUDENT_CLASS  rela
+                  where s.student_id = rela.student_id) s
+                     Left JOIN T_DC_PERSON p
+                               on p.PERSON_DEPT = s.pid and p.PERSON_TYPE = '2'
+                                   and p.person_id = s.student_id
+                                   and p.SURVEY_ID = #{surveyId}
+        )
+    </select>
 </mapper>

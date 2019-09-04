@@ -48,4 +48,28 @@
     <select id="checkQuestionBySurveyid" parameterType="java.lang.String" resultType="java.lang.String">
         select count(QUESTION_ID) from T_DC_QUESTION where survey_id = #{id}
     </select>
+    <select id="getOptionResultById" parameterType="java.lang.String" resultType="java.lang.String">
+        select ANSWER_RESULT from T_DC_ANSWER where survey_id = #{surveyId} and QUESTION_ID = #{questionId}
+    </select>
+    <select id="getOptionOrderById" parameterType="java.lang.String"
+            resultType="com.goisan.survey.bean.SurveyOption">
+        SELECT
+            decode(q.question_type,
+                       '4',FUNC_GET_USERNAME( n.option_value),
+                       '5',FUNC_GET_USERNAME( n.option_value),
+                       n.option_value) optionValue,
+            decode(m.optionOrder ,'','0',m.optionOrder) optionOrder
+        FROM T_DC_INDEXOPTION n ,T_DC_QUESTION q ,
+        (
+        SELECT i.option_id, count(1) optionOrder FROM
+        T_DC_ANSWER a , T_DC_INDEXOPTION i
+        WHERE (a.answer_result like '%'||i.option_id||'%'
+               or a.answer_result like  '%'||i.option_value||'%' )
+              AND a.question_id = #{questionId}
+              AND a.survey_id = #{surveyId}
+        GROUP BY i.option_id
+        ) m WHERE n.option_id = m.option_id(+) AND n.question_id = q.question_id
+        AND n.survey_id = #{surveyId} AND n.question_id = #{questionId}
+
+    </select>
 </mapper>

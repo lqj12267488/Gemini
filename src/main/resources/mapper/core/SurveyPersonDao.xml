@@ -9,9 +9,13 @@
     </select>
     <insert id="saveSurveyPerson" parameterType="com.goisan.survey.bean.SurveyPerson">
         insert into t_dc_person
-        (id,survey_id,person_id,person_dept,person_type,answer_flag,remark,creator,create_time,create_dept)
+        (id,survey_id,person_id,person_dept,person_type,
+        answer_flag,remark,
+        creator,create_time,create_dept)
         values
-        (#{id},#{surveyId},#{personId},#{personDept},#{personType},#{answerFlag},#{remark},#{creator},sysdate,#{createDept})
+        (#{id},#{surveyId},#{personId},#{personDept},#{personType},
+        #{answerFlag},'${remark}',
+        #{creator},sysdate,#{createDept})
     </insert>
     <select id="getSurveyPersonById" parameterType="java.lang.String"
             resultType="com.goisan.survey.bean.SurveyPerson">
@@ -39,5 +43,10 @@
     </delete>
     <select id="checkPersonBySurveyid" parameterType="java.lang.String" resultType="java.lang.String">
         select count(ID) from  T_DC_PERSON where survey_id = #{id}
+    </select>
+    <select id="getSurveyPersonBySurveyId" parameterType="java.lang.String" resultType="com.goisan.survey.bean.SurveyPerson">
+        SELECT p.person_id  personId,FUNC_GET_USERNAME( p.person_id ) personType FROM
+          t_dc_person p
+        WHERE p.answer_flag = '1' AND  survey_id = #{id}
     </select>
 </mapper>

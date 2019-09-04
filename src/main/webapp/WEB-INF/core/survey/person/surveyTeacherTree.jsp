@@ -26,15 +26,15 @@
     var surveyPersonTree;
 
     $(document).ready(function () {
-        $.get("<%=request.getContextPath()%>/survey/person/getSurveyParentTree?surveyId="+$("#surveyId").val(), function (data) {
+        $.get("<%=request.getContextPath()%>/survey/person/getSurveyTeacherTree?surveyId="+$("#surveyId").val(), function (data) {
             surveyPersonTree = $.fn.zTree.init($("#surveyPersonTree"), setting, data);
             surveyPersonTree.expandAll(true);
         });
         if($("#checkFlag").val()=="1"){
             $("#saveBut").css("display","none");
-            $("#head").html("查看答题家长");
+            $("#head").html("查看答题教师");
         }else{
-            $("#head").html("选择答题家长");
+            $("#head").html("选择答题教师");
         }
     })
 
@@ -54,7 +54,7 @@
         $.post("<%=request.getContextPath()%>/survey/person/saveSurveyParent", {
             surveyId:surveyId,
             checkList:checkList,
-            personType:3
+            personType:1
         }, function (msg) {
             if (msg.status == 1 ) {
                 swal({title: msg.msg, type: "success"});
