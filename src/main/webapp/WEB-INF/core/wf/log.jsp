@@ -93,6 +93,7 @@
     })
 
     function doPrint() {
+
       /*  var bdhtml = window.document.body.innerHTML;
         $("#logPrint div").attr("style", "text-align:center; padding-left: 20%;padding-top:8%;");
         $.get($("#printFunds").val(), function (html) {
@@ -111,6 +112,7 @@
             document.body.appendChild(iframe);
         }
         $.get($("#printFunds").val(), function (html) {
+
             console.log(html);
             doc = iframe.contentWindow.document;
             //这里可以自定义样式

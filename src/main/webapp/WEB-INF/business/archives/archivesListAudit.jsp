@@ -86,6 +86,16 @@
                 addOption(data, 'selOne');
             });
         $("#selTwo").append("<option value='' selected>请选择</option>");
+        $.get("<%=request.getContextPath()%>/common/getTableDict", {
+                id: "TYPE_ID",
+                text: "TYPE_NAME",
+                tableName: "DZDA_TYPE",
+                where: "WHERE PARENT_TYPE_ID !='0'",
+                orderby: "ORDER BY TYPE_ID"
+            }
+            , function (data) {
+                addOption(data, 'selTwo');
+            });
         $("#selOne").change(function () {
             $.get("<%=request.getContextPath()%>/common/getTableDict", {
                     id: "TYPE_ID",
@@ -106,6 +116,10 @@
             var data = listTable.row($(this).parent()).data();
             var archivesId = data.archivesId;
             var requestFlag = data.requestFlag;
+            if (this.id == "preview") {
+                $("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + archivesId + "&role=leader");
+                $("#dialog").modal("show");
+            }
             if (this.id == "audit") {
                 if (requestFlag == "1") {
                     $("#dialog").load("<%=request.getContextPath()%>/archives/archivesEditAudit?archivesId=" + archivesId);
@@ -119,6 +133,16 @@
 
     /*清空函数*/
     function searchclear() {
+        $.get("<%=request.getContextPath()%>/common/getTableDict", {
+                id: "TYPE_ID",
+                text: "TYPE_NAME",
+                tableName: "DZDA_TYPE",
+                where: "WHERE PARENT_TYPE_ID !='0'",
+                orderby: "ORDER BY TYPE_ID"
+            }
+            , function (data) {
+                addOption(data, 'selTwo');
+            });
         $("#selOne").val("");
         $("#selTwo").val("");
         $("#selType").val("");
@@ -147,15 +171,41 @@
                 {"width": "10%", "data": "createDept", "title": "创建部门"},
                 {"width": "10%", "data": "creator", "title": "创建人"},
                 {"width": "10%", "data": "archivesCode", "title": "档案编码"},
-                {"width": "10%", "data": "oneLevel", "title": "一级类别"},
-                {"width": "10%", "data": "twoLevel", "title": "二级类别"},
+                {
+                    "width": "10%", "data": "oneLevel", "title": "一级类别",
+                    "render": function (data, type, row, meta) {
+                        if(row.oneLevel!=null || row.oneLevel!=undefined || row.oneLevel!=0){
+                            var tt=row.oneLevel +"";
+                            return "<span title='" + tt + "'>" + tt.substring(0,10) + "</span>";
+                        }
+                    }
+                },
+                {
+                    "width": "10%", "data": "twoLevel", "title": "二级类别",
+                    "render": function (data, type, row, meta) {
+                        if(row.twoLevel!=null || row.twoLevel!=undefined || row.twoLevel!=0){
+                            var tt=row.twoLevel +"";
+                            return "<span title='" + tt + "'>" + tt.substring(0,10) + "</span>";
+                        }
+                    }
+                },
                 {"width": "10%", "data": "fileType", "title": "档案类型"},
-                {"width": "10%", "data": "remark", "title": "档案说明"},
+                {"width": "10%", "data": "schoolType", "title": "学校类别"},
+                {
+                    "width": "10%", "data": "archivesName", "title": "档案名称",
+                    "render": function (data, type, row, meta) {
+                        if(row.archivesName!=null || row.archivesName!=undefined || row.archivesName!=0){
+                            var tt=row.archivesName +"";
+                            return "<span title='" + tt + "'>" + tt.substring(0,10) + "</span>";
+                        }
+                    }
+                },
                 {"width": "10%", "data": "state", "title": "档案状态"},
                 {
                     "width": "7%", "title": "操作", "render":
                         function () {
-                            return "<a id='audit' class='icon-file-text-alt' title='审核'></a>";
+                            return "<a id='audit' class='icon-file-text-alt' title='审核'></a>&nbsp;&nbsp;&nbsp;"+
+                                "<a id='preview' class='icon-eye-open' title='查看附件'></a>";;
                         }
                 }
             ],

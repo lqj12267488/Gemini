@@ -119,16 +119,8 @@
                         <button type="button" class="btn btn-default btn-clean" onclick="addArchives()">
                             新增
                         </button>
-                        <button type="button" class="btn btn-default btn-clean" onclick="allEmpRole()">
-                            批量授权
+                        <button type="button" class="btn btn-info btn-clean" onclick="showArchivesCode()">显示档案编码
                         </button>
-                        <button type="button" class="btn btn-default btn-clean" onclick="roleTakeback()">
-                            权限收回
-                        </button>
-                        <button type="button" class="btn btn-default btn-clean" onclick="changeState()">
-                            批量退回
-                        </button>
-                        <button type="button" class="btn btn-info btn-clean" onclick="showArchivesCode()">显示档案编码</button>
                         <br>
                     </div>
                     <div class="form-row block" style="overflow-y:auto;">
@@ -137,25 +129,24 @@
                                class="table table-bordered table-striped sortable_default">
                             <thead>
                             <tr>
-                                <th width="10%"><input type="checkbox" id="checkAll" onclick="checkAll()"/>
-                                </th>
+                                <%--<th width="10%"><input type="checkbox" id="checkAll" onclick="checkAll()"/>--%>
+                                <%--</th>--%>
                                 <th>id</th>
                                 <th>time</th>
                                 <th>pid</th>
-                                <th>创建部门</th>
-                                <th>创建人</th>
-                                <th>档案编码</th>
-                                <th>一级类别</th>
-                                <th>二级类别</th>
-                                <th>档案类型</th>
-                                <th>学校类别</th>
-                                <th>档案名称</th>
-                                <th>档案状态</th>
-                                <th>授权状态</th>
-                                <th>附件数量</th>
-                                <th>文件形成时间</th>
-                                <th>备注</th>
-                                <th>操作</th>
+                                <th width="10%">创建部门</th>
+                                <th width="7%">创建人</th>
+                                <th width="10%">档案编码</th>
+                                <th width="7%">一级类别</th>
+                                <th width="7%">二级类别</th>
+                                <th width="7%">档案类型</th>
+                                <th width="7%">学校类别</th>
+                                <th width="7%">档案名称</th>
+                                <th width="7%">档案状态</th>
+                                <th width="7%">附件数量</th>
+                                <th width="7%">文件形成时间</th>
+                                <th width="7%">备注</th>
+                                <th width="7%">操作</th>
                             </tr>
                             </thead>
                         </table>
@@ -226,28 +217,23 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=XXLB", function (data) {
             addOption(data, 'selschoolType');
         });
-        $.get("<%=request.getContextPath()%>/common/getSysDict?name=DAZT", function (data) {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=DAZT&where=(dic_code = '5' or dic_code='6')", function (data) {
             addOption(data, 'selstate');
         });
         listTable = $("#listGrid").DataTable({
             "ajax": {
                 "type": "post",
-                "url": '<%=request.getContextPath()%>/archives/getDirectorArchivesList',
+                "url": '<%=request.getContextPath()%>/archives/getSchLeaderArchivesList',
             },
             "bAutoWidth": false,//自动宽度。
             "destroy": true,
             "columns": [
-                {
-                    "render": function (data, type, row) {
-                        return "<input type='checkbox' name='checkbox' value='" + row.archivesId + "'/>";
-                    }
-                },
                 {"data": "archivesId", "visible": false},
                 {"data": "createTime", "visible": false},
                 {"data": "personId", "visible": false},
-                {"data": "createDept", "title": "创建部门","width":"10%"},
-                {"data": "creator", "title": "创建人","width":"10%"},
-                {"data": "archivesCode", "title": "档案编码", "visible": false},
+                {"data": "createDept","width":"10%"},
+                {"data": "creator","width":"10%"},
+                {"data": "archivesCode", "visible": false},
                 {
                     "width": "7%", "data": "oneLevel", "title": "一级类别",
                     "render": function (data, type, row, meta) {
@@ -266,8 +252,8 @@
                         }
                     }
                 },
-                {"data": "fileType", "title": "档案类型","width":"7%"},
-                {"data": "schoolType", "title": "学校类别","width":"7%"},
+                {"data": "fileType","width":"8%"},
+                {"data": "schoolType","width":"10%"},
                 {
                     "width": "10%", "data": "archivesName", "title": "档案名称",
                     "render": function (data, type, row, meta) {
@@ -277,12 +263,11 @@
                         }
                     }
                 },
-                {"data": "state", "title": "档案状态","width":"7%"},
-                {"data": "roleState", "title": "授权状态","width":"7%"},
-                {"data": "fileNum", "title": "附件数量","width":"7%"},
-                {"data": "formatTime", "title": "文件形成时间","width":"7%"},
+                {"data": "state","width":"7%"},
+                {"data": "fileNum","width":"7%"},
+                {"data": "formatTime","width":"10%"},
                 {
-                    "width": "7%", "data": "remark", "title": "备注",
+                    "width": "10%", "data": "remark", "title": "备注",
                     "render": function (data, type, row, meta) {
                         if(row.remark!=null && row.remark!=undefined && row.remark!=0 && row.remark!=""){
                             var tt=row.remark +"";
@@ -293,36 +278,31 @@
                     }
                 },
                 {
-                 "width":"7%","title": "操作", "render":
+                    "width": "7%", "title": "操作", "render":
                         function () {
                             return "<a id='update' class='icon-edit' title='修改'></a>&nbsp;&nbsp;&nbsp;" +
                                 "<a id='upload' class='icon-upload' title='上传附件'></a>&nbsp;&nbsp;&nbsp;" +
                                 "<a id='delete' class='icon-trash' title='删除'></a>&nbsp;&nbsp;&nbsp;" +
-                                "<a id='submit' class='icon-ok' title='提交'></a>&nbsp;&nbsp;&nbsp;" +
-                                "<a id='audit' class='icon-file-text-alt' title='电子档案审查'></a>&nbsp;&nbsp;&nbsp;"+
                                 "<a id='preview' class='icon-eye-open' title='查看附件'></a>&nbsp;&nbsp;&nbsp;" +
-                                "<a id='empRoleView' class='icon-level-down' title='查看已授权人员'></a>";
+                                "<a id='submit' class='icon-ok' title='提交'></a>&nbsp;&nbsp;&nbsp;";
+                            /*  "<a id='audit' class='icon-file-text-alt' title='电子档案审查'></a>";*/
                         }
                 }
             ],
-            'order': [2, 'desc'],
+            'order': [[1, 'desc']],
             "dom": 'rtlip',
             language: language
         });
         listTable.on('click', 'tr a', function () {
             var data = listTable.row($(this).parent()).data();
             var archivesId = data.archivesId;
-            var archivesName=encodeURI(encodeURI(data.archivesName));
-            var archivesCode=data.archivesCode;
+            var archivesName = encodeURI(encodeURI(data.archivesName));
+            var archivesCode = data.archivesCode;
             var requestFlag = data.requestFlag;
             var creator = data.creator;
             var fileNum = data.fileNum;
             var personId = data.personId;
             //修改
-            if (this.id == "preview") {
-                $("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + archivesId + "&role=leader");
-                $("#dialog").modal("show");
-            }
             if (this.id == "update") {
                 $.post("<%=request.getContextPath()%>/archives/checkArchivesPerson", {
                     creator: creator,
@@ -333,7 +313,7 @@
                             type: "info"
                         });
                     } else {
-                        $("#dialog").load("<%=request.getContextPath()%>/archives/editArchives?archivesId=" + archivesId + "&role=teacher");
+                        $("#dialog").load("<%=request.getContextPath()%>/archives/editArchives?archivesId=" + archivesId + "&role=leader");
                         $("#dialog").modal("show");
                     }
                 });
@@ -350,7 +330,7 @@
                         });
                     } else {
                         $("#dialog").load("<%=request.getContextPath()%>/archives/uploadFiles?archivesId=" + archivesId +
-                            "&archivesName="+archivesName+"&archivesCode="+archivesCode+"&delState=1");
+                            "&archivesName=" + archivesName + "&archivesCode=" + archivesCode + "&delState=1&role=leader");
                         $("#dialog").modal("show");
                     }
                 });
@@ -375,8 +355,8 @@
                             confirmButtonText: "确定",
                             closeOnConfirm: false
                         }, function () {
-                            $.get("<%=request.getContextPath()%>/archives/updateValidFlag?archivesId=" + archivesId+
-                                "&archivesName="+archivesName+"&archivesCode="+archivesCode, function (msg) {
+                            $.get("<%=request.getContextPath()%>/archives/updateValidFlag?archivesId=" + archivesId +
+                                "&archivesName=" + archivesName + "&archivesCode=" + archivesCode, function (msg) {
                                 if (msg.status == 1) {
                                     swal({title: msg.msg, type: "success"});
                                     $('#listGrid').DataTable().ajax.reload();
@@ -387,7 +367,7 @@
                 });
             }
             if (this.id == "submit") {
-                if (requestFlag != null && requestFlag != '7' && requestFlag != '8' && requestFlag != '4' && requestFlag != '6') {
+                if (requestFlag != null && requestFlag != '7' && requestFlag != '8' && requestFlag != "4" && requestFlag != "6") {
                     swal({title: "该档案已提交", type: "info"});
                     return;
                 } else {
@@ -408,7 +388,8 @@
                                 confirmButtonText: "提交",
                                 closeOnConfirm: false
                             }, function () {
-                                $.get("<%=request.getContextPath()%>/archives/saveArchivesRequest?requestFlag=5&archivesId=" + archivesId+"&archivesName="+archivesName+"&archivesCode="+archivesCode, function (msg) {
+                                $.get("<%=request.getContextPath()%>/archives/saveArchivesRequest?requestFlag=5&archivesId=" +
+                                    archivesId + "&archivesName=" + archivesName + "&archivesCode=" + archivesCode, function (msg) {
                                     if (msg.status == 1) {
                                         swal({title: msg.msg, type: "success"});
                                         $('#listGrid').DataTable().ajax.reload();
@@ -420,20 +401,21 @@
                 }
             }
             if (this.id == "audit") {
-                if (requestFlag == "0" || requestFlag == "1") {
+                if (requestFlag == "0" || requestFlag == "0") {
                     $("#dialog").load("<%=request.getContextPath()%>/archives/archivesAudit?archivesId=" + archivesId);
                     $("#dialog").modal("show");
-                } else if (requestFlag == "2" || requestFlag == "5") {
+                } else if (requestFlag == "4" || requestFlag == "5") {
                     swal({title: "您已经审查过了！", type: "info"});
                 }
                 else {
                     swal({title: "该档案未提交修改申请！", type: "info"});
                 }
             }
-            if (this.id == "empRoleView") {
-                $("#dialog").load("<%=request.getContextPath()%>/archives/archivesPerRoleView?archivesId=" + archivesId);
+            if (this.id == "preview") {
+                $("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + archivesId + "&role=leader");
                 $("#dialog").modal("show");
             }
+
         });
     })
 
@@ -482,12 +464,11 @@
         var selPerson = $("#selPerson").val();
         var formatTimeStart = $("#formatTimeStart").val();
         var formatTimeEnd = $("#formatTimeEnd").val();
-
         arname = encodeURI(encodeURI(arname));
         selPerson = encodeURI(encodeURI(selPerson));
-        listTable.ajax.url("<%=request.getContextPath()%>/archives/getDirectorArchivesList?oneLevel=" + oneLevel +
+        listTable.ajax.url("<%=request.getContextPath()%>/archives/getSchLeaderArchivesList?oneLevel=" + oneLevel +
             "&twoLevel=" + twoLevel + "&fileType=" + fileType + "&yearCode=" + selYear + "&personName=" + selPerson +
-            "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode + "&archivesName=" + arname+ "&formatTimeStart=" + formatTimeStart+ "&formatTimeEnd=" + formatTimeEnd).load();
+            "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode + "&archivesName=" + arname + "&formatTimeStart=" + formatTimeStart + "&formatTimeEnd=" + formatTimeEnd).load();
     }
 
     //全选
@@ -544,32 +525,7 @@
         }
 
     }
-    //批量退回
-    function changeState() {
-        var chk_value = "";
-        if ($('input[name="checkbox"]:checked').length > 0) {
-            $('input[name="checkbox"]:checked').each(function () {
-                chk_value += $(this).val() + ",";
-            });
-            $.post("<%=request.getContextPath()%>/archives/archivesChangeState", {
-                ids: chk_value,
-            }, function (msg) {
-                if (msg.status == 1) {
-                    swal({
-                        title: msg.msg,
-                        type: "info"
-                    });
-                    $('#listGrid').DataTable().ajax.reload();
-                }
-            });
-        } else {
-            swal({
-                title: "请选择电子档案!",
-                type: "info"
-            });
-        }
 
-    }
     function showArchivesCode() {
         if (flag == "0") {
             flag = "1";
@@ -577,21 +533,16 @@
             listTable = $("#listGrid").DataTable({
                 "ajax": {
                     "type": "post",
-                    "url": '<%=request.getContextPath()%>/archives/getDirectorArchivesList',
+                    "url": '<%=request.getContextPath()%>/archives/getSchLeaderArchivesList',
                 },
                 "destroy": true,
                 "columns": [
-                    {
-                        "render": function (data, type, row) {
-                            return "<div style='width: 20px;height: 20px;'><input type='checkbox' name='checkbox' value='" + row.archivesId + "'/></div>";
-                        }
-                    },
                     {"data": "archivesId", "visible": false},
                     {"data": "createTime", "visible": false},
                     {"data": "personId", "visible": false},
-                    {"data": "createDept", "title": "创建部门"},
-                    {"data": "creator", "title": "创建人"},
-                    {"data": "archivesCode", "title": "档案编码"},
+                    {"data": "createDept"},
+                    {"data": "creator"},
+                    {"data": "archivesCode"},
                     {
                         "width": "7%", "data": "oneLevel", "title": "一级类别",
                         "render": function (data, type, row, meta) {
@@ -601,29 +552,27 @@
                             }
                         }
                     },
-                    {"data": "twoLevel", "title": "二级类别"},
-                    {"data": "fileType", "title": "档案类型"},
-                    {"data": "schoolType", "title": "学校类别"},
+                    {"data": "twoLevel"},
+                    {"data": "fileType"},
+                    {"data": "schoolType"},
                     {"width": "10%", "data": "archivesName", "title": "档案名称"},
-                    {"data": "state", "title": "档案状态"},
-                    {"data": "roleState", "title": "授权状态"},
-                    {"data": "fileNum", "title": "附件数量"},
-                    {"data": "formatTime", "title": "文件形成时间"},
-                    {"data": "remark", "title": "备注"},
+                    {"data": "state"},
+                    {"data": "fileNum"},
+                    {"data": "formatTime"},
+                    {"data": "remark"},
                     {
-                        "title": "操作", "render":
+                        "width": "7%", "title": "操作", "render":
                             function () {
                                 return "<a id='update' class='icon-edit' title='修改'></a>&nbsp;&nbsp;&nbsp;" +
                                     "<a id='upload' class='icon-upload' title='上传附件'></a>&nbsp;&nbsp;&nbsp;" +
                                     "<a id='delete' class='icon-trash' title='删除'></a>&nbsp;&nbsp;&nbsp;" +
-                                    "<a id='submit' class='icon-ok' title='提交'></a>&nbsp;&nbsp;&nbsp;" +
-                                    "<a id='audit' class='icon-file-text-alt' title='电子档案审查'></a>&nbsp;&nbsp;&nbsp;" +
                                     "<a id='preview' class='icon-eye-open' title='查看附件'></a>&nbsp;&nbsp;&nbsp;" +
-                                    "<a id='empRoleView' class='icon-level-down' title='查看已授权人员'></a>";
+                                    "<a id='submit' class='icon-ok' title='提交'></a>&nbsp;&nbsp;&nbsp;";
+                                /*  "<a id='audit' class='icon-file-text-alt' title='电子档案审查'></a>";*/
                             }
                     }
                 ],
-                'order': [2, 'desc'],
+                'order': [[1, 'desc']],
                 "dom": 'rtlip',
                 language: language
             });
@@ -637,10 +586,6 @@
                 var fileNum = data.fileNum;
                 var personId = data.personId;
                 //修改
-                if (this.id == "preview") {
-                    $("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + archivesId + "&role=leader");
-                    $("#dialog").modal("show");
-                }
                 if (this.id == "update") {
                     $.post("<%=request.getContextPath()%>/archives/checkArchivesPerson", {
                         creator: creator,
@@ -651,7 +596,7 @@
                                 type: "info"
                             });
                         } else {
-                            $("#dialog").load("<%=request.getContextPath()%>/archives/editArchives?archivesId=" + archivesId + "&role=teacher");
+                            $("#dialog").load("<%=request.getContextPath()%>/archives/editArchives?archivesId=" + archivesId + "&role=leader");
                             $("#dialog").modal("show");
                         }
                     });
@@ -668,7 +613,7 @@
                             });
                         } else {
                             $("#dialog").load("<%=request.getContextPath()%>/archives/uploadFiles?archivesId=" + archivesId +
-                                "&archivesName=" + archivesName + "&archivesCode=" + archivesCode + "&delState=1");
+                                "&archivesName=" + archivesName + "&archivesCode=" + archivesCode + "&delState=1&role=leader");
                             $("#dialog").modal("show");
                         }
                     });
@@ -705,7 +650,7 @@
                     });
                 }
                 if (this.id == "submit") {
-                    if (requestFlag != null && requestFlag != '7' && requestFlag != '8' && requestFlag != '4'  && requestFlag != '6') {
+                    if (requestFlag != null && requestFlag != '7' && requestFlag != '8' && requestFlag != "4" && requestFlag != "6") {
                         swal({title: "该档案已提交", type: "info"});
                         return;
                     } else {
@@ -726,7 +671,8 @@
                                     confirmButtonText: "提交",
                                     closeOnConfirm: false
                                 }, function () {
-                                    $.get("<%=request.getContextPath()%>/archives/saveArchivesRequest?requestFlag=5&archivesId=" + archivesId + "&archivesName=" + archivesName + "&archivesCode=" + archivesCode, function (msg) {
+                                    $.get("<%=request.getContextPath()%>/archives/saveArchivesRequest?requestFlag=5&archivesId=" +
+                                        archivesId + "&archivesName=" + archivesName + "&archivesCode=" + archivesCode, function (msg) {
                                         if (msg.status == 1) {
                                             swal({title: msg.msg, type: "success"});
                                             $('#listGrid').DataTable().ajax.reload();
@@ -738,23 +684,24 @@
                     }
                 }
                 if (this.id == "audit") {
-                    if (requestFlag == "0" || requestFlag == "1") {
+                    if (requestFlag == "0" || requestFlag == "0") {
                         $("#dialog").load("<%=request.getContextPath()%>/archives/archivesAudit?archivesId=" + archivesId);
                         $("#dialog").modal("show");
-                    } else if (requestFlag == "2" || requestFlag == "5") {
+                    } else if (requestFlag == "4" || requestFlag == "5") {
                         swal({title: "您已经审查过了！", type: "info"});
                     }
                     else {
                         swal({title: "该档案未提交修改申请！", type: "info"});
                     }
                 }
-                if (this.id == "empRoleView") {
-                    $("#dialog").load("<%=request.getContextPath()%>/archives/archivesPerRoleView?archivesId=" + archivesId);
+                if (this.id == "preview") {
+                    $("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + archivesId + "&role=leader");
                     $("#dialog").modal("show");
                 }
+
             });
-        }else {
-            $("#right").load("<%=request.getContextPath()%>/archives/archivesListDirector");
+        } else {
+            $("#right").load("<%=request.getContextPath()%>/archives/archivesListSchLeader");
         }
     }
 </script>

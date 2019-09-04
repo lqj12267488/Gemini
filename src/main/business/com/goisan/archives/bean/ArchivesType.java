@@ -7,6 +7,8 @@ public class ArchivesType extends BaseBean {
     private String typeName;
     private String parentTypeId;
     private String deptOrder;
+    private String publicType;
+    private String newTypeId;
     public String getTypeId() {
         return typeId;
     }
@@ -40,4 +42,19 @@ public class ArchivesType extends BaseBean {
     }
 
 
+    public String getPublicType() {
+        return publicType;
+    }
+
+    public void setPublicType(String publicType) {
+        this.publicType = publicType;
+    }
+
+    public String getNewTypeId() {
+        return newTypeId;
+    }
+
+    public void setNewTypeId(String newTypeId) {
+        this.newTypeId = newTypeId;
+    }
 }

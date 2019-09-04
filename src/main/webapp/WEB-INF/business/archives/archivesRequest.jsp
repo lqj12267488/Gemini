@@ -18,22 +18,9 @@
             <div id="layout" style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
             <div class="controls">
                 <div class="form-row">
-                    <div id="reason1" class="col-md-3 tar">
-                        <span class="iconBtx">*</span>申请原因:
-                    </div>
-                    <div id="reason2" class="col-md-3 tar">
-                        申请原因 :
-                    </div>
-                    <div id="reason3" class="col-md-9">${archives.reason}</div>
-                    <div class="col-md-9">
-                        <textarea id="reason" maxlength="200" placeholder="最多输入200个字"
-                                  class="validate[required,maxSize[100]] form-control"></textarea>
-                    </div>
-                </div>
-                <div id="re" class="form-row">
                     <div class="col-md-3 tar">
                         <span class="iconBtx">*</span>
-                        建议:
+                        建议：
                     </div>
                     <div class="col-md-9">
                         <textarea id="remark" maxlength="200" placeholder="最多输入200个字"
@@ -43,7 +30,6 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" id="saveBtn" class="btn btn-success btn-clean" onclick="save()">申请</button>
             <button type="button" id="auditBtn" class="btn btn-success btn-clean" onclick="auditBtn()">通过</button>
             <button type="button" id="rejectBtn" class="btn btn-default btn-clean" onclick="rejectBtn()">驳回</button>
             <button type="button" class="btn btn-default btn-clean" data-dismiss="modal">关闭</button>
@@ -54,59 +40,13 @@
     <input id="archivesCode" hidden value="${archives.archivesCode}">
 </div>
 <script>
-    $(document).ready(function(){
-        if("${audit}"=="audit"){
-            $("#saveBtn").hide();
-            $("#reason").hide();
-            $("#auditBtn").show();
-            $("#re").show();
-            $("#reason1").hide();
-            $("#reason2").show();
-            $("#rejectBtn").show();
-        }else{
-            $("#reason2").hide();
-            $("#reason3").hide();
-            $("#reason1").show();
-            $("#saveBtn").show();
-            $("#reason").show();
-            $("#auditBtn").hide();
-            $("#rejectBtn").hide();
-            $("#re").hide();
-            $("textarea").removeAttr('readonly');
-        }
-    });
-    function save() {
-        if ($("#reason").val() == "" || $("#reason").val() == "0" || $("#reason").val() == undefined) {
-            swal({
-                title: "请填写申请原因!",
-                type: "info"
-            });
-            return;
-        }
-        $.post("<%=request.getContextPath()%>/archives/saveArchivesRequest", {
-            archivesId: $("#archivesId").val(),
-            archivesName:$("#archivesName").val(),
-            archivesCode:$("#archivesCode").val(),
-            reason: $("#reason").val(),
-            requestFlag:"1",
-        }, function (msg) {
-            if (msg.status == 1) {
-                swal({
-                    title: msg.msg,
-                    type: "success"
-                });
-                $("#dialog").modal('hide');
-                $('#listGrid').DataTable().ajax.reload();
-            }
-        })
-    }
     function auditBtn() {
         $.post("<%=request.getContextPath()%>/archives/saveArchivesRequest", {
             archivesId: $("#archivesId").val(),
             archivesName:$("#archivesName").val(),
             archivesCode:$("#archivesCode").val(),
             remark:$("#remark").val(),
-            requestFlag:"7",
+            requestFlag:"5",
         }, function (msg) {
             if (msg.status == 1) {
                 swal({title: msg.msg,type: "success"});
@@ -118,7 +58,7 @@
     function rejectBtn() {
         if ($("#remark").val() == "" || $("#remark").val() == null || $("#remark").val() == undefined) {
             swal({
-                title: "请填写建议!",
+                title: "请填写修改建议!",
                 type: "info"
             });
             return;
@@ -128,7 +68,7 @@
             archivesName:$("#archivesName").val(),
             archivesCode:$("#archivesCode").val(),
             remark:$("#remark").val(),
-            requestFlag:"3",
+            requestFlag:"4",
         }, function (msg) {
             if (msg.status == 1) {
                 swal({title: msg.msg,type: "success"});

@@ -11,7 +11,7 @@
 <div class="row">
     <div class="col-md-3">
         <div class="block block-drop-shadow">
-            <div class="content controls" style="height: 85%">
+            <div class="content controls" id="style-4" style="overflow-y:auto;height: 85%">
                 <ul id="treeDemo" class="ztree"></ul>
             </div>
         </div>
@@ -46,7 +46,8 @@
             $("#addDept").show();
             $("#addDept").load("<%=request.getContextPath()%>/archivesType/editArchivesType", {
                 id: treeNode.id,
-                name:treeNode.name
+                name:treeNode.name,
+                type:treeNode.type
             });
             return false;
         } else {
@@ -79,7 +80,9 @@
                 confirmButtonText: "删除",
                 closeOnConfirm: false
             }, function () {
-                $.get("<%=request.getContextPath()%>/archivesType/deleteArchivesType?id=" + treeNode.id, function (msg) {
+                $.get("<%=request.getContextPath()%>/archivesType/deleteArchivesType?typeId=" + treeNode.id+"&publicType="
+                    +treeNode.type+"&typeName="+treeNode.name,
+                    function (msg) {
                     swal({
                         title: msg.msg,
                         type: msg.result
@@ -89,6 +92,7 @@
                             zTree.removeNode(treeNode);
                         }
                         deptObjhide();
+                        refrearchivesTree();
                     }
                 });
             });
@@ -140,7 +144,6 @@
     $(document).ready(function () {
         $.get("<%=request.getContextPath()%>/archivesType/getArchivesTypeTree", function (data) {
             archivesTree = $.fn.zTree.init($("#treeDemo"), setting, data);
-            archivesTree.expandAll(true);
         });
     });
 
@@ -151,9 +154,25 @@
     function refrearchivesTree() {
         $.get("<%=request.getContextPath()%>/archivesType/getArchivesTypeTree", function (data) {
             archivesTree = $.fn.zTree.init($("#treeDemo"), setting, data);
-            archivesTree.expandAll(true);
         })
         deptObjhide();
     }
 
 </script>
+<style>
+    #style-4::-webkit-scrollbar-track
+    {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #474D52;
+    }
+    #style-4::-webkit-scrollbar
+    {
+        width: 5px;
+        background-color: #474D52;
+    }
+    #style-4::-webkit-scrollbar-thumb
+    {
+        background-color: #ffffff;
+        border: 1px solid #474D52;
+    }
+</style>

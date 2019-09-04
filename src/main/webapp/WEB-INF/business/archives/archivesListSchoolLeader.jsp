@@ -93,13 +93,19 @@
                                     <input id="selPerson" type="text"
                                            class="validate[required,maxSize[100]] form-control"/>
                                 </div>
+                                <%--<button type="button" class="btn btn-default btn-clean" onclick="search()">--%>
+                                <%--查询--%>
+                                <%--</button>--%>
+                                <%--<button type="button" class="btn btn-default btn-clean" onclick="searchclear()">--%>
+                                <%--清空--%>
+                                <%--</button>--%>
                             </div>
                             <div class="form-row">
                                 <div class="col-md-1 tar" style="width: 90px">
                                     创建部门：
                                 </div>
                                 <div class="col-md-2">
-                                    <select id="selDept"></select>
+                                    <select id="selDept"/>
                                 </div>
                                 <div class="col-md-1 tar">
                                     文件形成时间(开始)
@@ -223,7 +229,7 @@
         listTable = $("#listGrid").DataTable({
             "ajax": {
                 "type": "post",
-                "url": '<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=0',
+                "url": '<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=1',
             },
             "destroy": true,
             "columns": [
@@ -242,7 +248,7 @@
                     }
                 },
                 {
-                    "width": "9%", "data": "twoLevel", "title": "二级类别",
+                    "width": "7%", "data": "twoLevel", "title": "二级类别",
                     "render": function (data, type, row, meta) {
                         if(row.twoLevel!=null || row.twoLevel!=undefined || row.twoLevel!=0){
                             var tt=row.twoLevel +"";
@@ -250,9 +256,9 @@
                         }
                     }
                 },
-                {"width": "9%", "data": "fileType", "title": "档案类型"},
-                {"width": "9%", "data": "schoolType", "title": "学校类型"},
-                {"width": "9%", "data": "state", "title": "档案状态"},
+                {"width": "7%", "data": "fileType", "title": "档案类型"},
+                {"width": "7%", "data": "schoolType", "title": "学校类型"},
+                {"width": "7%", "data": "state", "title": "档案状态"},
                 {
                     "width": "10%", "data": "archivesName", "title": "档案名称",
                     "render": function (data, type, row, meta) {
@@ -262,8 +268,8 @@
                         }
                     }
                 },
-                {"width": "9%", "data": "fileNum", "title": "附件数量"},
-                {"width": "9%", "data": "formatTime", "title": "文件形成时间"},
+                {"width": "7%", "data": "fileNum", "title": "附件数量"},
+                {"width": "7%", "data": "formatTime", "title": "文件形成时间"},
                 {
                     "width": "7%", "title": "操作", "render": function () {
                         return "<a id='preview' class='icon-eye-open' title='查看附件'></a>&nbsp;&nbsp;&nbsp;";
@@ -319,8 +325,8 @@
         var fileType = $("#selType").val();
         var yearCode = $("#selYear").val();
         var personName = $("#selPerson").val();
-        var deptId = $("#selDept").val();
         var schoolType = $("#selschoolType").val();
+        var deptId = $("#selDept").val();
         var selstate = $("#selstate").val();
         var arcode = $("#arcode").val();
         var arname = $("#arname").val();
@@ -329,18 +335,18 @@
         arname = encodeURI(encodeURI(arname));
         personName = encodeURI(encodeURI(personName));
         //var cond=$("#condition").val();
-        listTable.ajax.url("<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=0" + "&oneLevel=" + oneLevel +
+        listTable.ajax.url("<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=1" + "&oneLevel=" + oneLevel +
             "&twoLevel=" + twoLevel + "&fileType=" + fileType + "&yearCode=" + yearCode + "&personName=" + personName + "&deptId=" + deptId +
             "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode + "&archivesName=" + arname +
             "&formatTimeStart=" + formatTimeStart + "&formatTimeEnd=" + formatTimeEnd).load();
-        expList(oneLevel, twoLevel, fileType, yearCode, personName, schoolType, selstate, arcode, arname, deptName);
+        expList(oneLevel, twoLevel, fileType, yearCode, personName, schoolType, selstate, arcode, arname, deptId);
 
     }
 
-    function expList(oneLevel, twoLevel, fileType, yearCode, personName, schoolType, selstate, arcode, arname, deptName) {
+    function expList(oneLevel, twoLevel, fileType, yearCode, personName, schoolType, selstate, arcode, arname, deptId) {
         var href = "<%=request.getContextPath()%>/archives/expList?oneLevel=" + oneLevel + "&twoLevel=" + twoLevel +
-            "&fileType=" + fileType + "&schoolType=" + schoolType + "&yearCode=" + yearCode + "&archivesCode=" + arcode +
-            "&archivesName=" + arname + "&requestFlag=" + selstate + "&personName=" + personName + "&deptName=" + deptName + "&roleFlag=0";
+            "&fileType=" + fileType + "&schoolType=" + schoolType + "&yearCode=" + yearCode + "&archivesCode=" + arcode + "&deptId=" +
+            deptId + "&archivesName=" + arname + "&requestFlag=" + selstate + "&personName=" + personName + "&roleFlag=1";
         $("#expdata").attr("href", href);
     }
 
@@ -350,23 +356,22 @@
         var fileType = $("#selType").val();
         var yearCode = $("#selYear").val();
         var personName = $("#selPerson").val();
-        var deptName = $("#selDept").val();
+        var deptId = $("#selDept").val();
         var schoolType = $("#selschoolType").val();
         var selstate = $("#selstate").val();
         var arcode = $("#arcode").val();
         var arname = $("#arname").val();
         arname = encodeURI(encodeURI(arname));
         personName = encodeURI(encodeURI(personName));
-        deptName = encodeURI(encodeURI(deptName));
-        var print = "<%=request.getContextPath()%>/archives/printArchives?roleFlag=0" + "&oneLevel=" + oneLevel +
-            "&twoLevel=" + twoLevel + "&fileType=" + fileType + "&yearCode=" + yearCode + "&personName=" + personName + "&deptName=" + deptName +
-            "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode + "&archivesName=" + arname;
+        var print = "<%=request.getContextPath()%>/archives/printArchives?roleFlag=1" + "&oneLevel=" + oneLevel +
+            "&twoLevel=" + twoLevel + "&fileType=" + fileType + "&yearCode=" + yearCode + "&personName=" + personName +
+            "&deptId=" + deptId + "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode + "&archivesName=" + arname;
         var bdhtml = window.document.body.innerHTML;
         $.get(print, function (html) {
             window.document.body.innerHTML = html;
             window.print();
             window.document.body.innerHTML = bdhtml;
-            $("#right").load("<%=request.getContextPath()%>/archives/directorArchivesList");
+            $("#right").load("<%=request.getContextPath()%>/archives/archivesListSchoolLeader");
         })
     }
 
@@ -377,7 +382,7 @@
             listTable = $("#listGrid").DataTable({
                 "ajax": {
                     "type": "post",
-                    "url": '<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=0',
+                    "url": '<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=1',
                 },
                 "destroy": true,
                 "columns": [
@@ -396,12 +401,12 @@
                         }
                     },
                     {"width": "9%", "data": "twoLevel", "title": "二级类别"},
-                    {"width": "9%", "data": "fileType", "title": "档案类型"},
-                    {"width": "9%", "data": "schoolType", "title": "学校类型"},
-                    {"width": "9%", "data": "state", "title": "档案状态"},
+                    {"width": "7%", "data": "fileType", "title": "档案类型"},
+                    {"width": "7%", "data": "schoolType", "title": "学校类型"},
+                    {"width": "7%", "data": "state", "title": "档案状态"},
                     {"width": "10%", "data": "archivesName", "title": "档案名称"},
-                    {"width": "9%", "data": "fileNum", "title": "附件数量"},
-                    {"width": "9%", "data": "formatTime", "title": "文件形成时间"},
+                    {"width": "7%", "data": "fileNum", "title": "附件数量"},
+                    {"width": "7%", "data": "formatTime", "title": "文件形成时间"},
                     {
                         "width": "7%", "title": "操作", "render": function () {
                             return "<a id='preview' class='icon-eye-open' title='查看附件'></a>&nbsp;&nbsp;&nbsp;";
@@ -422,7 +427,7 @@
                 }
             });
         } else {
-            $("#right").load("<%=request.getContextPath()%>/archives/directorArchivesList");
+            $("#right").load("<%=request.getContextPath()%>/archives/archivesListSchoolLeader");
         }
     }
 </script>

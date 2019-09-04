@@ -209,7 +209,14 @@
                         <div class="mui-media-body">签到</div>
                     </a>
                 </li>
-
+                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    <a href="<%=request.getContextPath()%>/archives/appArchivesList">
+                        <span class="mui-icon mui-icon-chatbubble">
+                            <span style="display: none" id="archivesCountSpan" class="mui-badge">${archivesCount}</span>
+                        </span>
+                        <div class="mui-media-body">电子档案</div>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>

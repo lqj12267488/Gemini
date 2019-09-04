@@ -13,6 +13,14 @@
         .tar {
             width: 68px !important;
         }
+
+        th, td {
+            white-space: nowrap;
+        }
+
+        .dataTables_scrollHead {
+            height: 39px;
+        }
     }
 </style>
 <div class="container">
@@ -95,12 +103,6 @@
                                 </div>
                             </div>
                             <div class="form-row">
-                                <div class="col-md-1 tar" style="width: 90px">
-                                    创建部门：
-                                </div>
-                                <div class="col-md-2">
-                                    <select id="selDept"></select>
-                                </div>
                                 <div class="col-md-1 tar">
                                     文件形成时间(开始)
                                 </div>
@@ -109,6 +111,22 @@
                                            class="validate[required,maxSize[20]] form-control"
                                     />
                                 </div>
+                                <div class="col-md-1 tar" style="width: 90px">
+                                    创建部门：
+                                </div>
+                                <div class="col-md-2">
+                                    <select id="selDept"/>
+                                </div>
+                                <div class="col-md-1 tar" style="width: 90px">
+                                    授权状态：
+                                </div>
+                                <div class="col-md-2">
+                                    <select id="selRoleState"/>
+                                </div>
+                                <div class="col-md-1 tar" style="width: 90px">
+                                </div>
+                            </div>
+                            <div class="form-row">
                                 <div class="col-md-1 tar">
                                     文件形成时间(結束)
                                 </div>
@@ -197,6 +215,8 @@
                     addOption(data, 'selTwo');
                 });
         });
+
+
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=DALX", function (data) {
             addOption(data, 'selType');
         });
@@ -223,17 +243,20 @@
         listTable = $("#listGrid").DataTable({
             "ajax": {
                 "type": "post",
-                "url": '<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=0',
+                "url": '<%=request.getContextPath()%>/archives/getLeaderArchivesList',
+                "data": {
+                    roleFlag: 2
+                }
             },
             "destroy": true,
             "columns": [
                 {"data": "archivesId", "visible": false},
                 {"data": "createTime", "visible": false},
-                {"width": "9%", "data": "createDept", "title": "创建部门"},
-                {"width": "10%", "data": "creator", "title": "创建人"},
-                {"width": "10%", "data": "archivesCode", "title": "档案编码", "visible": false},
+                {"data": "createDept", "title": "创建部门"},
+                {"data": "creator", "title": "创建人"},
+                {"data": "archivesCode", "title": "档案编码", "visible": false},
                 {
-                    "width": "9%", "data": "oneLevel", "title": "一级类别",
+                    "data": "oneLevel", "title": "一级类别",
                     "render": function (data, type, row, meta) {
                         if(row.oneLevel!=null || row.oneLevel!=undefined || row.oneLevel!=0){
                             var tt=row.oneLevel +"";
@@ -242,7 +265,7 @@
                     }
                 },
                 {
-                    "width": "9%", "data": "twoLevel", "title": "二级类别",
+                    "width": "7%", "data": "twoLevel", "title": "二级类别",
                     "render": function (data, type, row, meta) {
                         if(row.twoLevel!=null || row.twoLevel!=undefined || row.twoLevel!=0){
                             var tt=row.twoLevel +"";
@@ -250,9 +273,9 @@
                         }
                     }
                 },
-                {"width": "9%", "data": "fileType", "title": "档案类型"},
-                {"width": "9%", "data": "schoolType", "title": "学校类型"},
-                {"width": "9%", "data": "state", "title": "档案状态"},
+                {"data": "fileType", "title": "档案类型"},
+                {"data": "schoolType", "title": "学校类型"},
+                {"data": "state", "title": "档案状态"},
                 {
                     "width": "10%", "data": "archivesName", "title": "档案名称",
                     "render": function (data, type, row, meta) {
@@ -262,10 +285,11 @@
                         }
                     }
                 },
-                {"width": "9%", "data": "fileNum", "title": "附件数量"},
-                {"width": "9%", "data": "formatTime", "title": "文件形成时间"},
+                {"data": "roleState", "title": "授权状态"},
+                {"data": "fileNum", "title": "附件数量"},
+                {"data": "formatTime", "title": "文件形成时间"},
                 {
-                    "width": "7%", "title": "操作", "render": function () {
+                    "width": "10%", "title": "操作", "render": function () {
                         return "<a id='preview' class='icon-eye-open' title='查看附件'></a>&nbsp;&nbsp;&nbsp;";
                     }
                 }
@@ -283,6 +307,11 @@
                 $("#dialog").modal("show");
             }
         });
+
+        $("#selRoleState").append("<option value=''>请选择</option>");
+        $("#selRoleState").append("<option value='0'>已授权</option>");
+        $("#selRoleState").append("<option value='1'>未授权</option>");
+
     })
 
     /*清空函数*/
@@ -307,6 +336,7 @@
         $("#selstate").val("");
         $("#arcode").val("");
         $("#arname").val("");
+        $("#selRoleState").val("");
         $("#formatTimeStart").val("");
         $("#formatTimeEnd").val("");
         search();
@@ -324,23 +354,24 @@
         var selstate = $("#selstate").val();
         var arcode = $("#arcode").val();
         var arname = $("#arname").val();
+        var roleState = $("#selRoleState").val();
         var formatTimeStart = $("#formatTimeStart").val();
         var formatTimeEnd = $("#formatTimeEnd").val();
         arname = encodeURI(encodeURI(arname));
         personName = encodeURI(encodeURI(personName));
         //var cond=$("#condition").val();
-        listTable.ajax.url("<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=0" + "&oneLevel=" + oneLevel +
+        listTable.ajax.url("<%=request.getContextPath()%>/archives/getLeaderArchivesList?oneLevel=" + oneLevel +
             "&twoLevel=" + twoLevel + "&fileType=" + fileType + "&yearCode=" + yearCode + "&personName=" + personName + "&deptId=" + deptId +
-            "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode + "&archivesName=" + arname +
-            "&formatTimeStart=" + formatTimeStart + "&formatTimeEnd=" + formatTimeEnd).load();
-        expList(oneLevel, twoLevel, fileType, yearCode, personName, schoolType, selstate, arcode, arname, deptName);
+            "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode + "&archivesName=" + arname
+            + "&roleState=" + roleState + "&formatTimeStart=" + formatTimeStart + "&formatTimeEnd=" + formatTimeEnd).load();
+        expList(oneLevel, twoLevel, fileType, yearCode, personName, schoolType, selstate, arcode, arname, deptId, roleState);
 
     }
 
-    function expList(oneLevel, twoLevel, fileType, yearCode, personName, schoolType, selstate, arcode, arname, deptName) {
-        var href = "<%=request.getContextPath()%>/archives/expList?oneLevel=" + oneLevel + "&twoLevel=" + twoLevel +
-            "&fileType=" + fileType + "&schoolType=" + schoolType + "&yearCode=" + yearCode + "&archivesCode=" + arcode +
-            "&archivesName=" + arname + "&requestFlag=" + selstate + "&personName=" + personName + "&deptName=" + deptName + "&roleFlag=0";
+    function expList(oneLevel, twoLevel, fileType, yearCode, personName, schoolType, selstate, arcode, arname, deptId, roleState) {
+        var href = "<%=request.getContextPath()%>/archives/expList?roleFlag=2" + "&oneLevel=" + oneLevel + "&twoLevel=" +
+            twoLevel + "&fileType=" + fileType + "&schoolType=" + schoolType + "&yearCode=" + yearCode + "&archivesCode=" + arcode +
+            "&deptId=" + deptId + "&archivesName=" + arname + "&requestFlag=" + selstate + "&personName=" + personName + "&roleState=" + roleState;
         $("#expdata").attr("href", href);
     }
 
@@ -350,23 +381,25 @@
         var fileType = $("#selType").val();
         var yearCode = $("#selYear").val();
         var personName = $("#selPerson").val();
-        var deptName = $("#selDept").val();
+        var deptId = $("#selDept").val();
         var schoolType = $("#selschoolType").val();
         var selstate = $("#selstate").val();
         var arcode = $("#arcode").val();
         var arname = $("#arname").val();
+        var roleState = $("#selRoleState").val();
+
         arname = encodeURI(encodeURI(arname));
         personName = encodeURI(encodeURI(personName));
-        deptName = encodeURI(encodeURI(deptName));
-        var print = "<%=request.getContextPath()%>/archives/printArchives?roleFlag=0" + "&oneLevel=" + oneLevel +
-            "&twoLevel=" + twoLevel + "&fileType=" + fileType + "&yearCode=" + yearCode + "&personName=" + personName + "&deptName=" + deptName +
-            "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode + "&archivesName=" + arname;
+        var print = "<%=request.getContextPath()%>/archives/printArchives?roleFlag=2" + "&oneLevel=" + oneLevel +
+            "&twoLevel=" + twoLevel + "&fileType=" + fileType + "&yearCode=" + yearCode + "&personName=" + personName + "&deptId=" +
+            deptId + "&schoolType=" + schoolType + "&requestFlag=" + selstate + "&archivesCode=" + arcode +
+            "&archivesName=" + arname + "&roleState=" + roleState;
         var bdhtml = window.document.body.innerHTML;
         $.get(print, function (html) {
             window.document.body.innerHTML = html;
             window.print();
             window.document.body.innerHTML = bdhtml;
-            $("#right").load("<%=request.getContextPath()%>/archives/directorArchivesList");
+            $("#right").load("<%=request.getContextPath()%>/archives/departmentArchivesList");
         })
     }
 
@@ -377,17 +410,22 @@
             listTable = $("#listGrid").DataTable({
                 "ajax": {
                     "type": "post",
-                    "url": '<%=request.getContextPath()%>/archives/getLeaderArchivesList?roleFlag=0',
+                    "url": '<%=request.getContextPath()%>/archives/getLeaderArchivesList',
+                    "data": {
+                        roleFlag: 2
+                    }
                 },
                 "destroy": true,
+                // "scrollX": true,
+                // "responsive": false,
                 "columns": [
                     {"data": "archivesId", "visible": false},
                     {"data": "createTime", "visible": false},
-                    {"width": "9%", "data": "createDept", "title": "创建部门"},
-                    {"width": "10%", "data": "creator", "title": "创建人"},
-                    {"width": "10%", "data": "archivesCode", "title": "档案编码"},
+                    {"data": "createDept", "title": "创建部门"},
+                    {"data": "creator", "title": "创建人"},
+                    {"data": "archivesCode", "title": "档案编码"},
                     {
-                        "width": "9%", "data": "oneLevel", "title": "一级类别",
+                        "data": "oneLevel", "title": "一级类别",
                         "render": function (data, type, row, meta) {
                             if(row.oneLevel!=null || row.oneLevel!=undefined || row.oneLevel!=0){
                                 var tt=row.oneLevel +"";
@@ -395,15 +433,16 @@
                             }
                         }
                     },
-                    {"width": "9%", "data": "twoLevel", "title": "二级类别"},
-                    {"width": "9%", "data": "fileType", "title": "档案类型"},
-                    {"width": "9%", "data": "schoolType", "title": "学校类型"},
-                    {"width": "9%", "data": "state", "title": "档案状态"},
+                    {"data": "twoLevel", "title": "二级类别"},
+                    {"data": "fileType", "title": "档案类型"},
+                    {"data": "schoolType", "title": "学校类型"},
+                    {"data": "state", "title": "档案状态"},
                     {"width": "10%", "data": "archivesName", "title": "档案名称"},
-                    {"width": "9%", "data": "fileNum", "title": "附件数量"},
-                    {"width": "9%", "data": "formatTime", "title": "文件形成时间"},
+                    {"data": "roleState", "title": "授权状态"},
+                    {"data": "fileNum", "title": "附件数量"},
+                    {"data": "formatTime", "title": "文件形成时间"},
                     {
-                        "width": "7%", "title": "操作", "render": function () {
+                        "title": "操作", "render": function () {
                             return "<a id='preview' class='icon-eye-open' title='查看附件'></a>&nbsp;&nbsp;&nbsp;";
                         }
                     }
@@ -422,7 +461,7 @@
                 }
             });
         } else {
-            $("#right").load("<%=request.getContextPath()%>/archives/directorArchivesList");
+            $("#right").load("<%=request.getContextPath()%>/archives/departmentArchivesList");
         }
     }
 </script>

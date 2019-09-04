@@ -25,8 +25,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-success btn-clean" id="saveBtn" onclick="saveRoleEmpDeptRelation()">保存</button>
-            <button class="btn btn-default btn-clean" id="close" data-dismiss="modal">取消</button>
+            <button class="btn btn-default btn-clean" id="close" data-dismiss="modal">关闭</button>
         </div>
     </div>
 </div>
@@ -60,31 +59,6 @@
         });
     });
 
-    function saveRoleEmpDeptRelation() {
-        var archivesId = $("#archivesId").val();
-        var nodes = EmpDeptTree.getCheckedNodes(true);
-        var checkList = "";
-        for (var i = 0; i < nodes.length; i++) {
-            if (isNaN(nodes[i].id)) {
-                checkList += nodes[i].pId + "@" + nodes[i].id + "@@@";
-            }
-        }
-        if (checkList.length > 0)
-            checkList = checkList.substring(0, checkList.length - 3);
-        showSaveLoading();
-        $.post("<%=request.getContextPath()%>/archives/savePerRelation", {
-            ids:$("#ids").val(),
-            archivesId: archivesId,
-            checkList: checkList
-        }, function (msg) {
-            hideSaveLoading();
-            if (msg.status == 1) {
-                swal({title: msg.msg, type: "success"});
-                $("#dialog").modal('hide');
-                $('#listGrid').DataTable().ajax.reload();
-            }
-        })
-    }
 </script>
 <style>
     #style-4::-webkit-scrollbar-track {

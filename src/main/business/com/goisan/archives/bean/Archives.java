@@ -4,6 +4,8 @@ import com.goisan.system.bean.BaseBean;
 
 public class Archives extends BaseBean {
     private String archivesId;
+    private String personType;
+    private String archivesName;
     private String archivesCode;
     private String deptCode;
     private String yearCode;
@@ -29,6 +31,98 @@ public class Archives extends BaseBean {
     private String condition;
     private String logId;
     private String roleFlag;
+    private String schoolType;//学校类别
+    private String fileNum;//附件数量
+    private String roleState;//附件数量
+    private String requestFlagShow;
+    private String rolePersonId;
+    private String rolePersonDept;
+    private String businessId;
+    private String formatTime;
+    private String formatTimeStart;
+    private String formatTimeEnd;
+    private String createDeptOne;
+    private String createPerson;
+
+    public String getCreatePerson() {
+        return createPerson;
+    }
+
+    public void setCreatePerson(String createPerson) {
+        this.createPerson = createPerson;
+    }
+
+    public String getCreateDeptOne() {
+        return createDeptOne;
+    }
+
+    public void setCreateDeptOne(String createDeptOne) {
+        this.createDeptOne = createDeptOne;
+    }
+
+    public String getFormatTimeEnd() {
+        return formatTimeEnd;
+    }
+
+    public void setFormatTimeEnd(String formatTimeEnd) {
+        this.formatTimeEnd = formatTimeEnd;
+    }
+
+    public String getFormatTimeStart() {
+        return formatTimeStart;
+    }
+
+    public void setFormatTimeStart(String formatTimeStart) {
+        this.formatTimeStart = formatTimeStart;
+    }
+
+    public String getFormatTime() {
+        return formatTime;
+    }
+
+    public void setFormatTime(String formatTime) {
+        this.formatTime = formatTime;
+    }
+
+    public String getBusinessId() {
+        return businessId;
+    }
+
+    public void setBusinessId(String businessId) {
+        this.businessId = businessId;
+    }
+
+    public String getRequestFlagShow() {
+        return requestFlagShow;
+    }
+
+    public void setRequestFlagShow(String requestFlagShow) {
+        this.requestFlagShow = requestFlagShow;
+    }
+
+    public String getPersonType() {
+        return personType;
+    }
+
+    public void setPersonType(String personType) {
+        this.personType = personType;
+    }
+
+    public String getArchivesName() {
+        return archivesName;
+    }
+
+    public void setArchivesName(String archivesName) {
+        this.archivesName = archivesName;
+    }
+
+    public String getSchoolType() {
+        return schoolType;
+    }
+
+    public void setSchoolType(String schoolType) {
+        this.schoolType = schoolType;
+    }
 
     public String getPersonId() {
         return personId;
@@ -236,5 +330,37 @@ public class Archives extends BaseBean {
 
     public void setRoleFlag(String roleFlag) {
         this.roleFlag = roleFlag;
+    }
+
+    public String getFileNum() {
+        return fileNum;
+    }
+
+    public void setFileNum(String fileNum) {
+        this.fileNum = fileNum;
+    }
+
+    public String getRoleState() {
+        return roleState;
+    }
+
+    public void setRoleState(String roleState) {
+        this.roleState = roleState;
+    }
+
+    public String getRolePersonId() {
+        return rolePersonId;
+    }
+
+    public void setRolePersonId(String rolePersonId) {
+        this.rolePersonId = rolePersonId;
+    }
+
+    public String getRolePersonDept() {
+        return rolePersonDept;
+    }
+
+    public void setRolePersonDept(String rolePersonDept) {
+        this.rolePersonDept = rolePersonDept;
     }
 }

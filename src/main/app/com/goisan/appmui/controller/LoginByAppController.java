@@ -1,10 +1,15 @@
 package com.goisan.appmui.controller;
 
+import com.goisan.archives.bean.Archives;
+import com.goisan.archives.service.ArchivesService;
 import com.goisan.evaluation.bean.EvaluationEmpsMenmbers;
 import com.goisan.evaluation.service.EvaluationService;
 import com.goisan.synergy.notice.service.NoticeService;
 import com.goisan.system.bean.LoginLog;
 import com.goisan.system.bean.LoginUser;
+import com.goisan.system.bean.Select2;
+import com.goisan.system.bean.TableDict;
+import com.goisan.system.service.CommonService;
 import com.goisan.system.service.LoginLogService;
 import com.goisan.system.service.LoginUserService;
 import com.goisan.system.tools.CommonUtil;
@@ -99,7 +104,10 @@ public class LoginByAppController {
 
         return map;
     }
-
+@Resource
+private CommonService commonService;
+    @Resource
+    private ArchivesService archivesService;
     @RequestMapping("/loginApp/index")
     public ModelAndView index() {
         ModelAndView mv = new ModelAndView();
@@ -124,6 +132,28 @@ public class LoginByAppController {
             mv.addObject("smCount", eSMenmbersList.size());
         else
             mv.addObject("smCount",0);
+        TableDict tableDict = new TableDict();
+        tableDict.setId(" wm_concat(distinct role_id) ");
+        tableDict.setText(" '' ");
+        tableDict.setTableName(" T_RS_EMPLOYEE_DEPT_ROLE ");
+        tableDict.setWhere("where 1=1");
+        tableDict.setWhere(" where person_id = '"+CommonUtil.getPersonId()+"' and " +
+                " role_id in ('b34d00b3-bcde-4600-9d4c-a48906c7d750' ) ");
+        List<Select2> selectList = commonService.getTableDict(tableDict);
+
+        Archives archives = new Archives();
+        archives.setValidFlag("1");
+        archives.setRequestFlag("1");
+        archives.setCreator(CommonUtil.getPersonId());
+        if(null != selectList && selectList.size() !=0){
+            archives.setCreateDept(CommonUtil.getDefaultDept());
+        }
+        String count = archivesService.getCheckListCount(archives);
+        if(null == count || count.equals("0")){
+            count = "0";
+        }
+        mv.addObject("archivesCount", count);
+
 
         int unDoList = workflowService.getlistUnDoWorkFlowNameAppByType("%"+loginUser.getPersonId()+"%").size();
         if(!"" .equals(unDoList) )

@@ -12,7 +12,8 @@ public class EmpDeptTree {
     private String isper;
     private boolean isOpen;
     private String checked;
-
+    private String flag;
+    private String createDept;
     public String getIsper() {
         return isper;
     }
@@ -77,5 +78,20 @@ public class EmpDeptTree {
         isOpen = open;
     }
 
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
+
+    public String getCreateDept() {
+        return createDept;
+    }
+
+    public void setCreateDept(String createDept) {
+        this.createDept = createDept;
+    }
 }
 

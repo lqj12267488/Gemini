@@ -25,8 +25,23 @@ public class ArchivesTypeServiceImpl implements ArchivesTypeService {
     }
 
     @Override
+    public ArchivesType getArchivesTypeByName(String name) {
+        return archivesTypeDao.getArchivesTypeByName(name);
+    }
+
+    @Override
     public List<ArchivesType> checkName(ArchivesType archivesType) {
         return archivesTypeDao.checkName(archivesType);
+    }
+
+    @Override
+    public List<ArchivesType> checkId(ArchivesType archivesType) {
+        return archivesTypeDao.checkId(archivesType);
+    }
+
+    @Override
+    public List<ArchivesType> allPid(ArchivesType archivesType) {
+        return archivesTypeDao.allPid(archivesType);
     }
 
     @Override
@@ -51,9 +66,20 @@ public class ArchivesTypeServiceImpl implements ArchivesTypeService {
     }
 
     @Override
+    public void updateArchivesTypeName(ArchivesType archivesType) {
+        archivesTypeDao.updateArchivesTypeName(archivesType);
+    }
+
+    @Override
     public void deleteArchivesType(String id) {
         archivesTypeDao.deleteArchivesType(id);
     }
+
+    @Override
+    public void deleteArchivesName(String name) {
+        archivesTypeDao.deleteArchivesName(name);
+    }
+
     @Override
     public String getTypeName(String pId) {
         return archivesTypeDao.getTypeName(pId);
