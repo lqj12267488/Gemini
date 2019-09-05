@@ -6,11 +6,6 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Title</title>
-</head>
-<body>
 <div class="container">
     <div class="row">
         <div class="col-md-12">
@@ -59,12 +54,6 @@
                             <button type="button" class="btn btn-default btn-clean"
                                     onclick="addArcad()">新增
                             </button>
-                            <button type="button" class="btn btn-default btn-clean"
-                                    onclick="importArcadTemplate()">下载导入模板
-                            </button>
-                            <button type="button" class="btn btn-default btn-clean"
-                                    onclick="importArcad()">导入
-                            </button>
                             <br>
                         </div>
                         <table id="arcadGrid" cellpadding="0" cellspacing="0" width="100%"
@@ -77,8 +66,7 @@
         </div>
     </div>
 </div>
-</body>
-</html>
+
 <script type="text/javascript">
     var path = '<%=request.getContextPath()%>';
     $(function () {
@@ -158,7 +146,7 @@
     }
 
     function edit(id) {
-        $("#dialog").load("<%=request.getContextPath()%>/acrad/editArcad?arcadId="+id);
+        $("#dialog").load("<%=request.getContextPath()%>/arcad/editArcad?arcadId="+id);
         $("#dialog").modal("show");
     }
     function searchClear(){

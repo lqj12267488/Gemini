@@ -7,6 +7,7 @@ import com.goisan.studentwork.studentprove.service.StudentProveService;
 import com.goisan.studentwork.studentreissue.bean.StudentReissue;
 import com.goisan.studentwork.studentreissue.service.StudentReissueService;
 import com.goisan.synergy.workflow.service.StampService;
+import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.LoginUser;
 import com.goisan.system.bean.Student;
 import com.goisan.system.tools.CommonUtil;
@@ -69,6 +70,17 @@ public class StudentReissueController {
         studentReissue.setCreateDept(CommonUtil.getDefaultDept());
         studentReissueMap.put("data", studentReissueService.getStudentReissueList(studentReissue));
         return studentReissueMap;
+    }
+    @ResponseBody
+    @RequestMapping("/studentReissue/autoCompleteDept")
+    public List<AutoComplete> autoCompleteDept() {
+        return studentReissueService.autoCompleteDept();
+    }
+
+    @ResponseBody
+    @RequestMapping("/studentReissue/autoCompleteEmployee")
+    public List<AutoComplete> autoCompleteEmployee() {
+        return studentReissueService.autoCompleteEmployee();
     }
 
     /**
@@ -181,9 +193,7 @@ public class StudentReissueController {
     public Map<String, List<StudentReissue>> getProcessList(StudentReissue studentReissue) {
         Map<String, List<StudentReissue>> studentReissueMap = new HashMap<String, List<StudentReissue>>();
         studentReissue.setCreator(CommonUtil.getPersonId());
-        studentReissue.setCreateDept(CommonUtil.getDefaultDept());
         studentReissue.setChanger(CommonUtil.getPersonId());
-        studentReissue.setChangeDept(CommonUtil.getDefaultDept());
         studentReissueMap.put("data", studentReissueService.getProcessList(studentReissue));
         return studentReissueMap;
     }
@@ -250,16 +260,75 @@ public class StudentReissueController {
     @RequestMapping("/studentReissue/printStudentReissue")
     public ModelAndView printLeaves(String id) {
         ModelAndView mv = new ModelAndView("/business/studentwork/studentreissue/printStudentReissue");
-        String workflowName = workflowService.getWorkflowNameByWorkflowCode("T_XG_STUDENT_PROVE_WF01");
+        String workflowName = workflowService.getWorkflowNameByWorkflowCode("T_XG_STUDENT_REISSUE_WF01");
         StudentReissue leave = studentReissueService.getLeaveBy(id);
-        String requestDate = leave.getRequestDate().replace("T", " ");
-        mv.addObject("requestDate", requestDate);
+        leave.setRequestDate(leave.getRequestDate().split("T")[0].split("-")[0]+"年"+leave.getRequestDate().split("T")[0].split("-")[1]+"月"+leave.getRequestDate().split("T")[0].split("-")[2]+"日");
         mv.addObject("studentReissue", leave);
         mv.addObject("workflowName", workflowName);
         String state = stampService.getStateById(id);
         List<Handle> list = stampService.getHandlebyId(id);
         int size = list.size();
-        mv.addObject("handleList", list);
+        String agent = "";
+        String requestDate = "";
+        String departmentName = "";
+        String departmentNameStudent = "";
+
+        String agentNames = "";
+        String departmentNames = "";
+        String departmentStudentNames = "";
+
+        String departmentNameRequestDate = "";
+        String departmentNameStudentRequestDate = "";
+        String agentRequestDate = "";
+
+        String number = "";
+        for (Handle s : list) {
+            requestDate = s.getHandleTime();
+            if ("年级组组长".equals(s.getHandleRole())) {
+                agentNames = s.getHandleName();
+                agent = s.getRemark();
+                agentRequestDate =  s.getHandleTime().split(" ")[0].split("-")[0]+"年"+s.getHandleTime().split(" ")[0].split("-")[1]+"月"+s.getHandleTime().split(" ")[0].split("-")[2]+"日";
+            }
+            if ("部门负责人".equals(s.getHandleRole())) {
+                departmentNames = s.getHandleName();
+                departmentName = s.getRemark();
+                departmentNameRequestDate =  s.getHandleTime().split(" ")[0].split("-")[0]+"年"+s.getHandleTime().split(" ")[0].split("-")[1]+"月"+s.getHandleTime().split(" ")[0].split("-")[2]+"日";
+            }
+            if ("学生处负责人".equals(s.getHandleRole())) {
+                departmentStudentNames = s.getHandleName();
+                departmentNameStudent = s.getRemark();
+                departmentNameStudentRequestDate =  s.getHandleTime().split(" ")[0].split("-")[0]+"年"+s.getHandleTime().split(" ")[0].split("-")[1]+"月"+s.getHandleTime().split(" ")[0].split("-")[2]+"日";
+            }
+        }
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+        StudentReissue studentProve = new StudentReissue();
+        studentProve.setRequestDate(df.format(new Date()) + "");
+        if ("".equals(requestDate)) {
+
+        } else {
+            requestDate = requestDate.split("-")[0] + "年" + requestDate.split("-")[1] + "月" + requestDate.split("-")[2].split(" ")[0] + "日";
+        }
+        List<StudentReissue> list1 = studentReissueService.getStudentReissueList(studentProve);
+        if (list1.size() < 9) {
+            number = df.format(new Date()).split("-")[0] + df.format(new Date()).split("-")[1] + df.format(new Date()).split("-")[2] + "00" + (list1.size() + 1);
+        } else if (list1.size() < 99) {
+            number = df.format(new Date()).split("-")[0] + df.format(new Date()).split("-")[1] + df.format(new Date()).split("-")[2] + "0" + (list1.size() + 1);
+        } else {
+            number = df.format(new Date()).split("-")[0] + df.format(new Date()).split("-")[1] + df.format(new Date()).split("-")[2] + (list1.size() + 1);
+        }
+        String newDate = df.format(new Date()).split("-")[0] + "年" + df.format(new Date()).split("-")[1] + "月" + df.format(new Date()).split("-")[2] + "日";
+        mv.addObject("newDate", newDate);
+        mv.addObject("agentNames", agentNames);
+        mv.addObject("agentRequestDate", agentRequestDate);
+        mv.addObject("departmentNames", departmentNames);
+        mv.addObject("departmentNameRequestDate", departmentNameRequestDate);
+        mv.addObject("departmentStudentNames", departmentStudentNames);
+        mv.addObject("departmentNameStudentRequestDate", departmentNameStudentRequestDate);
+        mv.addObject("number", number);
+        mv.addObject("requestDate", requestDate);
+        mv.addObject("agent", agent);
+        mv.addObject("departmentName", departmentName);
+        mv.addObject("departmentNameStudent", departmentNameStudent);
         mv.addObject("size", size);
         mv.addObject("state", state);
         final Properties properties = new Properties();

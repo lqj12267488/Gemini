@@ -26,6 +26,17 @@ public class StudentReissue extends BaseBean {
     private String feedbackFlag;
     private String nativePlace;
     private String img;
+    private String agent;//年级组长意见
+    private String departmentName;//班主任意见
+    private String departmentNameStudent;//学生处意见
+    private String agentNames;//年级组长姓名
+    private String departmentNames;//班主任姓名
+    private String departmentStudentNames;//学生处姓名
+    private String departmentNameRequestDate;//班主任审核时间
+    private String departmentNameStudentRequestDate;//学生处审核时间
+    private String agentRequestDate;//年级组长审核时间
+    private String number;//编号
+
     public String getId() {
         return id;
     }
@@ -208,5 +219,85 @@ public class StudentReissue extends BaseBean {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public String getAgent() {
+        return agent;
+    }
+
+    public void setAgent(String agent) {
+        this.agent = agent;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public String getDepartmentNameStudent() {
+        return departmentNameStudent;
+    }
+
+    public void setDepartmentNameStudent(String departmentNameStudent) {
+        this.departmentNameStudent = departmentNameStudent;
+    }
+
+    public String getAgentNames() {
+        return agentNames;
+    }
+
+    public void setAgentNames(String agentNames) {
+        this.agentNames = agentNames;
+    }
+
+    public String getDepartmentNames() {
+        return departmentNames;
+    }
+
+    public void setDepartmentNames(String departmentNames) {
+        this.departmentNames = departmentNames;
+    }
+
+    public String getDepartmentStudentNames() {
+        return departmentStudentNames;
+    }
+
+    public void setDepartmentStudentNames(String departmentStudentNames) {
+        this.departmentStudentNames = departmentStudentNames;
+    }
+
+    public String getDepartmentNameRequestDate() {
+        return departmentNameRequestDate;
+    }
+
+    public void setDepartmentNameRequestDate(String departmentNameRequestDate) {
+        this.departmentNameRequestDate = departmentNameRequestDate;
+    }
+
+    public String getDepartmentNameStudentRequestDate() {
+        return departmentNameStudentRequestDate;
+    }
+
+    public void setDepartmentNameStudentRequestDate(String departmentNameStudentRequestDate) {
+        this.departmentNameStudentRequestDate = departmentNameStudentRequestDate;
+    }
+
+    public String getAgentRequestDate() {
+        return agentRequestDate;
+    }
+
+    public void setAgentRequestDate(String agentRequestDate) {
+        this.agentRequestDate = agentRequestDate;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 }

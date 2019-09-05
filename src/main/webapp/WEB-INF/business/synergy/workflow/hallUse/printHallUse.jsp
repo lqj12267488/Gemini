@@ -58,7 +58,7 @@
     <tr>
         <td align="center" class="left" style="padding-left: 2%;text-align:center; width: 140px;">使用设备：</td>
         <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${hallUse.usedeviceShow}</td>
-        <td align="center" class="left" style="padding-left: 2%;text-align:center; width: 140px;">活动内容：</td>
+        <td align="center" class="left" style="padding-left: 2%;text-align:center; width: 140px;">会议主题：</td>
         <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${hallUse.content}</td>
     </tr>
     <tr>
@@ -70,6 +70,14 @@
     <tr>
         <td align="center" class="left" style="padding-left: 2%;text-align:center; width: 140px;">使用规范：</td>
         <td align="center" class="left1" colspan="3">${standard.standardContent}</td>
+    </tr>
+    <tr>
+        <td align="center" class="left" style="padding-left: 2%;text-align:center; width: 140px;">会议地点：</td>
+        <td align="center" class="left1" colspan="3">${hallUse.meetingSiteShow}</td>
+    </tr>
+    <tr>
+        <td align="center" class="left" style="padding-left: 2%;text-align:center; width: 140px;">会议申请：</td>
+        <td align="center" class="left1" colspan="3">${hallUse.meetingRequestShow}</td>
     </tr>
 </table>
 <table border="1" cellpadding="0" cellspacing="0" style="margin-top: 0.13%;border-top:none;" >

@@ -8,40 +8,66 @@
         SELECT
         ARCHIVES_ID archivesId,
         ARCHIVES_CODE archivesCode,
+        ARCHIVES_NAME archivesName,
         DEPT_CODE deptCode,
         to_char(request_date,'yyyy-mm-dd') requestDate,
         SCHOOL_CODE schoolCode,
         FUNC_GET_TABLEVALUE(ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
         FUNC_GET_TABLEVALUE(TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
         FUNC_GET_DICVALUE(FILE_TYPE,'DALX') fileType,
-        CASE WHEN REQUEST_FLAG='0' THEN '已提交'
-        WHEN REQUEST_FLAG='1' THEN '待审核'
-        WHEN REQUEST_FLAG='2' THEN '通过'
-        WHEN REQUEST_FLAG='3' THEN '驳回'
-        ELSE '无' END state,
+        FUNC_GET_DICVALUE(SCHOOL_TYPE,'XXLB') schoolType,
+        FUNC_GET_DICVALUE(REQUEST_FLAG,'DAZT') state,
+        CASE WHEN ROLE_STATE='0' THEN '已授权'
+        ELSE '未授权' END roleState,
         REQUEST_FLAG requestFlag,
+        FUNC_GET_DICVALUE(REQUEST_FLAG,'DAZT') requestFlagShow,
         REQUEST_TYPE requestType,
         REMARK remark,
         EDITED_ID editedId,
         FUNC_GET_USERNAME(CREATOR) creator,
         FUNC_GET_DEPTNAME(CREATE_DEPT) createDept,
-        CREATE_TIME createTime
+        CREATE_TIME createTime,
+        SCHOOL_TYPE schoolType,
+        to_char(FORMAT_TIME,'yyyy-mm-dd') formatTime
         FROM DZDA_MESSAGE
         WHERE 1=1 AND VALID_FLAG=#{validFlag} AND DEL_STATE = '0'
+        AND ( 1=1
+        <if test=" roleState != null and roleState != '' ">
+            AND ROLE_STATE = #{roleState}
+        </if>
+        <if test=" formatTimeStart != null and formatTimeStart != '' and formatTimeEnd != null and formatTimeEnd != '' ">
+            AND FORMAT_TIME between to_date(#{formatTimeStart},'yyyy-mm-dd') and to_date(#{formatTimeEnd},'yyyy-mm-dd')
+        </if>
+        <if test=" level == null or level != '' ">
+            AND (REQUEST_FLAG = '6' or REQUEST_FLAG != '7' or REQUEST_FLAG != '8' or REQUEST_FLAG is null)
+        </if>
         <if test="creator != 'sa'  and creator != null and creator != '' ">
             AND CREATOR= #{creator}
         </if>
-        <if test="createDept != 'sa'  and createDept != null and createDept != '' ">
+        <if test="createDept != null and createDept != '' and level == null ">
             AND CREATE_DEPT= #{createDept}
+        </if>
+        <if test="createDept != 'sa' and createDept != null and createDept != ''
+                  and level != null and level != '' ">
+            AND CREATE_DEPT LIKE FUNC_GET_RANGE(#{createDept},#{level})
         </if>
         <if test="deptName != null and deptName != '' ">
             AND FUNC_GET_DEPTNAME(CREATE_DEPT) LIKE '%'||#{deptName}||'%'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND CREATE_DEPT = #{deptId}
         </if>
         <if test="personName != null and personName != '' ">
             AND FUNC_GET_USERNAME(CREATOR) LIKE '%'||#{personName}||'%'
         </if>
         <if test="schoolCode !=null and schoolCode !=''">
             AND SCHOOL_CODE=#{schoolCode}
+        </if>
+        <if test="schoolType !=null and schoolType !=''">
+            AND SCHOOL_TYPE=#{schoolType}
+        </if>
+        <if test="yearCode !=null and yearCode !=''">
+            AND to_char(request_date,'yyyy')=#{yearCode}
         </if>
         <if test="deptCode !=null and deptCode !=''">
             AND DEPT_CODE=#{deptCode}
@@ -58,45 +84,186 @@
         <if test="fileType !=null and fileType !='' and fileType !='null' ">
             AND FILE_TYPE=#{fileType}
         </if>
+        <if test="requestFlag !=null and requestFlag !='' ">
+            AND REQUEST_FLAG=#{requestFlag}
+        </if>
+        <if test="archivesName !=null and archivesName !=''">
+            AND ARCHIVES_NAME like '%'||#{archivesName}||'%'
+        </if>
+        <if test="archivesCode !=null and archivesCode !=''">
+            AND ARCHIVES_CODE like '%'||#{archivesCode}||'%'
+        </if>
+        <if test="rolePersonId !=null and rolePersonId !=''">
+            or ARCHIVES_ID in (
+            select t.archives_id from DZDA_ROLE t
+            where t.person_id = #{rolePersonId} and t.dept_id = #{rolePersonDept} )
+        </if>
+        )
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <select id="getArchivesByIds" parameterType="java.lang.String"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT ARCHIVES_ID                                                         archivesId,
+               ARCHIVES_CODE                                                       archivesCode,
+               ARCHIVES_NAME                                                       archivesName,
+               DEPT_CODE                                                           deptCode,
+               to_char(request_date, 'yyyy-mm-dd')                                 requestDate,
+               SCHOOL_CODE                                                         schoolCode,
+               FUNC_GET_TABLEVALUE(ONE_LEVEL, 'DZDA_TYPE', 'TYPE_ID', 'TYPE_NAME') oneLevel,
+               FUNC_GET_TABLEVALUE(TWO_LEVEL, 'DZDA_TYPE', 'TYPE_ID', 'TYPE_NAME') twoLevel,
+               FUNC_GET_DICVALUE(FILE_TYPE, 'DALX')                                fileType,
+               FUNC_GET_DICVALUE(SCHOOL_TYPE, 'XXLB')                              schoolType,
+               FUNC_GET_DICVALUE(REQUEST_FLAG, 'DAZT')                             state,
+               CASE
+                   WHEN ROLE_STATE = '0' THEN '已授权'
+                   ELSE '未授权' END                                                  roleState,
+               REQUEST_FLAG                                                        requestFlag,
+               REASON                                                              reason,
+               FUNC_GET_DICVALUE(REQUEST_FLAG, 'DAZT')                             requestFlagShow,
+               REQUEST_TYPE                                                        requestType,
+               REMARK                                                              remark,
+               EDITED_ID                                                           editedId,
+               FUNC_GET_USERNAME(CREATOR)                                          creator,
+               FUNC_GET_DEPTNAME(CREATE_DEPT)                                      createDept,
+               CREATE_TIME                                                         createTime,
+               SCHOOL_TYPE                                                         schoolType
+        FROM DZDA_MESSAGE
+        WHERE 1 = 1
+          AND VALID_FLAG = '1'
+          AND DEL_STATE = '0'
+          AND REQUEST_FLAG = '5'
+          and ARCHIVES_ID = #{businessId}
+    </select>
+    <select id="getArchivesHeadmasterList" parameterType="com.goisan.archives.bean.Archives"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        m.ARCHIVES_ID archivesId,
+        m.ARCHIVES_CODE archivesCode,
+        m.ARCHIVES_NAME archivesName,
+        m.DEPT_CODE deptCode,
+        to_char(m.request_date,'yyyy-mm-dd') requestDate,
+        m.SCHOOL_CODE schoolCode,
+        FUNC_GET_TABLEVALUE(m.ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
+        FUNC_GET_TABLEVALUE(m.TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
+        FUNC_GET_DICVALUE(m.FILE_TYPE,'DALX') fileType,
+        FUNC_GET_DICVALUE(m.SCHOOL_TYPE,'XXLB') schoolType,
+        FUNC_GET_DICVALUE(m.REQUEST_FLAG,'DAZT') state,
+        CASE WHEN ROLE_STATE='0' THEN '已授权'
+        ELSE '未授权' END roleState,
+        m.REQUEST_FLAG requestFlag,
+        FUNC_GET_DICVALUE(REQUEST_FLAG,'DAZT') requestFlagShow,
+        m.REQUEST_TYPE requestType,
+        m.REMARK remark,
+        m.EDITED_ID editedId,
+        FUNC_GET_USERNAME(m.CREATOR) creator,
+        FUNC_GET_DEPTNAME(m.CREATE_DEPT) createDept,
+        m.CREATE_TIME createTime,
+        m.creator personId,
+        m. SCHOOL_TYPE schoolType,
+        to_char(m.FORMAT_TIME,'yyyy-mm-dd') formatTime
+        FROM DZDA_MESSAGE m
+        WHERE 1=1 AND VALID_FLAG=#{validFlag} AND DEL_STATE = '0'
+        <if test="createDept == 'sa'  or createDept == null or createDept == '' ">
+            AND (m.REQUEST_FLAG!='6' or CREATOR=#{createPerson})
+        </if>
+        <if test="createDept != 'sa'  and createDept != null and createDept != '' ">
+            AND CREATE_DEPT= #{createDept}
+            and CREATOR=#{createPerson}
+            and (m.REQUEST_FLAG='6' or m.REQUEST_FLAG='5')
+        </if>
+        <if test="roleFlag != 'null'  and roleFlag != null and roleFlag != '' ">
+            AND instr((select dept_id from T_RS_EMPLOYEE_RANGE where PERSON_ID = #{createPerson}),m.create_dept) &gt; 0
+        </if>
+        <if test="deptName != null and deptName != '' ">
+            AND FUNC_GET_DEPTNAME(m.CREATE_DEPT) LIKE '%'||#{deptName}||'%'
+        </if>
+        <if test="personName != null and personName != '' ">
+            AND FUNC_GET_USERNAME(m.CREATOR) LIKE '%'||#{personName}||'%'
+        </if>
+        <if test="formatTimeStart != null and formatTimeStart != '' and formatTimeEnd != null and formatTimeEnd != ''">
+            AND FORMAT_TIME between to_date(#{formatTimeStart},'yyyy-mm-dd') and to_date(#{formatTimeEnd},'yyyy-mm-dd')
+        </if>
+        <if test="schoolType !=null and schoolType !=''">
+            AND m.SCHOOL_TYPE=#{schoolType}
+        </if>
+        <if test="deptCode !=null and deptCode !=''">
+            AND m.DEPT_CODE=#{deptCode}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND m.request_date= #{requestDate}
+        </if>
         <if test="requestFlag !=null and requestFlag !=''">
             AND REQUEST_FLAG=#{requestFlag}
         </if>
-        ORDER BY CREATE_TIME DESC
+        <if test="oneLevel !=null and oneLevel !='' and oneLevel !='null' ">
+            AND m.ONE_LEVEL=#{oneLevel}
+        </if>
+        <if test="twoLevel !=null and twoLevel !='' and twoLevel !='null' ">
+            AND m.TWO_LEVEL=#{twoLevel}
+        </if>
+        <if test="fileType !=null and fileType !='' and fileType !='null' ">
+            AND m.FILE_TYPE=#{fileType}
+        </if>
+        <if test="archivesName !=null and archivesName !=''">
+            AND ARCHIVES_NAME like '%'||#{archivesName}||'%'
+        </if>
+        <if test="archivesCode !=null and archivesCode !=''">
+            AND ARCHIVES_CODE like '%'||#{archivesCode}||'%'
+        </if>
+        <if test="yearCode !=null and yearCode !=''">
+            AND to_char(request_date,'yyyy')=#{yearCode}
+        </if>
+        <if test="creator !=null and creator !=''">
+            AND m.creator = #{creator}
+        </if>
+        <if test=" roleState != null and roleState != '' ">
+            AND ROLE_STATE = #{roleState}
+        </if>
+        ORDER BY m.CREATE_TIME DESC
     </select>
     <select id="getArchivesById" parameterType="java.lang.String"
             resultType="com.goisan.archives.bean.Archives">
-        SELECT
-        ARCHIVES_ID archivesId,
-        ARCHIVES_CODE archivesCode,
-        DEPT_CODE deptCode,
-        to_char(request_date,'yyyy-mm-dd') requestDate,
-        SCHOOL_CODE schoolCode,
-        ONE_LEVEL oneLevel,
-        TWO_LEVEL twoLevel,
-        FILE_TYPE fileType,
-        REQUEST_FLAG requestFlag,
-        REQUEST_TYPE requestType,
-        REMARK remark,
-        REASON reason,
-        FUNC_GET_USERNAME(CREATOR) creator,
-        FUNC_GET_DEPTNAME(CREATE_DEPT) createDept
+        SELECT ARCHIVES_ID                             archivesId,
+               ARCHIVES_NAME                           archivesName,
+               ARCHIVES_CODE                           archivesCode,
+               DEPT_CODE                               deptCode,
+               to_char(request_date, 'yyyy-mm-dd')     requestDate,
+               to_char(FORMAT_TIME, 'yyyy-mm-dd')      formatTime,
+               SCHOOL_CODE                             schoolCode,
+               ONE_LEVEL                               oneLevel,
+               TWO_LEVEL                               twoLevel,
+               FILE_TYPE                               fileType,
+               SCHOOL_TYPE                             schoolType,
+               REQUEST_FLAG                            requestFlag,
+               FUNC_GET_DICVALUE(REQUEST_FLAG, 'DAZT') requestFlagShow,
+               REQUEST_TYPE                            requestType,
+               REMARK                                  remark,
+               REASON                                  reason,
+               FUNC_GET_USERNAME(CREATOR)              creator,
+               FUNC_GET_DEPTNAME(CREATE_DEPT)          createDept
         FROM DZDA_MESSAGE
-        WHERE ARCHIVES_ID=#{archivesId}
+        WHERE ARCHIVES_ID = #{archivesId}
     </select>
     <insert id="insertArchives" parameterType="com.goisan.archives.bean.Archives">
         INSERT INTO DZDA_MESSAGE
-        (ARCHIVES_ID,ARCHIVES_CODE,
-        DEPT_CODE,request_date,SCHOOL_CODE,
-        ONE_LEVEL,TWO_LEVEL,FILE_TYPE,REMARK,
-        CREATOR,CREATE_DEPT,CREATE_TIME)
-        VALUES
-        (#{archivesId},(select decode(ARCHIVES_CODE,'',#{archivesCode}||'0001',ARCHIVES_CODE)
-                        from (select lpad(max(to_number(ARCHIVES_CODE))+1,19,'0') as ARCHIVES_CODE
-                        from DZDA_MESSAGE where ARCHIVES_CODE like #{archivesCode}||'%')),
-        #{deptCode},to_date(#{requestDate},'yyyy-mm-dd'),#{schoolCode},
-        #{oneLevel},#{twoLevel},#{fileType},#{remark},
-        #{creator},#{createDept},sysdate)
+        (ARCHIVES_ID, FORMAT_TIME, ARCHIVES_CODE, ARCHIVES_NAME,
+         DEPT_CODE, request_date, SCHOOL_CODE,
+         ONE_LEVEL, TWO_LEVEL, FILE_TYPE, REMARK, REQUEST_FLAG,
+         CREATOR, CREATE_DEPT, CREATE_TIME, SCHOOL_TYPE, ROLE_STATE)
+        VALUES (#{archivesId}, to_date(#{formatTime}, 'yyyy-mm-dd'),
+                (select decode(ARCHIVES_CODE, '', #{archivesCode} || '0001', ARCHIVES_CODE)
+                 from (select lpad(max(to_number(ARCHIVES_CODE)) + 1, 19, '0') as ARCHIVES_CODE
+                       from DZDA_MESSAGE
+                       where ARCHIVES_CODE like #{archivesCode} || '%')),
+                #{archivesName}, #{deptCode}, to_date(#{requestDate}, 'yyyy-mm-dd'), #{schoolCode},
+                #{oneLevel}, #{twoLevel}, #{fileType}, #{remark}, #{requestFlag},
+                #{creator}, #{createDept}, sysdate, #{schoolType}, '1')
     </insert>
+    <select id="getArchivesName" resultType="java.lang.String" parameterType="java.lang.String">
+        select TYPE_NAME
+        from DZDA_TYPE
+        where TYPE_ID = #{oneLevel}
+    </select>
     <update id="updateArchives" parameterType="com.goisan.archives.bean.Archives">
         UPDATE DZDA_MESSAGE SET
         <if test="archivesCode!=null and archivesCode!=''">
@@ -105,140 +272,199 @@
             from DZDA_MESSAGE where ARCHIVES_CODE like #{archivesCode}||'%')),
         </if>
         request_date=to_date(#{requestDate},'yyyy-mm-dd'),
+        FORMAT_TIME=to_date(#{formatTime},'yyyy-mm-dd'),
+        ARCHIVES_NAME=#{archivesName},
         ONE_LEVEL=#{oneLevel},
         TWO_LEVEL=#{twoLevel},
         FILE_TYPE=#{fileType},
+        SCHOOL_TYPE=#{schoolType},
         REMARK=#{remark},
-        REQUEST_FLAG='',
+        REQUEST_FLAG=#{requestFlag},
         CHANGER=#{changer},
         CHANGE_DEPT=#{changeDept},
         CHANGE_TIME=sysdate
         WHERE ARCHIVES_ID=#{archivesId}
     </update>
+    <update id="updateArchivesState" parameterType="java.lang.String">
+        UPDATE DZDA_MESSAGE
+        SET REQUEST_FLAG = '2'
+        WHERE ARCHIVES_ID = #{id}
+    </update>
+    <update id="updateArchivesInfo" parameterType="java.lang.String">
+        update DZDA_MESSAGE
+        set request_flag='9'
+        where archives_id = #{id}
+    </update>
+    <update id="updateArchivesRemark" parameterType="com.goisan.archives.bean.Archives">
+        UPDATE DZDA_MESSAGE
+        SET
+            request_flag=#{requestFlag}
+        WHERE ARCHIVES_ID = #{archivesId}
+    </update>
     <update id="updateValidFlag" parameterType="com.goisan.archives.bean.Archives">
-        UPDATE DZDA_MESSAGE SET
-        VALID_FLAG=#{validFlag}
-        WHERE ARCHIVES_ID=#{archivesId}
+        UPDATE DZDA_MESSAGE
+        SET VALID_FLAG=#{validFlag},
+            DEL_STATE='1'
+        WHERE ARCHIVES_ID = #{archivesId}
     </update>
     <delete id="deleteArchivesById" parameterType="java.lang.String">
-        DELETE FROM DZDA_MESSAGE WHERE ARCHIVES_ID=#{archivesId}
+        DELETE
+        FROM DZDA_MESSAGE
+        WHERE ARCHIVES_ID = #{archivesId}
     </delete>
     <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
-        SELECT name from t_rs_employee WHERE person_id = #{personId}
+        SELECT name
+        from t_rs_employee
+        WHERE person_id = #{personId}
     </select>
     <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
-        SELECT dept_name from t_sys_dept WHERE dept_id = #{deptId}
+        SELECT dept_name
+        from t_sys_dept
+        WHERE dept_id = #{deptId}
+    </select>
+    <select id="getFileNum" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT count(*)
+        from DZDA_FILES
+        WHERE ARCHIVES_ID = #{id}
+    </select>
+    <select id="getArchivesCode" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT ARCHIVES_CODE
+        from DZDA_MESSAGE
+        WHERE ARCHIVES_ID = #{id}
     </select>
     <!--查询所有部门id和名称-->
     <select id="selectDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
-        select
-        t.dept_id as "value",
-        t.dept_name as "label"
+        select t.dept_id   as "value",
+               t.dept_name as "label"
         FROM T_SYS_DEPT t
     </select>
     <!--查询所有人员id和姓名-->
     <select id="selectPerson" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
-        select
-        t.name as "label",
-        t.person_id as "value"
+        select distinct t.name      as "label",
+                        t.person_id as "value"
         FROM T_RS_EMPLOYEE t
     </select>
+    <select id="selectRequester" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select distinct t.name      as "label",
+                        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t,
+             T_RS_EMPLOYEE_DEPT d
+        where t.person_id = d.person_id
+          and d.dept_id = #{deptId}
+    </select>
     <select id="getDeptList" resultType="com.goisan.system.bean.Select2">
-        SELECT DEPT_ID id,DEPT_NAME text
+        SELECT DEPT_ID id, DEPT_NAME text
         FROM T_SYS_DEPT
         WHERE valid_flag = '1'
         ORDER BY DEPT_ORDER
     </select>
     <select id="getStaffBelongs" parameterType="java.lang.String" resultType="java.lang.String">
-        SELECT decode(STAFF_BELONGS,'','0',STAFF_BELONGS)
+        SELECT decode(STAFF_BELONGS, '', '0', STAFF_BELONGS)
         FROM T_RS_EMPLOYEE
-        WHERE PERSON_ID=#{personId}
+        WHERE PERSON_ID = #{personId}
     </select>
     <!--附件-->
     <select id="getFilesByArchivesId" parameterType="java.lang.String"
             resultType="com.goisan.archives.bean.ArchivesFile">
-        SELECT
-        FILE_ID fileId,
-        ARCHIVES_ID archivesId,
-        FILE_NAME fileName,
-        FILE_URL fileUrl,
-        FILE_SUFFIX fileSuffix,
-        FILE_SIZE fileSize,
-        CASE WHEN FILE_STATE='0' THEN '删除'
-            WHEN FILE_STATE='1' THEN '新增'
-            ELSE '' END fileState,
-        COVER_URL coverUrl,
-        COVER_TYPE coverType,
-        CREATE_TIME createTime
+        SELECT FILE_ID         fileId,
+               ARCHIVES_ID     archivesId,
+               FILE_NAME       fileName,
+               FILE_URL        fileUrl,
+               FILE_SUFFIX     fileSuffix,
+               FILE_SIZE       fileSize,
+               CASE
+                   WHEN FILE_STATE = '0' THEN '删除'
+                   WHEN FILE_STATE = '1' THEN '新增'
+                   ELSE '' END fileState,
+               COVER_URL       coverUrl,
+               COVER_TYPE      coverType,
+               CREATE_TIME     createTime
         FROM DZDA_FILES
         WHERE ARCHIVES_ID = #{archivesId}
         ORDER BY CREATE_TIME DESC
     </select>
     <select id="getArchivesFileById" parameterType="java.lang.String"
             resultType="com.goisan.archives.bean.ArchivesFile">
-        SELECT
-        FILE_URL fileUrl,
-        FILE_NAME fileName,
-        FILE_SUFFIX fileSuffix
+        SELECT FILE_URL    fileUrl,
+               FILE_NAME   fileName,
+               FILE_SUFFIX fileSuffix
         FROM DZDA_FILES
         WHERE FILE_ID = #{fileId}
     </select>
     <insert id="insertArchivesFile" parameterType="com.goisan.archives.bean.ArchivesFile">
-        INSERT INTO
-        DZDA_FILES
-        (FILE_ID,ARCHIVES_ID,FILE_NAME,FILE_URL,
-        FILE_SUFFIX,FILE_SIZE,COVER_URL,COVER_TYPE,FILE_STATE,
-        CREATOR,CREATE_TIME,CREATE_DEPT)
-        VALUES
-        (FUNC_GET_UUID,#{archivesId},#{fileName},#{fileUrl},
-        #{fileSuffix},#{fileSize},#{coverUrl},#{coverType},#{fileState},
-        #{creator},sysdate,#{createDept})
+        INSERT INTO DZDA_FILES
+        (FILE_ID, ARCHIVES_ID, FILE_NAME, FILE_URL,
+         FILE_SUFFIX, FILE_SIZE, COVER_URL, COVER_TYPE, FILE_STATE,
+         CREATOR, CREATE_TIME, CREATE_DEPT)
+        VALUES (FUNC_GET_UUID, #{archivesId}, #{fileName}, #{fileUrl},
+                #{fileSuffix}, #{fileSize}, #{coverUrl}, #{coverType}, #{fileState},
+                #{creator}, sysdate, #{createDept})
     </insert>
     <delete id="deleteFileByFileId" parameterType="java.lang.String">
-        DELETE FROM DZDA_FILES WHERE FILE_ID=#{fileId}
+        DELETE
+        FROM DZDA_FILES
+        WHERE FILE_ID = #{fileId}
     </delete>
     <delete id="deleteFileByArchivesId" parameterType="java.lang.String">
-        DELETE FROM DZDA_FILES WHERE ARCHIVES_ID=#{archivesId}
+        DELETE
+        FROM DZDA_FILES
+        WHERE ARCHIVES_ID = #{archivesId}
     </delete>
     <select id="getArchivesLogList" parameterType="com.goisan.archives.bean.Archives"
             resultType="com.goisan.archives.bean.Archives">
         SELECT
         log_id,
         ARCHIVES_ID,
+        ARCHIVES_NAME archivesName,
+        ARCHIVES_CODE archivesCode,
         PERSON_ID,
         DEPT_ID,
         OPERATE_TYPE,
-        FUNC_GET_DICVALUE(OPERATE_TYPE,'ZYK_CZLX') operateType,
+        FUNC_GET_DICVALUE(OPERATE_TYPE,'DZDA_CZLX') operateType,
         FUNC_GET_USERNAME(PERSON_ID) personId,
         FUNC_GET_DEPTNAME(DEPT_ID) deptId,
         to_char(OPERATE_TIME, 'yyyy-mm-dd hh24:mi') operateTime,
-        remark
+        remark,
+        SCHOOL_TYPE schoolType
         from DZDA_LOG where VALID_FLAG='1'
         <if test="operateType !=null and operateType!=''">
             and OPERATE_TYPE=#{operateType}
+        </if>
+        <if test="personName != null and personName != '' ">
+            AND FUNC_GET_USERNAME(person_id) LIKE '%'||#{personName}||'%'
+        </if>
+        <if test="archivesName !=null and archivesName !=''">
+            AND ARCHIVES_NAME like '%'||#{archivesName}||'%'
+        </if>
+        <if test="archivesCode !=null and archivesCode !=''">
+            AND ARCHIVES_CODE like '%'||#{archivesCode}||'%'
+        </if>
+        <if test="operateTime !=null and operateTime !=''">
+            AND to_char(OPERATE_TIME,'yyyy-mm-dd')=#{operateTime}
         </if>
         order by operateTime desc
     </select>
     <!--教师档案操作申请与审核-->
     <!--档案信息修改申请状态-->
     <update id="archivesRequestFlag" parameterType="com.goisan.archives.bean.Archives">
-        UPDATE DZDA_MESSAGE SET
-        REQUEST_FLAG=#{requestFlag}
-        WHERE ARCHIVES_ID=#{archivesId}
+        UPDATE DZDA_MESSAGE
+        SET REQUEST_FLAG=#{requestFlag}
+        WHERE ARCHIVES_ID = #{archivesId}
     </update>
     <update id="archivesEditRequest" parameterType="com.goisan.archives.bean.Archives">
-        UPDATE DZDA_MESSAGE SET
-        REASON =#{reason},
-        REQUEST_FLAG=#{requestFlag}
-        WHERE ARCHIVES_ID=#{archivesId}
+        UPDATE DZDA_MESSAGE
+        SET REASON      =#{reason},
+            REQUEST_FLAG=#{requestFlag}
+        WHERE ARCHIVES_ID = #{archivesId}
     </update>
     <update id="updateArchivesDelStateById" parameterType="com.goisan.archives.bean.Archives">
-        UPDATE DZDA_MESSAGE SET
-        DEL_STATE =#{delState},
-        CHANGER = #{changer},
-        CHANGE_DEPT = #{changeDept},
-        CHANGE_TIME = sysdate
-        WHERE ARCHIVES_ID=#{archivesId}
+        UPDATE DZDA_MESSAGE
+        SET DEL_STATE   =#{delState},
+            VALID_FLAG='1',
+            CHANGER     = #{changer},
+            CHANGE_DEPT = #{changeDept},
+            CHANGE_TIME = sysdate
+        WHERE ARCHIVES_ID = #{archivesId}
     </update>
     <select id="getArchivesRecycleBinList" parameterType="com.goisan.archives.bean.Archives"
             resultType="com.goisan.archives.bean.Archives">
@@ -247,29 +473,42 @@
         ARCHIVES_CODE archivesCode,
         DEPT_CODE deptCode,
         to_char(request_date,'yyyy-mm-dd') requestDate,
+        to_char(FORMAT_TIME,'yyyy-mm-dd') formatTime,
         SCHOOL_CODE schoolCode,
         FUNC_GET_TABLEVALUE(ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
         FUNC_GET_TABLEVALUE(TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
         FUNC_GET_DICVALUE(FILE_TYPE,'DALX') fileType,
+        FUNC_GET_DICVALUE(SCHOOL_TYPE,'XXLB') schoolType,
         CASE WHEN REQUEST_FLAG='0' THEN '已提交'
-        WHEN REQUEST_FLAG='1' THEN '待审核'
+        WHEN REQUEST_FLAG='1' THEN '修改申请中'
         WHEN REQUEST_FLAG='2' THEN '通过'
         WHEN REQUEST_FLAG='3' THEN '驳回'
         ELSE '无' END state,
+        CASE WHEN ROLE_STATE='0' THEN '已授权'
+        ELSE '未授权' END roleState,
         REQUEST_FLAG requestFlag,
+        FUNC_GET_DICVALUE(REQUEST_FLAG,'DAZT') requestFlagShow,
         REQUEST_TYPE requestType,
         REMARK remark,
         EDITED_ID editedId,
         FUNC_GET_USERNAME(CREATOR) creator,
         FUNC_GET_DEPTNAME(CREATE_DEPT) createDept,
-        CREATE_TIME createTime
+        CREATE_TIME createTime,
+        SCHOOL_TYPE schoolType,
+        ARCHIVES_NAME archivesName
         FROM DZDA_MESSAGE
         WHERE 1=1 AND DEL_STATE = '1'
-        <if test="changer != 'sa'  and changer != null and changer != '' ">
-            AND CHANGER= #{changer}
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND creator= #{creator}
+        </if>
+        <if test="createDept != 'null'  and createDept != null and createDept != '' ">
+            AND create_dept= #{createDept}
         </if>
         <if test="deptName != null and deptName != '' ">
             AND FUNC_GET_DEPTNAME(CREATE_DEPT) LIKE '%'||#{deptName}||'%'
+        </if>
+        <if test="formatTimeStart != null and formatTimeStart != '' and formatTimeEnd != null and formatTimeEnd != ''">
+            AND FORMAT_TIME between to_date(#{formatTimeStart},'yyyy-mm-dd') and to_date(#{formatTimeEnd},'yyyy-mm-dd')
         </if>
         <if test="personName != null and personName != '' ">
             AND FUNC_GET_USERNAME(CREATOR) LIKE '%'||#{personName}||'%'
@@ -277,11 +516,14 @@
         <if test="schoolCode!=null and schoolCode!=''">
             AND SCHOOL_CODE=#{schoolCode}
         </if>
+        <if test="schoolType !=null and schoolType !=''">
+            AND SCHOOL_TYPE=#{schoolType}
+        </if>
         <if test="deptCode!=null and deptCode!=''">
             AND DEPT_CODE=#{deptCode}
         </if>
-        <if test="requestDate != null and requestDate != '' ">
-            AND request_date= #{requestDate}
+        <if test="yearCode !=null and yearCode !=''">
+            AND to_char(request_date,'yyyy')=#{yearCode}
         </if>
         <if test="oneLevel!=null and oneLevel!=''">
             AND ONE_LEVEL=#{oneLevel}
@@ -295,34 +537,43 @@
         <if test="requestFlag!=null and requestFlag!=''">
             AND REQUEST_FLAG=#{requestFlag}
         </if>
+        <if test="archivesName !=null and archivesName !=''">
+            AND ARCHIVES_NAME like '%'||#{archivesName}||'%'
+        </if>
+        <if test="archivesCode !=null and archivesCode !=''">
+            AND ARCHIVES_CODE like '%'||#{archivesCode}||'%'
+        </if>
         ORDER BY CREATE_TIME DESC
     </select>
     <delete id="delRoleEmpDeptByArchivesId" parameterType="java.lang.String">
-        DELETE DZDA_ROLE WHERE archives_id = #{id}
+        DELETE DZDA_ROLE
+        WHERE archives_id = #{id}
     </delete>
     <insert id="insertRoleEmpDept" parameterType="com.goisan.archives.bean.ArchivesRole">
         INSERT INTO DZDA_ROLE
-        (ID,PERSON_ID,DEPT_ID,CREATOR,CREATE_TIME,CREATE_DEPT,ARCHIVES_ID)
-        values
-        (func_get_uuid,#{personId},#{deptId},#{creator},sysdate,#{createDept} ,#{archivesId})
+        (ID, PERSON_ID, DEPT_ID, CREATOR, CREATE_TIME, CREATE_DEPT, ARCHIVES_ID)
+        values (func_get_uuid, #{personId}, #{deptId}, #{creator}, sysdate, #{createDept}, #{archivesId})
     </insert>
     <select id="getArchivesDeptAndPersonTree" resultType="com.goisan.system.bean.EmpDeptTree"
-            parameterType="java.lang.String">
+            parameterType="com.goisan.system.bean.EmpDeptTree">
         SELECT
         id,
         name,
         pid,
-        isper1   AS isper,
+        isper1 AS isper,
         checked1 AS checked
         FROM
         (
         SELECT
-        dept_id             id,
+        dept_id id,
         dept_name || '(部门)' name,
-        parent_dept_id      pid,
-        'false' AS          isper1,
-        'false' AS          checked1
+        parent_dept_id pid,
+        'false' AS isper1,
+        'false' AS checked1
         FROM t_sys_dept WHERE VALID_FLAG = '1'
+        <if test="flag !=null and flag !=''">
+            AND dept_id = #{createDept}
+        </if>
         UNION ALL
         (SELECT
         t.*,
@@ -330,83 +581,467 @@
         FROM
         (SELECT
         t1.person_id id,
-        t1.name      name,
-        t2.dept_id   pid,
-        'true' AS    isper1
+        t1.name name,
+        t2.dept_id pid,
+        'true' AS isper1
         FROM T_RS_EMPLOYEE t1, T_RS_EMPLOYEE_DEPT t2 ,t_sys_dept d
         WHERE t1.person_id = t2.person_id AND t1.VALID_FLAG = '1' AND d.VALID_FLAG = '1' AND t2.dept_id=d.dept_id
+        <if test="flag !=null and flag !=''">
+            AND t2.dept_id = #{createDept}
+        </if>
         ORDER BY t2.person_order
         ) t
         LEFT JOIN DZDA_ROLE t3 ON t.id = t3.person_id AND t.pid = t3.dept_id
-        AND t3.archives_id = #{archivesId}
+        AND t3.archives_id = #{id}
         )
         )
     </select>
     <select id="getPrintById" parameterType="java.lang.String"
             resultType="com.goisan.archives.bean.Archives">
-        SELECT
-        ARCHIVES_ID archivesId,
-        ARCHIVES_CODE archivesCode,
-        DEPT_CODE deptCode,
-        to_char(request_date,'yyyy-mm-dd') requestDate,
-        SCHOOL_CODE schoolCode,
-        FUNC_GET_TABLEVALUE(ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
-        FUNC_GET_TABLEVALUE(TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
-        FUNC_GET_DICVALUE(FILE_TYPE,'DALX') fileType,
-        REQUEST_FLAG requestFlag,
-        REQUEST_TYPE requestType,
-        REMARK remark,
-        REASON reason,
-        FUNC_GET_USERNAME(CREATOR) creator,
-        FUNC_GET_DEPTNAME(CREATE_DEPT) createDept
+        SELECT ARCHIVES_ID                                                         archivesId,
+               ARCHIVES_NAME                                                       archivesName,
+               ARCHIVES_CODE                                                       archivesCode,
+               DEPT_CODE                                                           deptCode,
+               to_char(request_date, 'yyyy-mm-dd')                                 requestDate,
+               SCHOOL_CODE                                                         schoolCode,
+               FUNC_GET_TABLEVALUE(ONE_LEVEL, 'DZDA_TYPE', 'TYPE_ID', 'TYPE_NAME') oneLevel,
+               FUNC_GET_TABLEVALUE(TWO_LEVEL, 'DZDA_TYPE', 'TYPE_ID', 'TYPE_NAME') twoLevel,
+               FUNC_GET_DICVALUE(FILE_TYPE, 'DALX')                                fileType,
+               FUNC_GET_DICVALUE(SCHOOL_TYPE, 'XXLB')                              schoolType,
+               CASE
+                   WHEN REQUEST_FLAG = '0' THEN '已提交'
+                   WHEN REQUEST_FLAG = '1' THEN '修改申请中'
+                   WHEN REQUEST_FLAG = '2' THEN '通过'
+                   WHEN REQUEST_FLAG = '3' THEN '驳回'
+                   ELSE '无' END                                                    state,
+               REQUEST_FLAG                                                        requestFlag,
+               FUNC_GET_DICVALUE(REQUEST_FLAG, 'DAZT')                             requestFlagShow,
+               REQUEST_TYPE                                                        requestType,
+               REMARK                                                              remark,
+               REASON                                                              reason,
+               CREATOR                                                             personId,
+               FUNC_GET_USERNAME(CREATOR)                                          creator,
+               FUNC_GET_DEPTNAME(CREATE_DEPT)                                      createDept,
+               SCHOOL_TYPE                                                         schoolType,
+               to_char(FORMAT_TIME,'yyyy-mm-dd') formatTime
         FROM DZDA_MESSAGE
-        WHERE ARCHIVES_ID=#{archivesId}
+        WHERE ARCHIVES_ID = #{archivesId}
     </select>
     <select id="getAllArchivesList" parameterType="com.goisan.archives.bean.Archives"
             resultType="com.goisan.archives.bean.Archives">
         SELECT
+        distinct
         m.ARCHIVES_ID archivesId,
         m.ARCHIVES_CODE archivesCode,
+        m.ARCHIVES_NAME archivesName,
         m.DEPT_CODE deptCode,
         to_char(m.request_date,'yyyy-mm-dd') requestDate,
+        to_char(m.FORMAT_TIME,'yyyy-mm-dd') formatTime,
         m.SCHOOL_CODE schoolCode,
         FUNC_GET_TABLEVALUE( m.ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
         FUNC_GET_TABLEVALUE( m.TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
         FUNC_GET_DICVALUE( m.FILE_TYPE,'DALX') fileType,
-        CASE WHEN m.REQUEST_FLAG='0' THEN '已提交'
-        WHEN m.REQUEST_FLAG='1' THEN '待审核'
-        WHEN m.REQUEST_FLAG='2' THEN '通过'
-        WHEN m.REQUEST_FLAG='3' THEN '驳回'
-        ELSE '无' END state,
+        FUNC_GET_DICVALUE(SCHOOL_TYPE,'XXLB') schoolType,
+        FUNC_GET_DICVALUE(REQUEST_FLAG,'DAZT') state,
+        CASE WHEN ROLE_STATE='0' THEN '已授权'
+        ELSE '未授权' END roleState,
         m.REQUEST_FLAG requestFlag,
+        FUNC_GET_DICVALUE(m.REQUEST_FLAG,'DAZT') requestFlagShow,
         m.REQUEST_TYPE requestType,
         m.REMARK remark,
         m.EDITED_ID editedId,
         FUNC_GET_USERNAME( m.CREATOR) creator,
+        m.CREATE_DEPT createDeptOne,
         FUNC_GET_DEPTNAME( m.CREATE_DEPT) createDept,
-        m.CREATE_TIME createTime
-        FROM DZDA_MESSAGE m,DZDA_ROLE r
-        WHERE 1=1 AND m.VALID_FLAG='1' AND m.DEL_STATE = '0' AND m.request_flag = '0'
-        <if test="roleFlag == 1 ">
-           AND m.create_dept = #{createDept} OR m.archives_id = r.archives_id AND r.dept_id = #{createDept}
+        m.CREATE_TIME createTime,
+        SCHOOL_TYPE schoolType
+        FROM DZDA_MESSAGE m
+        WHERE 1=1 AND m.VALID_FLAG='1' AND m.DEL_STATE = '0' AND m.request_flag = '5'
+        <if test="roleFlag == 3">
+            AND instr((select dept_id from T_RS_EMPLOYEE_RANGE where PERSON_ID = #{createPerson}),m.create_dept) &gt; 0
         </if>
-        <if test="condition  != null and condition != '' ">
-            AND FUNC_GET_DEPTNAME(m.CREATE_DEPT) LIKE '%'||#{condition}||'%'
-            OR FUNC_GET_USERNAME(m.CREATOR) LIKE '%'||#{condition}||'%'
-            OR FUNC_GET_TABLEVALUE(m.TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') LIKE '%'||#{condition}||'%'
-            OR FUNC_GET_TABLEVALUE(m.ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') LIKE '%'||#{condition}||'%'
-            OR FUNC_GET_DICVALUE(m.FILE_TYPE,'DALX') LIKE '%'||#{condition}||'%'
-            OR to_char(m.request_date,'yyyy-mm-dd') LIKE '%'||#{condition}||'%'
-            OR m.REMARK LIKE '%'||#{condition}||'%'
+        <if test="roleFlag == 1 ">
+            AND (m.archives_id in (select r.archives_id from DZDA_ROLE r where r.person_id = #{creator})
+            OR m.CREATE_DEPT in (SELECT REGEXP_SUBSTR(e.DEPT_ID, '[^,]+', 1, lv)
+            FROM T_RS_EMPLOYEE_RANGE e,(SELECT LEVEL lv FROM dual CONNECT BY LEVEL &lt; 100) b
+            WHERE e.PERSON_ID = #{creator} and b.lv &lt;= REGEXP_COUNT(e.DEPT_ID, '\,') + 1))
+        </if>
+        <if test="roleFlag == 2 ">
+            AND (m.archives_id in (select r.archives_id from DZDA_ROLE r where r.person_id = #{creator})
+            or m.create_dept=#{createDeptOne})
+        </if>
+        <if test="creator != null and creator != '' and roleFlag != 1">
+            AND CREATOR = #{creator}
+        </if>
+        <if test="personName != null and personName != '' ">
+            AND FUNC_GET_USERNAME(CREATOR) LIKE '%'||#{personName}||'%'
+        </if>
+        <if test="schoolCode !=null and schoolCode !=''">
+            AND SCHOOL_CODE=#{schoolCode}
+        </if>
+        <if test="schoolType !=null and schoolType !=''">
+            AND SCHOOL_TYPE=#{schoolType}
+        </if>
+        <if test="formatTimeStart !=null and formatTimeStart !='' and formatTimeEnd !=null and formatTimeEnd !=''">
+            AND FORMAT_TIME between to_date(#{formatTimeStart},'yyyy-mm-dd') and to_date(#{formatTimeEnd},'yyyy-mm-dd')
+        </if>
+        <if test="yearCode !=null and yearCode !=''">
+            AND to_char(request_date,'yyyy')=#{yearCode}
+        </if>
+        <if test="deptName !=null and deptName !=''">
+            AND FUNC_GET_DEPTNAME(CREATE_DEPT) LIKE '%'||#{deptName}||'%'
+        </if>
+        <if test="createDeptOne !=null and createDeptOne !=''">
+            AND CREATE_DEPT = #{createDeptOne}
+        </if>
+        <if test="deptId !=null and deptId !=''">
+            AND CREATE_DEPT = #{deptId}
+        </if>
+        <if test="requestDate !=null and requestDate != '' ">
+            AND request_date= #{requestDate}
+        </if>
+        <if test="oneLevel !=null and oneLevel !='' and oneLevel !='null' ">
+            AND ONE_LEVEL=#{oneLevel}
+        </if>
+        <if test="twoLevel !=null and twoLevel !='' and twoLevel !='null' ">
+            AND TWO_LEVEL=#{twoLevel}
+        </if>
+        <if test="fileType !=null and fileType !='' and fileType !='null' ">
+            AND FILE_TYPE=#{fileType}
+        </if>
+        <if test="requestFlag !=null and requestFlag !=''">
+            AND REQUEST_FLAG=#{requestFlag}
+        </if>
+        <if test="roleState !=null and roleState !=''">
+            AND ROLE_STATE = #{roleState}
+        </if>
+        <if test="archivesName !=null and archivesName !=''">
+            AND ARCHIVES_NAME like '%'||#{archivesName}||'%'
+        </if>
+        <if test="archivesCode !=null and archivesCode !=''">
+            AND ARCHIVES_CODE like '%'||#{archivesCode}||'%'
         </if>
         ORDER BY m.CREATE_TIME DESC
     </select>
     <insert id="insertArchivesLog" parameterType="com.goisan.archives.bean.Archives">
         INSERT INTO DZDA_LOG
-        (LOG_ID,ARCHIVES_ID,PERSON_ID,DEPT_ID,OPERATE_TYPE,OPERATE_TIME,REMARK,
-        CREATOR,CREATE_DEPT,CREATE_TIME)
-        VALUES
-        (FUNC_GET_UUID,#{archivesId},#{creator},#{createDept},#{operateType},sysdate,#{remark},
-        #{creator},#{createDept},sysdate)
+        (LOG_ID, ARCHIVES_ID, ARCHIVES_NAME, ARCHIVES_CODE, PERSON_ID, DEPT_ID, OPERATE_TYPE, OPERATE_TIME, REMARK,
+         CREATOR, CREATE_DEPT, CREATE_TIME)
+        VALUES (FUNC_GET_UUID, #{archivesId}, #{archivesName}, #{archivesCode}, #{creator}, #{createDept},
+                #{operateType}, sysdate, #{remark},
+                #{creator}, #{createDept}, sysdate)
     </insert>
+    <delete id="archivesRoleTakeBack" parameterType="java.lang.String">
+        delete
+        from DZDA_ROLE
+        where ARCHIVES_ID = #{id}
+    </delete>
+    <update id="updateArchivesRoleState" parameterType="java.lang.String">
+        update DZDA_MESSAGE
+        set ROLE_STATE = '1'
+        where ARCHIVES_ID = #{id}
+    </update>
+    <update id="updateRoleState" parameterType="java.lang.String">
+        update DZDA_MESSAGE
+        set ROLE_STATE = '0'
+        where ARCHIVES_ID = #{id}
+    </update>
+    <select id="getArchivesLogById" parameterType="java.lang.String"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT log_id,
+               ARCHIVES_ID,
+               ARCHIVES_NAME                                archivesName,
+               ARCHIVES_CODE                                archivesCode,
+               PERSON_ID,
+               DEPT_ID,
+               OPERATE_TYPE,
+               FUNC_GET_DICVALUE(OPERATE_TYPE, 'DZDA_CZLX') operateType,
+               FUNC_GET_USERNAME(PERSON_ID)                 personId,
+               FUNC_GET_DEPTNAME(DEPT_ID)                   deptId,
+               to_char(OPERATE_TIME, 'yyyy-mm-dd hh24:mi')  operateTime,
+               remark,
+               SCHOOL_TYPE                                  schoolType
+        from DZDA_LOG
+        where VALID_FLAG = '1'
+          and log_id = #{archivesId}
+        order by operateTime desc
+    </select>
+    <select id="getArchivesCheckEmp" parameterType="java.lang.String"
+            resultType="java.lang.String">
+        SELECT t.person_id
+        FROM DZDA_ROLE t
+        WHERE t.archives_id = #{archivesId}
+          AND t.dept_id like '${deptId}%'
+    </select>
+    <select id="getPersonBydeptId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Emp">
+        SELECT t1.person_id                   personId,
+               t1.name || '--' || d.DEPT_NAME name,
+               t2.dept_id                     deptId
+        FROM T_RS_EMPLOYEE t1,
+             T_RS_EMPLOYEE_DEPT t2,
+             t_sys_dept d
+        WHERE t1.person_id = t2.person_id
+          AND t1.VALID_FLAG = '1'
+          AND d.VALID_FLAG = '1'
+          AND t2.dept_id = d.dept_id
+          AND t2.dept_id like '${deptId}%'
+    </select>
+    <delete id="delArchivesPower" parameterType="java.lang.String">
+        DELETE DZDA_ROLE
+        WHERE archives_id = #{archivesId}
+          AND dept_id like '${deptId}%'
+    </delete>
+    <select id="getCheckListCount" parameterType="com.goisan.archives.bean.Archives"
+            resultType="java.lang.String">
+        SELECT
+        count(m.ARCHIVES_ID) ||''
+        FROM DZDA_MESSAGE m
+        WHERE 1=1 AND VALID_FLAG='1' AND DEL_STATE = '0'
+        <if test="roleFlag == 1">
+            and (REQUEST_FLAG='1' or REQUEST_FLAG='0')
+            and m.CREATE_DEPT= #{createDept}
+        </if>
+        <if test="roleFlag == 2">
+            and (REQUEST_FLAG='2' or REQUEST_FLAG='4' or REQUEST_FLAG='7' or REQUEST_FLAG='3')
+            and m.creator = #{creator}
+        </if>
+       <!-- AND (
+        ( m.REQUEST_FLAG in ( '2' ,'3','4','6' ) and m.creator = #{creator} )
+        <if test="createDept !=null and createDept !=''">
+            or (
+            m.REQUEST_FLAG in ('0' ,'1')
+            AND CREATE_DEPT= #{createDept}
+            )
+        </if>-->
+    </select>
+    <select id="allArchivesId" parameterType="com.goisan.archives.bean.Archives"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        ARCHIVES_ID archivesId
+        FROM DZDA_MESSAGE
+        WHERE 1=1 and VALID_FLAG=#{validFlag} AND DEL_STATE = '0'
+        <if test=" roleState != null and roleState != '' ">
+            AND ROLE_STATE = #{roleState}
+        </if>
+        <if test=" level == null or level != '' ">
+            AND (REQUEST_FLAG = '6' or REQUEST_FLAG != '7' or REQUEST_FLAG != '8' or REQUEST_FLAG is null)
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND CREATOR= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' and level == null ">
+            AND CREATE_DEPT= #{createDept}
+        </if>
+        <if test="createDept != 'sa' and createDept != null and createDept != ''
+                  and level != null and level != '' ">
+            AND CREATE_DEPT LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        </if>
+        <if test="deptName != null and deptName != '' ">
+            AND FUNC_GET_DEPTNAME(CREATE_DEPT) LIKE '%'||#{deptName}||'%'
+        </if>
+        <if test="deptId != null and deptId != '' ">
+            AND CREATE_DEPT = #{deptId}
+        </if>
+        <if test="personName != null and personName != '' ">
+            AND FUNC_GET_USERNAME(CREATOR) LIKE '%'||#{personName}||'%'
+        </if>
+        <if test="schoolCode !=null and schoolCode !=''">
+            AND SCHOOL_CODE=#{schoolCode}
+        </if>
+        <if test="schoolType !=null and schoolType !=''">
+            AND SCHOOL_TYPE=#{schoolType}
+        </if>
+        <if test="yearCode !=null and yearCode !=''">
+            AND to_char(request_date,'yyyy')=#{yearCode}
+        </if>
+        <if test="deptCode !=null and deptCode !=''">
+            AND DEPT_CODE=#{deptCode}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND request_date= #{requestDate}
+        </if>
+        <if test="oneLevel !=null and oneLevel !='' and oneLevel !='null' ">
+            AND ONE_LEVEL=#{oneLevel}
+        </if>
+        <if test="twoLevel !=null and twoLevel !='' and twoLevel !='null' ">
+            AND TWO_LEVEL=#{twoLevel}
+        </if>
+        <if test="fileType !=null and fileType !='' and fileType !='null' ">
+            AND FILE_TYPE=#{fileType}
+        </if>
+        <if test="requestFlag !=null and requestFlag !='' ">
+            AND REQUEST_FLAG=#{requestFlag}
+        </if>
+        <if test="archivesName !=null and archivesName !=''">
+            AND ARCHIVES_NAME like '%'||#{archivesName}||'%'
+        </if>
+        <if test="archivesCode !=null and archivesCode !=''">
+            AND ARCHIVES_CODE like '%'||#{archivesCode}||'%'
+        </if>
+        ORDER BY CREATE_TIME DESC
+    </select>
+    <!--部门主任-->
+    <select id="getArchivesListBumen" parameterType="com.goisan.archives.bean.Archives"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        m.ARCHIVES_ID archivesId,
+        m.ARCHIVES_CODE archivesCode,
+        m.ARCHIVES_NAME archivesName,
+        m.DEPT_CODE deptCode,
+        to_char(m.request_date,'yyyy-mm-dd') requestDate,
+        m.SCHOOL_CODE schoolCode,
+        FUNC_GET_TABLEVALUE(m.ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
+        FUNC_GET_TABLEVALUE(m.TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
+        FUNC_GET_DICVALUE(m.FILE_TYPE,'DALX') fileType,
+        FUNC_GET_DICVALUE(m.SCHOOL_TYPE,'XXLB') schoolType,
+        FUNC_GET_DICVALUE(m.REQUEST_FLAG,'DAZT') state,
+        CASE WHEN ROLE_STATE='0' THEN '已授权'
+        ELSE '未授权' END roleState,
+        m.REQUEST_FLAG requestFlag,
+        FUNC_GET_DICVALUE(REQUEST_FLAG,'DAZT') requestFlagShow,
+        m.REQUEST_TYPE requestType,
+        m.REMARK remark,
+        m.EDITED_ID editedId,
+        FUNC_GET_USERNAME(m.CREATOR) creator,
+        FUNC_GET_DEPTNAME(m.CREATE_DEPT) createDept,
+        m.CREATE_TIME createTime,
+        m.creator personId,
+        m. SCHOOL_TYPE schoolType,
+        to_char(m.FORMAT_TIME,'yyyy-mm-dd') formatTime
+        FROM DZDA_MESSAGE m
+        WHERE 1=1 AND VALID_FLAG=#{validFlag} AND DEL_STATE = '0'
+        AND (m.REQUEST_FLAG != '6' or creator=#{createPerson})
+        AND  CREATE_DEPT= #{createDept}
+        <if test="deptName != null and deptName != '' ">
+            AND FUNC_GET_DEPTNAME(m.CREATE_DEPT) LIKE '%'||#{deptName}||'%'
+        </if>
+        <if test="personName != null and personName != '' ">
+            AND FUNC_GET_USERNAME(m.CREATOR) LIKE '%'||#{personName}||'%'
+        </if>
+        <if test="formatTimeStart != null and formatTimeStart != '' and formatTimeEnd != null and formatTimeEnd != ''">
+            AND FORMAT_TIME between to_date(#{formatTimeStart},'yyyy-mm-dd') and to_date(#{formatTimeEnd},'yyyy-mm-dd')
+        </if>
+        <if test="schoolType !=null and schoolType !=''">
+            AND m.SCHOOL_TYPE=#{schoolType}
+        </if>
+        <if test="deptCode !=null and deptCode !=''">
+            AND m.DEPT_CODE=#{deptCode}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND m.request_date= #{requestDate}
+        </if>
+        <if test="requestFlag !=null and requestFlag !=''">
+            AND REQUEST_FLAG=#{requestFlag}
+        </if>
+        <if test="oneLevel !=null and oneLevel !='' and oneLevel !='null' ">
+            AND m.ONE_LEVEL=#{oneLevel}
+        </if>
+        <if test="twoLevel !=null and twoLevel !='' and twoLevel !='null' ">
+            AND m.TWO_LEVEL=#{twoLevel}
+        </if>
+        <if test="fileType !=null and fileType !='' and fileType !='null' ">
+            AND m.FILE_TYPE=#{fileType}
+        </if>
+        <if test="archivesName !=null and archivesName !=''">
+            AND ARCHIVES_NAME like '%'||#{archivesName}||'%'
+        </if>
+        <if test="archivesCode !=null and archivesCode !=''">
+            AND ARCHIVES_CODE like '%'||#{archivesCode}||'%'
+        </if>
+        <if test="yearCode !=null and yearCode !=''">
+            AND to_char(request_date,'yyyy')=#{yearCode}
+        </if>
+        <if test="creator !=null and creator !=''">
+            AND m.creator = #{creator}
+        </if>
+        <if test=" roleState != null and roleState != '' ">
+            AND ROLE_STATE = #{roleState}
+        </if>
+        ORDER BY m.CREATE_TIME DESC
+    </select>
+    <!--校领导-->
+    <select id="getArchivesListLingDao" parameterType="com.goisan.archives.bean.Archives"
+            resultType="com.goisan.archives.bean.Archives">
+        SELECT
+        m.ARCHIVES_ID archivesId,
+        m.ARCHIVES_CODE archivesCode,
+        m.ARCHIVES_NAME archivesName,
+        m.DEPT_CODE deptCode,
+        to_char(m.request_date,'yyyy-mm-dd') requestDate,
+        m.SCHOOL_CODE schoolCode,
+        FUNC_GET_TABLEVALUE(m.ONE_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') oneLevel,
+        FUNC_GET_TABLEVALUE(m.TWO_LEVEL,'DZDA_TYPE','TYPE_ID','TYPE_NAME') twoLevel,
+        FUNC_GET_DICVALUE(m.FILE_TYPE,'DALX') fileType,
+        FUNC_GET_DICVALUE(m.SCHOOL_TYPE,'XXLB') schoolType,
+        FUNC_GET_DICVALUE(m.REQUEST_FLAG,'DAZT') state,
+        CASE WHEN ROLE_STATE='0' THEN '已授权'
+        ELSE '未授权' END roleState,
+        m.REQUEST_FLAG requestFlag,
+        FUNC_GET_DICVALUE(REQUEST_FLAG,'DAZT') requestFlagShow,
+        m.REQUEST_TYPE requestType,
+        m.REMARK remark,
+        m.EDITED_ID editedId,
+        FUNC_GET_USERNAME(m.CREATOR) creator,
+        FUNC_GET_DEPTNAME(m.CREATE_DEPT) createDept,
+        m.CREATE_TIME createTime,
+        m.creator personId,
+        m. SCHOOL_TYPE schoolType,
+        to_char(m.FORMAT_TIME,'yyyy-mm-dd') formatTime
+        FROM DZDA_MESSAGE m
+        WHERE 1=1 AND VALID_FLAG=#{validFlag} AND DEL_STATE = '0'
+        AND ((
+        m.request_flag='5'
+        <if test="roleFlag != 2">
+            and  instr((select dept_id from T_RS_EMPLOYEE_RANGE where PERSON_ID = #{createPerson}),m.create_dept) &gt; 0
+        </if>
+        )
+        or  CREATOR=#{createPerson})
+        <if test="deptName != null and deptName != '' ">
+            AND FUNC_GET_DEPTNAME(m.CREATE_DEPT) LIKE '%'||#{deptName}||'%'
+        </if>
+        <if test="personName != null and personName != '' ">
+            AND FUNC_GET_USERNAME(m.CREATOR) LIKE '%'||#{personName}||'%'
+        </if>
+        <if test="formatTimeStart != null and formatTimeStart != '' and formatTimeEnd != null and formatTimeEnd != ''">
+            AND FORMAT_TIME between to_date(#{formatTimeStart},'yyyy-mm-dd') and to_date(#{formatTimeEnd},'yyyy-mm-dd')
+        </if>
+        <if test="schoolType !=null and schoolType !=''">
+            AND m.SCHOOL_TYPE=#{schoolType}
+        </if>
+        <if test="deptCode !=null and deptCode !=''">
+            AND m.DEPT_CODE=#{deptCode}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND m.request_date= #{requestDate}
+        </if>
+        <if test="requestFlag !=null and requestFlag !=''">
+            AND REQUEST_FLAG=#{requestFlag}
+        </if>
+        <if test="oneLevel !=null and oneLevel !='' and oneLevel !='null' ">
+            AND m.ONE_LEVEL=#{oneLevel}
+        </if>
+        <if test="twoLevel !=null and twoLevel !='' and twoLevel !='null' ">
+            AND m.TWO_LEVEL=#{twoLevel}
+        </if>
+        <if test="fileType !=null and fileType !='' and fileType !='null' ">
+            AND m.FILE_TYPE=#{fileType}
+        </if>
+        <if test="archivesName !=null and archivesName !=''">
+            AND ARCHIVES_NAME like '%'||#{archivesName}||'%'
+        </if>
+        <if test="archivesCode !=null and archivesCode !=''">
+            AND ARCHIVES_CODE like '%'||#{archivesCode}||'%'
+        </if>
+        <if test="yearCode !=null and yearCode !=''">
+            AND to_char(request_date,'yyyy')=#{yearCode}
+        </if>
+        <if test="creator !=null and creator !=''">
+            AND m.creator = #{creator}
+        </if>
+        <if test="roleState != null and roleState != '' ">
+            AND ROLE_STATE = #{roleState}
+        </if>
+        ORDER BY m.CREATE_TIME DESC
+    </select>
 </mapper>

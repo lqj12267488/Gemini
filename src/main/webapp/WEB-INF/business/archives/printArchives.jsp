@@ -1,4 +1,4 @@
-<%@ page import="com.goisan.system.bean.CommonBean" %><%--q申请新增和修改界面
+<%--q申请新增和修改界面
   Created by IntelliJ IDEA.
   User: wq
   Date: 2017/7/18
@@ -32,8 +32,8 @@
 </head>
 <table border="1" bgcolor="#fff">
     <div>
-        <h2 style="margin-left: 40%;">
-            <%--<img src="<%=request.getContextPath()%>/libs/img/logodl.png" style="width: 50px; height: 50px;">&nbsp;&nbsp;--%><%=CommonBean.getParamValue("SZXXMC")%>
+        <h2 style="margin-left: 25%;">
+            <img src="<%=request.getContextPath()%>/libs/img/logodl.png" style="width: 50px; height: 50px;">&nbsp;&nbsp;大连职工大学、大连商业学校
         </h2>
     </div>
     <div style="margin-left: 45%;margin-top: 5%;">
@@ -41,12 +41,12 @@
     </div>
     <tr >
         <td align="center"  class="left" style="padding-left: 2%;text-align:center; width: 140px;">创建部门</td>
-        <td align="center"  class="left" style="padding-left: 2%;text-align:center; width: 140px;">创建人</td>
-        <td class="left"   align="center" style="padding-left: 2%;text-align:center;  width: 140px;">档案编码</td>
+        <td align="center"  class="left" style="padding-left: 2%;text-align:center; width: 100px;">创建人</td>
+        <td class="left"   align="center" style="padding-left: 2%;text-align:center;  width: 120px;">档案编码</td>
         <td class="left"  align="center" style=" padding-left: 2%;text-align:center; width: 140px;">一级类别</td>
         <td class="left"  align="center" style="padding-left: 2%;text-align:center;  width: 140px;">二级类别</td>
         <td class="left"  align="center" style="padding-left: 2%;text-align:center;  width: 140px;">档案类型</td>
-        <td class="left"  align="center" style="padding-left: 2%;text-align:center;  width: 140px;">档案说明</td>
+        <td class="left"  align="center" style="padding-left: 2%;text-align:center;  width: 160px;">档案名称</td>
     </tr>
     <c:forEach items="${list}" var="index">
         <tr>
@@ -69,7 +69,7 @@
                     ${index.fileType}
             </td>
             <td  class="left1" align="center">
-                    ${index.remark}
+                    ${index.archivesName}
             </td>
         </tr>
     </c:forEach>
@@ -92,7 +92,7 @@
                 {"width": "10%", "data": "oneLevel", "title": "一级类别"},
                 {"width": "10%", "data": "twoLevel", "title": "二级类别"},
                 {"width": "10%", "data": "fileType", "title": "档案类型"},
-                {"width": "10%", "data": "remark", "title": "档案说明"},
+                {"width": "10%", "data": "remark", "title": "档案名称"},
             ],
             'order': [1, 'desc'],
             "dom": 'rtlip',

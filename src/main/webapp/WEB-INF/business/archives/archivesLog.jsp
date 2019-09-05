@@ -24,10 +24,40 @@
                     <div class="content block-fill-white">
                         <div class="form-row">
                             <div class="col-md-1 tar">
+                                档案名称：
+                            </div>
+                            <div class="col-md-2">
+                                <input id="arname" type="text"
+                                       class="validate[required,maxSize[100]] form-control"/>
+                            </div>
+                            <div class="col-md-1 tar">
+                                档案编码：
+                            </div>
+                            <div class="col-md-2">
+                                <input id="arcode" type="text"
+                                       class="validate[required,maxSize[100]] form-control"/>
+                            </div>
+                            <div class="col-md-1 tar">
                                 操作类型：
                             </div>
                             <div class="col-md-2">
                                 <select id="typeSelect" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-1 tar">
+                                操作人员：
+                            </div>
+                            <div class="col-md-2">
+                                <input id="selPerson" type="text"
+                                       class="validate[required,maxSize[100]] form-control"/>
+                            </div>
+                            <div class="col-md-1 tar">
+                                操作时间：
+                            </div>
+                            <div class="col-md-2">
+                                <input id="selDate" type="date"
+                                       class="validate[required,maxSize[100]] form-control"/>
                             </div>
                             <div class="col-md-2">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
@@ -54,31 +84,26 @@
 <script>
     var archivesLogTable;
     $(document).ready(function () {
-        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZYK_CZLX", function (data) {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=DZDA_CZLX", function (data) {
             addOption(data, "typeSelect");
         })
         archivesLogTable = $("#archivesLogGrid").DataTable({
             "ajax": {
+                "type": "post",
                 "url": '<%=request.getContextPath()%>/archives/getArchivesLogList',
             },
             "destroy": true,
             "columns": [
                 {"data": "logId", "visible": false},
-                //{"width": "16%", "data": "archivesId", "title": "档案编码"},
-                {"width": "16%","data": "operateType", "title": "操作类型"},
-                {"width": "16%", "data": "deptId", "title": "操作部门"},
-                {"width": "16%", "data": "personId", "title": "操作人"},
-                {"width": "20%", "data": "remark", "title": "操作说明"},
-                {"width": "16%", "data": "operateTime", "title": "操作时间"},
-                // {
-                //     "width": "10%",
-                //     "title": "操作",
-                //     "render": function () {
-                //         return render;
-                //     }
-                // }
+                {"width": "14%", "data": "archivesName", "title": "档案名称"},
+                {"width": "14%", "data": "archivesCode", "title": "档案编码"},
+                {"width": "14%","data": "operateType", "title": "操作类型"},
+                {"width": "14%", "data": "deptId", "title": "操作部门"},
+                {"width": "14%", "data": "personId", "title": "操作人"},
+                {"width": "16%", "data": "remark", "title": "操作说明"},
+                {"width": "14%", "data": "operateTime", "title": "操作时间"},
             ],
-            'order' : [1,'desc'],
+            'order' : [7,'desc'],
             "dom": 'rtlip',
             language: language
         });
@@ -117,14 +142,26 @@
         });
     })
     function searchclear() {
+        $("#selPerson").val("");
+        $("#selDate").val("");
+        $("#arcode").val("");
+        $("#arname").val("");
         $("#typeSelect").val("");
         $("#typeSelect option:selected").val("");
         search();
     }
 
     function search() {
+        var personName = $("#selPerson").val();
+        //var operateTime=$("#selDate").val().replace('T',' ');
+        var operateTime=$("#selDate").val();
+        var arcode=$("#arcode").val();
+        var arname=$("#arname").val();
         var seltype=$("#typeSelect option:selected").val();
-        archivesLogTable.ajax.url("<%=request.getContextPath()%>/archives/getArchivesLogList?operateType="+seltype).load();
+        arname=encodeURI(encodeURI(arname));
+        personName=encodeURI(encodeURI(personName));
+        archivesLogTable.ajax.url("<%=request.getContextPath()%>/archives/getArchivesLogList?operateType="+seltype+
+        "&archivesName="+arname+"&personName="+personName+"&archivesCode="+arcode+"&operateTime="+operateTime).load();
     }
 
 </script>

@@ -75,8 +75,8 @@ public class ArcadController {
             arcadServcie.updateArcadById(arcad);
             return new Message(1,"修改成功",null);
         }else {
-            arcadServcie.insertArcad(arcad);
-            return new Message(1,"保存成功",null);
+//            检查是否详情是否存在
+          return  arcadServcie.insertArcad(arcad);
         }
     }
 

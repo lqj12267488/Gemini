@@ -53,7 +53,8 @@
             checkList = checkList.substring(0,checkList.length-1);
         $.post("<%=request.getContextPath()%>/survey/person/saveSurveyParent", {
             surveyId:surveyId,
-            checkList:checkList
+            checkList:checkList,
+            personType:3
         }, function (msg) {
             if (msg.status == 1 ) {
                 swal({title: msg.msg, type: "success"});

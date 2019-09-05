@@ -8,16 +8,16 @@
                 <div class="block block-drop-shadow content block-fill-white">
                     <div class="form-row">
                         <div class="col-md-1 tar">
-                            家长姓名
+                            父母或监护人1姓名
                         </div>
                         <div class="col-md-2">
                             <input id="nameSel" />
                         </div>
                         <div class="col-md-2 tar">
-                            家长身份证号
+                            父母或监护人2姓名
                         </div>
                         <div class="col-md-2">
-                            <input id="idcardSel" placeholder="末位字母请大写"/>
+                            <input id="nameSelSecond" />
                         </div>
                         <div class="col-md-3 tar">
                             <button type="button" class="btn btn-default btn-clean pull-right"
@@ -61,9 +61,17 @@
             "destroy": true,
             "columns": [
                 {"data":"parentId","visible": false},
-                {"data":"parentName","title":"家长姓名"},
-                {"data":"idcard","title":"身份证号"},
-                {"data":"parentTel","title":"电话"},
+                {"data":"studentName","title":"学生姓名"},
+                {"data":"studentId","title":"学生身份证件号码"},
+                {"data":"parentName","title":"父母或监护人1姓名"},
+                {"data":"idCardTypeShow","title":"父母或监护人1身份证件类型"},
+                {"data":"idcard","title":"父母或监护人1身份证件号码"},
+                {"data":"parentTel","title":"父母或监护人1联系方式"},
+                {"data":"parentNameSecond","title":"父母或监护人2姓名"},
+                {"data":"idCardTypeSecondShow","title":"父母或监护人2身份证件类型"},
+                {"data":"idcardSecond","title":"父母或监护人2身份证件号码"},
+                {"data":"parentTelSecond","title":"父母或监护人2联系方式"},
+                {"data":"householdRegisterPlace","title":"学生户籍地址（与身份证上一致）"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
@@ -146,16 +154,16 @@
 
     function searchclear() {
         $("#nameSel").val("");
-        $("#idcardSel").val("");
+        $("#nameSelSecond").val("");
         search();
     }
 
     function search() {
         var nameSel = $("#nameSel").val();
-        var idcardSel = $("#idcardSel").val();
+        var nameSelSecond = $("#nameSelSecond").val();
 
         parentTable.ajax.url("<%=request.getContextPath()%>/core/parent/getParentList" +
-            "?parentName="+nameSel+"&idcard="+idcardSel ).load();
+            "?parentName="+nameSel+"&parentNameSecond="+nameSelSecond ).load();
     }
 
 </script>

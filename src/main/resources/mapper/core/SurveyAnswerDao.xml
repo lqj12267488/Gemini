@@ -7,6 +7,22 @@
             resultType="com.goisan.survey.bean.SurveyAnswer">
         select answer_id,question_id,survey_id,person_id,person_dept,answer_type,answer_result from T_DC_ANSWER
     </select>
+    <select id="getSurveyAnswerListByUserId"
+            parameterType="com.goisan.survey.bean.Survey"
+            resultType="com.goisan.survey.bean.Survey">
+        select survey_id,survey_title,start_time,end_time,
+        years,FUNC_GET_DICVALUE(years, 'ND') yearsShow,
+        check_flag,FUNC_GET_DICVALUE(check_flag, 'SF') checkFlagShow,
+        survey_type,FUNC_GET_DICVALUE(survey_type, 'DCLX') surveyTypeShow,survey_type surveyType,
+        start_flag,FUNC_GET_DICVALUE(start_flag, 'JSPJQDZT') startFlagShow,
+        remark
+        from T_DC_SURVEY t
+        WHERE 1 = 1 AND t.start_flag = '1' and   t.END_TIME &gt;= (sysdate-1)
+        AND t.survey_id in ( select p.survey_id from T_DC_PERSON p where p.person_id = #{creator} and p.PERSON_DEPT =#{createDept} and p.ANSWER_FLAG ='0' )
+        <if test="surveyTitle != null and surveyTitle != '' ">
+            AND survey_title LIKE '%${surveyTitle}%'
+        </if>
+    </select>
     <insert id="saveSurveyAnswer" parameterType="com.goisan.survey.bean.SurveyAnswer">
         insert into t_dc_answer
         (answer_id,question_id,survey_id,person_id,person_dept,answer_type,answer_result,
@@ -37,6 +53,20 @@
         ) a ,
         (select count(PERSON_ID) as sumNum from T_DC_PERSON
          where  ANSWER_FLAG='1' and survey_id = #{surveyId} ) p
+    </select>
+    <select id="surveyAnswerServiceBySurveyId"
+            parameterType="java.lang.String" resultType="com.goisan.survey.bean.SurveyAnswer">
+        SELECT t.question_id questionId, t.person_id personId,
+               decode(q.question_type ,
+               '3',(select wm_concat(i.OPTION_VALUE) from T_DC_INDEXOPTION i WHERE t.answer_result LIKE '%'||i.OPTION_ID||'%'),
+               '4',FUNC_GET_USERNAME(t.answer_result),
+               '5',FUNC_GET_USERNAME(t.answer_result),
+               '2' ,FUNC_GET_TABLEVALUE(t.answer_result,'T_DC_INDEXOPTION','OPTION_ID','OPTION_VALUE') ,
+               t.answer_result
+               ) answerResult
+          from T_DC_ANSWER t, T_DC_QUESTION q
+         WHERE t.survey_id = #{id}
+           and t.question_id = q.question_id
     </select>
 
 </mapper>

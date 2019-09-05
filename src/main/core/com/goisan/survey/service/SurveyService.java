@@ -1,5 +1,6 @@
 package com.goisan.survey.service;
 
+import com.goisan.survey.bean.Survey;
 import com.goisan.system.bean.BaseBean;
 
 import java.util.List;
@@ -19,5 +20,9 @@ public interface SurveyService {
     void updateSurveyFlag(BaseBean baseBean);
 
     void delSurvey(String id);
+
+    List<Survey> getSurveyEditList(Survey survey);
+
+    List<Survey> getSurveyExport(Survey survey);
 
 }

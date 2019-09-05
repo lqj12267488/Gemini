@@ -19,10 +19,21 @@
         <if test='null!=arcadCounty and ""!=arcadCounty'>
             and arcad_county = #{arcadCounty}
         </if>
+        <if test='arcadDetail!=null and ""!=arcadDetail'>
+            and arcad_detail = #{arcadDetail}
+        </if>
     </select>
 
     <select id="getArcadById" parameterType="java.lang.String" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
-          select  * from T_XG_ARCHIVESADDR t where t.arcad_id = #{arcadId}
+          select  t.* ,FUNC_GET_TABLEVALUE(t.arcad_province,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')arcadProvinceShow,
+        FUNC_GET_TABLEVALUE(t.arcad_city, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') arcadCityShow,
+        FUNC_GET_TABLEVALUE(t.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')  arcadCountyShow
+        from T_XG_ARCHIVESADDR t where t.arcad_id = #{arcadId} and valid_flag = '1'
+    </select>
+
+    <select id="checkArcad" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
+        select *  from T_XG_ARCHIVESADDR t where t.arcad_province=#{arcadProvince} and t.arcad_city = #{arcadCity}
+         and t.arcad_county = #{arcadCounty}  and t.arcad_detail = #{arcadDetail} and valid_flag = '1'
     </select>
 
     <insert id="insertArcad" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
@@ -34,7 +45,7 @@
     <update id="updateArcadById" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">
       update  T_XG_ARCHIVESADDR t set arcad_province=#{arcadProvince},arcad_city=#{arcadCity},arcad_county = #{arcadCounty},
       arcad_detail=#{arcadDetail} ,changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
-      where t.arcad_id = #{arcadId}
+      where t.arcad_id = #{arcadId} and valid_flag = '1'
     </update>
 
     <delete id="delArcadById" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.Arcad">

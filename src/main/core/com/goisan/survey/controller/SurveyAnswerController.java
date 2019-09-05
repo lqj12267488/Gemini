@@ -1,9 +1,12 @@
 package com.goisan.survey.controller;
 
-import com.goisan.survey.bean.SurveyAnswer;
-import com.goisan.survey.bean.SurveyPerson;
+import com.goisan.studentwork.studentprove.service.StudentProveService;
+import com.goisan.survey.bean.*;
 import com.goisan.survey.service.SurveyAnswerService;
 import com.goisan.survey.service.SurveyPersonService;
+import com.goisan.survey.service.SurveyQuestionService;
+import com.goisan.survey.service.SurveyService;
+import com.goisan.system.bean.Student;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import org.springframework.stereotype.Controller;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -22,7 +26,12 @@ public class SurveyAnswerController {
     private SurveyAnswerService surveyAnswerService;
     @Resource
     private SurveyPersonService surveyPersonService;
-
+    @Resource
+    private SurveyService surveyService;
+    @Resource
+    private SurveyQuestionService surveyQuestionService;
+    @Resource
+    private StudentProveService studentProveService;
     @RequestMapping("/survey/answer/toSurveyAnswerList")
     public ModelAndView toList() {
         ModelAndView mv = new ModelAndView("/core/survey/answer/surveyAnswerList");
@@ -31,8 +40,15 @@ public class SurveyAnswerController {
 
     @ResponseBody
     @RequestMapping("/survey/answer/getSurveyAnswerList")
-    public Map getList(SurveyAnswer surveyAnswer) {
-        return CommonUtil.tableMap(surveyAnswerService.getSurveyAnswerList(surveyAnswer));
+    public Map getList(Survey surveyAnswer) {
+        Student student = studentProveService.getStudentByStudentId(CommonUtil.getPersonId());
+        if (null == student) {
+            CommonUtil.save(surveyAnswer);
+        } else {
+            surveyAnswer.setCreator(student.getStudentId());
+            surveyAnswer.setCreateDept(student.getClassId());
+        }
+        return CommonUtil.tableMap(surveyAnswerService.getSurveyAnswerListByUserId(surveyAnswer));
     }
 
     @RequestMapping("/survey/answer/toSurveyAnswerAdd")
@@ -41,6 +57,35 @@ public class SurveyAnswerController {
         mv.addObject("head", "新增");
         return mv;
     }
+
+    @RequestMapping("/survey/answer/toAnswer")
+    public ModelAndView toAnswer(String id) {
+        ModelAndView mv = new ModelAndView("/core/survey/answer/surveyAnswer");
+        mv.addObject("data", surveyService.getSurveyById(id));
+
+        SurveyQuestion surveyQuestion = new SurveyQuestion();
+        surveyQuestion.setSurveyId(id);
+        List<SurveyQuestion> questionList = surveyQuestionService.getSurveyQuestionList(surveyQuestion);
+        mv.addObject("questionList", questionList);
+
+        SurveyOption surveyOption = new SurveyOption();
+        surveyOption.setSurveyId(id);
+//        List optionList = surveyOptionService.getSurveyOptionList(surveyOption);
+//        mv.addObject("optionList",optionList);
+        mv.addObject("surveyId",id);
+        mv.addObject("qList", CommonUtil.jsonUtil(questionList));
+        return mv;
+
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/survey/answer/insertSurveyAnswer")
+    public Message insertSurveyAnswer(String returnValue , String surveyId) {
+        surveyAnswerService.insertSurveyAnswer(returnValue , surveyId);
+        return new Message(0, "添加成功！", null);
+    }
+
 
     @ResponseBody
     @RequestMapping("/survey/answer/saveSurveyAnswer")

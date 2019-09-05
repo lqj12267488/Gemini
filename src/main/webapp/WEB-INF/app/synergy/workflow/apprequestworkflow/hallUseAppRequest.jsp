@@ -153,7 +153,7 @@
 </div>
 <input id="h_Id" type="hidden" value="${id}">
 <input id="tableName" hidden value="T_BG_HALLUSE_WF">
-<input id="workflowCode" hidden value="T_BG_HALLUSE_WF01">
+<input id="workflowCode" hidden value="T_BG_HALLUSE_WF02">
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     $(document).ready(function () {

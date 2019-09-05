@@ -19,7 +19,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closeToProcess()">
                 &times;
             </button>
-            <span style="font-size: 14px">礼堂使用规范</span>
+            <span style="font-size: 14px">会议室使用规范</span>
         </div>
         <div class="modal-body clearfix">
             <div id="layout" style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
@@ -31,7 +31,7 @@
                     <div class="col-md-9">
                         <input id="standardName" type="text" readonly="readonly"
                                class="validate[required,maxSize[50]] form-control"
-                               value="礼堂使用规范"/>
+                               value="会议室使用规范"/>
                     </div>
                 </div>
 

@@ -29,6 +29,12 @@
                                 <div class="col-md-2">
                                     <input id="empSearch"/>
                                 </div>
+                                <div class="col-md-1 tar">
+                                    证件号：
+                                </div>
+                                <div class="col-md-2">
+                                    <input id="idCardSel"/>
+                                </div>
                                 <div class="col-md-2">
                                     <button type="button" class="btn btn-default btn-clean"
                                             onclick="search()">查询
@@ -259,13 +265,15 @@
 
     function searchclear() {
         $("#empSearch").val("");
+        $("#idCardSel").val("");
         search();
     }
 
     function search() {
         var empName = $("#empSearch").val();
+        /*var idCard = $("#idCardSel").val();*/
         deptTable.ajax.url("<%=request.getContextPath()%>/getEmpList?deptId=" + $("#deptCache").val() + "&name="
-            + empName).load();
+            + empName +"&idCard=" + $("#idCardSel").val()).load();
     }
     function checkAll() {
         if ($("#checkAll").attr("checked")) {

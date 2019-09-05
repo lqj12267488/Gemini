@@ -10,7 +10,7 @@
                         <button type="button" class="btn btn-default btn-clean"
                                 onclick="back()">返回
                         </button>
-                        <span style="font-size: 14px"><div id="head"></div></span>
+                        <span style="font-size: 14px"><div id="head">编辑提问问题</div></span>
                     </div>
                     <div class="form-row">
                         <button type="button" class="btn btn-default btn-clean" id="saveBut"
@@ -28,15 +28,21 @@
         </div>
         <input id="surveyId" hidden value="${surveyId}" >
         <input id="checkFlag" hidden value="${checkFlag}">
+        <input id="surveyType" hidden value="${surveyType}">
     </div>
 </div>
 <script>
     var questiontable;
+    var personDate ;
+
+    var dataEmpDept ;
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getEmpTree", function (data) {
+            dataEmpDept = data;
+        });
+
         if($("#checkFlag").val()=="1"){
             $("#saveBut").css("display","none");
-            $("#head").html("查看答题家长");
-        }else{
             $("#head").html("查看提问问题");
         }
 

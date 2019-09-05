@@ -7,7 +7,8 @@
             resultType="com.goisan.survey.bean.Survey">
         select survey_id,survey_title,start_time,end_time,
         check_flag,FUNC_GET_DICVALUE(check_flag, 'SF') checkFlagShow,
-        survey_type,FUNC_GET_DICVALUE(survey_type, 'JSPJRWLX') surveyTypeShow,
+        years years,FUNC_GET_DICVALUE(years,'ND') yearsShow,
+        survey_type,FUNC_GET_DICVALUE(survey_type, 'DCLX') surveyTypeShow,survey_type surveyType,
         start_flag,FUNC_GET_DICVALUE(start_flag, 'JSPJQDZT') startFlagShow,
         remark
         from T_DC_SURVEY
@@ -15,20 +16,23 @@
         <if test="surveyTitle != null and surveyTitle != '' ">
             AND survey_title LIKE '%${surveyTitle}%'
         </if>
+        <if test="years != null and years != '' ">
+            AND years = #{years}
+        </if>
     </select>
     <insert id="saveSurvey" parameterType="com.goisan.survey.bean.Survey">
         insert into t_dc_survey
-        (survey_id,survey_title,start_time,end_time,check_flag,survey_type,start_flag,remark,
+        (survey_id,survey_title,start_time,end_time,check_flag,survey_type,start_flag,remark,years,
         creator,create_time,create_dept)
-        values (#{surveyId},#{surveyTitle},to_date('${startTime}','yyyy-mm-dd'),to_date('${endTime}','yyyy-mm-dd'),'0',#{surveyType},'0',#{remark},
+        values (#{surveyId},#{surveyTitle},to_date('${startTime}','yyyy-mm-dd'),to_date('${endTime}','yyyy-mm-dd'),'0',#{surveyType},'0',#{remark},#{years},
         #{creator},sysdate,#{createDept})
     </insert>
     <select id="getSurveyById" parameterType="java.lang.String"
             resultType="com.goisan.survey.bean.Survey">
         SELECT
-            survey_id,survey_title,start_time,end_time,
+            survey_id,survey_title,start_time,end_time,years,FUNC_GET_DICVALUE(years, 'ND') yearsShow,
             check_flag,FUNC_GET_DICVALUE(check_flag, 'SF') checkFlagShow,
-            survey_type,FUNC_GET_DICVALUE(survey_type, 'JSPJRWLX') surveyTypeShow,
+            survey_type,FUNC_GET_DICVALUE(survey_type, 'DCLX') surveyTypeShow,
             start_flag,FUNC_GET_DICVALUE(start_flag, 'JSPJQDZT') startFlagShow,
             remark
         FROM T_DC_SURVEY
@@ -41,6 +45,7 @@
             end_time=to_date('${endTime}','yyyy-mm-dd'),
             survey_type=#{surveyType},
             remark=#{remark},
+                years = #{years},
             changer=#{changer},
             change_time=sysdate,
             change_dept=#{changeDept}
@@ -63,12 +68,25 @@
     <delete id="delSurvey" parameterType="java.lang.String">
         delete from T_DC_SURVEY where survey_id = #{id}
     </delete>
+    <delete id="delQuestionBySurveyId" parameterType="java.lang.String">
+        delete from T_DC_QUESTION where survey_id = #{id}
+    </delete>
+    <delete id="delOptionBySurveyId" parameterType="java.lang.String">
+        delete from T_DC_INDEXOPTION where survey_id = #{id}
+    </delete>
+    <delete id="delPersonBySurveyId" parameterType="java.lang.String">
+        delete from T_DC_PERSON where survey_id = #{id}
+    </delete>
+    <delete id="delAnswerBySurveyId" parameterType="java.lang.String">
+        delete from T_DC_ANSWER where survey_id = #{id}
+    </delete>
     <select id="getSurveyListByPerson"
             parameterType="com.goisan.survey.bean.Survey"
             resultType="com.goisan.survey.bean.Survey">
         select s.survey_id,s.survey_title,s.start_time,s.end_time,
+        s.years,FUNC_GET_DICVALUE(s.years, 'SF') yearsShow,
         s.check_flag,FUNC_GET_DICVALUE(s.check_flag, 'SF') checkFlagShow,
-        s.survey_type,FUNC_GET_DICVALUE(s.survey_type, 'JSPJRWLX') surveyTypeShow,
+        s.survey_type,FUNC_GET_DICVALUE(s.survey_type, 'DCLX') surveyTypeShow,
         s.start_flag,FUNC_GET_DICVALUE(s.start_flag, 'JSPJQDZT') startFlagShow,
         s.remark
         from T_DC_SURVEY  s , T_DC_PERSON p
@@ -78,5 +96,60 @@
             AND survey_title LIKE '%${surveyTitle}%'
         </if>
     </select>
-
+    <select id="getSurveyEditList" parameterType="com.goisan.survey.bean.Survey" resultType="com.goisan.survey.bean.Survey">
+        select
+            distinct
+            t.person_dept,
+            s.class_name classes,
+            s.major_code majorCode,
+            FUNC_GET_TABLEVALUE(s.major_code,
+                                'T_XG_MAJOR',
+                                'major_code',
+                                'MAJOR_NAME') major,
+            FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') dept,
+            s.departments_id departmentsId,
+            sum(case when t.answer_flag = '0' then 1 else 0 end) numberNotSurvey,
+            sum(case when t.answer_flag = '1' then 1 else 0 end) numberSurvey
+    from T_DC_PERSON t left join t_xg_class s on t.person_dept = s.class_id
+        where t.survey_id = #{surveyId}
+        <if test="majorCode != null and majorCode != '' ">
+            AND s.major_code = #{majorCode}
+        </if>
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND s.departments_id = #{departmentsId}
+        </if>
+        <if test="personDept != null and personDept != '' ">
+            AND t.person_dept = #{personDept}
+        </if>
+        group by t.person_dept,
+                 s.class_name,
+                 s.major_code,
+                 s.departments_id
+    </select>
+    <select id="getSurveyExport" parameterType="com.goisan.survey.bean.Survey" resultType="com.goisan.survey.bean.Survey">
+        select
+            distinct
+            t.person_dept,
+            t.person_id,
+            s.class_name classes,
+            FUNC_GET_TABLEVALUE(t.person_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentName,
+            FUNC_GET_TABLEVALUE(t.person_id,'T_XG_STUDENT','STUDENT_ID','STUDENT_NUMBER') studentNumber,
+            FUNC_GET_TABLEVALUE(t.person_id,'T_XG_STUDENT','STUDENT_ID','IDCARD') studentIdcard,
+            FUNC_GET_TABLEVALUE(s.major_code,
+                                'T_XG_MAJOR',
+                                'major_code',
+                                'MAJOR_NAME') major,
+            FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') dept,
+            decode(t.answer_flag,'0','未做调查','1','已做调查')  completion
+        from T_DC_PERSON t left join t_xg_class s on t.person_dept = s.class_id where t.survey_id = #{surveyId}
+        <if test="departmentsId != null and departmentsId != '' ">
+            AND s.departments_id = #{departmentsId}
+        </if>
+        group by t.person_dept,
+            s.class_name,
+            s.major_code,
+            s.departments_id,
+            t.person_id,
+            t.answer_flag
+    </select>
 </mapper>

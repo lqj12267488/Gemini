@@ -90,6 +90,35 @@
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     var studentProveTable;
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/studentReissue/autoCompleteDept", function (data) {
+            $("#s_class").autocomplete({
+                source: data,
+                select: function (event, ui) {
+                    $("#s_class").val(ui.item.label);
+                    $("#s_class").attr("keycode", ui.item.value);
+                    return false;
+                }
+            }).data("ui-autocomplete")._renderItem = function (ul, item) {
+                return $("<li>")
+                    .append("<a>" + item.label + "</a>")
+                    .appendTo(ul);
+            };
+        })
+
+        $.get("<%=request.getContextPath()%>/studentReissue/autoCompleteEmployee", function (data) {
+            $("#s_major").autocomplete({
+                source: data,
+                select: function (event, ui) {
+                    $("#s_major").val(ui.item.label);
+                    $("#s_major").attr("keycode", ui.item.value);
+                    return false;
+                }
+            }).data("ui-autocomplete")._renderItem = function (ul, item) {
+                return $("<li>")
+                    .append("<a>" + item.label + "</a>")
+                    .appendTo(ul);
+            };
+        })
         search();
         studentProveTable.on('click', 'tr a', function () {
             var data = studentProveTable.row($(this).parent()).data();
@@ -142,7 +171,7 @@
         $("#s_student").val("");
         $("#s_studentNum").val("");
         $("#s_major").val("");
-        $("#s_classId").val("");
+        $("#s_class").val("");
         search();
     }
 
@@ -153,7 +182,7 @@
         var requesters = $("#s_student").val();
         var studentNumbers = $("#s_studentNum").val();
         var majorCodes = $("#s_major").val();
-        var classIds = $("#s_classId").val();
+        var classIds = $("#s_class").val();
         studentProveTable = $("#studentProveGrid").DataTable({
             "ajax": {
                 "type": "post",

@@ -99,7 +99,7 @@
 </div>
 <div class="form-row">
     <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>新疆省
+        新疆省
     </div>
     <div class="col-md-9">
         <input id="f_xinjiangProvinc" readonly="readonly" value="${studentReissue.province}"/>
@@ -107,7 +107,7 @@
 </div>
 <div class="form-row">
     <div class="col-md-3 tar">
-        <span class="iconBtx">*</span>地区（州）
+        地区（州）
     </div>
     <div class="col-md-9">
         <input id="f_regional"  readonly="readonly" value="${studentReissue.regional}"/>

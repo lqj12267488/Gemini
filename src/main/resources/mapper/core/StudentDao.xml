@@ -98,6 +98,10 @@
                s.health_condition           healthCondition,
                s.enrollment_target          enrollmentTarget,
                s.admissions_way             admissionsWay,
+               s.from_army                  fromArmy,
+               s.rural_household_registratio ruralHouseholdRegistratio,
+               s.order_training             orderTraining,
+               s.documentary_lika_poor_familie documentaryLikaPoorFamilie,
                s.cooperation_type           cooperationType,
                s.examination_card_number    examinationCardNumber,
                s.candidate_number           candidateNumber,
@@ -425,7 +429,8 @@ INSERT INTO t_xg_student
  code_cooperative_eduation,
  external_teaching_point,
  subsection_culture, trailing_children_flag, "FROM", NAME_OF_MEMBER, MEMBER_RELATIONSHIP, IS_GUARDIAN,
- MEMBER_TELEPHONE_NUMBER, GRADUATION_SCHOOL)
+ MEMBER_TELEPHONE_NUMBER, GRADUATION_SCHOOL,
+ FROM_ARMY,RURAL_HOUSEHOLD_REGISTRATIO,ORDER_TRAINING,DOCUMENTARY_LIKA_POOR_FAMILIE)
 VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
         to_date('${birthday}', 'yyyy-mm-dd'), '${joinYear}', '${joinMonth}',
         '${householdRegisterType}',
@@ -451,7 +456,8 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         '${testScores}', '${formCooperativeEducation}', '${codeCooperativeEducation}', '${externalTeachingPoint}',
         '${subsectionCulture}',
         '${trailingChildrenFlag}', '${from}', '${nameOfMember}', '${memberRelationship}', '${isGuardian}',
-        '${memberTelephoneNumber}', '${graduationSchool}')
+        '${memberTelephoneNumber}', '${graduationSchool}',
+        '${fromArmy}','${ruralHouseholdRegistratio}','${orderTraining}','${documentaryLikaPoorFamilie}')
     </insert>
     <update id="updateStudent" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student
@@ -510,6 +516,10 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
             health_condition=#{healthCondition},
             enrollment_target=#{enrollmentTarget},
             admissions_way=#{admissionsWay},
+            from_army = #{fromArmy},
+            rural_household_registratio = #{ruralHouseholdRegistratio},
+            order_training = #{orderTraining},
+            documentary_lika_poor_familie = #{documentaryLikaPoorFamilie},
             cooperation_type=#{cooperationType},
             examination_card_number=#{examinationCardNumber},
             candidate_number=#{candidateNumber},

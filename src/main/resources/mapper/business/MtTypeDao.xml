@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.studentwork.maintenance.dao.MtTypeDao">
+
+    <select id="getMtTypeList" resultType="com.goisan.studentwork.maintenance.bean.MtType">
+        select * from T_XG_MAINTENANCE_TYPE where  valid_flag = '1'
+    </select>
+
+
+    <select id="getMtTypeById" parameterType="com.goisan.studentwork.maintenance.bean.MtType" resultType="com.goisan.studentwork.maintenance.bean.MtType">
+          select   * from T_XG_MAINTENANCE_TYPE where valid_flag = '1' and MT_ID = #{mtId}
+    </select>
+
+    <insert id="insertMtType" parameterType="com.goisan.studentwork.maintenance.bean.MtType">
+        insert  into T_XG_MAINTENANCE_TYPE t (t.MT_ID,MT_NAME,CREATOR,CREATE_TIME,CREATE_DEPT,VALID_FLAG) values
+       (func_get_uuid,'${mtName}','${creator}',sysdate,'${createDept}',default )
+    </insert>
+
+    <update id="updateMtTypeById" parameterType="com.goisan.studentwork.maintenance.bean.MtType">
+      update  T_XG_MAINTENANCE_TYPE t set MT_ID=#{mtId},MT_NAME=#{mtName} ,changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+      where t.MT_ID = #{mtId} and valid_flag = '1'
+    </update>
+
+    <delete id="delMtTypeById" parameterType="com.goisan.studentwork.maintenance.bean.MtType">
+          update T_XG_MAINTENANCE_TYPE t set t.valid_flag = '0',changer=#{changer},
+          change_time=sysdate,
+          change_dept=#{changeDept}
+          where t.MT_ID = #{mtId}
+    </delete>
+
+</mapper>

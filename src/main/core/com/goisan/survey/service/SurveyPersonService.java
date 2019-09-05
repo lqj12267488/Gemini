@@ -20,8 +20,10 @@ public interface SurveyPersonService {
     void delSurveyPerson(String id);
 
     @Transactional
-    void delAndSaveSurveyParent(String surveyId, String checkList);
+    void delAndSaveSurveyParent(String surveyId, String checkList, String personType);
 
     String checkPersonBySurveyid(String id);
+
+    List getSurveyPersonBySurveyId(String surveyId);
 
 }

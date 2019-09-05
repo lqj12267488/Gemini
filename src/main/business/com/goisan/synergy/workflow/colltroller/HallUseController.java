@@ -224,7 +224,12 @@ public class HallUseController {
     public ModelAndView printHallUse(String id) {
         ModelAndView mv = new ModelAndView("/business/synergy/workflow/hallUse/printHallUse");
         HallUse hallUse = hallUseService.getHallUseById(id);
-        String workflowName = workflowService.getWorkflowNameByWorkflowCode("T_BG_HALLUSE_WF01");
+        String workflowName = "";
+        if("0".equals(hallUse.getMeetingRequest())){
+            workflowName = workflowService.getWorkflowNameByWorkflowCode("T_BG_HALLUSE_WF03");
+        }else{
+            workflowName = workflowService.getWorkflowNameByWorkflowCode("T_BG_HALLUSE_WF02");
+        }
         Standard standard=new Standard();
         standard.setLevel(CommonUtil.getLoginUser().getLevel());
         standard.setCreateDept(CommonUtil.getDefaultDept());

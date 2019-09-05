@@ -255,4 +255,11 @@ public class RepairServiceImpl implements RepairService {
     public void repairChenXiaoFenPei(Repair repair){
         repairDao.repairChenXiaoFenPei(repair);
     }
+
+    @Override
+    public Repair selectDistributionInfo(String repairID) {
+        return repairDao.selectDistributionInfo(repairID);
+    }
+
+
 }

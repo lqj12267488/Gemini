@@ -3,6 +3,7 @@ package com.goisan.studentwork.studentreissue.service.impl;
 import com.goisan.studentwork.studentreissue.bean.StudentReissue;
 import com.goisan.studentwork.studentreissue.dao.StudentReissueDao;
 import com.goisan.studentwork.studentreissue.service.StudentReissueService;
+import com.goisan.system.bean.AutoComplete;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,4 +53,8 @@ public class StudentReissueServiceImpl implements StudentReissueService {
    public StudentReissue getLeaveBy(String id){
        return studentReissueDao.getLeaveBy(id);
    }
+
+   public  List<AutoComplete> autoCompleteDept(){ return studentReissueDao.autoCompleteDept(); }
+
+   public  List<AutoComplete> autoCompleteEmployee(){ return studentReissueDao.autoCompleteEmployee(); }
 }

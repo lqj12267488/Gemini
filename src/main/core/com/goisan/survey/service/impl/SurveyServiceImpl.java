@@ -1,5 +1,6 @@
 package com.goisan.survey.service.impl;
 
+import com.goisan.survey.bean.Survey;
 import com.goisan.survey.dao.SurveyDao;
 import com.goisan.survey.service.SurveyService;
 import com.goisan.system.bean.BaseBean;
@@ -39,5 +40,16 @@ private SurveyDao surveyDao;
 
     public void delSurvey(String id) {
         surveyDao.delSurvey(id);
+        surveyDao.delQuestionBySurveyId(id);
+        surveyDao.delOptionBySurveyId(id);
+        surveyDao.delPersonBySurveyId(id);
+        surveyDao.delAnswerBySurveyId(id);
+
     }
+
+    public List<Survey> getSurveyEditList(Survey survey){
+        return surveyDao.getSurveyEditList(survey);
+    }
+
+    public List<Survey> getSurveyExport(Survey survey){ return surveyDao.getSurveyExport(survey); }
 }

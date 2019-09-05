@@ -9,13 +9,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <link rel="stylesheet" href="/libs/js/plugins/ssi-uploader/css/ssi-uploader.css">
-<script src="/libs/js/plugins/ssi-uploader/js/ssi-uploader.js"></script>
+<script src="/libs/js/plugins/ssi-uploader/js/archives-ssi-uploader.js"></script>
 
 <div class="modal-dialog">
     <div class="modal-content block-fill-white">
         <div class="modal-header">
             <span style="font-size: 14px">${head}</span>
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closeArchives()">
                 &times;
             </button>
         </div>
@@ -28,24 +28,38 @@
                 <input id="ssi-upload" type="file" multiple/>
             </div>
         </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-clean" data-dismiss="modal" onclick="closeArchives()">完成
+            </button>
+        </div>
     </div>
     <input id="archivesId" type="text" value="${archivesId}" hidden/>
+    <%--后缀--%>
+    <input id="fileType" type="text" value="${fileType}" hidden/>
     <input id="flag" type="text" value="${flag}" hidden/>
-    <%--<input id="fileUrl" type="text" value="${files.fileUrl}" hidden/>--%>
-    <%--&lt;%&ndash;<input id="fileName" type="text" value="${files.Name}" hidden/>&ndash;%&gt;--%>
+    <input id="arname" type="text" value="${archivesName}" hidden>
+    <input id="filesName" type="text"  hidden >
+
 </div>
 <script>
+    var archivesName = encodeURI(encodeURI('${archivesName}'));
+    var fileSuffix;
+    var filesTable;
+    var filesName =",";
     $(document).ready(function () {
-        $("#filesTable").DataTable({
+        filesTable = $("#filesTable").DataTable({
             "ajax": {
-                "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId?archivesId='+$("#archivesId").val(),
+                "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId?archivesId=' + $("#archivesId").val(),
             },
             "destroy": true,
             "columns": [
+                {"data": "fileName", "visible": false},
                 {
                     "title": "文件名称",
                     "render": function (data, type, row) {
-                        return '<a href="<%=request.getContextPath()%>/archives/downloadArchivesFile?fileId=' + row.fileId + '">' + row.fileName + '</a>';
+                        filesName = filesName +  row.fileName +",";
+                        $("#filesName").val(filesName);
+                        return '<a href="<%=request.getContextPath()%>/archives/downloadArchivesFile?archivesId=' + $("#archivesId").val() + '&fileId=' + row.fileId + '">' + row.fileName + '</a>';
                     }
                 },
                 {
@@ -59,18 +73,38 @@
             "dom": 'rtlip',
             language: language
         });
+
+        if ($("#fileType").val() == '1') {
+            fileSuffix = ['mp3', 'wma','wav'];
+        } else if ($("#fileType").val() == '2') {
+            fileSuffix = ['mp4', 'flv','avi','wmv','mov','vob','mkv'];
+        } else if ($("#fileType").val() =='3' ) {
+            fileSuffix = ['jpg', 'png', 'jpeg','gif','bmp'];
+        } else if ($("#fileType").val() == '4') {
+            fileSuffix = ['txt', 'doc', 'docx', 'xlsx', 'ppt', 'pdf', 'xls', 'xlsx', 'rar', 'zip', 'pptx','jpg', 'png', 'jpeg','gif','bmp'];
+        }
         $('#ssi-upload').ssi_uploader({
-            url: '<%=request.getContextPath()%>/archives/insertArchivesFiles?archivesId=${archivesId}&flag=${flag}&role=${role}',
-            maxFileSize: 100,
-            allowed: ['jpg', 'gif', 'txt', 'png', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'rar', 'zip', 'ppt', 'pptx','mp4','mp3'],
+            url: '<%=request.getContextPath()%>/archives/insertArchivesFiles?archivesId=${archivesId}&archivesName=' +
+            archivesName + '&archivesCode=${archivesCode}&flag=${flag}&role=${role}',
+            maxFileSize: 10240,
+            // beforeUpload: checkFileName ,
+            allowed: fileSuffix,
             onUpload: function () {
                 $("#filesTable").DataTable().ajax.reload();
             }
         });
-        if("${role}"=="leader"){
-            $("#file").hide();
-        }
     });
+
+    function checkFileName() {
+        alert(85);
+        return "error";
+        /*
+                        return;
+                        $("#filesTable").Rows.Count;
+                        fileDate = $("#filesTable").rows[i]["fieldname"].tostring() ;
+        */
+
+    }
 
     function del(fileId) {
         $.post("<%=request.getContextPath()%>/archives/deleteFileByFileId", {
@@ -95,5 +129,16 @@
                 return data;
             }
         });
+    }
+
+    function closeArchives() {
+        $("#dialog").modal("hide");
+        if ('${role}' == 'teacher') {
+            listTable.ajax.url("<%=request.getContextPath()%>/archives/getTeacherArchivesList").load();
+        } else if('${role}' == 'leader'){
+            listTable.ajax.url("<%=request.getContextPath()%>/archives/getSchLeaderArchivesList").load();
+        } else {
+            listTable.ajax.url("<%=request.getContextPath()%>/archives/getDirectorArchivesList").load();
+        }
     }
 </script>

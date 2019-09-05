@@ -37,10 +37,10 @@
             AND t.student_number LIKE '%'||#{studentNumber}||'%'
         </if>
         <if test="majorCode != null and majorCode != '' ">
-            AND t.major_code= #{majorCode}
+            AND FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') LIKE '%${majorCode}%'
         </if>
         <if test="classId != null and classId != '' ">
-            AND t.class_id= #{classId}
+            AND FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') LIKE '%${classId}%'
         </if>
         ORDER BY t.create_time desc
     </select>
@@ -258,6 +258,7 @@
             s.household_register_province,
             s.household_register_city,
             s.household_register_county,
+            s.household_register_place,
             d.CLASS_ID,
             FUNC_GET_TABLEVALUE(d.CLASS_ID,'T_XG_CLASS','CLASS_ID','MAJOR_CODE')    majorCode
         FROM T_XG_STUDENT s left join T_XG_STUDENT_CLASS d on s.STUDENT_ID = d.STUDENT_ID

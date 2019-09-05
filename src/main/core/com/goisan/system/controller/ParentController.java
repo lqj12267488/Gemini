@@ -13,6 +13,7 @@ import com.goisan.educational.teachingresult.service.TeacherResultService;
 import com.goisan.evaluation.bean.EvaluationEmp;
 import com.goisan.evaluation.bean.EvaluationTask;
 import com.goisan.evaluation.service.EvaluationService;
+import com.goisan.studentwork.studentprove.service.StudentProveService;
 import com.goisan.system.bean.*;
 import com.goisan.system.service.*;
 import com.goisan.system.tools.CommonUtil;
@@ -24,6 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,6 +71,8 @@ public class ParentController {
     private TeacherResultService teacherResultService;
     @Resource
     private ClassCadreService classCadreService;
+    @Resource
+    private StudentProveService studentProveService;
 
     @RequestMapping("/core/parent/toParentList")
     public String toList() {
@@ -88,6 +92,20 @@ public class ParentController {
     }
 
     @ResponseBody
+    @RequestMapping("/core/parent/getStudentByStudentId")
+    public Map getStudentByStudentNumber(String studentId) {
+        Student student = studentProveService.getStudentByStudentId(studentId);
+        Map studentList = new HashMap();
+        if(null == student){
+            studentList.put("householdRegisterPlace","");
+            studentList.put("studentName","");
+        }else{
+            studentList.put("householdRegisterPlace",student.getHouseholdRegisterPlace());
+            studentList.put("studentName",student.getName());
+        }
+        return studentList;
+    }
+    @ResponseBody
     @RequestMapping("/core/parent/saveParent")
     public Message save(Parent parent,String studentId,String relationVal) {
         if (null == parent.getParentId() || "".equals(parent.getParentId()) || "null".equals(parent.getParentId())) {
@@ -98,7 +116,7 @@ public class ParentController {
             String count = parentService.checkParentIdcard(parentIdCard);
             List<BaseBean> chechStudent = studentParentRelationService.checkStudentRelation(studentId);
             if( null != chechStudent  && chechStudent.size() > 0 ){
-                return new Message(0, "此学生已添加家长！", "success");
+                return new Message(0, "此学生已添加家长！", "error");
             }
             if(count.equals("0")){
                 parent.setParentId(parentIdCard);
@@ -133,6 +151,7 @@ public class ParentController {
         } else {
             CommonUtil.update(parent);
             parentService.updateParent(parent);
+            parentService.updateStudentId(parent);
             return new Message(1, "修改成功！", "success");
         }
 
@@ -190,7 +209,7 @@ public class ParentController {
         try {
             response.setContentType("application/vnd.ms-excel");
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode
-                    ("家长基本信息模板.xls", "utf-8"));
+                    ("高等教育学生父母或监护人信息录取表.xls", "utf-8"));
             os = response.getOutputStream();
             os.write(FileUtils.readFileToByteArray(file));
         } catch (UnsupportedEncodingException e) {
@@ -217,6 +236,8 @@ public class ParentController {
     public Message importStudent(@RequestParam(value = "file", required = false) CommonsMultipartFile file) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<Select2> gxList = commonService.getSysDict("XSJZGX","");
+        List<Select2> zjlx1 = commonService.getUserDict("JZZJLX");
+        List<Select2> zjlx2 = commonService.getUserDict("JZZJLX");
         int count = 0 ;
         try {
             HSSFWorkbook workbook = new HSSFWorkbook(file.getInputStream());
@@ -230,10 +251,26 @@ public class ParentController {
                     return new Message(1, "共计"+count+"条，导入成功！", "success");
                 }
                 Parent parent = new Parent();
-                parent.setParentName(row.getCell(0).toString());
-                parent.setIdcard(CommonUtil.toIdcardCheck(row.getCell(1).toString()));
+                parent.setStudentId(row.getCell(0).toString());
+                parent.setParentName(row.getCell(1).toString());
+                for (Select2 IdCardType : zjlx1) {
+                    if (IdCardType.getText().equals(row.getCell(2).toString())) {
+                        parent.setIdCardType(IdCardType.getId());
+                    }
+                }
+                parent.setIdcard(CommonUtil.toIdcardCheck(row.getCell(3).toString()));
+                parent.setParentTel(row.getCell(4).toString());
+                parent.setParentNameSecond(row.getCell(5).toString());
+                for (Select2 IdCardTypeSecond : zjlx2) {
+                    if (IdCardTypeSecond.getText().equals(row.getCell(6).toString())) {
+                        parent.setIdCardTypeSecond(IdCardTypeSecond.getId());
+                    }
+                }
+                parent.setIdcardSecond(CommonUtil.toIdcardCheck(row.getCell(7).toString()));
+                parent.setParentTelSecond(row.getCell(8).toString());
+                /*parent.setIdcard(CommonUtil.toIdcardCheck(row.getCell(1).toString()));
                 parent.setParentId(CommonUtil.toIdcardCheck(row.getCell(1).toString()));
-                parent.setParentTel(row.getCell(2).toString());
+                parent.setParentTel(row.getCell(2).toString());*/
 
                 String check = parentService.checkParentIdcard(parent.getIdcard());
                 if(check.equals("0")){
@@ -256,7 +293,7 @@ public class ParentController {
                     }
                     loginUserService.saveUser(loginUser);
 
-                    if(row.getLastCellNum()>=5){
+                  /*  if(row.getLastCellNum()>=5){
                         String studentId =CommonUtil.toIdcardCheck( row.getCell(4).toString() );
                         String rygx = row.getCell(3).toString();
                         List<BaseBean> chechStudent = studentParentRelationService.checkStudentRelation(studentId);
@@ -276,7 +313,7 @@ public class ParentController {
                                     "此条数据的学生已经添加了家长。导入失败！" ;
                             return new Message(0, msg, "error");
                         }
-                    }
+                    }*/
 
                     count++;
                 }else{

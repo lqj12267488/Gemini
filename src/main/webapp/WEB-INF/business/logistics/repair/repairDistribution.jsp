@@ -21,7 +21,9 @@
             <div class="block">
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
+
                         <div class="form-row">
+
                             <div class="col-md-1 tar">
                                 报修物品名称：
                             </div>
@@ -41,6 +43,8 @@
                     </div>
                 </div>
                 <div class="content">
+                    <%--<button type="button" class="btn btn-default btn-clean" onclick="printDate()">打印
+                    </button>--%>
                     <table id="repairTable" cellpadding="0" cellspacing="0" width="100%"
                            class="table table-bordered table-striped sortable_default">
                     </table>
@@ -87,7 +91,8 @@
                 {
                     "width": "9%", "title": "操作", "render": function () {
                         return "<a id='submitRepair' class='icon-upload-alt' title='分配任务'></a>&nbsp;&nbsp;&nbsp;" +
-                            "<a id='dolw' class='icon-cloud-download' title='附件查看'></a>&nbsp;&nbsp;&nbsp;";
+                            "<a id='dolw' class='icon-cloud-download' title='附件查看'></a>&nbsp;&nbsp;&nbsp;" +
+                            "<a id='selectId' class='icon-search' title='详情'></a>";
                     }
                 }
             ],
@@ -113,6 +118,11 @@
             if (this.id == "dolw") {
                 $('#dialogFile').load('<%=request.getContextPath()%>/files/filesUpload1?businessId=' + repairID + '&businessType=TEST&tableName=T_ZW_REPAIR');
                 $('#dialogFile').modal('show');
+            }
+
+            if(this.id == "selectId"){
+                $("#dialog").load("<%=request.getContextPath()%>/repair/searchDetils?repairID=" + repairID);
+                $("#dialog").modal("show");
             }
             //删除
             if (this.id == "deleteRepair") {
@@ -160,5 +170,14 @@
         var itemName = $("#rname").val();
         repairTable.ajax.url("<%=request.getContextPath()%>/repair/distributionInfo?itemName=" + itemName).load();
     }
+    /*function printDate() {
+        var print = "<%=request.getContextPath()%>/repair/printDistribution";
+        var bdhtml = window.document.body.innerHTML;
+        $.get(print, function (html) {
+            window.document.body.innerHTML = html;
+            window.print();
+            window.document.body.innerHTML = bdhtml;
+        })
+    }*/
 </script>
 

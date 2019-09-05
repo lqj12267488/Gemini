@@ -1,6 +1,7 @@
 package com.goisan.studentwork.studentreissue.service;
 
 import com.goisan.studentwork.studentreissue.bean.StudentReissue;
+import com.goisan.system.bean.AutoComplete;
 
 import java.util.List;
 
@@ -24,4 +25,8 @@ public interface StudentReissueService {
     List<StudentReissue> getCompleteList(StudentReissue studentReissue);
 
     StudentReissue getLeaveBy(String id);
+
+    List<AutoComplete> autoCompleteDept();
+
+    List<AutoComplete> autoCompleteEmployee();
 }

@@ -86,11 +86,29 @@
 
 <div class="form-row">
     <div class="col-md-3 tar">
-        活动内容
+        会议主题
     </div>
     <div class="col-md-9">
                         <textarea id="h_content"
                                   class="validate[required,maxSize[100]] form-control">${hallUse.content}</textarea>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="col-md-3 tar">
+        会议地点
+    </div>
+    <div class="col-md-9">
+        <select id="meetingSiteSel"/>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="col-md-3 tar">
+        会议申请
+    </div>
+    <div class="col-md-9">
+        <select id="meetingRequestSel"/>
     </div>
 </div>
 
@@ -126,7 +144,7 @@
     </div>
 </div>
 <input id="h_Id" hidden value="${hallUse.id}"/>
-<input id="workflowCode" hidden value="T_BG_HALLUSE_WF01">
+<input id="workflowCode" hidden value="T_BG_HALLUSE_WF02">
 <input id="printFunds" hidden value="<%=request.getContextPath()%>/hallUse/printHallUse?id=${hallUse.id}">
 <script>
     $(document).ready(function () {
@@ -140,6 +158,21 @@
                 var callbackFlag = $("#"+lis[i]).attr("checked");
                 deviceNameTree.checkNode(node, true, false, callbackFlag);
             }
+        });
+
+        $.get("<%=request.getContextPath()%>/common/getTableDict",{
+                id: " ID ",
+                text: " MEETING_ROOM_NAME ",
+                tableName: " T_JW_MEETINGROOM ",
+                where: " ",
+                orderby: "  "
+            },
+            function (data) {
+                addOption(data, "meetingSiteSel",'${hallUse.meetingSite}');
+            })
+
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=HYSQ", function (data) {
+            addOption(data, 'meetingRequestSel','${hallUse.meetingRequest}' );
         });
     });
     /**功能：修改的申请信息保存
@@ -176,11 +209,33 @@
         }
         if ($("#h_content").val() == "" || $("#h_content").val() == "0" || $("#h_content").val() == undefined) {
             swal({
-                title: "请填写活动内容",
+                title: "请填写会议主题",
                 type: "info"
             });
             //alert("请填写活动内容");
             return;
+        }
+        if ($("#meetingSiteSel").val() == "" || $("#meetingSiteSel").val() == "0" || $("#meetingSiteSel").val() == undefined) {
+            swal({
+                title: "请选择会议地点",
+                type: "info"
+            });
+            //alert("请填写活动内容");
+            return;
+        }
+
+        if ($("#meetingRequestSel").val() == "" || $("#meetingRequestSel").val() == undefined) {
+            swal({
+                title: "请选择会议申请",
+                type: "info"
+            });
+            //alert("请填写活动内容");
+            return;
+        }
+        if("0"==$("#meetingRequestSel option:selected").val()){
+            $("#workflowCode").val("T_BG_HALLUSE_WF03");
+        }else{
+            $("#workflowCode").val("T_BG_HALLUSE_WF02");
         }
         if ($("#h_peopleNumber").val() == "" || $("#h_peopleNumber").val() == "0" || $("#h_peopleNumber").val() == undefined) {
             swal({
@@ -219,6 +274,8 @@
             endTime:endTime,
             usedevice: $("#usedevice").val(),
             content: $("#h_content").val(),
+            meetingSite:$("#meetingSiteSel").val(),
+            meetingRequest:$("#meetingRequestSel").val(),
             peopleNumber: $("#h_peopleNumber").val(),
             remark:$("#h_remark").val()
         }, function (msg) {

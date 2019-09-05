@@ -75,12 +75,34 @@
 
 <div class="form-row">
     <div class="col-md-3 tar">
-        活动内容
+        会议主题
     </div>
     <div class="col-md-9">
                         <textarea id="h_content"
                                   class="validate[required,maxSize[100]] form-control"
                                   readonly="readonly">${hallUse.content}</textarea>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="col-md-3 tar">
+        会议地点
+    </div>
+    <div class="col-md-9">
+        <input id="site" type="text"
+               class="validate[required,maxSize[10]] form-control"
+               value="${hallUse.meetingSiteShow}" readonly="readonly"/>
+    </div>
+</div>
+
+<div class="form-row">
+    <div class="col-md-3 tar">
+        会议申请
+    </div>
+    <div class="col-md-9">
+        <input id="request" type="text"
+               class="validate[required,maxSize[10]] form-control"
+               value="${hallUse.meetingRequestShow}" readonly="readonly"/>
     </div>
 </div>
 

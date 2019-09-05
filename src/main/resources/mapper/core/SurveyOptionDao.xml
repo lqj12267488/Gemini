@@ -42,7 +42,30 @@
     <delete id="delSurveyOption" parameterType="java.lang.String">
         delete from T_DC_INDEXOPTION where option_id = #{id}
     </delete>
-    <select id="checkOptionBySurveyid" parameterType="java.lang.String" resultType="java.lang.String">
-        select count(OPTION_ID) from T_DC_INDEXOPTION where survey_id = #{id}
+    <delete id="delOptionByQuestionId" parameterType="java.lang.String">
+        delete from T_DC_INDEXOPTION where question_id = #{id}
+    </delete>
+    <select id="checkOptionBySurveyid" parameterType="java.lang.String"
+            resultType="com.goisan.survey.bean.SurveyOption">
+        SELECT t.QUESTION_NAME optionCode, q.optionValue
+        FROM
+          T_DC_QUESTION t ,
+          (SELECT QUESTION_ID , count(OPTION_ID) optionValue FROM T_DC_INDEXOPTION WHERE survey_id = #{id}
+            group by QUESTION_ID ) q
+        WHERE t.QUESTION_ID= q.QUESTION_ID(+) AND t.question_type &lt; &gt; '1'
+        AND survey_id = #{id}
     </select>
+    <select id="getOptionListById" parameterType="java.lang.String"
+            resultType="com.goisan.survey.bean.SurveyOption">
+        select i.option_id,i.survey_id,i.question_id,
+            decode(q.question_type,'4',i.option_value||','||i.option_code,'5',i.option_value||','||i.option_code,i.option_code) optionCode,
+            decode(q.question_type,'4',FUNC_GET_USERNAME(i.option_value)||' ---- '|| FUNC_GET_DEPTNAME(i.option_code),
+                                   '5',FUNC_GET_USERNAME(i.option_value)||' ---- '|| FUNC_GET_DEPTNAME(i.option_code),i.option_value) optionValue,
+            i.option_order
+        from T_DC_INDEXOPTION i , T_DC_QUESTION q
+        where i.question_id = q.question_id
+        and i.question_id = #{id}
+        order by option_order
+    </select>
+
 </mapper>

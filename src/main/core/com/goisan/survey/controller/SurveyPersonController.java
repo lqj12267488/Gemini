@@ -7,7 +7,6 @@ import com.goisan.system.service.ParentService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -72,6 +71,21 @@ public class SurveyPersonController {
         surveyPersonService.delSurveyPerson(id);
         return new Message(0, "删除成功！", null);
     }
+    @RequestMapping("/survey/person/toSurveyStudent")
+    public ModelAndView toListStudent(String id,String checkFlag) {
+        ModelAndView mv = new ModelAndView("/core/survey/person/surveyStudentTree");
+        mv.addObject("surveyId",id);
+        mv.addObject("checkFlag",checkFlag);
+        return mv;
+    }
+
+    @RequestMapping("/survey/person/toSurveyTeacher")
+    public ModelAndView toListTeacher(String id,String checkFlag) {
+        ModelAndView mv = new ModelAndView("/core/survey/person/surveyTeacherTree");
+        mv.addObject("surveyId",id);
+        mv.addObject("checkFlag",checkFlag);
+        return mv;
+    }
 
     @RequestMapping("/survey/person/toSurveyPerson")
     public ModelAndView toListPerson(String id,String checkFlag) {
@@ -88,10 +102,34 @@ public class SurveyPersonController {
         return trees;
     }
 
+    /**
+     * 学生教师答卷人
+     * @param surveyId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/survey/person/getSurveyTeacherTree")
+    public List<Tree> getSurveyTeacherTree(String surveyId) {
+        List<Tree> trees = parentService.getSurveyTeacherTree(surveyId);
+        return trees;
+    }
+
+    /**
+     * 学生答卷人
+     * @param surveyId
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/survey/person/getSurveyStudentTree")
+    public List<Tree> getSurveyStudentTree(String surveyId) {
+        List<Tree> trees = parentService.getSurveyStudentTree(surveyId);
+        return trees;
+    }
+
     @ResponseBody
     @RequestMapping("/survey/person/saveSurveyParent")
-    public Message saveSurveyParent(String surveyId, String checkList) {
-        surveyPersonService.delAndSaveSurveyParent(surveyId,checkList);
+    public Message saveSurveyParent(String surveyId, String checkList, String personType) {
+        surveyPersonService.delAndSaveSurveyParent(surveyId,checkList,personType);
         return new Message(1, "保存成功！", null);
     }
 

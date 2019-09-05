@@ -45,7 +45,23 @@ public class Repair extends BaseBean {
     private String endDate;//查询结束时间
     private String changeStartTime;
     private String changeEndTime;
+    private String sysName; //派单人
+    private String PersonIdShow; //维修人
 
+    public String getPersonIdShow() {
+        return PersonIdShow;
+    }
+
+    public void setPersonIdShow(String personIdShow) {
+        PersonIdShow = personIdShow;
+    }
+    public String getSysName() {
+        return sysName;
+    }
+
+    public void setSysName(String sysName) {
+        this.sysName = sysName;
+    }
     public String getStartDate() {
         return startDate;
     }

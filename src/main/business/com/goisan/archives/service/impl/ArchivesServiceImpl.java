@@ -6,8 +6,10 @@ import com.goisan.archives.bean.ArchivesRole;
 import com.goisan.archives.dao.ArchivesDao;
 import com.goisan.archives.service.ArchivesService;
 import com.goisan.system.bean.AutoComplete;
+import com.goisan.system.bean.Emp;
 import com.goisan.system.bean.EmpDeptTree;
 import com.goisan.system.bean.Select2;
+import com.goisan.system.service.EmpService;
 import com.goisan.system.tools.CommonUtil;
 import org.springframework.stereotype.Service;
 
@@ -27,16 +29,32 @@ public class ArchivesServiceImpl implements ArchivesService {
         return archivesDao.getArchivesById(archivesId);
     }
 
+    public Archives getArchivesByIds(String businessId) {
+        return archivesDao.getArchivesByIds(businessId);
+    }
+
     public void insertArchives(Archives archives) {
         archivesDao.insertArchives(archives);
+    }
+
+    public String getArchivesName(String oneLevel){
+        return archivesDao.getArchivesName(oneLevel);
     }
 
     public void updateArchives(Archives archives) {
         archivesDao.updateArchives(archives);
     }
 
+    public void updateArchivesState(String id) {
+        archivesDao.updateArchivesState(id);
+    }
+
     public void updateValidFlag(Archives archives) {
         archivesDao.updateValidFlag(archives);
+    }
+
+    public void updateArchivesInfo(String id) {
+        archivesDao.updateArchivesInfo(id);
     }
 
     public void deleteArchivesById(String archivesId) {
@@ -51,12 +69,27 @@ public class ArchivesServiceImpl implements ArchivesService {
         return archivesDao.getDeptNameById(id);
     }
 
+    @Override
+    public String getFileNum(String id) {
+        return archivesDao.getFileNum(id);
+    }
+
+    @Override
+    public String getArchivesCode(String id) {
+        return archivesDao.getArchivesCode(id);
+    }
+
     public List<AutoComplete> selectDept() {
         return archivesDao.selectDept();
     }
 
     public List<AutoComplete> selectPerson() {
         return archivesDao.selectPerson();
+    }
+
+    @Override
+    public List<AutoComplete> selectRequester(String deptId) {
+        return archivesDao.selectRequester(deptId);
     }
 
     public List<Select2> getDeptList() {
@@ -138,13 +171,18 @@ public class ArchivesServiceImpl implements ArchivesService {
         archivesDao.insertRoleEmpDept(ar);
     }
 
-    public List<EmpDeptTree> getArchivesDeptAndPersonTree(String id) {
-        return archivesDao.getArchivesDeptAndPersonTree(id);
+    public List<EmpDeptTree> getArchivesDeptAndPersonTree(EmpDeptTree edt) {
+        return archivesDao.getArchivesDeptAndPersonTree(edt);
     }
 
     @Override
     public Archives getPrintById(String archivesId) {
         return archivesDao.getPrintById(archivesId);
+    }
+
+    @Override
+    public Archives getArchivesLogById(String archivesId) {
+        return archivesDao.getArchivesLogById(archivesId);
     }
 
     public List<Archives> getAllArchivesList(Archives archives) {
@@ -153,5 +191,83 @@ public class ArchivesServiceImpl implements ArchivesService {
     @Override
     public void insertArchivesLog(Archives archives) {
         archivesDao.insertArchivesLog(archives);
+    }
+
+    public void updateArchivesRemark(Archives archives) {
+        archivesDao.updateArchivesRemark(archives);
+    }
+
+    public List<Archives> getArchivesHeadmasterList(Archives archives) {
+        return archivesDao.getArchivesHeadmasterList(archives);
+    }
+
+    @Override
+    public List<Archives> getArchivesListLingDao(Archives archives) {
+        return archivesDao.getArchivesListLingDao(archives);
+    }
+
+    @Override
+    public List<Archives> getArchivesListBumen(Archives archives) {
+        return archivesDao.getArchivesListBumen(archives);
+    }
+
+    public void archivesRoleTakeBack(String id) {
+        archivesDao.archivesRoleTakeBack(id);
+    }
+
+    public void updateArchivesRoleState(String id) {
+        archivesDao.updateArchivesRoleState(id);
+    }
+
+    public void updateRoleState(String archivesId) {
+        archivesDao.updateRoleState(archivesId);
+    }
+
+    public List getArchivesCheckEmp(String archivesId , String deptId){
+        return archivesDao.getArchivesCheckEmp(archivesId , deptId);
+    }
+
+    public List<Emp> getPersonBydeptId(String deptId){
+        return archivesDao.getPersonBydeptId(deptId);
+    }
+
+    public void saveArchivesPower(String deptId ,String archivesId,String checkList){
+        archivesDao.delArchivesPower(archivesId,deptId);
+        String[] check ;
+        if(!checkList.equals("")){
+            check = checkList.split("##");
+            archivesDao.updateRoleState(archivesId);
+        }else{
+            check = new String[0];
+        }
+        ArchivesRole role = new ArchivesRole();
+        CommonUtil.save(role);
+        for (int i = 0; i < check.length; i++) {
+            role.setArchivesId(archivesId);
+            String a = check[i];
+            String[] b = a.split(",");
+            role.setDeptId(b[1].toString());
+            role.setPersonId(b[0].toString());
+            archivesDao.insertRoleEmpDept(role);
+        }
+    }
+    @Resource
+    private EmpService empService;
+    public String getCheckListCount(Archives archives){
+        String personId= CommonUtil.getPersonId();
+        String deptId= CommonUtil.getDefaultDept();
+        List list = empService.getEmpRole(personId,deptId);
+        if (list.contains("b34d00b3-bcde-4600-9d4c-a48906c7d750")){
+            archives.setCreateDept(deptId);
+            archives.setRoleFlag("1");//是部门主任角色中的人
+        }else {
+            archives.setCreator(personId);
+            archives.setRoleFlag("2");//不是部门主任角色中的人
+        }
+        return archivesDao.getCheckListCount(archives);
+    }
+
+    public List<Archives> allArchivesId(Archives arc) {
+        return archivesDao.allArchivesId(arc);
     }
 }

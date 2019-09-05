@@ -1,4 +1,5 @@
-<%--
+<%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.Date" %><%--
   Created by IntelliJ IDEA.
   User: Admin
   Date: 2017/4/25
@@ -6,7 +7,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<div class="modal-dialog" style="width: 1200px">
+<div class="modal-dialog" style="width: 800px">
     <div class="modal-content block-fill-white">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
@@ -14,10 +15,10 @@
             </button>
             <h4 class="modal-title">修改</h4>
         </div>
-        <div class="modal-body clearfix">
+        <div class="modal-body clearfix" style="font-size: 15px;">
             <div id="layout" style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
             <div class="controls">
-                <div class="form-row">
+               <%-- <div class="form-row">
                     <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>姓名
                     </div>
@@ -244,7 +245,355 @@
                     <div class="col-md-4">
                         <select id="workYear" class="js-example-basic-single"></select>
                     </div>
-                </div>
+                </div>--%>
+                   <div class="form-row">
+                       <div class="col-md-2 tar">
+                           <span class="iconBtx">*</span>姓名
+                       </div>
+                       <div class="col-md-3">
+                           <input id="name" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.name}"
+                                  class="validate[required,maxSize[20]] form-control"/>
+                       </div>
+                       <div style="float: right;width: 354px;height: 150px;">
+                           <div style="width: 218px;height: 150px;margin-top: -4px;">
+                               <img id="photo" style="border: 1px dashed #ffffff
+                            ;width: 136px;height: 172px;margin-top: 2px;margin-left: 58px"
+                                    src="<%=request.getContextPath()%>/idcardimg/bg.png">
+                           </div>
+                       </div>
+                       <%--<div class="col-md-2 tar" style="margin-top: 2%">
+                           曾用名
+                       </div>
+                       <div class="col-md-3" style="margin-top: 2%">
+                           <input id="usedName" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" />
+                       </div>--%>
+                       <div class="col-md-2 tar" style="margin-top: 2%">
+                           <span class="iconBtx">*</span>岗位
+                       </div>
+                       <div class="col-md-3" style="margin-top: 2%">
+                           <select id="jobSel" class="js-example-basic-single" />
+                       </div>
+
+                       <div class="col-md-2 tar" style="margin-top: 2%">
+                           <span class="iconBtx">*</span>性别
+                       </div>
+                       <div class="col-md-3" style="margin-top: 2%">
+                           <select id="sex" class="js-example-basic-single"></select>
+                       </div>
+
+
+                       <div class="col-md-2 tar" style="margin-top: 2%">
+                           <span class="iconBtx"></span>籍贯
+                       </div>
+                       <div class="col-md-3" style="margin-top: 2%">
+                           <input id="jg" class="js-example-basic-single" value="${emp.nativePlace}"></input>
+                       </div>
+                       <%-- <div class="col-md-3" style="margin-top: 2%;margin-bottom: 4px;">
+                            <input id="idCard" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
+                                   class="validate[required,minSize[5],maxSize[10]] form-control"/>
+                        </div>--%>
+                   </div>
+                   <div class="form-row">
+                       <div class="col-md-2 tar">
+                           <span class="iconBtx">*</span>入职日期
+                       </div>
+                       <div class="col-md-3">
+                           <input id="rz" type="date" value="${emp.entryDate}"/>
+                       </div>
+
+                       <div class="col-md-2 tar">
+                           <span class="iconBtx"></span>户口所在地
+                       </div>
+                       <div class="col-md-3">
+                           <input id="hkszd" type="text" value="${emp.permanentResidence}"/>
+                       </div>
+
+                   </div>
+                   <div class="form-row">
+                       <div class="col-md-2 tar">
+                           民族
+                       </div>
+                       <div class="col-md-3">
+                           <select id="nation" class="js-example-basic-single"></select>
+                       </div>
+
+                       <div class="col-md-2 tar">
+                           <span class="iconBtx"></span>户口所在地区
+                       </div>
+                       <div class="col-md-3">
+                           <input id="hkszdqSel" type="text" value="${emp.permanentResidenceLocal}"/>
+                       </div>
+
+                   </div>
+                   <div class="form-row">
+
+                       <%--<div class="col-md-2 tar">
+                           国籍
+                       </div>
+                       <div class="col-md-3">
+                           <select id="nationality" class="js-example-basic-single"></select>
+                       </div>--%>
+                       <div class="col-md-2 tar">
+                           <span class="iconBtx"></span>级别
+                       </div>
+                       <div class="col-md-3">
+                           <input id="levelSel" type="text" value="${emp.levels}"/>
+                       </div>
+                       <div class="col-md-2 tar">
+                           婚姻状况
+                       </div>
+                       <div class="col-md-3">
+                           <select id="maritalStatus" class="js-example-basic-single"></select>
+                       </div>
+                   </div>
+                   <div class="form-row">
+                       <%-- <div class="col-md-2 tar">
+                            <span class="iconBtx">*</span>教职工编号
+                        </div>
+                        <div class="col-md-3">
+                            <input id="staffId" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"/>
+                        </div>
+                        <div class="col-md-2 tar">
+                            出生地
+                        </div>
+                        <div class="col-md-3">
+                            <input id="birthPlace" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"/>
+                        </div>--%>
+                       <div class="col-md-2 tar">
+                           <span class="iconBtx">*</span>出生日期
+                       </div>
+                       <div class="col-md-3">
+                           <input id="birthday" type="date" value="${emp.birthday}"/>
+                       </div>
+
+                       <div class="col-md-2 tar">
+                           是否政审
+                       </div>
+                       <div class="col-md-3">
+                           <select id="sfzs" class="js-example-basic-single"></select>
+                       </div>
+
+                   </div>
+                   <div class="form-row">
+                       <%--<div class="col-md-2 tar">
+                           籍贯省
+                       </div>
+                       <div class="col-md-3">
+                           <select id="nativePlaceProvince" class="js-example-basic-single">
+                           </select>
+                       </div>
+                       <div class="col-md-2 tar">
+                           籍贯市
+                       </div>
+                       <div class="col-md-3">
+                           <select id="nativePlaceCity" class="js-example-basic-single">
+                               <option value="">请选择</option>
+                           </select>
+                       </div>--%>
+                       <div class="col-md-2 tar" style="margin-top: 2%">
+                           <span class="iconBtx">*</span>证件类型
+                       </div>
+                       <div class="col-md-3" style="margin-top: 2%">
+                           <select id="idType" class="js-example-basic-single"></select>
+                       </div>
+
+                       <div class="col-md-2 tar">
+                           现住址
+                       </div>
+                       <div class="col-md-3">
+                           <input id="address" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.address}"/>
+                       </div>
+                   </div>
+                   <div class="form-row">
+                       <%--<div class="col-md-2 tar">
+                           籍贯县(区)
+                       </div>
+                       <div class="col-md-3">
+                           <select id="nativePlaceCounty" class="js-example-basic-single">
+                               <option value="">请选择</option>
+                           </select>
+                       </div>--%>
+
+                       <div class="col-md-2 tar" id="idTypeCode" style="margin-top: 2%">
+                           <span class="iconBtx">*</span>证件号
+                       </div>
+                       <div class="col-md-3" style="margin-top: 2%;margin-bottom: 4px;">
+                           <input id="idCard" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
+                                  class="validate[required,minSize[5],maxSize[10]] form-control" value="${emp.idCard}"/>
+                       </div>
+                       <div class="col-md-2 tar">
+                           政治面貌
+                       </div>
+                       <div class="col-md-3">
+                           <select id="politicalStatus" class="js-example-basic-single"></select>
+                       </div>
+                   </div>
+                   <div class="form-row">
+
+                       <%--<div class="col-md-2 tar">
+                           健康状况
+                       </div>
+                       <div class="col-md-3">
+                           <select id="healthStatus" class="js-example-basic-single"></select>
+                       </div>--%>
+                       <div class="col-md-2 tar">
+                           <span class="iconBtx">*</span>联系方式
+                       </div>
+                       <div class="col-md-3">
+                           <input id="tel" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.tel}"/>
+                       </div>
+                       <div class="col-md-2 tar">
+                           文化程度
+                       </div>
+                       <div class="col-md-3">
+                           <select id="educational_level" class="js-example-basic-single"></select>
+                       </div>
+                   </div>
+                   <div class="form-row">
+                       <%-- <div class="col-md-2 tar">
+                            <span class="iconBtx">*</span> 参加工作时间
+                        </div>
+                        <div class="col-md-3">
+                            <input id="workTime" type="date" value="${newdate}"/>
+                        </div>
+                        <div class="col-md-2 tar">
+                            <span class="iconBtx">*</span>来校时间
+                        </div>
+                        <div class="col-md-3">
+                            <input id="toSchoolTime" type="date" value="${newdate}"/>
+                        </div>--%>
+                       <div class="col-md-2 tar">
+                           教育方式
+                       </div>
+                       <div class="col-md-3">
+                           <select id="education_technique" class="js-example-basic-single"></select>
+                       </div>
+                       <div class="col-md-2 tar">
+                           毕业院校
+                       </div>
+                       <div class="col-md-3">
+                           <input id="graduate_school" class="js-example-basic-single" value="${emp.graduateSchool}"></input>
+                       </div>
+                   </div>
+                   <div class="form-row">
+                       <%--  <div class="col-md-2 tar">
+                             教职工所属
+                         </div>
+                         <div class="col-md-3">
+                             <select id="staffBelongs" class="js-example-basic-single"></select>
+                         </div>
+                         <div class="col-md-2 tar">
+                             教职工来源
+                         </div>
+                         <div class="col-md-3">
+                             <select id="staffSource" class="js-example-basic-single">
+                                 <option value="">请选择所属</option>
+                             </select>
+                         </div>--%>
+                       <div class="col-md-2 tar">
+                           毕业时间
+                       </div>
+                       <div class="col-md-3">
+                           <input id="graduate_time" class="js-example-basic-single" type="date" value="${emp.graduateTime}"></input>
+                       </div>
+                       <div class="col-md-2 tar">
+                           专业
+                       </div>
+                       <div class="col-md-3">
+                           <input id="majorSel" class="js-example-basic-single" type="text" value="${emp.major}"></input>
+                       </div>
+                   </div>
+                   <div class="form-row">
+                       <%--  <div class="col-md-2 tar">
+                             教职工类别
+                         </div>
+                         <div class="col-md-3">
+                             <select id="staffType" class="js-example-basic-single"></select>
+                         </div>
+                         <div class="col-md-2 tar">
+                             是否在编
+                         </div>
+                         <div class="col-md-3">
+                             <select id="staffFlag" class="js-example-basic-single"></select>
+                         </div>--%>
+                       <div class="col-md-2 tar">
+                           职称名称
+                       </div>
+                       <div class="col-md-3">
+                           <input id="positional_titles" class="js-example-basic-single" type="text" value="${emp.positionalTitles}"></input>
+                       </div>
+                       <div class="col-md-2 tar">
+                           职称级别
+                       </div>
+                       <div class="col-md-3">
+                           <input id="positional_level" class="js-example-basic-single" type="text" value="${emp.positionalLevel}"></input>
+                       </div>
+
+                   </div>
+                   <div class="form-row">
+                       <%--<div class="col-md-2 tar">
+                           签订合同情况
+                       </div>
+                       <div class="col-md-3">
+                           <select id="contractType" class="js-example-basic-single"></select>
+                       </div>
+                       <div class="col-md-2 tar">
+                           <span class="iconBtx">*</span>人员状态
+                       </div>
+                       <div class="col-md-3">
+                           <select id="staffStatus" class="js-example-basic-single"></select>
+                       </div>--%>
+                       <div class="col-md-2 tar">
+                           备注
+                       </div>
+                       <div class="col-md-8">
+                    <textarea id="remarkSel" style="height: 100px"
+                              class="validate[required,maxSize[20]] form-control"
+                              value="${emp.remark}">${emp.remark}</textarea>
+                       </div>
+                   </div>
+                   <%-- <div class="form-row">
+                        <div class="col-md-2 tar">
+                            用人形式
+                        </div>
+                        <div class="col-md-3">
+                            <select id="employeForm" class="js-example-basic-single"></select>
+                        </div>
+                        <div class="col-md-2 tar">
+                            信息技术应用能力
+                        </div>
+                        <div class="col-md-3">
+                            <select id="technicalSkills" class="js-example-basic-single"></select>
+                        </div>
+                    </div>--%>
+                   <%-- <div class="form-row">
+                        <div class="col-md-2 tar">
+                            是否双师型教师
+                        </div>
+                        <div class="col-md-3">
+                            <select id="doubleTypeFlag" class="js-example-basic-single"></select>
+                        </div>
+                        <div class="col-md-2 tar">
+                            是否具备职业技能等级证书
+                        </div>
+                        <div class="col-md-3">
+                            <select id="credentialsFlag" class="js-example-basic-single"></select>
+                        </div>
+                    </div>--%>
+                   <%--  <div class="form-row">
+                         <div class="col-md-2 tar">
+                             是否是特级教师
+                         </div>
+                         <div class="col-md-3">
+                             <select id="stuntTeacherFlag" class="js-example-basic-single"></select>
+                         </div>
+                         <div class="col-md-2 tar">
+                             企业工作(实践)时长
+                         </div>
+                         <div class="col-md-3">
+                             <select id="workYear" class="js-example-basic-single"></select>
+                         </div>
+                     </div>--%>
             </div>
         </div>
         <div class="modal-footer">
@@ -277,6 +626,11 @@
 <input id="doubleTypeFlagSHOW" value="${emp.doubleTypeFlag}" hidden>
 <input id="credentialsFlagSHOW" value="${emp.credentialsFlag}" hidden>
 <input id="stuntTeacherFlagSHOW" value="${emp.stuntTeacherFlag}" hidden>
+<input id="examinePoliticalSHOW" value="${emp.examinePolitical}" hidden>
+<input id="educationalLevelSHOW" value="${emp.educationalLevel}" hidden>
+<input id="educationTechniqueSHOW" value="${emp.educationTechnique}" hidden>
+<input id="jobSHOW" value="${emp.job}" hidden>
+<input id="dt" name="startdate"  type="text" hidden value=<%=new SimpleDateFormat("yyyy-MM-dd").format(new Date())%>></input>
 <%--<input id="staffIdSHOW" value="${emp.staffId}" hidden>--%>
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
@@ -332,7 +686,19 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=JZGSS", function (data) {
             addOption(data, 'staffBelongs', $("#staffBelongsSHOW").val());
         });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'sfzs',$("#examinePoliticalSHOW").val());
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=WHCD", function (data) {
+            addOption(data, 'educational_level',$("#educationalLevelSHOW").val());
+        });
 
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=JYFS", function (data) {
+            addOption(data, 'education_technique',$("#educationTechniqueSHOW").val());
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=GW", function (data) {
+            addOption(data, 'jobSel',$("#jobSHOW").val());
+        });
         if (null != $("#staffBelongsSHOW").val() && "" != $("#staffBelongsSHOW").val()) {
             var staffBelongsSHOW = $("#staffBelongsSHOW").val();
             if (staffBelongsSHOW == 1) {
@@ -372,7 +738,7 @@
 
 
     function updateEmp() {
-        if ($("#name").val() == "" || $("#name").val() == null) {
+        /*if ($("#name").val() == "" || $("#name").val() == null) {
             swal({
                 title: "请填写人员姓名",
                 type: "info"
@@ -482,6 +848,114 @@
                 type: "info"
             });
             return;
+        }*/
+        if ($("#name").val() == "" || $("#name").val() == null) {
+            swal({
+                title: "请填写人员姓名",
+                type: "info"
+            });
+            //alert("请填写人员姓名");
+            return;
+        }
+       /* if ($("#deptId").val() == "" || $("#deptId").val() == null) {
+            swal({
+                title: "请在左侧选择部门后再进行人员添加",
+                type: "info"
+            });
+            //alert("请在左侧选择部门后再进行人员添加");
+            return;
+        }*/
+        if ($("#jobSel option:selected").val() == "" || $("#jobSel option:selected").val() == null) {
+            swal({
+                title: "请选择岗位",
+                type: "info"
+            });
+            //alert("请选择人员性别");
+            return;
+        }
+        if ($("#sex option:selected").val() == "" || $("#sex option:selected").val() == null) {
+            swal({
+                title: "请选择人员性别",
+                type: "info"
+            });
+            //alert("请选择人员性别");
+            return;
+        }
+
+        if ($("#rz").val() == "" || $("#rz").val() == null) {
+            swal({
+                title: "请选择入职日期",
+                type: "info"
+            });
+            //alert("请选择人员出生日期");
+            return;
+        }
+        /* var myDate = new Date();
+         var nowTime = myDate.getTime();*/
+
+        if ($("#birthday").val() == "" || $("#birthday").val() == null) {
+            swal({
+                title: "请选择出生日期",
+                type: "info"
+            });
+            return;
+        }
+        if ($("#dt").val() < $("#birthday").val()) {
+            swal({
+                title: "出生日期不可大于当前日期",
+                type: "info"
+            });
+            return;
+        }
+        if ($("#idType option:selected").val() == "" || $("#idType option:selected").val() == null) {
+            swal({
+                title: "请选择证件类型",
+                type: "info"
+            });
+            //alert("请选择人员性别");
+            return;
+        }
+        if ($("#idCard").val() == "" || $("#idCard").val() == null) {
+            swal({
+                title: "请填写证件号码",
+                type: "info"
+            });
+            //alert("请填写身份证号码");
+            return;
+        }
+        var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+        if ($("#idType option:selected").val() == '1' && reg.test($("#idCard").val()) === false) {
+            swal({
+                title: "身份证输入不合法",
+                type: "info"
+            });
+            //alert("身份证输入不合法");
+            return;
+        }
+
+
+
+        if ($("#tel").val() == "" || $("#tel").val() == null) {
+            swal({
+                title: "请填写联系方式",
+                type: "info"
+            });
+            return;
+        }
+
+        if ($("#tel").val() != "") {
+//            alert("请填写联系人电话");
+//            return;
+            var phoneNum = /^1\d{10}$/;
+            var telNum = /^0\d{2,3}-[1-9]\d{6,7}$/ // /^0\d{2,3}-?\d{7,8}$/;
+            if (phoneNum.test($("#tel").val()) === false && telNum.test($("#tel").val()) === false) {
+                swal({
+                    title: "联系人电话不正确",
+                    type: "info"
+                });
+                //alert("联系人电话不正确");
+                return;
+            }
         }
         $("#saveLoadingHeight").css('height','200px');
         showSaveLoading();
@@ -505,8 +979,8 @@
             politicalStatus: $("#politicalStatus option:selected").val(),
             maritalStatus: $("#maritalStatus option:selected").val(),
             healthStatus: $("#healthStatus option:selected").val(),
-            workTime: workTime,
-            toSchoolTime: toSchoolTime,
+            /*workTime: workTime,
+            toSchoolTime: toSchoolTime,*/
             staffSource: $("#staffSource option:selected").val(),
             staffType: $("#staffType option:selected").val(),
             staffFlag: $("#staffFlag option:selected").val(),
@@ -518,7 +992,22 @@
             stuntTeacherFlag: $("#stuntTeacherFlag option:selected").val(),
             workYear: $("#workYear option:selected").val(),
             staffStatus: $("#staffStatus option:selected").val(),
-            staffBelongs: $("#staffBelongs option:selected").val()
+            staffBelongs: $("#staffBelongs option:selected").val(),
+            job: $("#jobSel option:selected").val(),
+            nativePlace: $("#jg").val(),
+            entryDate: $("#rz").val(),
+            permanentResidence: $("#hkszd").val(),
+            permanentResidenceLocal: $("#hkszdqSel").val(),
+            levels: $("#levelSel").val(),
+            examinePolitical: $("#sfzs option:selected").val(),
+            educationalLevel: $("#educational_level option:selected").val(),
+            educationTechnique: $("#education_technique option:selected").val(),
+            graduateSchool: $("#graduate_school").val(),
+            graduateTime: $("#graduate_time").val(),
+            major: $("#majorSel").val(),
+            positionalTitles: $("#positional_titles").val(),
+            positionalLevel:$("#positional_level").val(),
+            remark:$("#remarkSel").val()
         }, function (msg) {
             hideSaveLoading();
             if (msg.status == 1) {

@@ -38,7 +38,7 @@ public class ArchivesTypeController {
      * 电子档案类别页面*/
     @ResponseBody
     @RequestMapping("/archivesType/archivesTypeList")
-    public ModelAndView archivsTypeList(){
+    public ModelAndView archivesTypeList(){
         ModelAndView modelAndView=new ModelAndView("/business/archives/archivesTypeList");
         return modelAndView;
     }
@@ -68,32 +68,73 @@ public class ArchivesTypeController {
         }
     }
     /**
+     * 字典二级编号查重
+     */
+    @ResponseBody
+    @RequestMapping("/archivesType/checkId")
+    public Message archivesTypeCheckId(ArchivesType archivesType){
+        List size = archivesTypeService.checkId(archivesType);
+        if(size.size()>0){
+            return new Message(1, "编号重复，请重新填写！", null);
+        }else{
+            return new Message(0, "", null);
+        }
+    }
+    /**
      * 电子档案新增保存*/
     @ResponseBody
     @RequestMapping("/archivesType/saveArchivesType")
     public Message saveArchivesType(ArchivesType archivesType) {
-        archivesType.setCreator(CommonUtil.getPersonId());
-        archivesType.setCreateTime(CommonUtil.getDate());
-        archivesType.setCreateDept(CommonUtil.getDefaultDept());
-        String dicorder=archivesTypeService.getMaxDeptOrder(archivesType.getParentTypeId());
-        if(dicorder!=null && dicorder!="" ){
-            int neworder=Integer.parseInt(dicorder);
-            dicorder=(neworder+1)+"";
-            archivesType.setDeptOrder(dicorder);
+        if(archivesType.getPublicType().equals("1")){
+            List<ArchivesType> allPid=archivesTypeService.allPid(archivesType);
+            for(int i=0;i<allPid.size();i++){
+                String[] pid=allPid.get(i).getTypeId().split(",");
+                String apid="";
+                for(int j=0;j<pid.length;j++){
+                    apid= pid[j];
+                    archivesType.setCreator(CommonUtil.getPersonId());
+                    archivesType.setCreateTime(CommonUtil.getDate());
+                    archivesType.setCreateDept(CommonUtil.getDefaultDept());
+                    archivesType.setParentTypeId(apid);
+                    archivesType.setTypeId(apid+archivesType.getNewTypeId());
+                    String dicorder = archivesTypeService.getMaxDeptOrder(archivesType.getParentTypeId());
+                    if (dicorder != null && dicorder != "") {
+                        int neworder = Integer.parseInt(dicorder);
+                        dicorder = (neworder + 1) + "";
+                        archivesType.setDeptOrder(dicorder);
+                    } else {
+                        archivesType.setDeptOrder("1");
+                    }
+                    archivesTypeService.saveArchivesType(archivesType);
+                }
+            }
+        }else {
+            archivesType.setCreator(CommonUtil.getPersonId());
+            archivesType.setCreateTime(CommonUtil.getDate());
+            archivesType.setCreateDept(CommonUtil.getDefaultDept());
+            String dicorder = archivesTypeService.getMaxDeptOrder(archivesType.getParentTypeId());
+            if (dicorder != null && dicorder != "") {
+                int neworder = Integer.parseInt(dicorder);
+                dicorder = (neworder + 1) + "";
+                archivesType.setDeptOrder(dicorder);
+            } else {
+                archivesType.setDeptOrder("1");
+            }
+            archivesTypeService.saveArchivesType(archivesType);
         }
-        else {
-            archivesType.setDeptOrder("1");
-        }
-        archivesTypeService.saveArchivesType(archivesType);
         return new Message(1, "添加成功！", null);
     }
     /**
      * 电子档案类别修改*/
     @ResponseBody
     @RequestMapping("/archivesType/editArchivesType")
-    public ModelAndView editArchivesType(String id,String name) {
+    public ModelAndView editArchivesType(String id,String name,String type) {
         ModelAndView mv = new ModelAndView();
-        ArchivesType archivesType = archivesTypeService.getArchivesTypeById(id);
+        ArchivesType archivesType=new ArchivesType();
+        archivesType = archivesTypeService.getArchivesTypeById(id);
+        if(id.length()>3){
+            archivesType.setNewTypeId(archivesType.getTypeId().substring(3,6));
+        }
         mv.addObject("archivesType", archivesType);
         mv.addObject("name", name);
         mv.addObject("id", id);
@@ -115,9 +156,9 @@ public class ArchivesTypeController {
      * 电子档案类别删除*/
     @ResponseBody
     @RequestMapping("/archivesType/deleteArchivesType")
-    public Message deleteArchivesType(String id) {
+    public Message deleteArchivesType(ArchivesType archivesType) {
         Message message = new Message(1, "删除成功！", "success");
-        archivesTypeService.deleteArchivesType(id);
+        archivesTypeService.deleteArchivesType(archivesType.getTypeId());
         return message;
     }
 }

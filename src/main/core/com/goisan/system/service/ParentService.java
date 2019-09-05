@@ -1,10 +1,7 @@
 package com.goisan.system.service;
 
 import com.goisan.educational.teachingresult.bean.TeachingResult;
-import com.goisan.system.bean.BaseBean;
-import com.goisan.system.bean.Select2;
-import com.goisan.system.bean.TeacherBean;
-import com.goisan.system.bean.Tree;
+import com.goisan.system.bean.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -28,10 +25,16 @@ public interface ParentService {
 
     List<Tree> getSurveyParsonTree(String surveyId);
 
+    List<Tree> getSurveyTeacherTree(String surveyId);
+
+    List<Tree> getSurveyStudentTree(String surveyId);
+
     List<TeacherBean> getCourseTeacherList(List ids);
 
     List<TeacherBean> getCourseListByTeacher(String teacherId);
 
     @Transactional
     List<Map> getScoreExamCourseList(String studentId,List<Select2> className);
+
+    void updateStudentId(Parent baseBean);
 }

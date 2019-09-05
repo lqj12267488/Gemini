@@ -48,30 +48,51 @@
 </style>
 
 <script>
+    var authFlag;
     $(document).ready(function () {
-        $("#filesTable").DataTable({
-            "ajax": {
-                "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId?archivesId=' + $("#archivesId").val(),
-            },
-            "destroy": true,
-            "columns": [
-                {
-                    "title": "文件名称",
-                    "render": function (data, type, row) {
-                        return '<span id="preview" title="点击预览" onclick="preview(\'' + row.fileId + '\')">' + row.fileName + '</span>';
-                    }
+        authFlag = "${authFlag}"
+        if (authFlag=="1"){
+            $("#filesTable").DataTable({
+                "ajax": {
+                    "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId?archivesId=' + $("#archivesId").val(),
                 },
-                {
-                    "title": "操作",
-                    "width": "15%",
-                    "render": function (data, type, row) {
-                        return '<a id="upload" href="<%=request.getContextPath()%>/archives/downloadArchivesFile?fileId=' + row.fileId + '" class="icon-download"title="下载"></span>';
+                "destroy": true,
+                "columns": [
+                    {
+                        "title": "文件名称",
+                        "render": function (data, type, row) {
+                            return '<span id="preview" title="点击预览" onclick="preview(\'' + row.fileId + '\')">' + row.fileName + '</span>';
+                        }
                     }
-                }
-            ],
-            "dom": 'rtlip',
-            language: language
-        });
+                ],
+                "dom": 'rtlip',
+                language: language
+            });
+        }else {
+            $("#filesTable").DataTable({
+                "ajax": {
+                    "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId?archivesId=' + $("#archivesId").val(),
+                },
+                "destroy": true,
+                "columns": [
+                    {
+                        "title": "文件名称",
+                        "render": function (data, type, row) {
+                            return '<span id="preview" title="点击预览" onclick="preview(\'' + row.fileId + '\')">' + row.fileName + '</span>';
+                        }
+                    },
+                    {
+                        "title": "操作",
+                        "width": "15%",
+                        "render": function (data, type, row) {
+                            return '<a id="upload"  href="<%=request.getContextPath()%>/archives/downloadArchivesFile?archivesId='+$("#archivesId").val()+'&fileId=' + row.fileId + '" class="icon-download"title="下载"></span>';
+                        }
+                    }
+                ],
+                "dom": 'rtlip',
+                language: language
+            });
+        }
         $('#ssi-upload').ssi_uploader({
             url: '<%=request.getContextPath()%>/archives/insertArchivesFiles?archivesId=${archivesId}&flag=${flag}&role=${role}',
             maxFileSize: 100,

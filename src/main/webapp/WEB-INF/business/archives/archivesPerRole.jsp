@@ -30,6 +30,8 @@
         </div>
     </div>
 </div>
+<input id="ids" hidden value="${ids}">
+<input id="flag" hidden value="${flag}">
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     var EmpDeptTree;
@@ -52,7 +54,7 @@
     };
 
     $(document).ready(function () {
-        $.get("<%=request.getContextPath()%>/archives/getArchivesDeptAndPersonTree?id=" + $("#archivesId").val(), function (data) {
+        $.get("<%=request.getContextPath()%>/archives/getArchivesDeptAndPersonTree?id=" + $("#archivesId").val()+"&flag="+$("#flag").val(), function (data) {
             EmpDeptTree = $.fn.zTree.init($("#treeDemo"), setting, data);
             EmpDeptTree.expandAll(true);
         });
@@ -71,6 +73,7 @@
             checkList = checkList.substring(0, checkList.length - 3);
         showSaveLoading();
         $.post("<%=request.getContextPath()%>/archives/savePerRelation", {
+            ids:$("#ids").val(),
             archivesId: archivesId,
             checkList: checkList
         }, function (msg) {
@@ -78,6 +81,7 @@
             if (msg.status == 1) {
                 swal({title: msg.msg, type: "success"});
                 $("#dialog").modal('hide');
+                $('#listGrid').DataTable().ajax.reload();
             }
         })
     }

@@ -19,6 +19,7 @@
             <input id="parentQuestionId" hidden value="${data.parentQuestionId}"/>
         </div>
         <div class="modal-body clearfix">
+            <div id="layout" style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
             <div class="controls">
                 <div class="form-row">
                     <div class="col-md-3 tar">
@@ -41,7 +42,35 @@
                         答题方式
                     </div>
                     <div class="col-md-9">
-                        <select id="questionType"  />
+                        <select id="questionType" onchange="qTypeFun()" ></select>
+                    </div>
+                </div>
+                <div class="form-row" id="questionTypeRow" style="display: none">
+                    <div class="col-md-3 tar">
+                        <button class="btn btn-default btn-clean" onclick="addCheck()"  id="check">新增选项</button>
+                    </div>
+                    <div class="col-md-9"  id="checkShow">
+                        <c:choose>
+                            <c:when test="${data.questionType == '2' || data.questionType == '3' }">
+                                <c:forEach items="${option}" var="item">
+                                    <div class="form-row" id="${item.optionId}">
+                                        <div class="col-md-3">可选答案:</div>
+                                        <div class="col-md-6"><input type="text" id="${item.optionId}_val" value="${item.optionValue}" class="inputBox"></div>
+                                        <div class="col-md-3"><a href="#" onclick="delRow('${item.optionId}')" >删除此选项</a></div>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                        </c:choose>
+                    </div>
+                </div>
+                <div class="form-row" id="questionTypeTree" style="display: none">
+                    <div class="col-md-3 tar">
+                        选择教师
+                    </div>
+                    <div class="col-md-9" >
+                        <div class="controls" id="style-4" style="overflow-y:auto;height:200px ">
+                            <ul id="treeDemo" class="ztree"></ul>
+                        </div>
                     </div>
                 </div>
                 <div class="form-row">
@@ -64,11 +93,71 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        $.get("<%=request.getContextPath()%>/common/getSysDict?name=DTFS", function (data) {
-            addOption(data, 'questionType','${data.questionType}');
-        });
+    var surveyType = $("#surveyType").val();
 
+    var EmpDeptTree;
+    // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+    var setting = {
+        view: {
+            fontCss: {color: "white"},
+            showLine: false
+        },
+        check: {
+            enable: true,
+            chkStyle: "checkbox",
+            chkboxType: { "Y": "ps", "N": "ps" }
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
+
+    $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
+    var questionType = '${data.questionType}';
+    $(document).ready(function () {
+
+        if ( questionType == "1") {
+            $("#questionTypeRow").css("display", "none");
+            $("#checkShow").html("");
+        } else if( questionType =='4' || questionType == '5' ){
+            $("#questionTypeTree").css("display", "block");
+            $("#questionTypeRow").css("display", "none");
+        }else if( questionType =='2' || questionType == '3' ){
+            $("#questionTypeRow").css("display", "block");
+            $("#questionTypeTree").css("display", "none");
+        }
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=DTFS", function (data) {
+            $("#" + 'questionType').append("<option value=''>请选择</option>")
+
+            $.each(data, function (index, content) {
+                if (content.id === questionType) {
+                    $("#" + 'questionType').append("<option value='" + content.id + "' selected>" + content.text + "</option>")
+                } else {
+                    if(surveyType =='1'){
+                        if(content.id != '1')
+                            $("#" + 'questionType').append("<option value='" + content.id + "'>" + content.text + "</option>")
+                    }else if(surveyType =='2'){
+                        if(content.id != '4' && content.id != '5' )
+                            $("#" + 'questionType').append("<option value='" + content.id + "'>" + content.text + "</option>")
+                    }
+                }
+            })
+
+        });
+        EmpDeptTree = $.fn.zTree.init($("#treeDemo"), setting, dataEmpDept);
+        EmpDeptTree.expandAll(true);
+
+        if(questionType == '4' || questionType == '5'){
+            var node;
+            var option = JSON.parse('${optionDate}');
+            $.each(option, function (index, content) {
+                node = EmpDeptTree.getNodeByParam("id",content.optionCode);
+                var callbackFlag = $("#"+content.optionCode).attr("checked");
+                EmpDeptTree.checkNode(node, true, false, callbackFlag);
+            });
+        }
     });
 
 
@@ -101,15 +190,50 @@
             });
             return;
         }
-/*
-        if (remark == "" || remark == undefined || remark == null) {
-            swal({
-                title: "请填写备注！",
-                type: "info"
+
+        var checkval ="";
+        if(  $("#questionType option:selected").val()=='4' || $("#questionType option:selected").val() == '5' ){
+            var nodes = EmpDeptTree.getCheckedNodes(true);
+            var id = '';
+            for (var i = 0; i < nodes.length; i++) {
+                var item = nodes[i].id;
+                if(item.indexOf(",") != -1)
+                    id+= item +"##";
+            }
+            if(id!=''){
+                id = id.substring(0,id.length-2);
+                checkval = id;
+            } else{
+                swal({title: "请选择教师选项！"});
+                return;
+            }
+        }else if( $("#questionType option:selected").val()=='2' || $("#questionType option:selected").val() == '3' ){
+            var b = false;
+            var check = false;
+            $(".inputBox").each(function(index,item) {
+                var val = $(this).attr("id");
+                var person =$("#"+ val).val();
+                if( person== undefined|| person == "" ){
+                    b = true;
+                }
+                if(checkval !="" && checkval.indexOf(person) != -1){
+                    check = true;
+                }
+
+                if(index != 0)
+                    checkval += ";";
+                checkval += person ;
             });
-            return;
+            if(check){
+                swal({title: "教师不能重复！"});
+                return;
+            }
+
+            if(b || checkval =="" ){
+                swal({title: "请填写答案选项！"});
+                return;
+            }
         }
-*/
 
         $.post("<%=request.getContextPath()%>/survey/question/saveSurveyQuestion", {
             questionId:questionId,
@@ -119,6 +243,8 @@
             questionType:questionType,
             questionOrder:questionOrder,
             remark:remark,
+            checkval: checkval,
+            surveyType: surveyType,
         }, function (msg) {
             swal({
                 title: msg.msg,
@@ -129,7 +255,82 @@
             });
         })
     }
+
+    function guid() {
+        function S4() {
+            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        }
+        return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+    }
+
+    function qTypeFun() {
+        if ($("#questionType").val() == "1") {
+            $("#questionTypeRow").css("display", "none");
+            $("#checkShow").html("");
+        } else if( $("#questionType").val()=='4' || $("#questionType").val() == '5' ){
+            $("#questionTypeTree").css("display", "block");
+            $("#questionTypeRow").css("display", "none");
+            EmpDeptTree = $.fn.zTree.init($("#treeDemo"), setting, dataEmpDept);
+            EmpDeptTree.expandAll(true);
+
+        }else if( $("#questionType").val()=='2' || $("#questionType").val() == '3' ){
+            $("#questionTypeRow").css("display", "block");
+            $("#questionTypeTree").css("display", "none");
+        }
+    }
+    function addCheck() {
+        var id = guid();
+        if( $("#questionType option:selected").val()=='4' || $("#questionType option:selected").val() == '5' ){
+            var a = '<div class="form-row" id="'+id+'">' +
+                '<div class="col-md-3">可选教师:</div>' +
+                '<div class="col-md-6"><input type="text" id="'+id+'_val" class="inputBox"></div>' +
+                '<div class="col-md-3"><a href="#" onclick="delRow(\''+id+'\')" >删除此选项</a> </div>' +
+                '</div>';
+            $("#checkShow").append(a);
+
+            $("#"+id+"_val").autocomplete({
+                source: personDate,
+                select: function (event, ui) {
+                    $("#"+id+"_val").val(ui.item.label);
+                    $("#"+id+"_val").attr("keycode", ui.item.value);
+                    return false;
+                }
+            }).data("ui-autocomplete")._renderItem = function (ul, item) {
+                return $("<li>")
+                    .append("<a>" + item.label + "</a>")
+                    .appendTo(ul);
+            };
+        }else if( $("#questionType option:selected").val()=='2' || $("#questionType option:selected").val() == '3' ){
+            var a = '<div class="form-row" id="'+id+'">' +
+                '<div class="col-md-3">可选答案:</div>' +
+                '<div class="col-md-6"><input type="text" id="'+id+'_val" class="inputBox"></div>' +
+                '<div class="col-md-3"><a href="#" onclick="delRow(\''+id+'\')" >删除此选项</a> </div>' +
+                '</div>';
+            $("#checkShow").append(a);
+        }
+    }
+
+    function delRow(id){
+        var father = document.getElementById("checkShow");
+        var child = document.getElementById(id);
+        father.removeChild(child);
+    }
+
 </script>
-
-
-
+<style>
+    #style-4::-webkit-scrollbar-track
+    {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #474D52;
+    }
+    #style-4::-webkit-scrollbar
+    {
+        width: 5px;
+        background-color: #474D52;
+    }
+    #style-4::-webkit-scrollbar-thumb
+    {
+        background-color: #ffffff;
+        border: 1px solid #474D52;
+    }
+</style>

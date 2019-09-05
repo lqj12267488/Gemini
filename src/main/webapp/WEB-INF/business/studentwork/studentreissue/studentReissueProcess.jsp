@@ -78,7 +78,7 @@
 
     $(document).ready(function () {
 
-        $.get("<%=request.getContextPath()%>/studentReissue/autoCompleteEmployee", function (data) {
+        $.get("<%=request.getContextPath()%>/studentProve/autoCompleteEmployee", function (data) {
             $("#f_requester").autocomplete({
                 source: data,
                 select: function (event, ui) {

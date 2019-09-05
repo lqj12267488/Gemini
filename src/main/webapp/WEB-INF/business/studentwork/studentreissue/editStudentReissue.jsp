@@ -32,10 +32,10 @@
                     <input id="studentReissueid" hidden value="${studentReissue.id}">
                     <input type="file" name="file" style="display: none" id="imgFile" onchange="fileChange(this)">
                     <div class="form-row">
-                        <div class="col-md-3 tar" style="float: left;">
+                        <div class="col-md-2 tar" style="float: left;">
                             申请时间
                         </div>
-                        <div class="col-md-4" style="margin-top: 4px;">
+                        <div class="col-md-5" style="margin-top: 4px;">
                             <input id="f_requestDate" type="datetime-local" readonly="readonly"
                                    class="validate[required,maxSize[100]] form-control"
                                    value="${studentReissue.requestDate}"/>
@@ -60,37 +60,37 @@
                         </c:choose>
                             </div>
                         </div>
-                        <div class="col-md-3 tar" style="float: left;">
+                        <div class="col-md-2 tar" style="float: left;">
                             学生姓名
                         </div>
-                        <div class="col-md-4" style="margin-top: 4px;">
+                        <div class="col-md-5" style="margin-top: 4px;">
                             <select id="studentId" disabled="disabled"
                                     class="validate[required,maxSize[100]] form-control"></select>
                         </div>
-                        <div class="col-md-3 tar" style="float: left;">
+                        <div class="col-md-2 tar" style="float: left;">
                             民族
                         </div>
-                        <div class="col-md-4" style="margin-top: 4px;">
+                        <div class="col-md-5" style="margin-top: 4px;">
                             <select id="f_nation" disabled="disabled"
                                     class="validate[required,maxSize[100]] form-control"></select>
                         </div>
-                        <div class="col-md-3 tar" style="float: left;">
+                        <div class="col-md-2 tar" style="float: left;">
                             性别
                         </div>
-                        <div class="col-md-4" style="margin-top: 4px;">
+                        <div class="col-md-5" style="margin-top: 4px;">
                             <select id="f_sex" disabled="disabled"
                                     class="validate[required,maxSize[100]] form-control"></select>
                         </div>
-                        <div class="col-md-3 tar" style="float: left;">
+                        <div class="col-md-2 tar" style="float: left;">
                             班级
                         </div>
-                        <div class="col-md-4" style="margin-top: 4px;">
+                        <div class="col-md-5" style="margin-top: 4px;">
                             <select id="classIdId" type="text" disabled="disabled"
                                     class="validate[required,maxSize[100]] form-control"></select>
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             专业
                         </div>
                         <div class="col-md-9">
@@ -99,7 +99,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             学号
                         </div>
                         <div class="col-md-9">
@@ -108,7 +108,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             身份证号
                         </div>
                         <div class="col-md-9">
@@ -116,7 +116,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>乘车区间
                         </div>
                         <div class="col-md-9">
@@ -125,7 +125,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>家庭地址
                         </div>
                         <div class="col-md-9">
@@ -134,7 +134,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>新疆省
                         </div>
                         <div class="col-md-9">
@@ -142,7 +142,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>地区（州）
                         </div>
                         <div class="col-md-9">
@@ -150,7 +150,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>市（县）
                         </div>
                         <div class="col-md-9">
@@ -158,7 +158,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>申请项目
                         </div>
                         <div class="col-md-9">
@@ -166,7 +166,7 @@
                         </div>
                     </div>
                     <div class="form-row">
-                        <div class="col-md-3 tar">
+                        <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>申请理由
                         </div>
                         <div class="col-md-9">
