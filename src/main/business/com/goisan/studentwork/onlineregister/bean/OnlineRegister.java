@@ -31,6 +31,16 @@ public class OnlineRegister extends BaseBean {
     private String fatherTel;
     private String motherTel;
     private String remark;
+    private int year;
+    private String img;
+    private String auditFlag;
+    private String auditTime;
+    private String auditMind;
+
+
+    private String majorName;
+    private String registerOriginShow;
+    private String examTypeShow;
 
     public String getId() {
         return id;
@@ -246,5 +256,69 @@ public class OnlineRegister extends BaseBean {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public String getAuditFlag() {
+        return auditFlag;
+    }
+
+    public void setAuditFlag(String auditFlag) {
+        this.auditFlag = auditFlag;
+    }
+
+    public String getAuditTime() {
+        return auditTime;
+    }
+
+    public void setAuditTime(String auditTime) {
+        this.auditTime = auditTime;
+    }
+
+    public String getAuditMind() {
+        return auditMind;
+    }
+
+    public void setAuditMind(String auditMind) {
+        this.auditMind = auditMind;
+    }
+
+    public String getMajorName() {
+        return majorName;
+    }
+
+    public void setMajorName(String majorName) {
+        this.majorName = majorName;
+    }
+
+    public String getRegisterOriginShow() {
+        return registerOriginShow;
+    }
+
+    public void setRegisterOriginShow(String registerOriginShow) {
+        this.registerOriginShow = registerOriginShow;
+    }
+
+    public String getExamTypeShow() {
+        return examTypeShow;
+    }
+
+    public void setExamTypeShow(String examTypeShow) {
+        this.examTypeShow = examTypeShow;
     }
 }

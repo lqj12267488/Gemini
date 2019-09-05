@@ -17,4 +17,8 @@ public interface OnlineRegisterDao {
 
     void delOnlineRegister(String id);
 
+    List<OnlineRegister> getRegisterByIDCard(OnlineRegister onlineRegister);
+
+    List<String> getAllYear();
+
 }
