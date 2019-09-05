@@ -134,6 +134,20 @@
             and tt.id not in (select message_id from T_SYS_MESSAGE_LOG l where l.creator ='${loginID}')
             and tt.title is not null
             and tt.valid_flag = '1'
+        UNION
+        SELECT '3' abc,
+               t.id,
+               '【'||FUNC_GET_DICVALUE(t.MEETING_REQUEST, 'HYSQ')||'】'||to_char(t.start_time,'yyyy')||'年'||to_char(t.start_time,'MM')||'月'||to_char(t.start_time,'dd')||'日，在'||FUNC_GET_TABLEVALUE(t.MEETING_SITE, 'T_JW_MEETINGROOM', 'id', 'MEETING_ROOM_NAME')||'举行'||t.content||'会议，请参会人员准时参加。' title,
+               FUNC_GET_DEPTNAME(t.create_dept) isdean,
+               to_char(t.content) content,
+               t.MEETING_REQUEST type,
+               t.create_time publicTime,
+               '会议通知' typeShow,
+               t.create_time createTime,
+               t.create_dept deptId,
+               FUNC_GET_USERNAME(t.creator) requester ,t.creator
+        FROM T_BG_HALLUSE_WF t
+        WHERE valid_flag = '1' and t.request_flag ='2'
         ) a  , t_sys_user u where a.creator = u.user_id ORDER BY createTime DESC
       ) r WHERE ROWNUM &lt; 7
     </select>
