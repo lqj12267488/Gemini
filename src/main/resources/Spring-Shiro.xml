@@ -126,6 +126,7 @@
                 /enrollment/** = anon
                 /onlineregister/** = anon
                 / = anon
+                /common/** = anon
                 /pageoffice/** = anon
                 /login = anon
                 /loginApp/loginJsp = anon

@@ -23,6 +23,21 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        .uploadKj {
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid #9e9e9e;
+            border-radius: 0;
+            outline: none;
+            height: 3rem;
+            width: 100%;
+            font-size: 1rem;
+            margin: 0 0 20px 0;
+            padding: 0;
+            box-shadow: none;
+            box-sizing: content-box;
+            transition: all 0.3s;
+        }
     </style>
 <body><%-- onload="onl();"--%>
 <!-- 主页面容器 -->
@@ -36,19 +51,18 @@
     <input type="hidden" id="idCardisHave">
     <div class="mui-content">
         <div class="row">
-            <form class="col s12" id="summerCamp">
-                <input type="file" name="file" style="display: none" id="imgFile" onchange="fileChange(this)">
+            <form class="col s12" id="signUp">
+                <input type="hidden" name="registerType" value="${type}">
+                <input type="file" name="file_img" style="display: none" id="imgFile" onchange="fileChange(this)">
                 <table>
                     <tr>
                         <td>
                             <div class="input-field col s12">
-                                <input id="s_name" name="name" type="text" class="validate" value="${summerCamp.name}"/>
+                                <input id="s_name" name="name" type="text" class="validate"/>
                                 <label for="s_name"><span style="color: red">*</span>姓名</label>
                             </div>
                         </td>
-                        <td rowspan="2"><img onclick="showInputFile()"
-                                             src="<%=request.getContextPath()%>/libs/img/upload.png" height="150"
-                                             width="110" alt="" id="userImg"></td>
+                        <td rowspan="2"><img onclick="showInputFile()" src="<%=request.getContextPath()%>/libs/img/upload.png" height="150" width="110" alt="" id="userImg"></td>
                     </tr>
                     <tr>
                         <td>
@@ -60,254 +74,185 @@
                     </tr>
                 </table>
                 <div class="input-field col s6">
-                    <select name="mz" id="s_mz">
+                    <select name="nation" id="s_nation">
                         <option value="" disabled selected><span style="color: red">*</span>民族</option>
-                        <option value="汉族">汉族</option>
-                        <option value="壮族">壮族</option>
-                        <option value="满族">满族</option>
-                        <option value="回族">回族</option>
-                        <option value="苗族">苗族</option>
-                        <option value="维吾尔族">维吾尔族</option>
-                        <option value="土家族">土家族</option>
-                        <option value="彝族">彝族</option>
-                        <option value="土族">土族</option>
-                        <option value="朝鲜族">朝鲜族</option>
-                        <option value="蒙古族">蒙古族</option>
-                        <option value="阿昌族">阿昌族</option>
-                        <option value="鄂温克族">鄂温克族</option>
-                        <option value="傈僳族">傈僳族</option>
-                        <option value="水族">水族</option>
-                        <option value="白族">白族</option>
-                        <option value="高山族">高山族</option>
-                        <option value="珞巴族">珞巴族</option>
-                        <option value="塔吉克族">塔吉克族</option>
-                        <option value="保安族">保安族</option>
-                        <option value="仡佬族">仡佬族</option>
-                        <option value="布朗族">布朗族</option>
-                        <option value="塔塔尔族">塔塔尔族</option>
-                        <option value="哈尼族">哈尼族</option>
-                        <option value="毛南族">毛南族</option>
-                        <option value="布依族">布依族</option>
-                        <option value="哈萨克族">哈萨克族</option>
-                        <option value="门巴族">门巴族</option>
-                        <option value="佤族">佤族</option>
-                        <option value="达斡尔族">达斡尔族</option>
-                        <option value="赫哲族">赫哲族</option>
-                        <option value="傣族">傣族</option>
-                        <option value="仫佬族">仫佬族</option>
-                        <option value="乌孜别克族">乌孜别克族</option>
-                        <option value="德昂族">德昂族</option>
-                        <option value="基诺族">基诺族</option>
-                        <option value="纳西族">纳西族</option>
-                        <option value="锡伯族">锡伯族</option>
-                        <option value="东乡族">东乡族</option>
-                        <option value="京族">京族</option>
-                        <option value="怒族">怒族</option>
-                        <option value="瑶族">瑶族</option>
-                        <option value="侗族">侗族</option>
-                        <option value="景颇族">景颇族</option>
-                        <option value="普米族">普米族</option>
-                        <option value="独龙族">独龙族</option>
-                        <option value="柯尔克孜族">柯尔克孜族</option>
-                        <option value="羌族">羌族</option>
-                        <option value="裕固族">裕固族</option>
-                        <option value="俄罗斯族">俄罗斯族</option>
-                        <option value="拉祜族">拉祜族</option>
-                        <option value="撒拉族">撒拉族</option>
-                        <option value="藏族">藏族</option>
-                        <option value="鄂伦春族">鄂伦春族</option>
-                        <option value="黎族">黎族</option>
-                        <option value="畲族">畲族</option>
+                        <option value="01">汉族</option>
+                        <option value="02">蒙古族</option>
+                        <option value="03">回族</option>
+                        <option value="04">藏族</option>
+                        <option value="05">维吾尔族</option>
+                        <option value="06">苗族</option>
+                        <option value="07">彝族</option>
+                        <option value="08">壮族</option>
+                        <option value="09">布依族</option>
+                        <option value="10">朝鲜族</option>
+                        <option value="11">满族</option>
+                        <option value="12">侗族</option>
+                        <option value="13">瑶族</option>
+                        <option value="14">白族</option>
+                        <option value="15">土家族</option>
+                        <option value="16">哈尼族</option>
+                        <option value="17">哈萨克族</option>
+                        <option value="18">傣族</option>
+                        <option value="19">黎族</option>
+                        <option value="20">僳僳族</option>
+                        <option value="21">佤族</option>
+                        <option value="22">畲族</option>
+                        <option value="23">高山族</option>
+                        <option value="24">拉祜族</option>
+                        <option value="25">水族</option>
+                        <option value="26">东乡族</option>
+                        <option value="27">纳西族</option>
+                        <option value="28">景颇族</option>
+                        <option value="29">柯尔克孜族</option>
+                        <option value="30">土族</option>
+                        <option value="31">达斡尔族</option>
+                        <option value="32">仫佬族</option>
+                        <option value="33">羌族</option>
+                        <option value="34">布朗族</option>
+                        <option value="35">撒拉族</option>
+                        <option value="36">毛南族</option>
+                        <option value="37">仡佬族</option>
+                        <option value="38">锡伯族</option>
+                        <option value="39">阿昌族</option>
+                        <option value="40">普米族</option>
+                        <option value="41">塔吉克族</option>
+                        <option value="42">怒族</option>
+                        <option value="43">乌孜别克族</option>
+                        <option value="44">俄罗斯族</option>
+                        <option value="45">鄂温克族</option>
+                        <option value="46">崩龙族</option>
+                        <option value="47">保安族</option>
+                        <option value="48">裕固族</option>
+                        <option value="49">京族</option>
+                        <option value="50">塔塔尔族</option>
+                        <option value="51">独龙族</option>
+                        <option value="52">鄂伦春族</option>
+                        <option value="53">赫哲族</option>
+                        <option value="54">门巴族</option>
+                        <option value="55">珞巴族</option>
+                        <option value="56">基诺族</option>
+                        <option value="57">其他</option>
+                        <option value="58">外国血统</option>
                     </select>
                 </div>
                 <div class="input-field col s6">
                     <select name="sex" id="s_sex">
                         <option value="" disabled selected><span style="color: red">*</span>性别</option>
-                        <option value="男">男</option>
-                        <option value="女">女</option>
                     </select>
                 </div>
                 <div class="input-field col s6">
-                    <input name="birdate" id="s_birdate" type="date" class="datepicker">
-                    <label for="s_birdate"><span style="color: red">*</span>出生日期</label>
+                    <input name="birthday" id="s_birthday" type="date" class="datepicker">
+                    <label for="s_birthday"><span style="color: red">*</span>出生日期</label>
                 </div>
                 <div class="input-field col s6">
-                    <select name="sex" id="language">
+                    <select name="language" id="s_language">
                         <option value="" disabled selected><span style="color: red">*</span>语言</option>
-                        <option value="男">男</option>
-                        <option value="女">女</option>
                     </select>
                 </div>
 
                 <div class="input-field col s6">
-                    <input name="stuno" type="text" id="s_stuno" class="validate"/>
-                    <label for="s_stuno">父亲电话</label>
+                    <input name="fatherTel" type="text" id="s_fatherTel" class="validate"/>
+                    <label for="s_fatherTel"><span style="color: red">*</span>父亲电话</label>
                 </div>
                 <div class="input-field col s6">
-                    <input name="health" type="text" id="s_health" class="validate"/>
-                    <label for="s_health">母亲电话</label>
+                    <input name="motherTel" type="text" id="s_motherTel" class="validate"/>
+                    <label for="s_motherTel"><span style="color: red">*</span>母亲电话</label>
                 </div>
 
                 <div class="input-field col s6">
-                    <input name="endschool" type="text" id="s_endschool" class="validate"/>
-                    <label for="s_endschool"><span style="color: red">*</span>考生类别</label>
+                    <select id="s_examType" name="examType">
+                        <option value="" disabled selected><span style="color: red">*</span>考生类别</option>
+                    </select>
                 </div>
                 <div class="input-field col s6">
-                    <select id="s_bmtype" name="bmtype">
+                    <select id="s_province" name="province">
                         <option value="" disabled selected><span style="color: red">*</span>省</option>
                     </select>
                 </div>
 
                 <div class="input-field col s6">
-                    <input name="endschool" type="text" id="s_endschool" class="validate"/>
-                    <label for="s_endschool"><span style="color: red">*</span>市</label>
+                    <select id="s_city" name="city">
+                        <option value="" disabled selected><span style="color: red">*</span>市</option>
+                    </select>
                 </div>
                 <div class="input-field col s6">
-                    <input name="endschool" type="text" id="s_endschool" class="validate"/>
-                    <label for="s_endschool"><span style="color: red">*</span>县</label>
-                </div>
-
-                <div class="input-field col s6">
-                    <input name="health" type="text" id="s_health" class="validate"/>
-                    <label for="s_health">毕业学校</label>
-                </div>
-                <div class="input-field col s6">
-                    <input name="health" type="text" id="s_health" class="validate"/>
-                    <label for="s_health">毕业时间</label>
+                    <select id="s_county" name="county">
+                        <option value="" disabled selected><span style="color: red">*</span>县</option>
+                    </select>
                 </div>
 
                 <div class="input-field col s6">
-                    <input name="stuno" type="text" id="s_stuno" class="validate"/>
-                    <label for="s_stuno">准考证号</label>
+                    <input name="graduatedSchool" type="text" id="s_graduatedSchool" class="validate"/>
+                    <label for="s_graduatedSchool"><span style="color: red">*</span>毕业学校</label>
                 </div>
                 <div class="input-field col s6">
-                    <select name="sex" id="language">
+                    <input name="graduationDate" id="s_graduationDate" type="date" class="datepicker"/>
+                    <label for="s_graduationDate"><span style="color: red">*</span>毕业时间</label>
+                </div>
+
+                <div class="input-field col s6">
+                    <input name="examinationCardNumber" type="text" id="s_examinationCardNumber" class="validate"/>
+                    <label for="s_examinationCardNumber"><span style="color: red">*</span>准考证号</label>
+                </div>
+                <div class="input-field col s6">
+                    <select name="registerOrigin" id="s_registerOrigin">
                         <option value="" disabled selected><span style="color: red">*</span>报名起点</option>
-                        <option value="男">男</option>
-                        <option value="女">女</option>
                     </select>
                 </div>
 
                 <div class="input-field col s6">
-                    <input name="stuno" type="text" id="s_stuno" class="validate"/>
-                    <label for="s_stuno">考试成绩</label>
+                    <input name="examScore" type="text" id="s_examScore" class="validate"/>
+                    <label for="s_examScore"><span style="color: red">*</span>考试成绩</label>
                 </div>
                 <div class="input-field col s6">
-                    <select id="s_isrelieve" name="isrelieve">
-                        <option value="" disabled selected><span style="color: red">*</span>是否服从调剂</option>
-                        <option value="是">是</option>
-                        <option value="否">否</option>
-                    </select>
+                    <input name="remark" type="text" id="s_remark" class="validate"/>
+                    <label for="s_remark">备注</label>
                 </div>
-                <div class="input-field col s6">
-                    <select id="s_isstay" name="isstay">
-                        <option value="" disabled selected><span style="color: red">*</span>是否住宿</option>
-                        <option value="是">是</option>
-                        <option value="否">否</option>
-                    </select>
-                </div>
-                <div class="input-field col s6">
-                    <select id="s_ismeal" name="ismeal">
-                        <option value="" disabled selected><span style="color: red">*</span>是否就餐</option>
-                        <option value="是">是</option>
-                        <option value="否">否</option>
-                    </select>
-                </div>
-                <div class="input-field col s12">
-                    <span style="font-size: 16px;font-weight: bold">家庭信息 - 父亲</span>
-                    <br>
-                </div>
-                <div class="input-field col s6">
-                    <input name="faname" id="s_faname" type="text" class="validate"/>
-                    <label for="s_faname"><span style="color: red">*</span>姓名</label>
-                </div>
-                <div class="input-field col s6">
-                    <input name="faworkunit" id="s_faworkunit" type="text" class="validate"/>
-                    <label for="s_faworkunit">工作单位</label>
-                </div>
-                <div class="input-field col s6">
-                    <input name="fapost" id="s_fapost" type="text" class="validate"/>
-                    <label for="s_fapost">职务</label>
-                </div>
-                <div class="input-field col s6">
-                    <input name="fatel" id="s_fatel" type="text" maxlength="11" class="validate"/>
-                    <label for="s_fatel"><span style="color: red">*</span>联系电话</label>
-                </div>
-
-                <div class="input-field col s12">
-                    <span style="font-size: 16px;font-weight: bold">家庭信息 - 母亲</span>
-                    <br>
-                </div>
-                <div class="input-field col s6">
-                    <input name="moname" id="s_moname" type="text" class="validate"/>
-                    <label for="s_moname"><span style="color: red">*</span>姓名</label>
-                </div>
-                <div class="input-field col s6">
-                    <input name="moworkunit" id="s_moworkunit" type="text" class="validate"/>
-                    <label for="s_moworkunit">工作单位</label>
-                </div>
-                <div class="input-field col s6">
-                    <input name="mopost" id="s_mopost" type="text" class="validate"/>
-                    <label for="s_mopost">职务</label>
-                </div>
-                <div class="input-field col s6">
-                    <input name="motel" id="s_motel" type="text" maxlength="11" class="validate"/>
-                    <label for="s_motel"><span style="color: red">*</span>联系电话</label>
-                </div>
-                <div class="input-field col s12">
-                    <span style="font-size: 16px;font-weight: bold">比赛情况</span>
-                    <a style="float: right;margin:0 30px 0 0 " class="btn-floating" onclick="addMatch()"><i
-                            class="material-icons">add</i></a>
-                    <br>
-                </div>
-                <div id="s_match">
-                    <div class="input-field col s6">
-                        <input id="s_matchtime" type="date" class="datepicker s_matchtime">
-                        <label for="s_matchtime">时间</label>
+                <div class="file-field input-field col s12">
+                    <div class="btn">
+                        <span>身份证附件</span>
+                        <input type="file" name="file_idcardImg" id="s_idcardImg"/>
                     </div>
-                    <div class="input-field col s6">
-                        <input id="s_matchname"   maxlength="256" type="text" class="validate s_matchname"/>
-                        <label for="s_matchname">小学参加的重要比赛名称</label>
-                    </div>
-                    <div class="input-field col s6">
-                        <select id="s_matchlevel" >
-                            <option value="" disabled selected>比赛级别</option>
-                            <option value="省">省</option>
-                            <option value="市">市</option>
-                            <option value="县">县</option>
-                            <option value="局">局</option>
-                            <option value="校">校</option>
-                            <option value="其他">其他</option>
-                        </select>
-                    </div>
-                    <div class="input-field col s6">
-                        <input id="s_matchrank" type="text" class="validate s_matchrank"/>
-                        <label for="s_matchrank">取得名次</label>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text"/>
                     </div>
                 </div>
-                <div class="input-field col s12">
-                    <span style="font-size: 16px;font-weight: bold">小学市级以上获奖和个人特长</span>
-                    <a style="float: right;margin:0 30px 0 0 " class="btn-floating " onclick="addAward()"><i
-                            class="material-icons">add</i></a>
-                    <br>
+                <div class="file-field input-field col s12">
+                    <div class="btn">
+                        <span>准考证附件</span>
+                        <input type="file" name="file_examinationImg" id="s_examinationImg"/>
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text"/>
+                    </div>
                 </div>
-                <div id="s_award">
-                    <div class="input-field col s6">
-                        <input id="s_awardtime" type="date" class="datepicker s_awardtime">
-                        <label for="s_awardtime">时间</label>
+                <div class="file-field input-field col s12">
+                    <div class="btn">
+                        <span>成绩单附件</span>
+                        <input type="file" name="file_scoreImg" id="s_scoreImg"/>
                     </div>
-                    <div class="input-field col s6">
-                        <input id="s_awardname" maxlength="256" type="text" class="validate s_awardname"/>
-                        <label for="s_awardname">受过何种奖励</label>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text"/>
                     </div>
-                    <div class="input-field col s12">
-                        <input id="s_awardpost"  maxlength="256" type="text" class="validate s_awardpost"/>
-                        <label for="s_awardpost">本人在活动中的职务/职责</label>
+                </div>
+                <div class="file-field input-field col s12">
+                    <div class="btn">
+                        <span>户口本附件</span>
+                        <input type="file" name="file_hukouImg" id="s_hukouImg" multiple/>
                     </div>
-                    <%--<div class="input-field col s12">
-                        <textarea name="hobby" maxlength="256" id="s_hobby" class="materialize-textarea s_hobby"></textarea>
-                        <label for="s_hobby">爱好和特长，取得成绩</label>
-                    </div>--%>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text"/>
+                    </div>
+                </div>
+                <div class="file-field input-field col s12">
+                    <div class="btn">
+                        <span>毕业证附件</span>
+                        <input type="file" name="file_graduatedImg" id="s_graduatedImg" multiple/>
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text"/>
+                    </div>
                 </div>
                 <div class="input-field col s6">
                     <input id="w_v" type="text"/>
@@ -330,10 +275,11 @@
        style="width: 200px">报名</a>
 </div>
 <br/>
-<span style="font-size: 10px">注：1.考生本人对填写内容的真实性负责，凡弄虚作假者一票否决。<br>注：2比赛级别指市级及以上，同等类型只需填写最高奖项。</span>
+<%--<span style="font-size: 10px">注：1.考生本人对填写内容的真实性负责，凡弄虚作假者一票否决。<br>注：2比赛级别指市级及以上，同等类型只需填写最高奖项。</span>--%>
 </body>
 <script>
-    $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
+    var baseUrl = "<%=request.getContextPath()%>";
+    $("#layout").load(baseUrl + "/common/commonSaveLoading");
     $(document).ready(function () {
 
 
@@ -345,37 +291,72 @@
         })
 
 
-        $.get("<%=request.getContextPath()%>/common/getSysDict?name=JKZK", function (data) {
+        $.get(baseUrl + "/common/getSysDict?name=XB", function (data) {
             $.each(data, function (index, content) {
-                $("#s_health").append("<option value='" + content.text + "'>" + content.text + "</option>");
+                $("#s_sex").append("<option value='" + content.id + "'>" + content.text + "</option>");
             });
             $('select').material_select();
         });
-        $.get("<%=request.getContextPath()%>/common/getSysDict?name=XLYBTYPE", function (data) {
+        $.get(baseUrl + "/common/getSysDict?name=YY", function (data) {
             $.each(data, function (index, content) {
-                $("#s_bmtype").append("<option value='" + content.text + "'>" + content.text + "</option>");
+                $("#s_language").append("<option value='" + content.id + "'>" + content.text + "</option>");
             });
             $('select').material_select();
         });
-        $.get("<%=request.getContextPath()%>/common/getSysDict?name=XLYBYXX", function (data) {
+        /*$.get(baseUrl + "/common/getSysDict?name=MZ", function (data) {
             $.each(data, function (index, content) {
-                $("#s_endschool").append("<option value='" + content.text + "'>" + content.text + "</option>");
+                $("#s_nation").append("<option value='" + content.id + "'>" + content.text + "</option>");
+            });
+            $('select').material_select();
+        });*/
+        $.get(baseUrl + "/common/getSysDict?name=XSLB", function (data) {
+            $.each(data, function (index, content) {
+                $("#s_examType").append("<option value='" + content.id + "'>" + content.text + "</option>");
             });
             $('select').material_select();
         });
-
+        //省
+        getAdministrativeDivisions("s_province", $("#s_province").val(), " and type = '1' ", baseUrl);
+        $("#s_province").change(function () {
+            $("#s_county").empty();
+            $("#s_county").append("<option value='' disabled selected><span style='color: red'>*</span>县</option>");
+            if ($(this).val() != "") {
+                $("#s_city").empty();
+                $("#s_city").append("<option value='' disabled selected><span style='color: red'>*</span>市</option>");
+                getAdministrativeDivisions("s_city", "", " and type = '2' and parent_id ='" + $(this).val() + "'", baseUrl);
+            }else {
+                $("#s_city").empty();
+                $("#s_city").append("<option value='' disabled selected><span style='color: red'>*</span>市</option>");
+            }
+        });
+        $("#s_city").change(function () {
+            if ($(this).val() != "") {
+                $("#s_county").empty();
+                $("#s_county").append("<option value='' disabled selected><span style='color: red'>*</span>县</option>");
+                getAdministrativeDivisions("s_county", "", " and type = '3' and parent_id ='" + $(this).val() + "'", baseUrl);
+            }else {
+                $("#s_county").empty();
+                $("#s_county").append("<option value='' disabled selected><span style='color: red'>*</span>县</option>");
+            }
+        });
+        //报名起点
+        $.get(baseUrl + "/common/getSysDict?name=BMQD", function (data) {
+            $.each(data, function (index, content) {
+                $("#s_registerOrigin").append("<option value='" + content.id + "'>" + content.text + "</option>");
+            });
+            $('select').material_select();
+        });
         //materialize 下拉选组件初始化
         $('select').material_select();
         //materialize 时间选择组件初始化
         $('.datepicker').pickadate({
             selectMonths: true, // 是否允许选择月份
-            selectYears: 99 // 选择的年份范围
+            selectYears: 99, // 选择的年份范围
+            format: 'yyyy-mm-dd'
         });
     });
 
     function saveArchives() {
-
-        console.log(matchtime);
         if ($("#s_name").val() == "" || $("#s_name").val() == "0" || $("#s_name").val() == undefined) {
             alert("请填写姓名");
             return;
@@ -384,167 +365,155 @@
             alert("请上传头像");
             return;
         }
-
         if ($("#s_idcard").val() == "" || $("#s_idcard").val() == undefined) {
             alert("请填写身份证号！");
             return;
-        }
+        }else {
+            var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+            if (reg.test($("#s_idcard").val()) === false) {
+                alert("身份证输入不合法");
+                $("#s_idcard").val("");
+                return;
+            }else {
+                $.post("<%=request.getContextPath()%>/onlineregister/getRegisterByIDCard", {
+                    idcard: $("#s_idcard").val(),
+                }, function (msg) {
+                    if (msg !== 'notfound'){
+                        alert("此身份证已报名！");
+                        return;
+                    }else {
+                        if ($("#s_nation").val() == "" || $("#s_nation").val() == undefined) {
+                            alert("请填写民族！");
+                            return;
+                        }
+                        if ($("#s_sex").val() == "" || $("#s_sex").val() == undefined) {
+                            alert("请填写性别！");
+                            return;
+                        }
+                        if ($("#s_birthday").val() == "" || $("#s_birthday").val() == undefined) {
+                            alert("请填写出生日期！");
+                            return;
+                        }
+                        if ($("#s_language").val() == "" || $("#s_language").val() == undefined) {
+                            alert("请填写语言！");
+                            return;
+                        }
+                        if ($("#s_fatherTel").val() == "" || $("#s_fatherTel").val() == undefined) {
+                            alert("请填写父亲电话！");
+                            return;
+                        }
+                        if ($("#s_motherTel").val() == "" || $("#s_motherTel").val() == undefined) {
+                            alert("请填写母亲电话！");
+                            return;
+                        }
 
-        if ($("#s_mz").val() == "" || $("#s_mz").val() == undefined) {
-            alert("请填写民族！");
-            return;
-        }
-        if ($("#s_sex").val() == "" || $("#s_sex").val() == undefined) {
-            alert("请填写性别！");
-            return;
-        }
-        if ($("#s_birdate").val() == "" || $("#s_birdate").val() == undefined) {
-            alert("请填写出生日期！");
-            return;
-        }
+                        if ($("#s_examType").val() == "" || $("#s_examType").val() == undefined) {
+                            alert("请填写考生类别！");
+                            return;
+                        }
+                        if ($("#s_province").val() == "" || $("#s_province").val() == undefined) {
+                            alert("请填写省！");
+                            return;
+                        }
+                        if ($("#s_city").val() == "" || $("#s_city").val() == undefined) {
+                            alert("请填写市！");
+                            return;
+                        }
+                        if ($("#s_county").val() == "" || $("#s_county").val() == undefined) {
+                            alert("请填写县！");
+                            return;
+                        }
+                        if ($("#s_graduatedSchool").val() == "" || $("#s_graduatedSchool").val() == undefined) {
+                            alert("请填写毕业学校！");
+                            return;
+                        }
+                        if ($("#s_graduationDate").val() == "" || $("#s_graduationDate").val() == undefined) {
+                            alert("请填写毕业时间！");
+                            return;
+                        }
+                        if ($("#s_examinationCardNumber").val() == "" || $("#s_examinationCardNumber").val() == undefined) {
+                            alert("请填写准考证号！");
+                            return;
+                        }
+                        if ($("#s_registerOrigin").val() == "" || $("#s_registerOrigin").val() == undefined) {
+                            alert("请填写报名起点！");
+                            return;
+                        }
+                        if ($("#s_examScore").val() == "" || $("#s_examScore").val() == undefined) {
+                            alert("请填写考试成绩！");
+                            return;
+                        }
+                        if ($("#s_idcardImg").val() == "" || $("#s_idcardImg").val() == undefined) {
+                            alert("请上传身份证附件！");
+                            return;
+                        }
+                        if ($("#s_examinationImg").val() == "" || $("#s_examinationImg").val() == undefined) {
+                            alert("请上传准考证附件！");
+                            return;
+                        }
+                        if ($("#s_scoreImg").val() == "" || $("#s_scoreImg").val() == undefined) {
+                            alert("请上传成绩单附件！");
+                            return;
+                        }
+                        if ($("#s_hukouImg").val() == "" || $("#s_hukouImg").val() == undefined) {
+                            alert("请上传户口本附件！");
+                            return;
+                        }if ($("#s_graduatedImg").val() == "" || $("#s_graduatedImg").val() == undefined) {
+                            alert("请上传毕业证附件！");
+                            return;
+                        }
+                        if ($("#w_v").val() == "" || $("#w_v").val() == "0" || $("#w_v").val() == undefined) {
+                            alert("请填写验证码！");
+                            return;
+                        }
+                        if ($("#myhidden").val().toLowerCase() != $("#w_v").val().toLowerCase()) {
+                            alert("验证码错误！");
+                            var show_num = [];
+                            $("#w_v").val('');
+                            draw(show_num);
+                            return;
+                        }
 
-        if ($("#s_bmtype").val() == "" || $("#s_bmtype").val() == undefined) {
-            alert("请填写报名营类型！");
-            return;
-        }
-        if ($("#s_endschool").val() == "" || $("#s_endschool").val() == undefined) {
-            alert("请填写毕业学校！");
-            return;
-        }
-        if ($("#s_isrelieve").val() == "" || $("#s_isrelieve").val() == undefined) {
-            alert("请填写是否服从调剂！");
-            return;
-        }
-        if ($("#s_isstay").val() == "" || $("#s_isstay").val() == undefined) {
-            alert("请填写是否住宿！");
-            return;
-        }
-        if ($("#s_ismeal").val() == "" || $("#s_ismeal").val() == undefined) {
-            alert("请填写是否就餐！");
-            return;
-        }
-        if ($("#s_faname").val() == "" || $("#s_faname").val() == undefined) {
-            alert("请填写父亲姓名！");
-            return;
-        }
-        if ($("#s_fatel").val() == "" || $("#s_fatel").val() == undefined) {
-            alert("请填写父亲联系电话！");
-            return;
-        }
-        if ($("#s_moname").val() == "" || $("#s_moname").val() == undefined) {
-            alert("请填写母亲姓名！");
-            return;
-        }
-        if ($("#s_motel").val() == "" || $("#s_motel").val() == undefined) {
-            alert("请填写母亲联系电话！");
-            return;
-        }
-        $.ajaxSettings.async = false;
-        $.post("<%=request.getContextPath()%>/summerCamp/getSummerCampsByIDCard", {
-            idcard: $("#s_idcard").val(),
-        }, function (msg) {
-            if (msg !== 'notfound')
-            {
-                $("#idCardisHave").val(12);
+                        var formData = new FormData(document.getElementById("signUp"));
+                        $("#progress").removeAttr("style");
+                        $("#btnDiv").html("<a class=\"waves-effect waves-light btn disabled\" onclick=\"saveArchives()\"\n" +
+                            "       style=\"width: 200px\">正在提交</a>");
+                        $.ajax({
+                            url: "<%=request.getContextPath()%>/onlineregister/saveOnlineRegister",
+                            type: 'POST',
+                            cache: false,
+                            data: formData,
+                            async: true,
+                            processData: false,
+                            contentType: false,
+                            dataType: "json",
+                            success: function (msg) {
+                                alert(msg.msg);
+                                searchResult();
+                            }
+                        });
+                    }
+                });
             }
-        });
-        $.ajaxSettings.async = true;
-        var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-        if (reg.test($("#s_idcard").val()) === false) {
-            alert("身份证输入不合法");
-            $("#s_idcard").val("");
-            return;
         }
-
-        if ($("#idCardisHave").val() === "12" ) {
-            alert("此身份证已报名！");
-            $("#idCardisHave").val(11);
-            return;
-        }
-
-
-
-        if ($("#w_v").val() == "" || $("#w_v").val() == "0" || $("#w_v").val() == undefined) {
-            alert("请填写验证码！");
-            return;
-        }
-
-        if ($("#myhidden").val().toLowerCase() != $("#w_v").val().toLowerCase()) {
-            alert("验证码错误！");
-            var show_num = [];
-            $("#w_v").val('');
-            draw(show_num);
-            return;
-        }
-
-
-
-        var matchname = "";
-        var matchlevel = "";
-        var matchrank = "";
-        var matchtime = "";
-
-        $(".s_matchtime").each(function (index, item) {
-            matchtime += $(item).val().replace(/(^\s*)|(\s*$)/g, "") + ",";
-        });
-
-        matchtime = matchtime.substring(0, matchtime.length - 1);
-        $(".s_matchname").each(function (index, item) {
-            matchname += $(item).val() + ",";
-        });
-        matchname = matchname.substring(0, matchname.length - 1);
-        $(".s_matchlevel").each(function (index, item) {
-            matchlevel += $(item).val() + ",";
-        });
-        matchlevel = matchlevel.substring(0, matchlevel.length - 1);
-        $(".s_matchrank").each(function (index, item) {
-            matchrank += $(item).val() + ",";
-        });
-        matchrank = matchrank.substring(0, matchrank.length - 1);
-        var awardtime = "";
-        var awardname = "";
-        var awardpost = "";
-
-        $(".s_awardtime").each(function (index, item) {
-            awardtime += $(item).val().replace(/(^\s*)|(\s*$)/g, "") + ",";
-        });
-        awardtime = awardtime.substring(0, awardtime.length - 1);
-        $(".s_awardname").each(function (index, item) {
-            awardname += $(item).val() + ",";
-        });
-        awardname = awardname.substring(0, awardname.length - 1);
-        $(".s_awardpost").each(function (index, item) {
-            awardpost += $(item).val() + ",";
-        });
-
-        awardpost = awardpost.substring(0, awardpost.length - 1);
-        var formData = new FormData(document.getElementById("summerCamp"));
-        formData.append("matchtime", matchtime);
-        formData.append("matchname", matchname);
-        formData.append("matchlevel", matchlevel);
-        formData.append("matchrank", matchrank);
-        formData.append("awardtime", awardtime);
-        formData.append("awardname", awardname);
-        formData.append("awardpost", awardpost);
-        $("#progress").removeAttr("style");
-        $("#btnDiv").html("<a class=\"waves-effect waves-light btn disabled\" onclick=\"saveArchives()\"\n" +
-            "       style=\"width: 200px\">正在提交</a>");
-        $.ajax({
-            url: "<%=request.getContextPath()%>/summerCamp/saveSummerCamp",
-            type: 'POST',
-            cache: false,
-            data: formData,
-            async: true,
-            processData: false,
-            contentType: false,
-            dataType: "json",
-            success: function (msg) {
-                alert(msg.msg);
-                searchResult();
-            }
-        });
     }
 
+    function getAdministrativeDivisions(id, value, where, path) {
+        $.get(path + "/common/getTableDict", {
+                id: " id",
+                text: " name ",
+                tableName: " t_sys_administrative_divisions ",
+                where: " WHERE valid_flag = '1' " + where,
+                orderBy: " order by show_order ",
+            },
+            function (data) {
+                $.each(data, function (index, content) {
+                    $("#" + id).append("<option value='" + content.id + "'>" + content.text + "</option>");
+                });
+                $('select').material_select();
+            }
+        );
+    }
 
     function draw(show_num) {
         var canvas_width = $('#canvas').width();
@@ -611,64 +580,6 @@
     //查询方法
     function searchResult() {
         window.location.href = "/summerCamp/signUpResult";
-    }
-
-    //新增比赛情况方法
-    function addMatch() {
-        $('#s_match').append("<div class=\"input-field col s6\">\n" +
-            "                        <input id=\"s_matchtime\"  type=\"date\" class=\"datepicker s_matchtime\">\n" +
-            "                        <label for=\"s_matchtime\">时间</label>\n" +
-            "                    </div>\n" +
-            "                    <div class=\"input-field col s6\">\n" +
-            "                        <input id=\"s_matchname\"  type=\"text\" class=\"validate s_matchname\"/>\n" +
-            "                        <label for=\"s_matchname\">小学参加的重要比赛名称</label>\n" +
-            "                    </div>\n" +
-            "                    <div class=\"input-field col s6\">\n" +
-            "                        <select id=\"s_matchlevel\" >\n" +
-            "                            <option value=\"\"  disabled selected>比赛级别</option>\n" +
-            "                            <option value=\"省\">省</option>\n" +
-            "                            <option value=\"市\">市</option>\n" +
-            "                            <option value=\"县\">县</option>\n" +
-            "                            <option value=\"局\">局</option>\n" +
-            "                            <option value=\"校\">校</option>\n" +
-            "                            <option value=\"其他\">其他</option>\n" +
-            "                        </select>\n" +
-            "                    </div>\n" +
-            "                    <div class=\"input-field col s6\">\n" +
-            "                        <input id=\"s_matchrank\"   type=\"text\" class=\"validate s_matchrank\"/>\n" +
-            "                        <label for=\"s_matchrank\">取得名次</label>\n" +
-            "                    </div>");
-        $('.datepicker').pickadate({
-            selectMonths: true,
-            selectYears: 99
-        });
-        $('select').material_select();
-
-    }
-
-    //新增小学阶段市级及以上获奖情况和个人特长情况方法
-    function addAward() {
-        $('#s_award').append("   <div class=\"input-field col s6\">\n" +
-            "                        <input id=\"s_awardtime\"  type=\"date\" class=\"datepicker s_awardtime\">\n" +
-            "                        <label for=\"s_awardtime\">时间</label>\n" +
-            "                    </div>\n" +
-            "                    <div class=\"input-field col s6\">\n" +
-            "                        <input id=\"s_awardname\"  type=\"text\" class=\"validate s_awardname\"/>\n" +
-            "                        <label for=\"s_awardname\">受过何种奖励</label>\n" +
-            "                    </div>\n" +
-            "                    <div class=\"input-field col s12\">\n" +
-            "                        <input id=\"s_awardpost\" type=\"text\" class=\"validate s_awardpost\"/>\n" +
-            "                        <label for=\"s_awardpost\">本人在活动中的职务/职责</label>\n" +
-            "                    </div>");
-            // "                    </div>\n" +
-            // "                    <div class=\"input-field col s12\">\n" +
-            // "                        <textarea name=\"hobby\" id=\"s_hobby\" class=\"materialize-textarea s_hobby\"></textarea>\n" +
-            // "                        <label for=\"s_hobby\">爱好和特长，取得成绩</label>\n" +
-            // "                    </div>");
-        $('.datepicker').pickadate({
-            selectMonths: true,
-            selectYears: 99
-        });
     }
 
     function fileChange(target) {

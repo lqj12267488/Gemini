@@ -5,10 +5,56 @@
     <select id="getOnlineRegisterList"
             parameterType="com.goisan.studentwork.onlineregister.bean.OnlineRegister"
             resultType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
-        select id,name,sex,nation,language,idcard,birthday,departments_id,major_code,province,city,county,register_type,register_origin,examination_card_number,exam_score,exam_type,graduated_school,graduation_date,idcard_img,examination_img,score_img,hukou_img,graduated_img,father_tel,mother_tel,remark from T_XG_ONLINE_REGISTER
+        select id,name,
+            FUNC_GET_DICVALUE(sex, 'XB') sex,
+            FUNC_GET_DICVALUE(nation, 'MZ') nation,
+            FUNC_GET_DICVALUE(language, 'YY') language,
+            idcard,
+            r.departments_id departmentsId,
+            r.major_code majorCode,
+            m.major_name majorName,
+            FUNC_GET_TABLEVALUE(province,'t_sys_administrative_divisions','ID','NAME')||FUNC_GET_TABLEVALUE(city,'t_sys_administrative_divisions','ID','NAME')||FUNC_GET_TABLEVALUE(county,'t_sys_administrative_divisions','ID','NAME')  province,
+            register_type registerType,
+            FUNC_GET_DICVALUE(register_origin, 'BMQD') registerOriginShow,
+            examination_card_number examinationCardNumber,
+            exam_score examScore,
+            exam_type examType,
+            FUNC_GET_DICVALUE(exam_type, 'XSLB') examTypeShow,
+            year,
+            CASE audit_flag WHEN '1' THEN '审核通过' WHEN '2' THEN '审核未通过' ELSE '未审核' END auditFlag,
+            audit_mind auditMind
+        from t_xg_online_register r
+        left join T_XG_MAJOR m on r.major_code=m.major_code
+        where register_type = #{registerType}
+        <if test="registerOrigin != null and registerOrigin != '' ">
+            and register_origin = #{registerOrigin}
+        </if>
+        <if test="name != null and name != '' ">
+            and name like '%'||#{name}||'%'
+        </if>
+        <if test="idcard != null and idcard != '' ">
+            and idcard like '%'||#{idcard}||'%'
+        </if>
+        <if test="year != null and year != '' ">
+            and year = #{year}
+        </if>
+        <if test="examType != null and examType != '' ">
+            and exam_type = #{examType}
+        </if>
+        <if test="province != null and province != '' ">
+            and province = #{province}
+        </if>
+        <if test="nation != null and nation != '' ">
+            and nation = #{nation}
+        </if>
+        <if test="language != null and language != '' ">
+            and language = #{language}
+        </if>
+        order by r.create_time
     </select>
     <insert id="saveOnlineRegister" parameterType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
-        insert into t_xg_online_register (id,name,sex,nation,language,idcard,birthday,departments_id,major_code,province,city,county,register_type,register_origin,examination_card_number,exam_score,exam_type,graduated_school,graduation_date,idcard_img,examination_img,score_img,hukou_img,graduated_img,father_tel,mother_tel,remark) values (#{id},#{name},#{sex},#{nation},#{language},#{idcard},#{birthday},#{departmentsId},#{majorCode},#{province},#{city},#{county},#{registerType},#{registerOrigin},#{examinationCardNumber},#{examScore},#{examType},#{graduatedSchool},#{graduationDate},#{idcardImg},#{examinationImg},#{scoreImg},#{hukouImg},#{graduatedImg},#{fatherTel},#{motherTel},#{remark})
+        insert into t_xg_online_register (id,name,sex,nation,language,idcard,birthday,departments_id,major_code,province,city,county,register_type,register_origin,examination_card_number,exam_score,exam_type,graduated_school,graduation_date,idcard_img,examination_img,score_img,hukou_img,graduated_img,father_tel,mother_tel,remark, year, audit_flag, img, create_time)
+        values (#{id},#{name},#{sex},#{nation},#{language},#{idcard},to_date('${birthday}','yyyy-mm-dd'),#{departmentsId},#{majorCode},#{province},#{city},#{county},#{registerType},#{registerOrigin},#{examinationCardNumber},#{examScore},#{examType},#{graduatedSchool},to_date('${graduationDate}','yyyy-mm-dd'),#{idcardImg},#{examinationImg},#{scoreImg},#{hukouImg},#{graduatedImg},#{fatherTel},#{motherTel},#{remark},#{year},'0',#{img}, sysdate)
     </insert>
     <select id="getOnlineRegisterById" parameterType="java.lang.String"
             resultType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
@@ -20,4 +66,12 @@
     <delete id="delOnlineRegister" parameterType="java.lang.String">
         delete from T_XG_ONLINE_REGISTER where id = #{id}
     </delete>
+
+    <select id="getRegisterByIDCard" parameterType="com.goisan.studentwork.onlineregister.bean.OnlineRegister"
+            resultType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
+        select id, check_flag, register_type  from T_XG_ONLINE_REGISTER where idcard=#{idcard}
+    </select>
+    <select id="getAllYear" resultType="java.lang.String">
+        select year from t_xg_online_register group by year order by year desc
+    </select>
 </mapper>
