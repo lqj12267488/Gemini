@@ -199,4 +199,12 @@
                                    and p.SURVEY_ID = #{surveyId}
         )
     </select>
+
+
+    <select id="getStudentList" parameterType="com.goisan.system.bean.Parent" resultType="com.goisan.system.bean.Parent">
+
+       select t.student_id  from t_xg_student t
+
+    </select>
+
 </mapper>

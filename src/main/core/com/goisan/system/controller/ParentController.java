@@ -13,6 +13,7 @@ import com.goisan.educational.teachingresult.service.TeacherResultService;
 import com.goisan.evaluation.bean.EvaluationEmp;
 import com.goisan.evaluation.bean.EvaluationTask;
 import com.goisan.evaluation.service.EvaluationService;
+import com.goisan.logistics.assets.service.AssetsService;
 import com.goisan.studentwork.studentprove.service.StudentProveService;
 import com.goisan.system.bean.*;
 import com.goisan.system.service.*;
@@ -20,9 +21,10 @@ import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.JsonUtils;
 import com.goisan.system.tools.Message;
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.goisan.logistics.assets.controller.AssetsController.setHSSFPrompt;
+import static com.goisan.logistics.assets.controller.AssetsController.setHSSFValidation;
 
 @Controller
 public class ParentController {
@@ -73,6 +78,9 @@ public class ParentController {
     private ClassCadreService classCadreService;
     @Resource
     private StudentProveService studentProveService;
+
+    @Resource
+    private AssetsService assetsService;
 
     @RequestMapping("/core/parent/toParentList")
     public String toList() {
@@ -199,7 +207,7 @@ public class ParentController {
      * @param response
      */
     @RequestMapping("/core/parent/getParentTemplate")
-    public void getParentTemplate(HttpServletResponse response) {
+   /* public void getParentTemplate(HttpServletResponse response) {
         String rootPath = new File(getClass().getResource("/").getPath()).getParentFile().getParent().toString();
         rootPath = rootPath.replaceAll("%20"," ");
         String fileName = rootPath + "/template/parentTemplate.xls";
@@ -224,6 +232,115 @@ public class ParentController {
                 e.printStackTrace();
             }
         }
+    }*/
+
+    public void getAssetsExcelTemplate(HttpServletResponse response) {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        //创建HSSFSheet对象
+        HSSFSheet sheet = wb.createSheet("高等教育学生父母或监护人信息录取表模板");
+        HSSFCellStyle cellStyle = wb.createCellStyle();
+        //cellStyle.setFillForegroundColor((short) 13);// 设置背景色
+        cellStyle.setBorderLeft(BorderStyle.THIN);//左边框
+        cellStyle.setBorderTop(BorderStyle.THIN);//上边框
+        cellStyle.setBorderRight(BorderStyle.THIN);//右边框
+        cellStyle.setBorderBottom(BorderStyle.THIN); //下边框
+        cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+        HSSFCellStyle headStyle = wb.createCellStyle();
+        headStyle.cloneStyleFrom(cellStyle);
+        HSSFFont hssfFont = wb.createFont();
+        hssfFont.setColor(HSSFColor.RED.index);
+        headStyle.setFont(hssfFont);
+        sheet.setDefaultColumnWidth(25);
+        sheet.createRow(0).createCell(0).setCellStyle(headStyle);
+        //sheet.getRow(0).getCell(0).setCellValue("");
+        sheet.getRow(0).getCell(0).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(1).setCellStyle(headStyle);
+        sheet.getRow(0).getCell(1).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(2).setCellStyle(headStyle);
+        sheet.getRow(0).getCell(2).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(3).setCellStyle(headStyle);
+        sheet.getRow(0).getCell(3).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(4).setCellStyle(headStyle);
+        sheet.getRow(0).getCell(4).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(5).setCellStyle(headStyle);
+        sheet.getRow(0).getCell(5).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(6).setCellStyle(headStyle);
+        sheet.getRow(0).getCell(6).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(7).setCellStyle(headStyle);
+        sheet.getRow(0).getCell(7).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(8).setCellStyle(headStyle);
+        sheet.getRow(0).getCell(8).setCellValue("说明：此项为必填项");
+
+        sheet.createRow(1).createCell(0).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(0).setCellValue("学生身份证件号码");
+        sheet.getRow(1).createCell(1).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(1).setCellValue("父母或监护人1姓名");
+        sheet.getRow(1).createCell(2).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(2).setCellValue("父母或监护人1身份证件类型");
+        sheet.getRow(1).createCell(3).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(3).setCellValue("父母或监护人1身份证件号码");
+        sheet.getRow(1).createCell(4).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(4).setCellValue("父母或监护人1联系方式");
+        sheet.getRow(1).createCell(5).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(5).setCellValue("父母或监护人2姓名");
+        sheet.getRow(1).createCell(6).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(6).setCellValue("父母或监护人2身份证件类型");
+        sheet.getRow(1).createCell(7).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(7).setCellValue("父母或监护人2身份证件号码");
+        sheet.getRow(1).createCell(8).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(8).setCellValue("父母或监护人2联系方式");
+        HSSFCellStyle textS = wb.createCellStyle();
+        HSSFDataFormat form = wb.createDataFormat();
+        textS.setDataFormat(form.getFormat("@"));
+        for (int i = 2; i < 10000; i++) {
+            HSSFRow row = sheet.createRow(i);
+            for (int j = 0; j <9; j++) {
+                row.createCell(j).setCellStyle(textS);
+            }
+        }
+        setHSSFPrompt(sheet, "", "", 1, 65535, 0, 0);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 1, 1);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 2, 2);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 3, 3);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 4, 4);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 5, 5);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 6, 6);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 7, 7);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 8, 8);
+        List<Select2> list5 = assetsService.getUserDictName("JZZJLX");
+        String[] major = new String[list5.size()];
+        for (int i = 0; i < list5.size(); i++) {
+            major[i] = list5.get(i).getText();
+        }
+        setHSSFValidation(sheet, major, 2, 65535, 2, 2);
+        setHSSFValidation(sheet, major, 2, 65535, 6, 6);
+        OutputStream os = null;
+        try {
+            response.setContentType("application/vnd.ms-excel");
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("高等教育学生父母或监护人信息录取表模板.xls", "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                    wb.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private static void setDataValidation(HSSFSheet sheet, String strFormula, int firstRow, int endRow, int firstCol, int endCol) {
+        CellRangeAddressList regions = new CellRangeAddressList(firstRow, endRow, firstCol, endCol);
+        DVConstraint constraint = DVConstraint.createFormulaListConstraint(strFormula);//add
+        HSSFDataValidation dataValidation = new HSSFDataValidation(regions, constraint);//add
+        dataValidation.createErrorBox("Error", "Error");
+        dataValidation.createPromptBox("", null);
+        sheet.addValidationData(dataValidation);
     }
 
     /**
@@ -233,105 +350,141 @@ public class ParentController {
      */
     @ResponseBody
     @RequestMapping("/core/parent/importParent")
-    public Message importStudent(@RequestParam(value = "file", required = false) CommonsMultipartFile file) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        List<Select2> gxList = commonService.getSysDict("XSJZGX","");
-        List<Select2> zjlx1 = commonService.getUserDict("JZZJLX");
-        List<Select2> zjlx2 = commonService.getUserDict("JZZJLX");
-        int count = 0 ;
+    public Message importEmp(@RequestParam(value = "file", required = false) CommonsMultipartFile file) {
+        List<Select2> List1 = commonService.getUserDict("JZZJLX");
+        /*TableDict tableDict = new TableDict();
+        tableDict.setId("DEPT_ID");
+        tableDict.setText("DEPT_NAME");
+        tableDict.setTableName("T_SYS_DEPT");
+        tableDict.setWhere("  WHERE VALID_FLAG='1' ");
+        List<Select2> bz = commonService.getTableDict(tableDict);*/
+
+        List<Parent> parentList = new ArrayList<Parent>();
+        int count = 0;
+        int num = 0;
+        Object str;
+        String msg = "第";
+        HSSFWorkbook workbook = null;
         try {
-            HSSFWorkbook workbook = new HSSFWorkbook(file.getInputStream());
+            workbook = new HSSFWorkbook(file.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+            ++num;
+        }
+        if (num > 0) {
+            return new Message(1, "导入失败！请重新导入", null);
+        } else {
             HSSFSheet sheet = workbook.getSheetAt(0);
-            int end = sheet.getLastRowNum();
-            for (int i = 2; i <= end; i++) {
+            int end = getRealLastRowNum(workbook);
+            for (int i = 2; i < end; i++) {
                 HSSFRow row = sheet.getRow(i);
-                if(null == row && count == 0){
-                    return new Message(0, "无数据，导入失败！", "error");
-                }else if(null == row || row.getLastCellNum() == 1){
-                    return new Message(1, "共计"+count+"条，导入成功！", "success");
-                }
+                int flag = 1;
                 Parent parent = new Parent();
-                parent.setStudentId(row.getCell(0).toString());
-                parent.setParentName(row.getCell(1).toString());
-                for (Select2 IdCardType : zjlx1) {
-                    if (IdCardType.getText().equals(row.getCell(2).toString())) {
-                        parent.setIdCardType(IdCardType.getId());
+                parent.setParentId(CommonUtil.changeToString(row.getCell(3)));
+                //assets.setAssetsId(CommonUtil.changeToString(row.getCell(1)));
+               /* for (Select2  ParentType: List1) {
+                    if (ParentType.getText().equals(row.getCell(0).toString())) {
+                        parent.setIdCardType(ParentType.getId());
+                    }
+                }*/
+                parent.setStudentId(CommonUtil.changeToString(row.getCell(0)));
+                parent.setParentName(CommonUtil.changeToString(row.getCell(1)));
+                for (Select2  ParentType: List1) {
+                    if (ParentType.getText().equals(row.getCell(2).toString())) {
+                        parent.setIdCardType(ParentType.getId());
                     }
                 }
-                parent.setIdcard(CommonUtil.toIdcardCheck(row.getCell(3).toString()));
-                parent.setParentTel(row.getCell(4).toString());
-                parent.setParentNameSecond(row.getCell(5).toString());
-                for (Select2 IdCardTypeSecond : zjlx2) {
-                    if (IdCardTypeSecond.getText().equals(row.getCell(6).toString())) {
-                        parent.setIdCardTypeSecond(IdCardTypeSecond.getId());
+
+                parent.setIdcard(CommonUtil.changeToString(row.getCell(3)));
+                parent.setParentTel(CommonUtil.changeToString(row.getCell(4)));
+                parent.setParentNameSecond(CommonUtil.changeToString(row.getCell(5)));
+                for (Select2  ParentType: List1) {
+                    if (ParentType.getText().equals(row.getCell(6).toString())) {
+                        parent.setIdCardTypeSecond(ParentType.getId());
                     }
                 }
-                parent.setIdcardSecond(CommonUtil.toIdcardCheck(row.getCell(7).toString()));
-                parent.setParentTelSecond(row.getCell(8).toString());
-                /*parent.setIdcard(CommonUtil.toIdcardCheck(row.getCell(1).toString()));
-                parent.setParentId(CommonUtil.toIdcardCheck(row.getCell(1).toString()));
-                parent.setParentTel(row.getCell(2).toString());*/
+                parent.setIdcardSecond(CommonUtil.changeToString(row.getCell(7)));
+                parent.setParentTelSecond(CommonUtil.changeToString(row.getCell(8)));
+                Student student = studentProveService.getStudentByStudentId(parent.getStudentId());
+                if (null == student){
+                    return new Message(0, "此学生不存在", null);
+                }
+                List<BaseBean> chechStudent = studentParentRelationService.checkStudentRelation(parent.getStudentId());
+                if( null != chechStudent  && chechStudent.size() > 0 ){
+                    return new Message(0, "此学生已添加家长！", "error");
+                }
+                parentService.saveParent(parent);
+                StudentParentRelation relation = new StudentParentRelation();
+                relation.setRelation("");
+                relation.setStudentId(parent.getStudentId());
+                relation.setParentId(parent.getIdcard());
+                relation.setId(CommonUtil.getUUID());
+                studentParentRelationService.saveStudentParentRelation(relation);
 
-                String check = parentService.checkParentIdcard(parent.getIdcard());
-                if(check.equals("0")){
-                    CommonUtil.save(parent);
-                    parentService.saveParent(parent);
-
-                    LoginUser loginUser = new LoginUser();
+                LoginUser loginUser = new LoginUser();
 //                    String userAccount = parent.getParentName();
 //                    userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
-                    loginUser.setId(CommonUtil.getUUID());
-                    loginUser.setName(parent.getParentName());
-                    loginUser.setUserAccount(parent.getIdcard());
-                    loginUser.setPersonId(parent.getIdcard());
-                    loginUser.setPassword((new SimpleHash("MD5", "123456",
-                            null, 1).toString()));
-                    loginUser.setUserType("2");
-                    CommonUtil.save(loginUser);
-                    if(row.getLastCellNum()>=5) {
-                        loginUser.setDefaultDeptId(CommonUtil.toIdcardCheck(row.getCell(4).toString()));
-                    }
-                    loginUserService.saveUser(loginUser);
+                loginUser.setId(CommonUtil.getUUID());
+                loginUser.setName(parent.getParentName());
+                loginUser.setUserAccount(parent.getIdcard());
+                loginUser.setPersonId(parent.getIdcard());
+                loginUser.setPassword((new SimpleHash("MD5", "123456",
+                        null, 1).toString()));
+                loginUser.setUserType("2");
+                CommonUtil.save(loginUser);
+                loginUser.setDefaultDeptId(parent.getStudentId());
+                loginUserService.saveUser(loginUser);
 
-                  /*  if(row.getLastCellNum()>=5){
-                        String studentId =CommonUtil.toIdcardCheck( row.getCell(4).toString() );
-                        String rygx = row.getCell(3).toString();
-                        List<BaseBean> chechStudent = studentParentRelationService.checkStudentRelation(studentId);
-                        if( null == chechStudent || chechStudent.size() == 0 ){
-                            StudentParentRelation relation = new StudentParentRelation();
-                            for (Select2 gx : gxList) {
-                                if (gx.getText().equals(rygx)) {
-                                    relation.setRelation(gx.getId());
-                                }
-                            }
-                            relation.setStudentId(studentId);
-                            relation.setParentId(parent.getParentId());
-                            relation.setId(CommonUtil.getUUID());
-                            studentParentRelationService.saveStudentParentRelation(relation);
-                        }else{
-                            String msg = "导入"+count+"条成功，第"+(count+1)+"条数据"+parent.getParentName()+"异常，" +
-                                    "此条数据的学生已经添加了家长。导入失败！" ;
-                            return new Message(0, msg, "error");
-                        }
-                    }*/
-
+                if (flag == 0) {
+                    msg += i + ",";
                     count++;
-                }else{
-                    String msg = "导入"+count+"条成功，第"+(count+1)+"条数据"+parent.getParentName()+"异常," +
-                            "此条数据的身份证号已存在。导入失败！" ;
-                    count = end+1;
-                    return new Message(0, msg, "error");
                 }
+
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            String msg = "导入"+count+"条成功，第"+(count+1)+"条数据异常。导入失败！" ;
-            return new Message(0, msg, "error");
+            if (count > 0) {
+                msg = msg.substring(0, msg.length() - 1) + "行,人员身份信息不正确！请重新导入！";
+            } else {
+                msg = "导入成功！";
+            }
+            return new Message(1, msg, null);
         }
-        return new Message(1, "共计"+count+"条，导入成功！", "success");
     }
 
+    /**
+     * 获取真实行数
+     * @param workbook 工作簿对象
+     * @return 真实行数
+     */
+    private int getRealLastRowNum(Workbook workbook) {
+        Sheet sheetAt = workbook.getSheetAt(0);
+        int lastRowNum = sheetAt.getLastRowNum();
 
+        Row row = sheetAt.getRow(0);
+        int realLastRowNum = 0;
+        error:
+        for (int i = 0; i < lastRowNum; i++) {
+            StringBuilder str = new StringBuilder();
+            for (int j = 0; j < sheetAt.getRow(0).getPhysicalNumberOfCells(); j++) {
+                Cell cell = sheetAt.getRow(i).getCell(j);
+                try {
+                    cell.setCellType(CellType.STRING);
+                    str.append(cell.getStringCellValue());
+                }
+                catch (Exception e)
+                {
+                    break error;
+                }
+
+            }
+            if (!"".equals(str.toString().replaceAll(" ", "")))
+            {
+                realLastRowNum = realLastRowNum + 1;
+            }
+        }
+        System.err.println("----------------------> 真实行数 "+realLastRowNum);
+        return realLastRowNum;
+
+    }
     /**
      * 导入导出
      */
@@ -637,6 +790,95 @@ public class ParentController {
     public Map getPaymentInfoStandardList(EvaluationTask task) {
 //        task.setCreator("210203199909050529");
         return CommonUtil.tableMap( evaluationService.getMonitoerTaskByTeacherId(task) );
+    }
+
+    /**
+     * 论文获奖信息导出
+     *
+     * @param
+     * @param response
+     * @throws UnsupportedEncodingException
+     */
+    @ResponseBody
+    @RequestMapping("/core/parent/exportParent")
+    public void exportParent(HttpServletResponse response) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Parent parent = new Parent();
+        parent.setCreator(CommonUtil.getPersonId());
+        parent.setCreateDept(CommonUtil.getDefaultDept());
+        parent.setLevel(CommonUtil.getLoginUser().getLevel());
+        List<BaseBean> list = parentService.getParentList(parent);
+
+        //创建HSSFWorkbook对象
+        HSSFWorkbook wb = new HSSFWorkbook();
+        //创建HSSFSheet对象
+        HSSFSheet sheet = wb.createSheet("高等教育学生父母或监护人信息录取表");
+
+        CellStyle cellStyle0 = wb.createCellStyle();
+
+        cellStyle0.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle0.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle0.setWrapText(true);
+
+        int tmp = 0;
+        tmp++;
+
+        HSSFRow row1 = sheet.createRow(tmp);
+        //创建HSSFCell对象
+        row1.createCell(0).setCellValue("序号");
+        row1.createCell(1).setCellValue("姓名（学生姓名）");
+        row1.createCell(2).setCellValue("学生身份证件类型");
+        row1.createCell(3).setCellValue("学生身份证件号码");
+        row1.createCell(4).setCellValue("学生是否在职");
+        row1.createCell(5).setCellValue("入学日期");
+        row1.createCell(6).setCellValue("学籍状态");
+        row1.createCell(7).setCellValue("父母或监护人1姓名");
+        row1.createCell(8).setCellValue("父母或监护人1身份证件类型");
+        row1.createCell(9).setCellValue("父母或监护人1身份证件号码");
+        row1.createCell(10).setCellValue("父母或监护人1联系方式");
+        row1.createCell(11).setCellValue("父母或监护人2姓名");
+        row1.createCell(12).setCellValue("父母或监护人2身份证件类型");
+        row1.createCell(13).setCellValue("父母或监护人2身份证件号码");
+        row1.createCell(14).setCellValue("父母或监护人2联系方式");
+        row1.createCell(15).setCellValue("班级");
+        row1.createCell(16).setCellValue("学生户籍地址（与身份证上一致）");
+        tmp++;
+        int i = 1;
+       /* for (Parent salaryObj : list) {
+            HSSFRow row = sheet.createRow(tmp);
+            //创建HSSFCell对象
+            row.createCell(0).setCellValue(i);
+            row.createCell(1).setCellValue(salaryObj.);
+            row.createCell(2).setCellValue(salaryObj.getTerm());
+            row.createCell(3).setCellValue(salaryObj.getCampusId());
+            row.createCell(4).setCellValue(salaryObj.getPersonId());
+            row.createCell(5).setCellValue(salaryObj.getPaperName());
+            row.createCell(6).setCellValue(salaryObj.getMatch());
+            row.createCell(7).setCellValue(salaryObj.getPrize());
+            row.createCell(8).setCellValue(salaryObj.getTime());
+            tmp++;
+            i++;
+        }*/
+        OutputStream os = null;
+        response.setContentType("application/vnd.ms-excel");
+        try {
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode
+                    ("论文获奖维护表.xls", "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                os.flush();
+                os.close();
+                wb.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

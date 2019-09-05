@@ -37,4 +37,6 @@ public interface ParentService {
     List<Map> getScoreExamCourseList(String studentId,List<Select2> className);
 
     void updateStudentId(Parent baseBean);
+
+    List<Parent> getStudentList(Parent parent);
 }

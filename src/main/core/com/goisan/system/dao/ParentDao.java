@@ -33,4 +33,6 @@ public interface ParentDao {
     List<TeacherBean> getCourseListByTeacher(String teacherId);
 
     void updateStudentId(Parent parent);
+
+    List<Parent> getStudentList(Parent parent);
 }

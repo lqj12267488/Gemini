@@ -109,5 +109,10 @@ public class ParentServiceImpl implements ParentService {
         parentDao.updateStudentId(baseBean);
     }
 
+    @Override
+    public List<Parent> getStudentList(Parent parent) {
+        return parentDao.getStudentList(parent);
+    }
+
 
 }

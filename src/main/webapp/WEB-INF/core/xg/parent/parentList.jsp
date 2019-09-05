@@ -37,7 +37,7 @@
                                 onclick="add()">新增
                         </button>
                         <button class="btn btn-default btn-clean" onclick="openImportDialog()">导入</button>
-                        <br>
+                        <a id="expdata" class="btn btn-default btn-clean" >导出</a>
                     </div>
                     <div class="form-row block" style="overflow-y:auto;">
                         <table id="parentTable" cellpadding="0" cellspacing="0"
@@ -77,7 +77,7 @@
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.parentId + '")></span>&ensp;&ensp;' +
                             '<span class="icon-repeat" title="初始化密码" onclick="getRepeatPwd(\'' + row.parentId + '\',\'' + row.parentName + '\')"></span>&ensp;&ensp;' +
-                            '<span class="icon-tags" title="关联学生" onclick=getRelation("' + row.parentId + '","' + row.parentName + '")></span>&ensp;&ensp;' +
+                            /*'<span class="icon-tags" title="关联学生" onclick=getRelation("' + row.parentId + '","' + row.parentName + '")></span>&ensp;&ensp;' +*/
                             '<span class="icon-trash" title="删除" onclick=del("' + row.parentId + '","' + row.parentName + '")></span>';
                     }
                 }
@@ -97,9 +97,14 @@
         $("#dialog").modal("show");
     }
 
-    function getRelation(parentId,parentName) {
+   /* function getRelation(parentId,parentName) {
         $("#dialog").load("<%=request.getContextPath()%>/core/parent/toParentRelationList?parentId="+parentId+"&parentName="+parentName);
         $("#dialog").modal("show");
+    }*/
+
+    function exportPaperPrize() {
+        var href = "<%=request.getContextPath()%>/core/parent/exportParent";
+        $("#expdata").attr("href",href);
     }
 
     function getRepeatPwd(parentId,parentName) {
