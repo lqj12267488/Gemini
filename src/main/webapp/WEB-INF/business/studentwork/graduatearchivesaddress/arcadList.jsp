@@ -54,6 +54,12 @@
                             <button type="button" class="btn btn-default btn-clean"
                                     onclick="addArcad()">新增
                             </button>
+                            <button type="button" class="btn btn-default btn-clean"
+                                    onclick="importArcadTemplate()">下载导入模板
+                            </button>
+                            <button type="button" class="btn btn-default btn-clean"
+                                    onclick="importArcad()">导入
+                            </button>
                             <br>
                         </div>
                         <table id="arcadGrid" cellpadding="0" cellspacing="0" width="100%"
@@ -82,7 +88,8 @@
         window.location.href = "<%=request.getContextPath()%>/arcad/importArcadTemplate";
     }
     function importArcad() {
-        
+        $("#dialog").load("<%=request.getContextPath()%>/arcad/importArcad");
+        $("#dialog").modal("show");
     }
 
     function search() {

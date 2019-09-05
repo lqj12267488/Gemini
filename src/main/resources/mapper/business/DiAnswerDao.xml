@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.synergy.disInspection.dao.DiAnswerDao">
+    <select id="getDiAnswerList" parameterType="com.goisan.synergy.disInspection.bean.DiAnswer" resultType="com.goisan.synergy.disInspection.bean.DiAnswer">
+    select re.remark_id,re.re_msg, to_char(re.CREATE_TIME, 'yyyy-mm-dd') reTime ,
+     FUNC_GET_USERNAME(re.creator) remarkPerson , an.answer_id,an.ans_msg ,an.creator answerPerson  from   T_BG_DIREMARK re
+     left join T_BG_DIANSWER  an  on an.remark_id = re.remark_id and an.creator = #{answerPerson}
+     where re.VALID_FLAG = '1'
+        <if test='null!=reMsg and ""!=reMsg'>
+            and re.RE_MSG like '%'|| #{reMsg} ||'%'
+        </if>
+        <if test="reTime != null and reTime != '' ">
+            AND  to_char(re.CREATE_TIME,'yyyy-mm-dd') LIKE '%'|| #{reTime} ||'%'
+        </if>
+
+    </select>
+
+    <insert id="insertDiAnswer" parameterType="com.goisan.synergy.disInspection.bean.DiAnswer">
+        insert  into T_BG_DIANSWER t (t.ANSWER_ID,REMARK_ID,ANS_MSG,CREATOR,CREATE_TIME,CREATE_DEPT) values
+       (func_get_uuid,'${remarkId}','${ansMsg}','${creator}',sysdate,'${createDept}')
+    </insert>
+
+    <select id="getDiAnswerByRemarkId" parameterType="com.goisan.synergy.disInspection.bean.DiAnswer" resultType="com.goisan.synergy.disInspection.bean.DiAnswer">
+    select re.remark_id,re.re_msg, to_char(re.CREATE_TIME, 'yyyy-mm-dd') reTime ,
+     FUNC_GET_USERNAME(re.creator) remarkPerson  , an.answer_id,an.ans_msg ,an.creator answerPerson  from   T_BG_DIREMARK re
+     left join T_BG_DIANSWER  an  on an.remark_id = re.remark_id and an.creator = #{answerPerson} where re.remark_id =  #{remarkId}
+    </select>
+    
+    <select id="getDiReAnsList" parameterType="com.goisan.synergy.disInspection.bean.DiAnswer" resultType="com.goisan.synergy.disInspection.bean.DiAnswer">
+        select di.remark_id,
+            to_char(di.CREATE_TIME, 'yyyy-mm-dd') reTime,
+            di.re_msg,
+            FUNC_GET_USERNAME(di.creator) remarkPerson,
+            FUNC_GET_USERNAME(an.creator) answerPerson,
+            an.ans_msg,
+             an.answer_id
+        from T_BG_DIREMARK di, T_BG_DIANSWER an
+        where di.remark_id = an.remark_id
+        and di.remark_id = #{remarkId}
+    </select>
+
+    <delete id="delDiAnswerByRemarkId" parameterType="com.goisan.synergy.disInspection.bean.DiRemark">
+        update T_BG_DIANSWER t set t.valid_flag = '0',changer=#{changer},
+          change_time=sysdate,
+          change_dept=#{changeDept}
+        where t.REMARK_ID=#{remarkId}
+    </delete>
+</mapper>

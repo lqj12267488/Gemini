@@ -46,12 +46,7 @@
                             <button type="button" class="btn btn-default btn-clean"
                                     onclick="addStuArcad()">新增
                             </button>
-                            <button type="button" class="btn btn-default btn-clean"
-                                    onclick="importArcadTemplate()">下载导入模板
-                            </button>
-                            <button type="button" class="btn btn-default btn-clean"
-                                    onclick="importArcad()">导入
-                            </button>
+
                             <br>
                         </div>
                         <table id="stuArcadGrid" cellpadding="0" cellspacing="0" width="100%"
@@ -78,12 +73,7 @@
         $("#dialog").load("<%=request.getContextPath()%>/stuArcad/editStuArcad");
         $("#dialog").modal("show");
     }
-    function importArcadTemplate() {
-        window.location.href = "<%=request.getContextPath()%>/arcad/importArcadTemplate";
-    }
-    function importArcad() {
 
-    }
 
     function search() {
         var table =  $("#stuArcadGrid").DataTable({

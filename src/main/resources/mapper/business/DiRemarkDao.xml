@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.synergy.disInspection.dao.DiRemarkDao">
+
+    <select id="getDiRemarkList" parameterType="com.goisan.synergy.disInspection.bean.DiRemark" resultType="com.goisan.synergy.disInspection.bean.DiRemark">
+        select t.*,to_char(CREATE_TIME,'yyyy-mm-dd') reTime from T_BG_DIREMARK t where  valid_flag = '1'
+        <if test='null!=reMsg and ""!=reMsg'>
+            and RE_MSG like '%'|| #{reMsg} ||'%'
+        </if>
+        <if test="reTime != null and reTime != '' ">
+            AND  to_char(t.CREATE_TIME,'yyyy-mm-dd') LIKE '%'|| #{reTime} ||'%'
+        </if>
+    </select>
+
+    <insert id="insertDiRemark" parameterType="com.goisan.synergy.disInspection.bean.DiRemark">
+        insert  into T_BG_DIREMARK t (t.REMARK_ID,RE_MSG,CREATOR,CREATE_TIME,CREATE_DEPT) values
+       (func_get_uuid,'${reMsg}','${creator}',sysdate,'${createDept}')
+    </insert>
+    <update id="updateArcadById" parameterType="com.goisan.synergy.disInspection.bean.DiRemark">
+      update  T_BG_DIREMARK t set RE_MSG=#{reMsg},changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+      where t.REMARK_ID = #{remarkId} and valid_flag = '1'
+    </update>
+
+    <delete id="delDiRemarkById" parameterType="com.goisan.synergy.disInspection.bean.DiRemark">
+          update T_BG_DIREMARK t set t.valid_flag = '0',changer=#{changer},
+          change_time=sysdate,
+          change_dept=#{changeDept}
+          where t.REMARK_ID=#{remarkId}
+    </delete>
+
+</mapper>
