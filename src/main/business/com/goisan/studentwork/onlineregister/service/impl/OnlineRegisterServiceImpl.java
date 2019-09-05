@@ -120,4 +120,24 @@ public class OnlineRegisterServiceImpl implements OnlineRegisterService {
     public List<String> getAllYear() {
         return onlineRegisterDao.getAllYear();
     }
+
+    @Override
+    public List<OnlineRegister> selectChinese() {
+        return onlineRegisterDao.selectChinese();
+    }
+
+    @Override
+    public List<OnlineRegister> selectMinkaoHan() {
+        return onlineRegisterDao.selectMinkaoHan();
+    }
+
+    @Override
+    public List<OnlineRegister> selectDoubleLanguage() {
+        return onlineRegisterDao.selectDoubleLanguage();
+    }
+
+    @Override
+    public String findMZ(String nation) {
+        return onlineRegisterDao.findMZ(nation);
+    }
 }

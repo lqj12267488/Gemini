@@ -206,4 +206,7 @@
         $("#dialog").load(baseUrl + "/onlineregister/toOnlineRegisterEdit?id=" + id);
         $("#dialog").modal("show");
     }
+    function internshipUnitObtain() {
+        window.location.href = "<%=request.getContextPath()%>/onlineregister/importRegister";
+    }
 </script>
