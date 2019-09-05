@@ -75,6 +75,36 @@
     })
     
     function save() {
+
+        if($("#arcadProvinceEdit").val()=="" || $("#arcadProvinceEdit").val() == undefined){
+            swal({
+                title: "请选择省",
+                type: "info"
+            });
+            return;
+        }
+        if($("#arcadCityEdit").val()=="" || $("#arcadCityEdit").val() == undefined){
+            swal({
+                title: "请选择市",
+                type: "info"
+            });
+            return;
+        }
+        if($("#arcadCountyEdit").val()=="" || $("#arcadCountyEdit").val() == undefined){
+            swal({
+                title: "请选择县",
+                type: "info"
+            });
+            return;
+        }
+        if($("#arcadDetailEdit").val()=="" || $("#arcadDetailEdit").val() == undefined){
+            swal({
+                title: "请填写详细地址",
+                type: "info"
+            });
+            return;
+        }
+
         $.post("<%=request.getContextPath()%>/arcad/saveArcad", {
             arcadId:"${arcadEdit.arcadId}",
             arcadProvince: $("#arcadProvinceEdit").val(),

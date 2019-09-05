@@ -40,7 +40,7 @@
                         <span class="iconBtx">*</span>性别：
                     </div>
                     <div class="col-md-9">
-                        <input id="sexEdit"  value="${stuInsuranceEdit.sexShow}"/>
+                        <input id="sexEdit"  value="${stuInsuranceEdit.sexShow}" readonly  class="validate[required,maxSize[100]] form-control"/>
                     </div>
                 </div>
 
@@ -49,7 +49,7 @@
                         <span class="iconBtx">*</span>姓名：
                     </div>
                     <div class="col-md-9">
-                        <input id="nameEdit" value="${stuInsuranceEdit.name}"/>
+                        <input id="nameEdit" value="${stuInsuranceEdit.name}" readonly  class="validate[required,maxSize[100]] form-control"/>
                     </div>
                 </div>
                 <div class="form-row">
@@ -57,7 +57,7 @@
                         <span class="iconBtx">*</span>学号：
                     </div>
                     <div class="col-md-9">
-                        <input id="studentNumberEdit" value="${stuInsuranceEdit.studentNumber}"/>
+                        <input id="studentNumberEdit" value="${stuInsuranceEdit.studentNumber}" readonly  class="validate[required,maxSize[100]] form-control"/>
 
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                         <span class="iconBtx">*</span>班级：
                     </div>
                     <div class="col-md-9">
-                        <input id="classEdit"  value="${stuInsuranceEdit.classShow}"/>
+                        <input id="classEdit"  value="${stuInsuranceEdit.classShow}" readonly  class="validate[required,maxSize[100]] form-control"/>
                     </div>
                 </div>
                 <div class="form-row">
@@ -85,7 +85,7 @@
                         <span class="iconBtx">*</span> 生源地
                     </div>
                     <div class="col-md-9">
-                        <input id="stuSourceAddrEdit" value="${stuInsuranceEdit.stuSourceAddr}"/>
+                        <input id="stuSourceAddrEdit" value="${stuInsuranceEdit.stuSourceAddr}" readonly class="validate[required,maxSize[100]] form-control"/>
                     </div>
                 </div>
 
@@ -94,7 +94,7 @@
                         <span class="iconBtx">*</span>民族：
                     </div>
                     <div class="col-md-9">
-                        <input id="nationEdit" value="${stuInsuranceEdit.nationShow}"/>
+                        <input id="nationEdit" value="${stuInsuranceEdit.nationShow}" readonly  class="validate[required,maxSize[100]] form-control"/>
                     </div>
                 </div>
 
@@ -154,6 +154,16 @@
             })});
 
     function save() {
+
+        if($("#studentId").val()=="" || $("#studentId").val() == undefined){
+            swal({
+                title: "请填写身份证账号",
+                type: "info"
+            });
+            return;
+        }
+
+
         $.post("<%=request.getContextPath()%>/studentInsurance/saveStudentInsurance", {
             id:"${stuInsuranceEdit.id}",
             studentId: $("#studentId").val(),

@@ -11,7 +11,7 @@
         <div class="form-row block" style="overflow-y:auto;">
             <div class="form-row">
                 <button type="button" class="btn btn-default btn-clean"
-                        onclick="addMtType()">新增
+                        onclick="addDiRemark()">新增
                 </button>
                 <br>
             </div>

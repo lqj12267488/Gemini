@@ -3,9 +3,15 @@ package com.goisan.studentwork.graduatearchivesaddress.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.goisan.studentwork.graduatearchivesaddress.bean.Arcad;
+import com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad;
 import com.goisan.studentwork.graduatearchivesaddress.service.ArcadServcie;
+import com.goisan.studentwork.maintenance.bean.MtRelation;
 import com.goisan.studentwork.studentinsurance.bean.StudentInsurance;
+import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Student;
+import com.goisan.system.bean.TableDict;
+import com.goisan.system.service.CommonService;
+import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
@@ -13,8 +19,11 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +42,9 @@ public class ArcadController {
 
     @Autowired
     private ArcadServcie arcadServcie;
+
+    @Autowired
+    private CommonService commonService;
 
     @RequestMapping("/acrad/acradList")
     public String acradList(){
@@ -86,6 +98,146 @@ public class ArcadController {
         arcadServcie.delArcadById(arcad);
         return new Message(1,"删除成功","success");
     }
+
+
+
+    @RequestMapping("/arcad/importArcad")
+    public ModelAndView importArcad(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/business/studentwork/graduatearchivesaddress/importArcad");
+        return modelAndView;
+    }
+
+    @ResponseBody
+    @RequestMapping("/arcad/importData")
+    public Message importData(@RequestParam(value = "file", required = false) CommonsMultipartFile file){
+        int count=3;
+        int rightCount = 0 ;
+        int errCount = 0 ;
+        StringBuilder sb = new StringBuilder();
+
+        TableDict tableDict = new TableDict();
+        tableDict.setId("ID");
+        tableDict.setText("NAME");
+        tableDict.setTableName("T_SYS_ADMINISTRATIVE_DIVISIONS");
+        tableDict.setWhere("where TYPE = '1'");
+        List<Select2> provinceList = commonService.getTableDict(tableDict);
+
+        tableDict.setWhere("where TYPE = '2'");
+        List<Select2> cityList = commonService.getTableDict(tableDict);
+
+        tableDict.setWhere("where TYPE = '3'");
+        List<Select2> countryList = commonService.getTableDict(tableDict);
+
+//        直辖市
+        tableDict.setWhere("");
+
+        try {
+            HSSFWorkbook workbook = new HSSFWorkbook(file.getInputStream());
+            Boolean checkExcel = this.checkExcel(workbook);
+            if (!checkExcel){
+                return new Message(1,"请检查导入模板",null);
+            }
+            HSSFSheet sheet = workbook.getSheetAt(0);
+            int end = sheet.getLastRowNum();
+            for (int i = 2; i <= end; i++) {
+                Arcad arcad = new Arcad();
+                arcad.setCreator(CommonUtil.getPersonId());
+                arcad.setCreateDept(CommonUtil.getDefaultDept());
+                HSSFRow row = sheet.getRow(i);
+
+
+
+                if (null!=row.getCell(1)){
+                    for (Select2 province: provinceList) {
+                        if (province.getText().equals(row.getCell(1).toString())){
+                            arcad.setArcadProvince( province.getId());
+                            break;
+                        }
+                    }
+//                    是否是香港,澳门,台湾省
+                    if (!row.getCell(1).toString().equals("香港特别行政区")&&!row.getCell(1).toString().equals("澳门特别行政区")
+                    && !row.getCell(1).toString().equals("台湾省")){
+
+                        if ( null == row.getCell(2) || null == row.getCell(3)|| null == row.getCell(4)
+                                || "".equals(row.getCell(2).toString()) || "".equals(row.getCell(3).toString())
+                                || "".equals(row.getCell(4).toString())
+                        ){
+                            sb.append("第");
+                            sb.append(count);
+                            sb.append("行 ");
+                            errCount++;
+                        }
+//                        判断是否是直辖市
+                        else {
+
+                            arcad.setArcadDetail(row.getCell(4).toString());
+
+                            if (!row.getCell(1).toString().equals("北京市") && !row.getCell(1).toString().equals("天津市")
+                                    &&!row.getCell(1).toString().equals("重庆市")&&!row.getCell(1).toString().equals("上海市")){
+                                for (Select2 city: cityList) {
+                                    if (city.getText().equals(row.getCell(2).toString())){
+                                        arcad.setArcadCity( city.getId());
+                                        break;
+                                    }
+                                }
+                            }else {
+//                                直辖市
+                                String province = arcad.getArcadProvince();
+                                tableDict.setWhere("where PARENT_ID = '"+province+"'");
+                                List<Select2> zCityList = commonService.getTableDict(tableDict);
+                                for (Select2 zCity: zCityList) {
+                                    if (row.getCell(2).toString().contains(zCity.getText())){
+                                        arcad.setArcadCity( zCity.getId());
+                                        break;
+                                    }
+                                }
+                            }
+
+                            for (Select2 country: countryList) {
+                                if (country.getText().equals(row.getCell(3).toString())){
+                                    arcad.setArcadCounty( country.getId());
+                                    break;
+                                }
+                            }
+//                            检查
+                            Message message = arcadServcie.insertArcad(arcad);
+                            if (message.getStatus()==1){
+                                errCount++;
+                            }else {
+                                rightCount++;
+                            }
+
+                        }
+
+                    }else {
+                        Message message = arcadServcie.insertArcad(arcad);
+                        if (message.getStatus()==1){
+                            errCount++;
+                        }else {
+                            rightCount++;
+                        }
+                    }
+                }else {
+                    sb.append("第");
+                    sb.append(count);
+                    sb.append("行 ");
+                    errCount++;
+                }
+                count++;
+            }
+//          检查模板
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (errCount==0) {
+            return new Message(1, "成功导入" + rightCount + "条", null);
+        }else {
+            return new Message(0,"成功导入"+ rightCount + "条\n 失败"+errCount+"条："+sb.toString()+"信息有误",null);
+        }
+    }
+
 
     //    导出以及导出模板
     @RequestMapping("/arcad/importArcadTemplate")
@@ -382,7 +534,7 @@ public class ArcadController {
     }
 
     private Boolean checkExcel(HSSFWorkbook workbook){
-        return workbook.getSheetName(0).contains("新疆现代职业技术学院社保缴费名单");
+        return workbook.getSheetName(0).contains("新疆现代职业技术学院档案接收地址");
     }
 
     public static void setHSSFValidation(HSSFSheet sheet, String[] textlist, int firstRow, int endRow, int firstCol, int endCol) {
