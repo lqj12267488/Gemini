@@ -59,14 +59,20 @@ public class StuArcadController {
             List<StuArcad> stuArcadList = stuArcadService.getStuByArcadId(stuArcad.getArcadId());
             StringBuilder studentIds = new StringBuilder();
             StringBuilder studentNames = new StringBuilder();
-            for (StuArcad stu:stuArcadList) {
-                studentIds.append(stu.getStudentId());
-                studentNames.append(stu.getStudentName());
-                studentNames.append(",");
-                studentIds.append(",");
+            if (stuArcadList.get(0).getStudentId()!=null&&!"".equals(stuArcadList.get(0).getStudentId())) {
+                for (StuArcad stu : stuArcadList) {
+                    studentIds.append(stu.getStudentId());
+                    studentNames.append(stu.getStudentName());
+                    studentNames.append(",");
+                    studentIds.append(",");
+                }
             }
-            studentIds.deleteCharAt(studentIds.lastIndexOf(","));
-            studentNames.deleteCharAt(studentNames.lastIndexOf(","));
+            if (studentIds.lastIndexOf(",")!= -1) {
+                studentIds.deleteCharAt(studentIds.lastIndexOf(","));
+            }
+            if (studentNames.lastIndexOf(",") != -1) {
+                studentNames.deleteCharAt(studentNames.lastIndexOf(","));
+            }
 
             Arcad arcad = arcadServcie.getArcadById(stuArcad.getArcadId());
             StuArcad stuArcadEdit = new StuArcad();
@@ -79,8 +85,7 @@ public class StuArcadController {
             stuArcadEdit.setStudentNames(studentNames.toString());
             modelAndView.addObject("head", "修改");
             modelAndView.addObject("stuArcadEdit", stuArcadEdit);
-
-//            editFlag 1不让改
+//          editFlag 1不让改
             modelAndView.addObject("editFlag",1);
         }else {
             modelAndView.addObject("head", "新增");

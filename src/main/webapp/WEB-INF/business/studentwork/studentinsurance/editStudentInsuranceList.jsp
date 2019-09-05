@@ -71,7 +71,7 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>宿舍号：
+                        宿舍号：
                     </div>
                     <div class="col-md-9">
                         <input id="dormEdit" type="text"
