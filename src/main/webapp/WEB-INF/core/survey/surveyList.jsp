@@ -83,9 +83,7 @@
                                 '<span class="icon-check" title="验证" onclick=checkSurvey("' + row.surveyId + '")></span>&ensp;&ensp;' +
                                 '<span class="icon-trash" title="删除" onclick=del("' + row.surveyId + '")></span>&ensp;&ensp;';
                         }else if(row.checkFlag =='1') {
-                            r = '<span class="icon-user" title="查看投票答题人" onclick=addStudent("' + row.surveyId + '","1")></span>&ensp;&ensp;' +
-                                '<span class="icon-align-justify" title="查看详细结果" onclick=viewResult("' + row.surveyId + '")></span>&ensp;&ensp;' +
-                                '<span class="icon-wrench" title="查看统计结果" onclick=orderResult("' + row.surveyId + '")></span>&ensp;&ensp;' ;
+                            r = '<span class="icon-user" title="查看投票答题人" onclick=addStudent("' + row.surveyId + '","1")></span>&ensp;&ensp;';
                         }
                         if( row.checkFlag =='1' && (row.startFlag =='0' || row.startFlag =='2')){
                             r = r + '<span class="icon-play" title="启动" onclick=changeStart("' + row.surveyId + '")></span>&ensp;&ensp;';
