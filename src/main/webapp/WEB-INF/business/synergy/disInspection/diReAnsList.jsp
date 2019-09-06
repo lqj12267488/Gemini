@@ -75,10 +75,11 @@
     }
 
 
-    function see(remarkId,answerId) {
-        $("#dialog").load("<%=request.getContextPath()%>/diAnswer/editDiAnswer?remarkId="+remarkId+"&answerId="+answerId);
+    function see(remarkId,answerId){
+        $("#dialog").load("<%=request.getContextPath()%>/diAnswer/editDiAnswer?remarkId="+remarkId+"&answerId="+answerId+"&flag=1");
         $("#dialog").modal("show");
     }
+
     function back() {
         $("#right").load("<%=request.getContextPath()%>/diRemark/diRemarkList");
     }

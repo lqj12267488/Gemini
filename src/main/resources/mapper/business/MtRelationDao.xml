@@ -6,9 +6,9 @@
     <select id="getMRClassList" resultType="com.goisan.studentwork.maintenance.bean.MtRelation">
        select t.id as relId,
        t.class_room_name as relName,
-        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c,T_JW_CLASSROOM r where c.mt_flag='0' and r.id = c.rel_id  and t.id = r.id and c.valid_flag='1' )  = 0
-          then '已维护'
-          else '未维护'
+        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c,T_JW_CLASSROOM r where r.id = c.rel_id  and t.id = r.id and c.valid_flag='1' )  = 0
+          then '未维护'
+          else '已维护'
           end mtStatus
        from T_JW_CLASSROOM t
       left join T_XG_MAINTENANCE_RELATION mr
@@ -20,9 +20,9 @@
     <select id="getMRDormList" resultType="com.goisan.studentwork.maintenance.bean.MtRelation">
         select d.id as relId,
        d.dorm_name as relName,
-        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c,T_JW_DORM r where c.mt_flag='0' and r.id = c.rel_id  and d.id = r.id and c.valid_flag='1')  = 0
-          then '已维护'
-           else '未维护'
+        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c,T_JW_DORM r where r.id = c.rel_id  and d.id = r.id and c.valid_flag='1')  = 0
+          then '未维护'
+           else '已维护'
              end mtStatus
        from T_JW_DORM d
       left join T_XG_MAINTENANCE_RELATION mr
@@ -57,7 +57,7 @@
     <update id="updateMRDetailById" parameterType="com.goisan.studentwork.maintenance.bean.MtRelation">
       update  T_XG_MAINTENANCE_RELATION t set MT_ID=#{mtId},GOOD_NAME=#{goodName}
       ,GOOD_UNIT=#{goodUnit} ,GOOD_NUM=#{goodNum} ,GOOD_CASE=#{goodCase}
-      ,GOOD_REMARK=#{goodRemark},changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
+      ,GOOD_REMARK=#{goodRemark},changer=#{changer},change_time=sysdate,change_dept=#{changeDept},UNIT_PRICE=#{unitPrice}
       where t.MT_ID = #{mtId} and valid_flag = '1'
     </update>
 

@@ -26,6 +26,13 @@
      FUNC_GET_USERNAME(re.creator) remarkPerson  , an.answer_id,an.ans_msg ,an.creator answerPerson  from   T_BG_DIREMARK re
      left join T_BG_DIANSWER  an  on an.remark_id = re.remark_id and an.creator = #{answerPerson} where re.remark_id =  #{remarkId}
     </select>
+
+
+    <select id="getDiAnswerByAnswerId" parameterType="com.goisan.synergy.disInspection.bean.DiAnswer" resultType="com.goisan.synergy.disInspection.bean.DiAnswer">
+    select re.remark_id,re.re_msg, to_char(re.CREATE_TIME, 'yyyy-mm-dd') reTime ,
+     FUNC_GET_USERNAME(re.creator) remarkPerson  , an.answer_id,an.ans_msg ,an.creator answerPerson  from   T_BG_DIREMARK re
+     left join T_BG_DIANSWER  an  on an.remark_id = re.remark_id where re.remark_id =  #{remarkId} AND  an.answer_id = #{answerId}
+    </select>
     
     <select id="getDiReAnsList" parameterType="com.goisan.synergy.disInspection.bean.DiAnswer" resultType="com.goisan.synergy.disInspection.bean.DiAnswer">
         select di.remark_id,

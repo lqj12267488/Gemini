@@ -51,7 +51,7 @@
                             <div class="col-md-2">
                                     <input id="classSel" type="text"
                                            class="validate[required,maxSize[50]] form-control autoInput"onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
-                                           placeholder="请输入宿舍号，并点选"/>
+                                           placeholder="请输入班级，并点选"/>
                                     <input id="classIdSel" hidden>
                             </div>
 
@@ -206,7 +206,7 @@
             $("#classIdSel").val("");
         }
 
-        var table =  $("#stuInsuranceGrid").DataTable({
+        $("#stuInsuranceGrid").DataTable({
             "processing": true,
             "serverSide": true,
             "ajax": {
@@ -222,11 +222,6 @@
                 },
                 "contentType": "application/x-www-form-urlencoded;charset=UTF-8"
             },
-            // "columnDefs": [{
-            //     "searchable": false,
-            //     "orderable": false,
-            //     "targets": 0  //序号列不能排序也不能搜索
-            // }],
             "destroy": true,
             "columns": [
                 // { data: null,width:"5%"},
@@ -254,13 +249,17 @@
             "dom": 'rtlip',
             language: language
         })
-
-        // table.on('order.dt search.dt', function () {
-        //     table.column(0, {search:'applied', order:'applied'}).nodes().each(
-        //         function (cell, i) {
-        //             cell.innerHTML = i+1;
-        //         }
-        //     );
-        // }).draw();
     }
+
+    function searchClear() {
+        $("#studentNumberSel").val("");
+        $("#nameSel").val("");
+        $("#idcardSel").val("");
+        $("#classIdSel").val("");
+        $("#classSel").val("");
+        $("#dormIdSel").val("");
+        $("#dormSel").val("");
+        search();
+    }
+
 </script>

@@ -40,4 +40,9 @@ public class DiAnswerServiceImpl implements DiAnswerService {
     public List<DiAnswer> getDiReAnsList(DiAnswer diAnswer) {
         return diAnswerDao.getDiReAnsList(diAnswer);
     }
+
+    @Override
+    public DiAnswer getDiAnswerByAnswerId(DiAnswer diAnswer) {
+        return diAnswerDao.getDiAnswerByAnswerId(diAnswer);
+    }
 }

@@ -92,16 +92,17 @@
             "columns": [
                 {"data":"id","visible": false},
                 {"data":"arcadId","visible": false},
-                {"data": "arcadProvinceShow", "title": "省"},
-                {"data": "arcadCityShow", "title": "市"},
-                {"data": "arcadCountyShow", "title": "县"},
+                {"data": "arcadProvinceShow", "title": "省","width":"10%"},
+                {"data": "arcadCityShow", "title": "市","width":"10%"},
+                {"data": "arcadCountyShow", "title": "县","width":"10%"},
                 {"data": "arcadDetail", "title": "详细地址"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改学生" onclick=edit("' + row.arcadId + '")/>&ensp;&ensp;' +
                             '<span class="icon-search" title="查看" onclick=see("' + row.arcadId + '")/>&ensp;&ensp;';
-                    }
+                    },
+                    "width":"8%"
                 }
             ],
             'order': [1, 'desc'],

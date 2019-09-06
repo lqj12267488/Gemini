@@ -12,4 +12,5 @@ public interface DiAnswerService {
     void insertDiAnswer  (DiAnswer diAnswer);
     DiAnswer getDiAnswerByRemarkId (DiAnswer diAnswer);
     List<DiAnswer> getDiReAnsList(DiAnswer diAnswer);
+    DiAnswer getDiAnswerByAnswerId (DiAnswer diAnswer);
 }

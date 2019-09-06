@@ -11,7 +11,7 @@
         <div class="form-row block" style="overflow-y:auto;">
             <div class="form-row">
                 <button type="button" class="btn btn-default btn-clean"
-                        onclick="addDiRemark()">新增
+                        onclick="addMtType()">新增
                 </button>
                 <br>
             </div>
@@ -49,7 +49,8 @@
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.mtId + '")/>&ensp;&ensp;' +
                             '<span class="icon-trash" title="删除" onclick=del("' + row.mtId + '")/>&ensp;&ensp;';
-                    }
+                    },
+                    "width":"8%"
                 }
             ],
             'order': [1, 'desc'],

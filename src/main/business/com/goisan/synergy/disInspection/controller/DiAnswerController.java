@@ -55,9 +55,14 @@ public class DiAnswerController {
     }
 
     @RequestMapping("/diAnswer/editDiAnswer")
-    public ModelAndView editDiAnswer(DiAnswer diAnswer){
+    public ModelAndView editDiAnswer(DiAnswer diAnswer,String flag){
         ModelAndView modelAndView = new ModelAndView();
-        DiAnswer diAnswerEdit = diAnswerService.getDiAnswerByRemarkId(diAnswer);
+        DiAnswer diAnswerEdit;
+        if ("1".equals(flag)) {
+            diAnswerEdit = diAnswerService.getDiAnswerByAnswerId(diAnswer);
+        }else {
+            diAnswerEdit = diAnswerService.getDiAnswerByRemarkId(diAnswer);
+        }
         modelAndView.addObject("head", "回复");
         modelAndView.addObject("diAnswerEdit", diAnswerEdit);
         modelAndView.setViewName("/business/synergy/disInspection/editDiAnswer");

@@ -27,13 +27,13 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-info btn-clean" onclick="importArcad()">导入</button>
+            <button class="btn btn-info btn-clean" onclick="importData()">导入</button>
             <button type="button" class="btn btn-default btn-clean" data-dismiss="modal">关闭</button>
         </div>
     </div>
 </div>
 <script>
-    function importArcad() {
+    function importData() {
         if ($("#file").val() == "") {
             swal({
                 title: "请选择文件",

@@ -116,15 +116,13 @@
                 {"data": "goodPrice", "title": "金额"},
                 {"data": "goodCase", "title": "物品使用情况"},
                 {"data": "goodRemark", "title": "备注"},
-                {"data": "mtFalgShow", "title": "维护状况"},
-
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '","'+row.mtFlag+'")/>&ensp;&ensp;' +
-                            '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")/>&ensp;&ensp;'+
-                            '<span class="icon-ok" title="维护" onclick=mt("' + row.id + '","'+row.mtFlag+'")/>&ensp;&ensp;';
-                    }
+                            '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")/>&ensp;&ensp;';
+                    },
+                    "width":"8%"
                 }
             ],
             'order': [1, 'desc'],
@@ -132,7 +130,6 @@
             "dom": 'rtlip',
             language: language
         })
-
     }
 
     function del(id){
@@ -159,39 +156,38 @@
 
     function edit(id,mtFlag) {
 
-        if (mtFlag=="1"){
-             swal( {title: "已维护无法进行修改",type: "warning"})
-
-        }else {
+        // if (mtFlag=="1"){
+        //      swal( {title: "已维护无法进行修改",type: "warning"})
+        // }else {
             $("#dialog").load("<%=request.getContextPath()%>/mtRelation/editMRDetail?id="+id);
             $("#dialog").modal("show");
-        }
+        // }
     }
 
-    function mt(id, mtFlag) {
-        if (mtFlag == "1") {
-            swal({title: "已经过维护", type: "warning"})
-        } else {
-            swal({
-                title: "您确定要维护本条信息?",
-                type: "warning",
-                showCancelButton: true,
-                cancelButtonText: "取消",
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "维护",
-                closeOnConfirm: false
-            }, function () {
-                $.post("<%=request.getContextPath()%>/mtRelation/mtMRDetail", {
-                    id: id
-                }, function (msg) {
-                    if (msg.status == 1) {
-                        swal({title: msg.msg, type: "success"});
-                        $('#mRDetailGrid').DataTable().ajax.reload();
-                    }
-                })
-            })
-        }
-    }
+    <%--function mt(id, mtFlag) {--%>
+        <%--if (mtFlag == "1") {--%>
+            <%--swal({title: "已经过维护", type: "warning"})--%>
+        <%--} else {--%>
+            <%--swal({--%>
+                <%--title: "您确定要维护本条信息?",--%>
+                <%--type: "warning",--%>
+                <%--showCancelButton: true,--%>
+                <%--cancelButtonText: "取消",--%>
+                <%--confirmButtonColor: "#DD6B55",--%>
+                <%--confirmButtonText: "维护",--%>
+                <%--closeOnConfirm: false--%>
+            <%--}, function () {--%>
+                <%--$.post("<%=request.getContextPath()%>/mtRelation/mtMRDetail", {--%>
+                    <%--id: id--%>
+                <%--}, function (msg) {--%>
+                    <%--if (msg.status == 1) {--%>
+                        <%--swal({title: msg.msg, type: "success"});--%>
+                        <%--$('#mRDetailGrid').DataTable().ajax.reload();--%>
+                    <%--}--%>
+                <%--})--%>
+            <%--})--%>
+        <%--}--%>
+    <%--}--%>
 
     function importMRDetailTemplate() {
         window.location.href = "<%=request.getContextPath()%>/mtRelation/export";

@@ -14,6 +14,7 @@ public interface DiAnswerDao {
     List<DiAnswer> getDiAnswerList (DiAnswer diAnswer);
     void insertDiAnswer  (DiAnswer diAnswer);
     DiAnswer getDiAnswerByRemarkId (DiAnswer diAnswer);
+    DiAnswer getDiAnswerByAnswerId (DiAnswer diAnswer);
     List<DiAnswer> getDiReAnsList(DiAnswer diAnswer);
     void delDiAnswerByRemarkId(DiRemark diRemark);
 }

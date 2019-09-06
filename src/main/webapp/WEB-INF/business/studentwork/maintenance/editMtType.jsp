@@ -43,7 +43,8 @@
         if ("" == $("mtNameEdit").val()) {
             swal({title: "请填写内容", type: "error"});
         } else {
-            if (typeof (parseInt($("mtNameEdit").val())) == "number") {
+            debugger;
+            if (!isNaN(parseInt($("#mtNameEdit").val()))) {
                 swal({title: "不能填写纯数字类型", type: "error"});
             } else {
                 $.post("<%=request.getContextPath()%>/mtType/saveMtType", {

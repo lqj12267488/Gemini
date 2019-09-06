@@ -88,17 +88,18 @@
             "destroy": true,
             "columns": [
                 {"data":"id","visible": false},
-                {"data": "studentName", "title": "姓名"},
-                {"data": "arcadProvinceShow", "title": "省"},
-                {"data": "arcadCityShow", "title": "市"},
-                {"data": "arcadCountyShow", "title": "县"},
+                {"data": "studentName", "title": "姓名","width":"10%"},
+                {"data": "arcadProvinceShow", "title": "省","width":"10%"},
+                {"data": "arcadCityShow", "title": "市","width":"10%"},
+                {"data": "arcadCountyShow", "title": "县","width":"10%"},
                 {"data": "arcadDetail", "title": "详细地址"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
-                        return '<span class="icon-edit" title="修改学生" onclick=edit("' + row.id + '")/>&ensp;&ensp;'
+                        return '<span class="icon-edit" title="修改学生" onclick=edit("' + row.id + '")/>'
 
-                    }
+                    },
+                    "width":"7%"
                 }
             ],
             'order': [1, 'desc'],
@@ -118,7 +119,7 @@
         $("#arcadProvinceSel").val("");
         $("#arcadCitySel").val("");
         $("#arcadCountySel").val("");
-        $("#studentSel").val();
+        $("#studentSel").val("");
         search();
     }
 </script>
