@@ -181,4 +181,14 @@ public class EmpServiceImpl implements EmpService {
     public Emp getEmpByStaffId(String staffId){ return empDao.getEmpByStaffId(staffId); }
 
     public List<Emp> getEmpStaffId(String staffId){ return empDao.getEmpStaffId(staffId); }
+
+    @Override
+    public List<String> selectDeptName() {
+        return empDao.selectDeptName();
+    }
+
+    @Override
+    public List<Emp> selectList(String str) {
+        return empDao.selectList(str);
+    }
 }

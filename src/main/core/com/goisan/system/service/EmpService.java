@@ -79,4 +79,7 @@ public interface EmpService {
 
     List<Emp> getEmpStaffId(String staffId);
 
+    List<String> selectDeptName();
+
+    List<Emp> selectList(String str);
 }

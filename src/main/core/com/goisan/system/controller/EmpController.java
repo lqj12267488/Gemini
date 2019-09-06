@@ -609,11 +609,21 @@ public class EmpController {
     @RequestMapping("/exportEmp")
     public void exportEmp(Emp emp1, HttpServletResponse response) {
         List<Emp> emps;
+        HashMap<String, List<Emp>> hashMap = new HashMap<>();
         if ("undefined".equals(emp1.getDeptId())) {
             emps = empService.getEmpList(null);
         } else {
             emps = empService.getEmpList(emp1);
         }
+
+        //查询部门
+       List<String> list =  empService.selectDeptName();
+       //根据部门查询
+        for (String str : list) {
+          List<Emp> empList =  empService.selectList(str);
+          hashMap.put(str,empList);
+        }
+
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //创建HSSFWorkbook对象
@@ -660,7 +670,10 @@ public class EmpController {
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 25, 25));
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 26, 27));
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 28, 28));
-
+        //sheet.addMergedRegion(new CellRangeAddress(2, emps.size()+1, 2, 2));
+        HSSFFont font11 = this.createFont(wb, 11, "宋体", false);
+        HSSFCellStyle style12 = this.createStyle(wb, font11);
+        this.setColumnDefaultStyleAndWidth(sheet,style12);
 
         tmp++;
         HSSFRow hssfRow = sheet.createRow(0);
@@ -698,48 +711,85 @@ public class EmpController {
         HSSFRow hssfRow1 = sheet.createRow(1);
         hssfRow1.createCell(26).setCellValue("名称");
         hssfRow1.createCell(27).setCellValue("级别");
+
+
+
+        //合并的单元格样式
+        HSSFCellStyle boderStyle = wb.createCellStyle();
+        //垂直居中
+        boderStyle.setAlignment(HorizontalAlignment.CENTER);
+
         tmp++;
         int i = 1;
-        for (Emp emp : emps) {
-            HSSFRow row = sheet.createRow(tmp);
-            //创建HSSFCell对象
-            row.createCell(0).setCellValue(i);
-            row.createCell(1).setCellValue(emp.getDeptName());
-            //row.createCell(2).setCellValue(emp.getIdCard());
-            row.createCell(2).setCellValue(emps.size());
-            row.createCell(3).setCellValue(emp.getName());
-            row.createCell(4).setCellValue(emp.getJobShow());
-            row.createCell(5).setCellValue(emp.getEntryDateShow());
-            row.createCell(6).setCellValue(emp.getMaritalStatusShow());
-            row.createCell(7).setCellValue(emp.getLevels());
-            row.createCell(8).setCellValue(emp.getSexShow());
-            row.createCell(9).setCellValue(emp.getNationShow());
-            row.createCell(10).setCellValue(emp.getBirthdayShow());
-            row.createCell(11).setCellValue(emp.getAge());
-            row.createCell(12).setCellValue(emp.getIdTypeShow());
-            row.createCell(13).setCellValue(emp.getIdCard());
-            row.createCell(14).setCellValue(emp.getTel());
-            row.createCell(15).setCellValue(emp.getNativePlace());
-            row.createCell(16).setCellValue(emp.getPermanentResidence());
-            row.createCell(17).setCellValue(emp.getPermanentResidenceLocal());
-            row.createCell(18).setCellValue(emp.getExaminePoliticalShow());
-            row.createCell(19).setCellValue(emp.getAddress());
-            row.createCell(20).setCellValue(emp.getPoliticalStatusShow());
-            row.createCell(21).setCellValue(emp.getEducationalLevelShow());
-            row.createCell(22).setCellValue(emp.getEducationTechniqueShow());
-            row.createCell(23).setCellValue(emp.getGraduateSchool());
-            row.createCell(24).setCellValue(emp.getMajor());
-            row.createCell(25).setCellValue(emp.getGraduateTimeShow());
-            row.createCell(26).setCellValue(emp.getPositionalTitles());
-            row.createCell(27).setCellValue(emp.getPositionalLevel());
-            row.createCell(28).setCellValue(emp.getRemark());
+        int c = 1;
+        int size = 0;
+        int lastSize = 0;
+        Set<String> set = hashMap.keySet();
+        for (String str : set) {
 
-            /*if (emp.getBirthday() != null) {
-                row.createCell(7).setCellValue(sdf.format(emp.getBirthday()));
-            }*/
-            tmp++;
-            i++;
+            //合并单元格
+            List<Emp> empList = hashMap.get(str);
+            if (empList.size()!=0 && empList.size()!=1) {
+                if (c==1) {
+                    sheet.addMergedRegion(new CellRangeAddress(2, empList.size()+1, 1, 1));
+                    sheet.addMergedRegion(new CellRangeAddress(2, empList.size()+1, 2, 2));
+                    lastSize += empList.size();
+                    size += empList.size();
+                }else{
+                    size += empList.size();
+                    sheet.addMergedRegion(new CellRangeAddress(lastSize+2, size+1, 1, 1));
+                    sheet.addMergedRegion(new CellRangeAddress(lastSize+2, size+1, 2, 2));
+                    lastSize += empList.size();;
+                }
+
+
+
+            for (int j = 0; j < empList.size(); j++) {
+                HSSFRow row = sheet.createRow(tmp);
+                //创建HSSFCell对象
+                row.createCell(0).setCellValue(i);
+                row.createCell(1).setCellValue(empList.get(j).getDeptName());
+                //row.createCell(2).setCellValue(emp.getIdCard());
+                row.createCell(2).setCellValue(empList.size());
+
+                row.createCell(3).setCellValue(empList.get(j).getName());
+                row.createCell(4).setCellValue(empList.get(j).getJobShow());
+                row.createCell(5).setCellValue(empList.get(j).getEntryDateShow());
+                row.createCell(6).setCellValue(empList.get(j).getMaritalStatusShow());
+                row.createCell(7).setCellValue(empList.get(j).getLevels());
+                row.createCell(8).setCellValue(empList.get(j).getSexShow());
+                row.createCell(9).setCellValue(empList.get(j).getNationShow());
+                row.createCell(10).setCellValue(empList.get(j).getBirthdayShow());
+                row.createCell(11).setCellValue(empList.get(j).getAge());
+                row.createCell(12).setCellValue(empList.get(j).getIdTypeShow());
+                row.createCell(13).setCellValue(empList.get(j).getIdCard());
+                row.createCell(14).setCellValue(empList.get(j).getTel());
+                row.createCell(15).setCellValue(empList.get(j).getNativePlace());
+                row.createCell(16).setCellValue(empList.get(j).getPermanentResidence());
+                row.createCell(17).setCellValue(empList.get(j).getPermanentResidenceLocal());
+                row.createCell(18).setCellValue(empList.get(j).getExaminePoliticalShow());
+                row.createCell(19).setCellValue(empList.get(j).getAddress());
+                row.createCell(20).setCellValue(empList.get(j).getPoliticalStatusShow());
+                row.createCell(21).setCellValue(empList.get(j).getEducationalLevelShow());
+                row.createCell(22).setCellValue(empList.get(j).getEducationTechniqueShow());
+                row.createCell(23).setCellValue(empList.get(j).getGraduateSchool());
+                row.createCell(24).setCellValue(empList.get(j).getMajor());
+                row.createCell(25).setCellValue(empList.get(j).getGraduateTimeShow());
+                row.createCell(26).setCellValue(empList.get(j).getPositionalTitles());
+                row.createCell(27).setCellValue(empList.get(j).getPositionalLevel());
+                row.createCell(28).setCellValue(empList.get(j).getRemark());
+
+                if (empList.get(j).getBirthday() != null) {
+                    row.createCell(7).setCellValue(sdf.format(empList.get(j).getBirthday()));
+                }
+                tmp++;
+                i++;
+            }
+            }
+            c++;
         }
+
+
         OutputStream os = null;
         response.setContentType("application/vnd.ms-excel");
         try {
@@ -761,6 +811,33 @@ public class EmpController {
             }
         }
 
+    }
+
+    private void setColumnDefaultStyleAndWidth(HSSFSheet sheet,HSSFCellStyle style){
+
+        sheet.setDefaultRowHeightInPoints(11);
+        sheet.setDefaultColumnStyle(0,style);
+        sheet.setDefaultColumnStyle(1,style);
+        sheet.setDefaultColumnStyle(2,style);
+        sheet.setDefaultColumnStyle(3,style);
+        sheet.setDefaultColumnStyle(4,style);
+    }
+
+    private HSSFFont createFont ( HSSFWorkbook wb,int fontSize,String fontName,Boolean bold){
+        HSSFFont font = wb.createFont();
+        font.setFontHeightInPoints((short) fontSize);
+        font.setFontName(fontName);
+        font.setBold(bold);
+        return font;
+    }
+
+    private HSSFCellStyle createStyle (HSSFWorkbook wb,HSSFFont font){
+        HSSFCellStyle cellStyle = wb.createCellStyle();
+        cellStyle.setFont(font);
+        cellStyle.setWrapText(true);
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        return cellStyle;
     }
 
     @RequestMapping("/getEmpExcelTemplate")
