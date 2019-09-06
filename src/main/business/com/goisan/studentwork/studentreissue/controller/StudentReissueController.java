@@ -110,6 +110,7 @@ public class StudentReissueController {
             studentReissue.setSex(student.getSex());
             studentReissue.setFamilyAddress(student.getAddress());
             studentReissue.setIdcard(student.getIdcard());
+            studentReissue.setPhone(student.getTel());
         }
         studentReissue.setRequestDate(datetime);
         mv.addObject("head", "学生证补办申请新增");

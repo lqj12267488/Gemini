@@ -513,7 +513,12 @@ public class WorkflowController {
         if (cuurent != null) {
             cuurentNodeId = cuurent.getCuurentNodeId();
         }
-        List<Handle> workflowLog = workflowService.getHandleList(start.getStartId());
+        List<Handle> workflowLog;
+        if ("T_BG_DOCUMENT_WF".equals(tableName)) {
+            workflowLog = workflowService.getHandleListByDocumentProcess(start.getStartId());
+        } else {
+            workflowLog = workflowService.getHandleList(start.getStartId());
+        }
         List<Node> nodes = workflowService.getNodeListByWorkflowId(start.getWorkflowId());
         ModelAndView mv = new ModelAndView("/core/wf/log");
         mv.addObject("tableName", tableName);
@@ -535,7 +540,12 @@ public class WorkflowController {
         if (cuurent != null) {
             cuurentNodeId = cuurent.getCuurentNodeId();
         }
-        List<Handle> workflowLog = workflowService.getHandleList(start.getStartId());
+        List<Handle> workflowLog;
+        if ("T_BG_DOCUMENT_WF".equals(tableName)) {
+            workflowLog = workflowService.getHandleListByDocumentProcess(start.getStartId());
+        } else {
+            workflowLog = workflowService.getHandleList(start.getStartId());
+        }
         List<Node> nodes = workflowService.getNodeListByWorkflowId(start.getWorkflowId());
         ModelAndView mv = new ModelAndView("/core/wf/indexLog");
         mv.addObject("tableName", tableName);
@@ -679,9 +689,18 @@ public class WorkflowController {
     public ModelAndView fundsToAudit(String tableName, String businessId, String url, String backUrl, String flag) {
         Start start = workflowService.getWorkflowStart(tableName, businessId);
         Handle cuurent = workflowService.getHandle(start.getStartId(), CommonUtil.getPersonId());
+        if (null == cuurent) {
+            ModelAndView mv = new ModelAndView("/business/synergy/workflow/document/documentProcess");
+            return mv;
+        }
         List<Definition> definitions = definitionService.getDefinitionListByNodeIdAndWorkflowId(
                 cuurent.getCuurentNodeId(), cuurent.getCuurentWorkflowId());
-        List<Handle> workflowLog = workflowService.getHandleList(start.getStartId());
+        List<Handle> workflowLog ;
+        if ("T_BG_DOCUMENT_WF".equals(tableName)) {
+            workflowLog = workflowService.getHandleListByDocumentProcess(start.getStartId());
+        } else {
+            workflowLog = workflowService.getHandleList(start.getStartId());
+        }
         List<Node> nodes = workflowService.getNodeListByWorkflowId(start.getWorkflowId());
         ModelAndView mv = new ModelAndView("/core/wf/audit");
         mv.addObject("definitions", definitions);

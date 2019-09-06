@@ -15,6 +15,8 @@ public class Handle extends BaseBean {
     private String handleRole;
     private String handleTime;
     private String handleDept;
+    private String fileName;
+    private String fileUrl;
     private String state;
     private String remark;
 
@@ -88,6 +90,22 @@ public class Handle extends BaseBean {
 
     public void setHandleTime(String handleTime) {
         this.handleTime = handleTime;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileUrl() {
+        return fileUrl;
+    }
+
+    public void setFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
     }
 
     public String getState() {

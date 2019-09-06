@@ -138,6 +138,18 @@
                                value="${document.printingNumber}" />
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>
+                        文号
+                    </div>
+                    <div class="col-md-9">
+                        <input id="f_symbol" type="text" class="validate[required,maxSize[100]] form-control"
+                               onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
+                               maxlength="10" placeholder="最多输入10个字"
+                               value="${document.symbol}"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -188,13 +200,6 @@
             });
             return;
         }
-       /* if ($("#f_title").val() == "" || $("#f_title").val() == undefined) {
-            swal({
-                title: "请填写标题!",
-                type: "info"
-            });
-            return;
-        }*/
         if ($("#f_printingNumber").val() == "" || $("#f_printingNumber").val() == undefined) {
             swal({
                 title: "请填写打印份数!",
@@ -202,7 +207,13 @@
             });
             return;
         }
-
+        if ($("#f_symbol").val() == "" || $("#f_symbol").val() == undefined) {
+            swal({
+                title: "请填写文号!",
+                type: "info"
+            });
+            return;
+        }
         $.post("<%=request.getContextPath()%>/document/updateDocument", {
             id: $("#documentid").val(),
             requestDate: date,
@@ -211,6 +222,7 @@
             makeEmpId:makeEmp,
             secretClass:$("#f_secretClass").val(),
             title:$("#f_title").val(),
+            symbol:$("#f_symbol").val(),
             printingNumber:$("#f_printingNumber").val(),
         }, function (msg) {
             hideSaveLoading();

@@ -852,4 +852,33 @@
           and s.student_id=#{studentId}
         order by t.create_time desc
     </select>
+    <select id="getHandleListByDocumentProcess" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.Handle">
+        select
+            t.HANDLE_NAME,
+            t.HANDLE_TIME,
+            t.HANDLE_USER,
+            t.REMARK,
+            t.CHANGE_TIME,
+            t.CUURENT_NODE_ID,
+            s.file_name,
+            s.file_url,
+            s.id
+        from
+            (SELECT
+                 id,
+                 HANDLE_NAME,
+                 HANDLE_TIME,
+                 HANDLE_USER,
+                 REMARK,
+                 CHANGE_TIME,
+                 FUNC_GET_TABLEVALUE(CUURENT_NODE_ID,
+                                     'T_SYS_WORKFLOW_NODE',
+                                     'node_id',
+                                     'node_name') CUURENT_NODE_ID
+             FROM T_SYS_WORKFLOW_HANDLE
+             WHERE START_ID = #{startId}
+               AND STATE = '2'
+             ORDER BY HANDLE_TIME) t left join T_BG_DOCUMENT_PROCESS s on t.id =s.handle_id
+    </select>
 </mapper>

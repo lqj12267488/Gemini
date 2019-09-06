@@ -200,4 +200,6 @@ public interface WorkflowDao {
 
     List<Select2> getHeadTeacherByStudentId(@Param
             ("studentId") String studentId);
+
+    List<Handle> getHandleListByDocumentProcess(String startId);
 }

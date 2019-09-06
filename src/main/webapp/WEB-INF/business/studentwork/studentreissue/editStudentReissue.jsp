@@ -55,7 +55,7 @@
                                      style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
                                      src="data:image/png;base64,${studentReissue.img}"
                                      height="150"
-                                     width="110" alt="" id="userImg">
+                                     width="110" alt="" id="userImg1">
                             </c:otherwise>
                         </c:choose>
                             </div>
@@ -135,6 +135,14 @@
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
+                            <span class="iconBtx">*</span>电话
+                        </div>
+                        <div class="col-md-9">
+                            <input id="f_phone"  value="${studentReissue.phone}"/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>新疆省
                         </div>
                         <div class="col-md-9">
@@ -205,7 +213,6 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=SQXM", function (data) {
             addOption(data, 'f_requestProject', '${studentReissue.requestProject}');
         });
-
         $.get("<%=request.getContextPath()%>/common/getTableDict", {
                 id: " major_code",
                 text: " major_name ",
@@ -239,9 +246,14 @@
     function save() {
         var date = $("#f_requestDate").val();
         date = date.replace('T', '');
-        if ($("#imgFile").val() == "" || $("#imgFile").val() == "0" || $("#imgFile").val() == undefined) {
-            alert("请上传头像");
-            return;
+        if(null == '${studentReissue.img}' || "" == '${studentReissue.img}'){
+            if ($("#imgFile").val() == "" || $("#imgFile").val() == "0" || $("#imgFile").val() == undefined) {
+                swal({
+                    title: "请上传头像",
+                    type: "info"
+                });
+                return;
+            }
         }
         if ($("#f_rideZone").val() == "" || $("#f_rideZone").val() == undefined) {
             swal({
@@ -253,6 +265,13 @@
         if ($("#f_familyAddress").val() == "" || $("#f_familyAddress").val() == undefined) {
             swal({
                 title: "请填写家庭地址",
+                type: "info"
+            });
+            return;
+        }
+        if ($("#f_phone").val() == "" || $("#f_phone").val() == undefined) {
+            swal({
+                title: "请填写电话",
                 type: "info"
             });
             return;
@@ -303,6 +322,7 @@
         formData.append("majorCode", $("#majorCodeId option:selected").val());
         formData.append("studentNumber", $("#studentNumber").val());
         formData.append("nation", $("#f_nation").val());
+        formData.append("phone", $("#f_phone").val());
         formData.append("sex", $("#f_sex").val());
         formData.append("idcard", $("#f_idcard").val());
         formData.append("rideZone", $("#f_rideZone").val());
@@ -351,6 +371,7 @@
         };
         reader.readAsDataURL(file.files[0]);
     }
+
 
 </script>
 

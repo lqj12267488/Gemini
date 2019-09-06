@@ -372,4 +372,8 @@ public class WorkflowServiceImpl implements WorkflowService {
             ("studentId") String studentId){
         return workflowDao.getHeadTeacherByStudentId(studentId);
     }
+
+    public List<Handle> getHandleListByDocumentProcess(String startId){
+        return workflowDao.getHandleListByDocumentProcess(startId);
+    }
 }

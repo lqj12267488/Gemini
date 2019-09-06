@@ -146,7 +146,7 @@
                         <input id="f_symbol" type="text" class="validate[required,maxSize[100]] form-control"
                                onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
                                maxlength="10" placeholder="最多输入10个字"
-                               value="${document.printingNumber}"/>
+                               value="${document.symbol}"/>
                     </div>
                 </div>
 
