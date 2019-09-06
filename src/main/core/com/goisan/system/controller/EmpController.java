@@ -671,9 +671,15 @@ public class EmpController {
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 26, 27));
         sheet.addMergedRegion(new CellRangeAddress(0, 1, 28, 28));
         //sheet.addMergedRegion(new CellRangeAddress(2, emps.size()+1, 2, 2));
-        HSSFFont font11 = this.createFont(wb, 11, "宋体", false);
+        HSSFFont font11 = this.createFont(wb, 10, "宋体", false);
         HSSFCellStyle style12 = this.createStyle(wb, font11);
         this.setColumnDefaultStyleAndWidth(sheet,style12);
+
+        //合并的单元格样式
+        HSSFCellStyle boderStyle = wb.createCellStyle();
+        //垂直居中
+        boderStyle.setAlignment(HorizontalAlignment.CENTER);
+
 
         tmp++;
         HSSFRow hssfRow = sheet.createRow(0);
@@ -704,9 +710,10 @@ public class EmpController {
         hssfRow.createCell(24).setCellValue("专业");
         hssfRow.createCell(25).setCellValue("毕业时间");
         Cell ce1 = row0.createCell(26);
-        ce1.setCellValue("职称");
-        ce1.setCellStyle(style11);
-        hssfRow.createCell(26).setCellValue("职称");
+        //ce1.setCellValue("职称");
+        HSSFCell cell = hssfRow.createCell(26);
+        cell.setCellStyle(boderStyle);
+        cell.setCellValue("职称");
         hssfRow.createCell(28).setCellValue("备注");
         HSSFRow hssfRow1 = sheet.createRow(1);
         hssfRow1.createCell(26).setCellValue("名称");
@@ -714,10 +721,7 @@ public class EmpController {
 
 
 
-        //合并的单元格样式
-        HSSFCellStyle boderStyle = wb.createCellStyle();
-        //垂直居中
-        boderStyle.setAlignment(HorizontalAlignment.CENTER);
+
 
         tmp++;
         int i = 1;
@@ -815,12 +819,37 @@ public class EmpController {
 
     private void setColumnDefaultStyleAndWidth(HSSFSheet sheet,HSSFCellStyle style){
 
-        sheet.setDefaultRowHeightInPoints(11);
+        sheet.setDefaultRowHeightInPoints(10);
         sheet.setDefaultColumnStyle(0,style);
         sheet.setDefaultColumnStyle(1,style);
         sheet.setDefaultColumnStyle(2,style);
         sheet.setDefaultColumnStyle(3,style);
         sheet.setDefaultColumnStyle(4,style);
+        sheet.setDefaultColumnStyle(5,style);
+        sheet.setDefaultColumnStyle(6,style);
+        sheet.setDefaultColumnStyle(7,style);
+        sheet.setDefaultColumnStyle(8,style);
+        sheet.setDefaultColumnStyle(9,style);
+        sheet.setDefaultColumnStyle(10,style);
+        sheet.setDefaultColumnStyle(11,style);
+        sheet.setDefaultColumnStyle(12,style);
+        sheet.setDefaultColumnStyle(13,style);
+        sheet.setDefaultColumnStyle(14,style);
+        sheet.setDefaultColumnStyle(15,style);
+        sheet.setDefaultColumnStyle(16,style);
+        sheet.setDefaultColumnStyle(17,style);
+        sheet.setDefaultColumnStyle(18,style);
+        sheet.setDefaultColumnStyle(19,style);
+        sheet.setDefaultColumnStyle(20,style);
+        sheet.setDefaultColumnStyle(21,style);
+        sheet.setDefaultColumnStyle(22,style);
+        sheet.setDefaultColumnStyle(23,style);
+        sheet.setDefaultColumnStyle(24,style);
+        sheet.setDefaultColumnStyle(25,style);
+        sheet.setDefaultColumnStyle(26,style);
+        sheet.setDefaultColumnStyle(27,style);
+        sheet.setDefaultColumnStyle(28,style);
+        sheet.setDefaultColumnStyle(29,style);
     }
 
     private HSSFFont createFont ( HSSFWorkbook wb,int fontSize,String fontName,Boolean bold){
