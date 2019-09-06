@@ -152,8 +152,8 @@
     <tr>
         <td class="left" align="center" style="text-align:center;width: 140px;">办理情况</td>
         <td align="center" class="left1" style="text-align:center;" colspan="6">
-            ${studentReissue.studentId} 同学的学生证已于${requestDate}办理完毕，于 发放。特备此表备查。<br>
-            20   年    月    日在                   报纸上声明丢失；<br>
+            ${studentReissue.studentId} 同学的学生证已于${requestDate}办理完毕，于 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发放。特备此表备查。<br>
+            20   &nbsp;&nbsp;&nbsp;年    &nbsp;&nbsp;&nbsp;月    &nbsp;&nbsp;&nbsp;日在 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;报纸上声明丢失；<br>
             学生签名：  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         </td>
     </tr>
