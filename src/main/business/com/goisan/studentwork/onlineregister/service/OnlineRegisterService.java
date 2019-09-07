@@ -24,11 +24,9 @@ public interface OnlineRegisterService {
     // 获得报名年份
     List<String> getAllYear();
 
-    List<OnlineRegister> selectChinese();
+    //导出查询
+    List<OnlineRegister> exportOnlineRegisterList(OnlineRegister onlineRegister);
 
-    List<OnlineRegister> selectMinkaoHan();
-
-    List<OnlineRegister> selectDoubleLanguage();
-
-    String findMZ(String nation);
+    //报名审核
+    void audit(String ids, String flag, String mind);
 }

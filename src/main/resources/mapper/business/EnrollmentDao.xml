@@ -321,7 +321,13 @@
         FUNC_GET_DICVALUE(political_status ,'ZZMM') politicalStatusShow,
         FUNC_GET_TABLEVALUE(DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentsShow,
         FUNC_GET_TABLEVALUE(major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME')   majorShow,
-        id_card_photo_url
+        id_card_photo_url,
+        student_source,
+        from_army,
+        rural_household_registratio,
+        order_training,
+        documentary_lika_poor_familie,
+        admissions_way
         FROM T_XG_ENROLLMENT_STUDENT
         WHERE student_id = #{studentId}
     </select>
@@ -451,7 +457,8 @@
         staying_status,
         report_status,
         household_register_type,
-        creator,create_time,create_dept,valid_flag,id_card_photo_url,PROGRAM_DURATION,GRADATION)
+        creator,create_time,create_dept,valid_flag,id_card_photo_url,PROGRAM_DURATION,GRADATION
+        , student_source, from_army, rural_household_registratio, order_training, documentary_lika_poor_familie, admissions_way)
         VALUES
         ('${studentId}','${joinYear}','${joinMonth}','${majorDirection}','${departmentsId}','${majorCode}',
         '${trainingLevel}','${name}','${sex}','${idcard}','${studentNumber}',to_date('${birthday}','yyyy-mm-dd'),
@@ -472,7 +479,8 @@
         '${stayingStatus}',
         '${reportStatus}',
         '${householdRegisterType}',
-        '${creator}',sysdate,'${createDept}',1,'${idCardPhotoUrl}','${programDuration}','${gradation}')
+        '${creator}',sysdate,'${createDept}',1,'${idCardPhotoUrl}','${programDuration}','${gradation}'
+        ,#{studentSource},#{fromArmy},#{ruralHouseholdRegistratio},#{orderTraining},#{documentaryLikaPoorFamilie},#{admissionsWay})
     </insert>
     <update id="updateEnrollmentStudent" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
         UPDATE T_XG_ENROLLMENT_STUDENT SET
@@ -515,7 +523,13 @@
         GRADATION=#{gradation},
         change_time = sysdate,
         change_dept = #{changeDept},
-        changer = #{changer}
+        changer = #{changer},
+        student_source=#{studentSource},
+        from_army=#{fromArmy},
+        rural_household_registratio=#{ruralHouseholdRegistratio},
+        order_training=#{orderTraining},
+        documentary_lika_poor_familie=#{documentaryLikaPoorFamilie},
+        admissions_way=#{admissionsWay}
         WHERE student_id = #{studentId}
     </update>
     <update id="updateAllStuMaintain" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">

@@ -41,6 +41,7 @@ public class OnlineRegister extends BaseBean {
     private String majorName;
     private String registerOriginShow;
     private String examTypeShow;
+    private String registerTypeShow;
 
     public String getId() {
         return id;
@@ -320,5 +321,13 @@ public class OnlineRegister extends BaseBean {
 
     public void setExamTypeShow(String examTypeShow) {
         this.examTypeShow = examTypeShow;
+    }
+
+    public String getRegisterTypeShow() {
+        return registerTypeShow;
+    }
+
+    public void setRegisterTypeShow(String registerTypeShow) {
+        this.registerTypeShow = registerTypeShow;
     }
 }

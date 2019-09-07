@@ -76,6 +76,13 @@ public class EnrollmentStudent extends BaseBean {
     private String studentStatusShow;
     private String reportStatusShow;
 
+    private String studentSource;//生源类别
+    private String admissionsWay;  //招生方式
+    private String fromArmy;//来自军队
+    private String ruralHouseholdRegistratio; //是否常住户口在农村
+    private String orderTraining; //是否订单（定向）培养
+    private String documentaryLikaPoorFamilie;//是否建档立卡贫困家庭
+
     public String getReportStatusShow() {
         return reportStatusShow;
     }
@@ -610,5 +617,53 @@ public class EnrollmentStudent extends BaseBean {
 
     public void setTrainingLevelShow(String trainingLevelShow) {
         this.trainingLevelShow = trainingLevelShow;
+    }
+
+    public String getStudentSource() {
+        return studentSource;
+    }
+
+    public void setStudentSource(String studentSource) {
+        this.studentSource = studentSource;
+    }
+
+    public String getAdmissionsWay() {
+        return admissionsWay;
+    }
+
+    public void setAdmissionsWay(String admissionsWay) {
+        this.admissionsWay = admissionsWay;
+    }
+
+    public String getFromArmy() {
+        return fromArmy;
+    }
+
+    public void setFromArmy(String fromArmy) {
+        this.fromArmy = fromArmy;
+    }
+
+    public String getRuralHouseholdRegistratio() {
+        return ruralHouseholdRegistratio;
+    }
+
+    public void setRuralHouseholdRegistratio(String ruralHouseholdRegistratio) {
+        this.ruralHouseholdRegistratio = ruralHouseholdRegistratio;
+    }
+
+    public String getOrderTraining() {
+        return orderTraining;
+    }
+
+    public void setOrderTraining(String orderTraining) {
+        this.orderTraining = orderTraining;
+    }
+
+    public String getDocumentaryLikaPoorFamilie() {
+        return documentaryLikaPoorFamilie;
+    }
+
+    public void setDocumentaryLikaPoorFamilie(String documentaryLikaPoorFamilie) {
+        this.documentaryLikaPoorFamilie = documentaryLikaPoorFamilie;
     }
 }

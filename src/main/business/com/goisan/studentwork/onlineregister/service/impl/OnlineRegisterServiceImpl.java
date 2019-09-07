@@ -7,6 +7,7 @@ import com.goisan.system.bean.PathBean;
 import com.goisan.system.tools.CommonUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -68,8 +69,8 @@ public class OnlineRegisterServiceImpl implements OnlineRegisterService {
             if (hukouImg != null && hukouImg.length > 0){
                 new File(path + File.separator + tiem + "_hukouImg").mkdir();
                 for(MultipartFile mf:hukouImg){
-                    fileName = UUID.randomUUID() + "." + CommonUtil.getFileExt(mf.getOriginalFilename());
-                    fileNames += "," + fileName;
+                    fileName = CommonUtil.getUUID() + "." + CommonUtil.getFileExt(mf.getOriginalFilename());
+                    fileNames += "," + tiem + "_hukouImg" + File.separator + fileName;
                     mf.transferTo(new File(path + File.separator + tiem + "_hukouImg" + File.separator + fileName));
                 }
                 onlineRegister.setHukouImg(fileNames.substring(1));
@@ -79,8 +80,8 @@ public class OnlineRegisterServiceImpl implements OnlineRegisterService {
                 fileNames = "";
                 new File(path + File.separator + tiem + "_graduatedImg").mkdir();
                 for(MultipartFile mf:graduatedImg){
-                    fileName = UUID.randomUUID() + "." + CommonUtil.getFileExt(mf.getOriginalFilename());
-                    fileNames += "," + fileName;
+                    fileName = CommonUtil.getUUID() + "." + CommonUtil.getFileExt(mf.getOriginalFilename());
+                    fileNames += "," + tiem + "_graduatedImg" + fileName;
                     mf.transferTo(new File(path + File.separator + tiem + "_graduatedImg" + File.separator + fileName));
                 }
                 onlineRegister.setGraduatedImg(fileNames.substring(1));
@@ -122,22 +123,17 @@ public class OnlineRegisterServiceImpl implements OnlineRegisterService {
     }
 
     @Override
-    public List<OnlineRegister> selectChinese() {
-        return onlineRegisterDao.selectChinese();
+    public List<OnlineRegister> exportOnlineRegisterList(OnlineRegister onlineRegister) {
+        return onlineRegisterDao.exportOnlineRegisterList(onlineRegister);
     }
 
+    @Transactional
     @Override
-    public List<OnlineRegister> selectMinkaoHan() {
-        return onlineRegisterDao.selectMinkaoHan();
-    }
-
-    @Override
-    public List<OnlineRegister> selectDoubleLanguage() {
-        return onlineRegisterDao.selectDoubleLanguage();
-    }
-
-    @Override
-    public String findMZ(String nation) {
-        return onlineRegisterDao.findMZ(nation);
+    public void audit(String ids, String flag, String mind) {
+        ids = ids.replaceAll(",", "','");
+        onlineRegisterDao.audit(ids, flag, mind);
+        if ("1".equals(flag)){
+            onlineRegisterDao.dataCopy(ids, CommonUtil.getPersonId(), CommonUtil.getDefaultDept());
+        }
     }
 }

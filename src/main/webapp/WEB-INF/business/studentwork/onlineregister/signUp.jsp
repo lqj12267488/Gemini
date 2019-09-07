@@ -45,7 +45,7 @@
 <div class="mui-inner-wrap">
     <!-- 主页面标题 -->
     <header class="mui-bar mui-bar-nav">
-        <h1 class="mui-title">新疆现代职业技术学院护理专业报名</h1>
+        <h1 class="mui-title">新疆现代职业技术学院护理专业报名<c:if test="${type==1}">（中专）</c:if><c:if test="${type==2}">（五年一贯制）</c:if></h1>
         <span id="appIndex" class="mui-icon mui-icon-search mui-pull-right" onclick="searchResult()" style="color:#fff;"></span>
     </header>
     <input type="hidden" id="idCardisHave">
@@ -195,15 +195,16 @@
                     <input name="examinationCardNumber" type="text" id="s_examinationCardNumber" class="validate"/>
                     <label for="s_examinationCardNumber"><span style="color: red">*</span>准考证号</label>
                 </div>
+                <c:if test="${type==1}">
                 <div class="input-field col s6">
-                    <select name="registerOrigin" id="s_registerOrigin">
+                    <select name="registerOrigin" id="s_registerOrigin" onchange="javaScript:if(this.value==1) {$('#score').html('中考成绩');}if(this.value==2) {$('#score').html('高考成绩');}">
                         <option value="" disabled selected><span style="color: red">*</span>报名起点</option>
                     </select>
                 </div>
-
+                </c:if>
                 <div class="input-field col s6">
                     <input name="examScore" type="text" id="s_examScore" class="validate"/>
-                    <label for="s_examScore"><span style="color: red">*</span>考试成绩</label>
+                    <label for="s_examScore"><span style="color: red">*</span><span id="score">中考成绩</span></label>
                 </div>
                 <div class="input-field col s6">
                     <input name="remark" type="text" id="s_remark" class="validate"/>
@@ -282,7 +283,6 @@
     $("#layout").load(baseUrl + "/common/commonSaveLoading");
     $(document).ready(function () {
 
-
         var show_num = [];
         draw(show_num);
 
@@ -339,6 +339,7 @@
                 $("#s_county").append("<option value='' disabled selected><span style='color: red'>*</span>县</option>");
             }
         });
+        <c:if test="${type==1}">
         //报名起点
         $.get(baseUrl + "/common/getSysDict?name=BMQD", function (data) {
             $.each(data, function (index, content) {
@@ -346,6 +347,7 @@
             });
             $('select').material_select();
         });
+        </c:if>
         //materialize 下拉选组件初始化
         $('select').material_select();
         //materialize 时间选择组件初始化
@@ -390,10 +392,18 @@
                             alert("请填写性别！");
                             return;
                         }
-                        if ($("#s_birthday").val() == "" || $("#s_birthday").val() == undefined) {
+                        var birthday = $("#s_birthday").val();
+                        if (birthday == "" || birthday == undefined) {
                             alert("请填写出生日期！");
                             return;
                         }
+                        <c:if test="${type==2}">
+                        var checkDate = Date.parse((new Date().getFullYear() + "-01-01"));
+                        if (checkDate>Date.parse(birthday)) {
+                            alert("毕业年龄不能超过22周岁！");
+                            return;
+                        }
+                        </c:if>
                         if ($("#s_language").val() == "" || $("#s_language").val() == undefined) {
                             alert("请填写语言！");
                             return;
@@ -435,12 +445,14 @@
                             alert("请填写准考证号！");
                             return;
                         }
+                        <c:if test="${type==1}">
                         if ($("#s_registerOrigin").val() == "" || $("#s_registerOrigin").val() == undefined) {
                             alert("请填写报名起点！");
                             return;
                         }
+                        </c:if>
                         if ($("#s_examScore").val() == "" || $("#s_examScore").val() == undefined) {
-                            alert("请填写考试成绩！");
+                            alert("请填写"+$("#score").html()+"！");
                             return;
                         }
                         if ($("#s_idcardImg").val() == "" || $("#s_idcardImg").val() == undefined) {

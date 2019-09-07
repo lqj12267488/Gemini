@@ -301,6 +301,49 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-2 tar">
+                        来自军队
+                    </div>
+                    <div class="col-md-4">
+                        <select id="fromArmySel" class="js-example-basic-single" value=""></select>
+                    </div>
+                    <div class="col-md-2 tar">
+                        招生方式
+                    </div>
+                    <div class="col-md-4">
+                        <select id="admissionsWaySel" class="js-example-basic-single" value=""></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        生源类型
+                    </div>
+                    <div class="col-md-4">
+                        <select id="studentSourceSel" class="js-example-basic-single" value=""></select>
+                    </div>
+                    <div class="col-md-2 tar">
+                        是否常住户口在农村
+                    </div>
+                    <div class="col-md-4">
+                        <select id="ruralHouseholdRegistratioSel" class="js-example-basic-single" value=""></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        是否订单（定向）培养
+                    </div>
+                    <div class="col-md-4">
+                        <select id="orderTrainingSel" class="js-example-basic-single" value=""></select>
+                    </div>
+
+                    <div class="col-md-2 tar">
+                        是否建档立卡贫困家庭
+                    </div>
+                    <div class="col-md-4">
+                        <select id="documentaryLikaPoorFamilieSel" class="js-example-basic-single" value=""></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
                         现家庭住址
                     </div>
                     <div class="col-md-10">
@@ -351,6 +394,11 @@
 <input id="programDurationSHOW" type="hidden" value="${enrollmentstudent.programDuration}"/>
 <input id="gradationSHOW" type="hidden" value="${enrollmentstudent.gradation}"/>
 <input id="reportStatus" type="hidden" value="${enrollmentstudent.reportStatus}"/>
+<input id="fromArmy" type="hidden" value="${student.fromArmy}"/>
+<input id="ruralHouseholdRegistratio" type="hidden" value="${student.ruralHouseholdRegistratio}"/>
+<input id="orderTraining" type="hidden" value="${student.orderTraining}"/>
+<input id="documentaryLikaPoorFamilie" type="hidden" value="${student.documentaryLikaPoorFamilie}"/>
+<input id="studentSource" type="hidden" value="${student.studentSource}"/>
 <object id="plugin0" type="application/x-syncard" width="0" height="0">
     <param name="onload" value="pluginLoaded"/>
 </object>
@@ -523,8 +571,30 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=YFXH", function (data) {
             addOption(data, "clothes", $("#clothesNumber").val());
         });
-
-
+        //招生方式
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZSFS", function (data) {
+            addOption(data, 'admissionsWaySel', "${student.admissionsWay}");
+        });
+        //来自军队
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=LZJD", function (data) {
+            addOption(data, 'fromArmySel', $("#fromArmy").val());
+        });
+        //是否常住户口在农村
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'ruralHouseholdRegistratioSel', $("#ruralHouseholdRegistratio").val());
+        });
+        //是否订单（定向）培养
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'orderTrainingSel', $("#orderTraining").val());
+        });
+        //是否建档立卡贫困家庭
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'documentaryLikaPoorFamilieSel', $("#documentaryLikaPoorFamilie").val());
+        });
+        //生源类别
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=XSLY", function (data) {
+            addOption(data, "studentSourceSel", $("#studentSource").val());
+        });
 
 
         var did = $("#did option:selected").val();
@@ -697,6 +767,13 @@
         var majorCode = mid.split(",")[0];
         var majorDirection = mid.split(",")[1];
         var trainingLevel = mid.split(",")[2];
+
+        var studentSource = $("#studentSourceSel option:selected").val();
+        var fromArmy = $("#fromArmySel option:selected").val();
+        var admissionsWay = $("#admissionsWaySel option:selected").val();
+        var ruralHouseholdRegistratio = $("#ruralHouseholdRegistratioSel option:selected").val();
+        var orderTraining = $("#orderTrainingSel option:selected").val();
+        var documentaryLikaPoorFamilie = $("#documentaryLikaPoorFamilieSel option:selected").val();
         if (category == "") {
             swal({
                 title: "请选择考生类别!",
@@ -896,7 +973,13 @@
             programDuration:programDuration,
             gradation:gradation,
             tel: tel,
-            img: img
+            img: img,
+            fromArmy: fromArmy,
+            admissionsWay: admissionsWay,
+            ruralHouseholdRegistratio: ruralHouseholdRegistratio,
+            orderTraining: orderTraining,
+            documentaryLikaPoorFamilie: documentaryLikaPoorFamilie,
+            studentSource: studentSource
         }, function (msg) {
             hideSaveLoading();
             if (msg.status == 1) {
