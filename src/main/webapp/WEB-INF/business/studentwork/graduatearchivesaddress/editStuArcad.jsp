@@ -82,7 +82,6 @@
     var nameShowMake = "makeClassName";
     var makeClassTree;
     var selectTreeIdMake = "makeTree";
-
     var selectTreeMakeSetting = {
         check: {
             enable: true,
@@ -200,7 +199,6 @@
                 addOption(data, "arcadDetailEdit",'${data.arcadDetailEdit}');
             });
     }
-
     function save() {
         $.post("<%=request.getContextPath()%>/stuArcad/saveStuArcad", {
             arcadId:'${stuArcadEdit.arcadId}',
@@ -216,28 +214,10 @@
         })
     }
 
-    function beforeClick(treeId, treeNode) {
-        var zTree = $.fn.zTree.getZTreeObj("tree");
-        zTree.checkNode(treeNode, !treeNode.checked, null, true);
-        return false;
-    }
-
     function beforeClickMake(treeId, treeNode) {
         var zTree = $.fn.zTree.getZTreeObj(treeId);
         zTree.checkNode(treeNode, !treeNode.checked, null, true);
         return false;
-    }
-
-    function onCheck(e, treeId, treeNode) {
-        var zTree = $.fn.zTree.getZTreeObj("tree"),
-            nodes = zTree.getCheckedNodes(true),
-            v = ""; //节点名称
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            v += nodes[i].name + ",";
-        }
-        if (v.length > 0) v = v.substring(0, v.length - 1);
-        var deptId = $("#vehicle");
-        deptId.attr("value", v);
     }
 
     function onCheckMake(e, treeId, treeNode) {
@@ -288,7 +268,6 @@
         }
         return nodes.join(",");
     }
-
 </script>
 
 <style type="text/css">
@@ -307,7 +286,6 @@
         background-color: #2c5c82;
         color: #dddddd;
     }
-
 
     element.style {
         left: 953.5px;

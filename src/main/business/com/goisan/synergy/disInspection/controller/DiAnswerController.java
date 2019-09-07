@@ -87,7 +87,4 @@ public class DiAnswerController {
         mv.addObject("files", files);
         return mv;
     }
-
-
-
 }
