@@ -180,7 +180,7 @@
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     $(document).ready(function (){
         <%--$.get("<%=request.getContextPath()%>/common/getSysDict?name=CJZT", function (data) {--%>
-            <%--addOption(data, 'f_scoreType','${scoreChange.scoreType}');--%>
+        <%--addOption(data, 'f_scoreType','${scoreChange.scoreType}');--%>
         <%--});--%>
         <%--如果是期末考试则--%>
         if ('${scoreChange.examTypes}' == "1"){
@@ -279,6 +279,7 @@
         var time = $("#f_time").val();
         time = time.replace('T','');
         var reg = new RegExp("^[0-9]*$");
+        var  ss;
         if($("#f_examinationStatus").val() == "" || $("#f_examinationStatus").val() == undefined){
             swal({
                 title: "请选择考试状态!",
@@ -309,7 +310,7 @@
                 swal({title: "请填写补考成绩",type: "info"});
                 return;
             }
-            $("#f_score").val($("#makeUpScore option:selected").text())
+            ss = $("#makeUpScore option:selected").text();
         }
         if ($("#f_examinationStatus").val() =="1" && ("1"=='${scoreChange.examTypes}')){
             if("2"=='${examMethod}'){
@@ -326,6 +327,7 @@
                     swal({title: "成绩请填写0以上的整数！", type: "info"});
                     return;
                 }
+                ss = $("#f_score").val();
             }
         }
         if ($("#f_reason").val() == "" || $("#f_reason").val() == "0" || $("#f_reason").val() == undefined) {
@@ -345,7 +347,7 @@
         if($("#examinationResults").val() == "" || $("#examinationResults").val() == undefined){
 
         }else{
-            $("#f_score").val($("#examinationResults option:selected").text())
+            ss = $("#examinationResults option:selected").text();
         }
         $.post("<%=request.getContextPath()%>/scoreChange/saveScoreChange", {
             id: $("#scoreChangeid").val(),
@@ -364,7 +366,7 @@
             courseId:$("#f_courseId").val(),
             term:$("#f_term").val(),
             originalScore:$("#f_originalScore").val(),
-            score:$("#f_score").val(),
+            score:ss,
             reason:$("#f_reason").val(),
         }, function (msg) {
             hideSaveLoading();

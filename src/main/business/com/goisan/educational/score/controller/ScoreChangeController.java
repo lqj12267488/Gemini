@@ -149,11 +149,13 @@ public class ScoreChangeController {
             ModelAndView mv = new ModelAndView("/business/educational/score/scoreChange/editScoreChange");
             mv.addObject("head", "成绩更改申请修改");
             mv.addObject("scoreChange", scoreChange);
+            mv.addObject("examMethod",scoreImport.getExamMethod());
             return mv;
         } else {
             ModelAndView mv = new ModelAndView("/business/educational/score/scoreChange/editScoreChange2");
             mv.addObject("head", "成绩更改申请修改");
             mv.addObject("scoreChange", scoreChange);
+            mv.addObject("examMethod",scoreImport.getExamMethod());
             return mv;
         }
     }

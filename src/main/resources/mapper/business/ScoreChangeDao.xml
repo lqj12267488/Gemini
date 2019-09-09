@@ -44,73 +44,74 @@
     </select>
     <select id="getScoreChangeById" resultType="com.goisan.educational.score.bean.ScoreChange" parameterType="com.goisan.educational.score.bean.ScoreChange">
         SELECT
-        t.id,
-        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
-        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
-        FUNC_GET_USERNAME(t.requester) requester,
-        to_char(t.time,'yyyy-mm-dd')|| 'T' || to_char(t.time,'hh24:mi') time,
-        t.MAKEUP_SCORE makeupScore,
-        t.examination_results examinationResults,
-        t.examination_status examinationStatus,
-        t.departments_id             departmentsId,
-        t.major_code          majorCode,
-        t.class_id            classId,
-        t.student_id          studentId,
-        t.score_id        scoreId,
-        t.student_number            studentNumber,
-        t.course_id           courseId,
-        t.term           term,
-        t.original_score             originalScore,
-        t.SCORE   score,
-        t.reason           reason,
-        t.request_flag,
-        t.creator,
-        t.create_time,
-        t.create_dept,
-        t.changer,
-        t.change_time,
-        t.change_dept,
-        t.valid_flag
+            t.id,
+            FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+            to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+            FUNC_GET_USERNAME(t.requester) requester,
+            to_char(t.time,'yyyy-mm-dd')|| 'T' || to_char(t.time,'hh24:mi') time,
+            t.MAKEUP_SCORE makeupScore,
+            t.examination_results examinationResults,
+            t.examination_status examinationStatus,
+            t.departments_id             departmentsId,
+            t.major_code          majorCode,
+            t.class_id            classId,
+            t.student_id          studentId,
+            t.score_id        scoreId,
+            t.student_number            studentNumber,
+            t.course_id           courseId,
+            t.term           term,
+            t.original_score             originalScore,
+            t.SCORE   score,
+            t.reason           reason,
+            t.request_flag,
+            t.creator,
+            t.create_time,
+            t.create_dept,
+            t.changer,
+            t.change_time,
+            t.change_dept,
+            t.valid_flag
         FROM
-        t_jw_score_change_wf t
+            t_jw_score_change_wf t
         WHERE id = #{id} ORDER BY t.create_time desc
     </select>
     <select id="getScoreChangeBy" resultType="com.goisan.educational.score.bean.ScoreChange" parameterType="com.goisan.educational.score.bean.ScoreChange">
         SELECT
-        t.id,
-        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
-        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
-        FUNC_GET_USERNAME(t.requester) requester,
-        to_char(t.time,'yyyy-mm-dd')|| 'T' || to_char(t.time,'hh24:mi') time,
-        t.class_id classes,
-        FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
-        FUNC_GET_TABLEVALUE(t.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
-        FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
-        FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
-        decode(makeup_score,'',FUNC_GET_DICVALUE(t.examination_status,'KSZT'),FUNC_GET_DICVALUE(t.examination_status,'BKZT'))  examinationStatus,
-        t.student_number            studentNumber,
-        FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
-        t.COURSE_ID    COURSE,
-        FUNC_GET_DICVALUE(t.term,'XQ')  term,
-        t.examination_results examinationResults,
-        t.original_score             originalScore,
-        t.SCORE         score,
-        t.reason           reason,
-        t.request_flag,
-        t.creator,
-        t.create_time,
-        t.create_dept,
-        t.changer,
-        t.change_time,
-        t.change_dept,
-        t.valid_flag
+            t.id,
+            FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+            to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+            FUNC_GET_USERNAME(t.requester) requester,
+            to_char(t.time,'yyyy-mm-dd')|| 'T' || to_char(t.time,'hh24:mi') time,
+            t.class_id classes,
+            FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
+            FUNC_GET_TABLEVALUE(t.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,
+            FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
+            FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
+            decode(makeup_score,'',FUNC_GET_DICVALUE(t.examination_status,'KSZT'),FUNC_GET_DICVALUE(t.examination_status,'BKZT'))  examinationStatus,
+            FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','student_number')   studentNumber,
+            FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+            t.COURSE_ID    COURSE,
+            FUNC_GET_DICVALUE(t.term,'XQ')  term,
+            t.term termShow,
+            t.examination_results examinationResults,
+            t.original_score             originalScore,
+            t.SCORE         score,
+            t.reason           reason,
+            t.request_flag,
+            t.creator,
+            t.create_time,
+            t.create_dept,
+            t.changer,
+            t.change_time,
+            t.change_dept,
+            t.valid_flag
         FROM
-        t_jw_score_change_wf t
+            t_jw_score_change_wf t
         WHERE id = #{id} ORDER BY t.create_time desc
     </select>
     <insert id="insertScoreChange" parameterType="com.goisan.educational.score.bean.ScoreChange">
         INSERT INTO
-        t_jw_score_change_wf
+            t_jw_score_change_wf
         (id,request_dept,requester,request_date,time,
          departments_id,major_code,class_id,MAKEUP_SCORE,examination_results,
          student_id,student_number,course_id,score_id,
@@ -127,43 +128,43 @@
     </delete>
     <update id="updateScoreChangeById" parameterType="com.goisan.educational.score.bean.ScoreChange">
         update
-        t_jw_score_change_wf
+            t_jw_score_change_wf
         SET
-        id = #{id},
-        request_dept = #{requestDept},
-        requester = #{requester},
-        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
-        time = to_date(#{time},'yyyy-mm-dd hh24:mi'),
-        departments_id   = #{departmentsId},
-        major_code   = #{majorCode},
-        class_id   = #{classId},
-        student_id   = #{studentId},
-        student_number   = #{studentNumber},
-        course_id    = #{courseId},
-        score_type = #{scoreType},
-        MAKEUP_SCORE = #{makeupScore},
-        examination_results = #{examinationResults},
-        examination_status = #{examinationStatus},
-        term    = #{term},
-        original_score    = #{originalScore},
-        score     = #{score},
-        reason    = #{reason},
-        changer= #{changer},
-        change_time= sysdate,
-        change_dept= #{changeDept}
+            id = #{id},
+            request_dept = #{requestDept},
+            requester = #{requester},
+            request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+            time = to_date(#{time},'yyyy-mm-dd hh24:mi'),
+            departments_id   = #{departmentsId},
+            major_code   = #{majorCode},
+            class_id   = #{classId},
+            student_id   = #{studentId},
+            student_number   = #{studentNumber},
+            course_id    = #{courseId},
+            score_type = #{scoreType},
+            MAKEUP_SCORE = #{makeupScore},
+            examination_results = #{examinationResults},
+            examination_status = #{examinationStatus},
+            term    = #{term},
+            original_score    = #{originalScore},
+            score     = #{score},
+            reason    = #{reason},
+            changer= #{changer},
+            change_time= sysdate,
+            change_dept= #{changeDept}
         WHERE
-        id = #{id}
+            id = #{id}
     </update>
     <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
         select
-        t.dept_id as "value",
-        t.dept_name as "label"
+            t.dept_id as "value",
+            t.dept_name as "label"
         FROM T_SYS_DEPT t
     </select>
     <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
         select
-        t.name as "label",
-        t.person_id as "value"
+            t.name as "label",
+            t.person_id as "value"
         FROM T_RS_EMPLOYEE t
     </select>
     <select id="getProcessList" resultType="com.goisan.educational.score.bean.ScoreChange" parameterType="com.goisan.educational.score.bean.ScoreChange">
@@ -285,17 +286,17 @@
 
     <update id="updateScoreById" parameterType="com.goisan.educational.score.bean.ScoreChange">
         update
-        T_JW_SCORE_IMPORT
+            T_JW_SCORE_IMPORT
         SET
-        score_type = #{scoreType},
-        examination_status = #{examinationStatus},
-        score = #{score},
-        change_time= sysdate,
-        changer = #{changer}
+            score_type = #{scoreType},
+            examination_status = #{examinationStatus},
+            score = #{score},
+            change_time= sysdate,
+            changer = #{changer}
         WHERE id = #{scoreId}
     </update>
     <select id="getTeacherIdByCourseId" parameterType="com.goisan.educational.score.bean.ScoreChange" resultType="java.lang.String">
-        select wmsys.wm_concat(FUNC_GET_USERNAME(t.teacher_id))  from T_JW_TEACHINGTASK t where t.course_id =#{course} and t.class_info = #{classes}
+        select wmsys.wm_concat(FUNC_GET_USERNAME(t.teacher_id))  from T_JW_TEACHINGTASK t where t.course_id =#{course} and t.class_info = #{classes} and t.SEMESTER = #{termShow}
     </select>
     <select id="getHandleById" parameterType="java.lang.String" resultType="com.goisan.workflow.bean.Handle">
         SELECT
@@ -317,7 +318,7 @@
 
     <select id="getStudentEndTime" parameterType="String" resultType="String">
         select
-            cast(c.YEAR as int)+cast((decode(m.MAX_YEAR,'','0','1','2','2','3','3','5')) as int)||'年6月' createTime
+                    cast(c.YEAR as int)+cast((decode(m.MAX_YEAR,'','0','1','2','2','3','3','5')) as int)||'年6月' createTime
         from T_XG_STUDENT_CLASS s
                  left join T_XG_CLASS c on s.CLASS_ID=c.CLASS_ID
                  left join T_XG_MAJOR m on c.MAJOR_CODE = m.MAJOR_CODE and c.TRAINING_LEVEL=m.TRAINING_LEVEL

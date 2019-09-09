@@ -98,8 +98,8 @@
                     </div>
                     <div class="col-md-9">
 			<textarea id="remark"
-                                  onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
-                                  maxlength="160" placeholder="最多输入160个字"></textarea>
+                      onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
+                      maxlength="160" placeholder="最多输入160个字"></textarea>
                     </div>
                 </div>
             </div>
@@ -121,7 +121,6 @@
         addOption(data.type, 'taskType');
         addOption(data.plan, 'planId');
         addOption(data.group, 'groupId');
-
         $.get("<%=request.getContextPath()%>/common/getTableDict",{
                 id: " group_id  ",
                 text: " group_name ",

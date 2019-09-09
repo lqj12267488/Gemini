@@ -858,7 +858,7 @@
            (SELECT wmsys.wm_concat(ae.finalEducatio || ',' ||ae.finalEducation ) as finalEducations
             from(
              SELECT
-         t.final_education finalEducatio,
+          func_get_dicvalue(t.final_education,'XL') finalEducatio,
          count(t.FINAL_EDUCATION) as finalEducation
         FROM T_JW_TEACHER_CONDITION t
         WHERE 1 = 1

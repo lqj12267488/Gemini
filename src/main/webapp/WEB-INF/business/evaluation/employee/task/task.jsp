@@ -73,15 +73,15 @@
                     "title": "操作",
                     "render": function (data, type, row) {
                         var html = '<span class="icon-edit" title="修改" ' +
-                                'onclick="edit(\'' + row.taskId + '\')"/>&ensp;' +
+                            'onclick="edit(\'' + row.taskId + '\')"/>&ensp;' +
                             '<span class="icon-copy" title="复制评教任务" ' + ' ' +
-                                'onclick="editCopy(\'' + row.taskId + '\')"/>&ensp;'+
+                            'onclick="editCopy(\'' + row.taskId + '\')"/>&ensp;'+
                             ' <span class="icon-user" title="查看被评人" ' +
                             'onclick="toSelectEmps(\'' + row.taskId + '\',\'' + row.startFlag + '\')"/>&ensp;'+
                             ' <span class="icon-sitemap" title="查看评委组列表" ' +
                             'onclick="toSelectMembers(\'' + row.taskId + '\',\'' + row.startFlag + '\')"/>&ensp;' +
                             '<span class="icon-trash" title="删除" ' +
-                                'onclick="del(\'' + row.taskId + '\',\'' + row.taskName + '\')"/>&ensp;';
+                            'onclick="del(\'' + row.taskId + '\',\'' + row.taskName + '\')"/>&ensp;';
                         if (row.startFlag == '0') {
                             html += '<span class="icon-cogs" title="启动评教" ' +
                                 'onclick="start(\'' + row.taskId + '\',\'' + row.taskName + '\')"/>&ensp;';
@@ -133,7 +133,7 @@
     function setStartFlag(id,startFlag) {
         var flag ="";
         if(startFlag == '1'){
-             flag ='重新启动';
+            flag ='重新启动';
         }else  if(startFlag == '2'){
             flag ='手动结束评教';
         }
@@ -238,7 +238,7 @@
 
     function searchclear() {
         $("#taskNameSea").val("");
-        taskTable.ajax.url("<%=request.getContextPath()%>/evaluation/getTasks").load();
+        taskTable.ajax.url("<%=request.getContextPath()%>/evaluation/getTasks?evaluationType=" + eType).load();
     }
 
     function search() {

@@ -267,6 +267,7 @@
         var time = $("#f_time").val();
         time = time.replace('T', '');
         var reg = new RegExp("^[0-9]*$");
+        var ss ;
         if($("#f_examinationStatus").val() == "" || $("#f_examinationStatus").val() == undefined){
             swal({
                 title: "请选择补考状态!",

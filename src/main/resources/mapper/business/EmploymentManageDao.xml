@@ -173,7 +173,7 @@
             resultType="com.goisan.studentwork.employments.bean.EmploymentManage">
         SELECT
         FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCode,
-        cast(year as int) + cast(maxYear as int)||''  employmentYear,
+        cast(year as int) + cast(decode(maxYear,'','0','1','2','2','3','3','5') as int)||''  employmentYear,
         employmentPropertyShow unitProperty,
         employmentIndustryShow ,
         employmentAreaShow,
@@ -196,7 +196,7 @@
         FUNC_GET_DICVALUE(eu.employment_place, 'JYDD') employmentPlaceShow,
         FUNC_GET_DICVALUE(eu.employment_channels, 'JYQD') employmentChannelsShow,
         decode(es.employment_unit_id,'','0','1') sumInternshipKeep,
-        es.major_match_flag
+        sum(es.major_match_flag) major_match_flag
         FROM T_XG_EMPLOYMENT_STUDENT  es,
         T_XG_EMPLOYMENT_UNIT     eu,
         T_XG_CLASS               en,
@@ -209,6 +209,15 @@
         AND en.VALID_FLAG='1'
         AND es.employment_unit_id = ei.internship_unit_id (+)
         AND es.student_id = ei.student_id(+)
+        group by
+        es.major_code,
+        en.year,
+        eu.unit_property,
+        eu.employment_industry,
+        eu.employment_area,
+        eu.employment_place,
+        eu.employment_channels,
+        es.employment_unit_id
         )
         WHERE 1=1
         <if test="majorCode != null and majorCode != '' ">
@@ -221,8 +230,8 @@
         employmentIndustryShow,
         employmentAreaShow,
         employmentPlaceShow,
-        employmentChannelsShow
-
+        employmentChannelsShow,
+        major_match_flag
     </select>
     <select id="selectEmploymentArea" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT area FROM T_XG_EMPLOYMENT_UNIT  WHERE employment_unit_id = #{employmentUnitId}
