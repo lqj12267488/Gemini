@@ -23,6 +23,8 @@ public interface EmpDao {
 
     void saveEmp(Emp emp);
 
+    void saveEmp1(Emp emp,EmpDeptRelation edr,LoginUser loginUser);
+
     void saveEmpDeptRelation(EmpDeptRelation edr);
 
     List<Emp> getEmpListByDeptId(Emp emp);

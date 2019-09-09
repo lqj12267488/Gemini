@@ -1,6 +1,7 @@
 package com.goisan.system.service;
 
 import com.goisan.system.bean.*;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Blob;
@@ -84,4 +85,6 @@ public interface EmpService {
     List<Emp> selectList(String str);
 
     List<Emp> selectListByName(String str, String deptId);
+
+    void saveEmp1(Emp emp,EmpDeptRelation edr,LoginUser loginUser);
 }

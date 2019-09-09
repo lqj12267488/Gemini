@@ -196,4 +196,13 @@ public class EmpServiceImpl implements EmpService {
     public List<Emp> selectListByName(String str, String deptId) {
         return empDao.selectListByName(str,deptId);
     }
+
+    @Override
+    public void saveEmp1(Emp emp, EmpDeptRelation edr, LoginUser loginUser) {
+        empDao.saveEmp(emp);
+        empDao.saveEmpDeptRelation(edr);
+        loginUserDao.saveUser(loginUser);
+    }
+
+
 }

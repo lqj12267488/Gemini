@@ -44,7 +44,7 @@
         FUNC_GET_USERDICVALUE(t.id_card_type,'JZZJLX') idCardTypeShow,
         FUNC_GET_USERDICVALUE(t.id_card_type_second,'JZZJLX') idCardTypeSecondShow,
         t1.student_id,
-        t2.HOUSEHOLD_REGISTER_PLACE,
+        t2.HOUSEHOLD_REGISTER_PLACE
         from T_XG_PARENT t,T_XG_PARENT_STUDENT t1,T_XG_STUDENT t2
         WHERE 1 = 1 and t.PARENT_ID = t1.PARENT_ID and t1.student_id = t2.student_id
         and t.parent_id = #{id}

@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1203,7 +1202,7 @@ public class EmpController {
                 HSSFRow row = sheet.getRow(i);
                 int flag = 1;
                 Emp emp = new Emp();
-                emp.setPersonId(CommonUtil.getUUID());
+
                 emp.setStaffStatus("100");
                // emp.setName(row.getCell(0).toString());
 
@@ -1215,6 +1214,7 @@ public class EmpController {
                 } else {
                     flag = 0;
                 }
+
 //                String deptName = CommonUtil.changeToString(row.getCell(2));
                 //emp.setDeptId(deptId);
 
@@ -1243,13 +1243,14 @@ public class EmpController {
 
 
                 String time1 = CommonUtil.changeToString(row.getCell(3));
-                if (!"".equals(time1)) {
-                    try {
-                        emp.setEntryDate(CommonUtil.formatExcelDate(time1));
-                    } catch (ParseException e1) {
-                        flag = 0;
-                        e1.printStackTrace();
-                    }
+                SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+                //必须捕获异常
+                try {
+                    java.util.Date Date = df.parse(time1);
+                    java.sql.Date formatDate= new java.sql.Date(Date.getTime());
+                    emp.setEntryDate(formatDate);
+                } catch(ParseException px) {
+                    px.printStackTrace();
                 }
 
                 String hyzk = CommonUtil.changeToString(row.getCell(4));
@@ -1294,15 +1295,16 @@ public class EmpController {
                 }
 
                 String time = CommonUtil.changeToString(row.getCell(8));
-                if (!"".equals(time)) {
-                    try {
-                        emp.setBirthday(CommonUtil.formatExcelDate(time));
-                    } catch (ParseException e1) {
-                        flag = 0;
-                        e1.printStackTrace();
-                    }
-                }
 
+                SimpleDateFormat df1=new SimpleDateFormat("yyyy-MM-dd");
+                //必须捕获异常
+                try {
+                    java.util.Date Date = df1.parse(time);
+                    java.sql.Date formatDate= new java.sql.Date(Date.getTime());
+                    emp.setBirthday(formatDate);
+                } catch(ParseException px) {
+                    px.printStackTrace();
+                }
                 String idType = CommonUtil.changeToString(row.getCell(9));
                 if (!"".equals(idType)) {
                     for (Select2 zjlx1 : zjlx) {
@@ -1391,15 +1393,17 @@ public class EmpController {
                 String zy = CommonUtil.changeToString(row.getCell(21));
                 emp.setMajor(zy);
 
-                String time3 = CommonUtil.changeToString(row.getCell(22));
-                if (!"".equals(time3)) {
-                    try {
-                        emp.setGraduateTime(CommonUtil.formatExcelDate(time3));
-                    } catch (ParseException e1) {
-                        flag = 0;
-                        e1.printStackTrace();
-                    }
+                String time2 = CommonUtil.changeToString(row.getCell(22));
+                SimpleDateFormat df2=new SimpleDateFormat("yyyy-MM-dd");
+                //必须捕获异常
+                try {
+                    java.util.Date Date = df2.parse(time2);
+                    java.sql.Date formatDate= new java.sql.Date(Date.getTime());
+                    emp.setGraduateTime(formatDate);
+                } catch(ParseException px) {
+                    px.printStackTrace();
                 }
+
 
                 String mc = CommonUtil.changeToString(row.getCell(23));
                 emp.setPositionalTitles(mc);
@@ -1416,7 +1420,7 @@ public class EmpController {
 
                 String bz = CommonUtil.changeToString(row.getCell(25));
                 emp.setRemark(bz);
-
+                emp.setPersonId(CommonUtil.getUUID());
                 emp.setCreator(CommonUtil.getPersonId());
                 emp.setCreateDept(CommonUtil.getDefaultDept());
                 emp.setCreateTime(CommonUtil.getDate());
@@ -1462,11 +1466,12 @@ public class EmpController {
                 if (flag == 0) {
                     msg += i + ",";
                     count++;
+                    empService.updateEmp(emp);
                 }
 
             }
             if (count > 0) {
-                msg = msg.substring(0, msg.length() - 1) + "行,人员身份信息不正确！请重新导入！";
+                msg = msg.substring(0, msg.length() - 1) + "行,人员身份信息已存在！请重新导入！";
             } else {
                 msg = "导入成功！";
             }

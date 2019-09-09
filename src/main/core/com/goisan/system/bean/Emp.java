@@ -88,15 +88,33 @@ public class Emp extends BaseBean {
     private String remark;
     private String age;
     private String educationTechniqueShow;
-    private String entryDateShow;
-    private String graduateTimeShow;
-    private String birthdayShow;
     private String classPositions;
     private String classPositionsShow;
     private String academicDegree;
     private String academicDegreeShow;
     private String img;
     private String nativePlaceProvinceShow;
+    private String birthdayShow;
+    private String workTimeShow;
+    private String toSchoolTimeShow;
+    private String entryDateShow;
+    private String graduateTimeShow;
+
+    public String getWorkTimeShow() {
+        return workTimeShow;
+    }
+
+    public void setWorkTimeShow(String workTimeShow) {
+        this.workTimeShow = workTimeShow;
+    }
+
+    public String getToSchoolTimeShow() {
+        return toSchoolTimeShow;
+    }
+
+    public void setToSchoolTimeShow(String toSchoolTimeShow) {
+        this.toSchoolTimeShow = toSchoolTimeShow;
+    }
 
     public String getNativePlaceProvinceShow() {
         return nativePlaceProvinceShow;
