@@ -71,6 +71,7 @@ public class Emp extends BaseBean {
     private Date entryDate;
     private String permanentResidence;
     private String permanentResidenceLocal;
+    private String permanentResidenceLocalShow;
     private String levels;
     private String educationalLevel;
     private String educationalLevelShow;
@@ -79,6 +80,8 @@ public class Emp extends BaseBean {
     private String major;
     private String positionalTitles;
     private String positionalLevel;
+    private String positionalLevelShow;
+    private String post;
     private String examinePolitical;
     private String examinePoliticalShow;
     private String educationTechnique;
@@ -88,6 +91,87 @@ public class Emp extends BaseBean {
     private String entryDateShow;
     private String graduateTimeShow;
     private String birthdayShow;
+    private String classPositions;
+    private String classPositionsShow;
+    private String academicDegree;
+    private String academicDegreeShow;
+    private String img;
+    private String nativePlaceProvinceShow;
+
+    public String getNativePlaceProvinceShow() {
+        return nativePlaceProvinceShow;
+    }
+
+    public void setNativePlaceProvinceShow(String nativePlaceProvinceShow) {
+        this.nativePlaceProvinceShow = nativePlaceProvinceShow;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+
+    public String getPermanentResidenceLocalShow() {
+        return permanentResidenceLocalShow;
+    }
+
+    public void setPermanentResidenceLocalShow(String permanentResidenceLocalShow) {
+        this.permanentResidenceLocalShow = permanentResidenceLocalShow;
+    }
+
+    public String getAcademicDegree() {
+        return academicDegree;
+    }
+
+    public void setAcademicDegree(String academicDegree) {
+        this.academicDegree = academicDegree;
+    }
+
+    public String getAcademicDegreeShow() {
+        return academicDegreeShow;
+    }
+
+    public void setAcademicDegreeShow(String academicDegreeShow) {
+        this.academicDegreeShow = academicDegreeShow;
+    }
+
+
+    public String getPositionalLevelShow() {
+        return positionalLevelShow;
+    }
+
+    public void setPositionalLevelShow(String positionalLevelShow) {
+        this.positionalLevelShow = positionalLevelShow;
+    }
+
+    public String getPost() {
+        return post;
+    }
+
+    public void setPost(String post) {
+        this.post = post;
+    }
+
+    public String getClassPositions() {
+        return classPositions;
+    }
+
+    public void setClassPositions(String classPositions) {
+        this.classPositions = classPositions;
+    }
+
+    public String getClassPositionsShow() {
+        return classPositionsShow;
+    }
+
+    public void setClassPositionsShow(String classPositionsShow) {
+        this.classPositionsShow = classPositionsShow;
+    }
+
 
     public String getAge() {
         return age;

@@ -38,5 +38,5 @@ public interface ParentService {
 
     void updateStudentId(Parent baseBean);
 
-    List<Parent> getStudentList(Parent parent);
+    List<Parent> getParentStudentList(Parent parent);
 }

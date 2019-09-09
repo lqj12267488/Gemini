@@ -119,6 +119,41 @@ public class Student extends BaseBean {
     private String codeCooperativeEducation;  //联招合作学校代码
     private String externalTeachingPoint;  //校外教学点
     private String subsectionCulture; //分段培养方式
+    private String duringEmployment;//学生是否在职
+    private String duringEmploymentShow;
+    private String idCardTypeStudentShow;
+    private String totalEnrollmentScore;//入学总分
+
+    public String getTotalEnrollmentScore() {
+        return totalEnrollmentScore;
+    }
+
+    public void setTotalEnrollmentScore(String totalEnrollmentScore) {
+        this.totalEnrollmentScore = totalEnrollmentScore;
+    }
+    public String getDuringEmployment() {
+        return duringEmployment;
+    }
+
+    public void setDuringEmployment(String duringEmployment) {
+        this.duringEmployment = duringEmployment;
+    }
+
+    public String getDuringEmploymentShow() {
+        return duringEmploymentShow;
+    }
+
+    public void setDuringEmploymentShow(String duringEmploymentShow) {
+        this.duringEmploymentShow = duringEmploymentShow;
+    }
+
+    public String getIdCardTypeStudentShow() {
+        return idCardTypeStudentShow;
+    }
+
+    public void setIdCardTypeStudentShow(String idCardTypeStudentShow) {
+        this.idCardTypeStudentShow = idCardTypeStudentShow;
+    }
 
     public String getFromArmy() {
         return fromArmy;

@@ -5,7 +5,7 @@
     <select id="getParentList"
             parameterType="com.goisan.system.bean.Parent"
             resultType="com.goisan.system.bean.Parent">
-        select t.parent_id,t.parent_name,t.idcard,t.parent_tel,t.PARENT_NAME_SECOND,
+        select t.parent_id,t.parent_name parentName,t.idcard,t.parent_tel,t.PARENT_NAME_SECOND,
         t.ID_CARD_TYPE,
         t.ID_CARD_TYPE_SECOND,
         t.IDCARD_SECOND,
@@ -44,7 +44,7 @@
         FUNC_GET_USERDICVALUE(t.id_card_type,'JZZJLX') idCardTypeShow,
         FUNC_GET_USERDICVALUE(t.id_card_type_second,'JZZJLX') idCardTypeSecondShow,
         t1.student_id,
-        t2.HOUSEHOLD_REGISTER_PLACE
+        t2.HOUSEHOLD_REGISTER_PLACE,
         from T_XG_PARENT t,T_XG_PARENT_STUDENT t1,T_XG_STUDENT t2
         WHERE 1 = 1 and t.PARENT_ID = t1.PARENT_ID and t1.student_id = t2.student_id
         and t.parent_id = #{id}
@@ -201,9 +201,30 @@
     </select>
 
 
-    <select id="getStudentList" parameterType="com.goisan.system.bean.Parent" resultType="com.goisan.system.bean.Parent">
+    <select id="getParentStudentList" parameterType="com.goisan.system.bean.Parent" resultType="com.goisan.system.bean.Parent">
 
-       select t.student_id  from t_xg_student t
+       select s.name studentName,
+              s.IDCARD_TYPE idcardType,
+              t.STUDENT_ID,
+              s.DURING_EMPLOYMENT duringEmployment,
+              FUNC_GET_DICVALUE(s.DURING_EMPLOYMENT,'SF') duringEmploymentShow,
+              s.year,
+              s.STUDENT_STATUS studentStatus,
+              FUNC_GET_DICVALUE(s.student_status,'XSZT') studentStatusShow,
+              p.PARENT_NAME parentName,
+              p.ID_CARD_TYPE idCardType,
+              FUNC_GET_USERDICVALUE(p.id_card_type,'JZZJLX') idCardTypeShow,
+              p.IDCARD idcard,
+              p.PARENT_TEL parentTel,
+              p.PARENT_NAME_SECOND parentNameSecond,
+              p.ID_CARD_TYPE_SECOND idCardTypeSecond,
+              FUNC_GET_USERDICVALUE(p.ID_CARD_TYPE_SECOND,'JZZJLX') idCardTypeSecondShow,
+              p.IDCARD_SECOND idcardSecond,
+              p.PARENT_TEL_SECOND parentTelSecond,
+              FUNC_GET_TABLEVALUE(d.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') className,
+              s.HOUSEHOLD_REGISTER_PLACE householdRegisterPlace
+       from T_XG_PARENT p left join T_XG_PARENT_STUDENT t on p.PARENT_ID = t.PARENT_ID left join t_xg_student s on t.STUDENT_ID = s.STUDENT_ID
+                          left join t_xg_student_class d on s.STUDENT_ID = d.STUDENT_ID
 
     </select>
 

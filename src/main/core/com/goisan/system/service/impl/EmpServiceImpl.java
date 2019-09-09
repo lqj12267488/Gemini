@@ -191,4 +191,9 @@ public class EmpServiceImpl implements EmpService {
     public List<Emp> selectList(String str) {
         return empDao.selectList(str);
     }
+
+    @Override
+    public List<Emp> selectListByName(String str, String deptId) {
+        return empDao.selectListByName(str,deptId);
+    }
 }

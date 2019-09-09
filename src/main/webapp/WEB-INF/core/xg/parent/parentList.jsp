@@ -37,7 +37,7 @@
                                 onclick="add()">新增
                         </button>
                         <button class="btn btn-default btn-clean" onclick="openImportDialog()">导入</button>
-                        <a id="expdata" class="btn btn-default btn-clean" >导出</a>
+                        <a id="expdata" class="btn btn-default btn-clean" onclick="exportStudent()">导出</a>
                     </div>
                     <div class="form-row block" style="overflow-y:auto;">
                         <table id="parentTable" cellpadding="0" cellspacing="0"
@@ -102,7 +102,7 @@
         $("#dialog").modal("show");
     }*/
 
-    function exportPaperPrize() {
+    function exportStudent() {
         var href = "<%=request.getContextPath()%>/core/parent/exportParent";
         $("#expdata").attr("href",href);
     }

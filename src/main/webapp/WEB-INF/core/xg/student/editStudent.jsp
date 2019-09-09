@@ -318,7 +318,20 @@
                     </div>
 
                 </div>
-
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                    学生是否在职
+                    </div>
+                    <div class="col-md-4">
+                        <select id="duringEmploymentSel" class="js-example-basic-single" value=""></select>
+                    </div>
+                    <div class="col-md-2 tar">
+                        入学总分
+                    </div>
+                    <div class="col-md-4">
+                        <input id="totalEnrollmentScore" class="js-example-basic-single" value="${student.totalEnrollmentScore}"></input>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -354,6 +367,7 @@
 <input id="ruralHouseholdRegistratio" type="hidden" value="${student.ruralHouseholdRegistratio}"/>
 <input id="orderTraining" type="hidden" value="${student.orderTraining}"/>
 <input id="documentaryLikaPoorFamilie" type="hidden" value="${student.documentaryLikaPoorFamilie}"/>
+<input id="duringEmployment" type="hidden" value="${student.duringEmployment}">
 <object id="plugin0" type="application/x-syncard" width="0" height="0">
     <param name="onload" value="pluginLoaded"/>
 </object>
@@ -570,6 +584,11 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
             addOption(data, 'documentaryLikaPoorFamilieSel', $("#documentaryLikaPoorFamilie").val());
         });
+
+        //是否在职
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'duringEmploymentSel', $("#duringEmployment").val());
+        });
         var path = "<%=request.getContextPath()%>";
         addAdministrativeDivisions("houseProvince", $("#houseProvinceValue").val(),
             "houseCity", $("#houseCityValue").val(),
@@ -680,7 +699,8 @@
         var ruralHouseholdRegistratio = $("#ruralHouseholdRegistratioSel option:selected").val();
         var orderTraining = $("#orderTrainingSel option:selected").val();
         var documentaryLikaPoorFamilie = $("#documentaryLikaPoorFamilieSel option:selected").val();
-
+        var duringEmployment = $("#duringEmploymentSel option:selected").val();
+        var totalEnrollmentScore = $("#totalEnrollmentScore").val();
         if ($("#name").val() == "") {
             swal({
                 title: "请填写学生姓名!",
@@ -809,6 +829,8 @@
             ruralHouseholdRegistratio: ruralHouseholdRegistratio,
             orderTraining: orderTraining,
             documentaryLikaPoorFamilie: documentaryLikaPoorFamilie,
+            duringEmployment: duringEmployment,
+            totalEnrollmentScore: totalEnrollmentScore,
         }, function (msg) {
             hideSaveLoading();
             if (msg.status == 1) {

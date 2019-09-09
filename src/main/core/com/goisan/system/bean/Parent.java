@@ -13,10 +13,85 @@ public class Parent extends BaseBean {
     private String parentName;
     private String idcard;
     private String parentTel;
-    private String studentName;
-    private String idCardTypeShow;
+    private String studentName;//学生姓名
+    private String idcardType;//学生身份证件类型
+    private String idCardTypeShow;//家长身份证件类型
     private String idCardTypeSecondShow;
-    private String studentId;
+    private String studentId;//学生身份证件号码
+    private String duringEmployment; //学生是否在职
+    private String duringEmploymentShow;
+    private String year;//入学年份
+    private String studentStatus;//学籍状态
+    private String studentStatusShow;
+    private String className;//班级名称
+    private String householdRegisterPlace;//户籍地址
+    private String idCardTypeStudentShow;
+
+    public String getIdcardType() {
+        return idcardType;
+    }
+
+    public void setIdcardType(String idcardType) {
+        this.idcardType = idcardType;
+    }
+
+    public String getDuringEmployment() {
+        return duringEmployment;
+    }
+
+    public void setDuringEmployment(String duringEmployment) {
+        this.duringEmployment = duringEmployment;
+    }
+
+    public String getDuringEmploymentShow() {
+        return duringEmploymentShow;
+    }
+
+    public void setDuringEmploymentShow(String duringEmploymentShow) {
+        this.duringEmploymentShow = duringEmploymentShow;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getStudentStatus() {
+        return studentStatus;
+    }
+
+    public void setStudentStatus(String studentStatus) {
+        this.studentStatus = studentStatus;
+    }
+
+    public String getStudentStatusShow() {
+        return studentStatusShow;
+    }
+
+    public void setStudentStatusShow(String studentStatusShow) {
+        this.studentStatusShow = studentStatusShow;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+
+
+    public String getIdCardTypeStudentShow() {
+        return idCardTypeStudentShow;
+    }
+
+    public void setIdCardTypeStudentShow(String idCardTypeStudentShow) {
+        this.idCardTypeStudentShow = idCardTypeStudentShow;
+    }
 
     public String getHouseholdRegisterPlace() {
         return householdRegisterPlace;
@@ -26,7 +101,7 @@ public class Parent extends BaseBean {
         this.householdRegisterPlace = householdRegisterPlace;
     }
 
-    private String householdRegisterPlace;
+
 
     public String getStudentId() {
         return studentId;

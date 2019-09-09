@@ -793,7 +793,7 @@ public class ParentController {
     }
 
     /**
-     * 论文获奖信息导出
+     * 导出
      *
      * @param
      * @param response
@@ -804,10 +804,7 @@ public class ParentController {
     public void exportParent(HttpServletResponse response) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Parent parent = new Parent();
-        parent.setCreator(CommonUtil.getPersonId());
-        parent.setCreateDept(CommonUtil.getDefaultDept());
-        parent.setLevel(CommonUtil.getLoginUser().getLevel());
-        List<BaseBean> list = parentService.getParentList(parent);
+        List<Parent> list = parentService.getParentStudentList(parent);
 
         //创建HSSFWorkbook对象
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -844,26 +841,34 @@ public class ParentController {
         row1.createCell(16).setCellValue("学生户籍地址（与身份证上一致）");
         tmp++;
         int i = 1;
-       /* for (Parent salaryObj : list) {
+        for (Parent parent1 : list) {
             HSSFRow row = sheet.createRow(tmp);
             //创建HSSFCell对象
             row.createCell(0).setCellValue(i);
-            row.createCell(1).setCellValue(salaryObj.);
-            row.createCell(2).setCellValue(salaryObj.getTerm());
-            row.createCell(3).setCellValue(salaryObj.getCampusId());
-            row.createCell(4).setCellValue(salaryObj.getPersonId());
-            row.createCell(5).setCellValue(salaryObj.getPaperName());
-            row.createCell(6).setCellValue(salaryObj.getMatch());
-            row.createCell(7).setCellValue(salaryObj.getPrize());
-            row.createCell(8).setCellValue(salaryObj.getTime());
+            row.createCell(1).setCellValue(parent1.getStudentName());
+            row.createCell(2).setCellValue(parent1.getIdcardType());
+            row.createCell(3).setCellValue(parent1.getStudentId());
+            row.createCell(4).setCellValue(parent1.getDuringEmploymentShow());
+            row.createCell(5).setCellValue(parent1.getYear());
+            row.createCell(6).setCellValue(parent1.getStudentStatusShow());
+            row.createCell(7).setCellValue(parent1.getParentName());
+            row.createCell(8).setCellValue(parent1.getIdCardTypeShow());
+            row.createCell(9).setCellValue(parent1.getIdcard());
+            row.createCell(10).setCellValue(parent1.getParentTel());
+            row.createCell(11).setCellValue(parent1.getParentNameSecond());
+            row.createCell(12).setCellValue(parent1.getIdCardTypeSecondShow());
+            row.createCell(13).setCellValue(parent1.getIdcardSecond());
+            row.createCell(14).setCellValue(parent1.getParentTelSecond());
+            row.createCell(15).setCellValue(parent1.getClassName());
+            row.createCell(16).setCellValue(parent1.getHouseholdRegisterPlace());
             tmp++;
             i++;
-        }*/
+        }
         OutputStream os = null;
         response.setContentType("application/vnd.ms-excel");
         try {
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode
-                    ("论文获奖维护表.xls", "utf-8"));
+                    ("高等教育学生父母或监护人信息录取表.xls", "utf-8"));
             os = response.getOutputStream();
             wb.write(os);
         } catch (UnsupportedEncodingException e) {

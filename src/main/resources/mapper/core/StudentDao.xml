@@ -111,6 +111,9 @@
                s.external_teaching_point    externalTeachingPoint,
                s.subsection_culture         subsectionCulture,
                s.trailing_children_flag     trailingChildrenFlag,
+               s.during_employment duringEmployment,
+               FUNC_GET_DICVALUE(s.during_employment ,'SF') duringEmploymentShow,
+               s.TOTAL_ENROLLMENT_SCORE totalEnrollmentScore,
                s. name,
                s.sex,
                s.year
@@ -430,7 +433,7 @@ INSERT INTO t_xg_student
  external_teaching_point,
  subsection_culture, trailing_children_flag, "FROM", NAME_OF_MEMBER, MEMBER_RELATIONSHIP, IS_GUARDIAN,
  MEMBER_TELEPHONE_NUMBER, GRADUATION_SCHOOL,
- FROM_ARMY,RURAL_HOUSEHOLD_REGISTRATIO,ORDER_TRAINING,DOCUMENTARY_LIKA_POOR_FAMILIE)
+ FROM_ARMY,RURAL_HOUSEHOLD_REGISTRATIO,ORDER_TRAINING,DOCUMENTARY_LIKA_POOR_FAMILIE,DURING_EMPLOYMENT,TOTAL_ENROLLMENT_SCORE)
 VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
         to_date('${birthday}', 'yyyy-mm-dd'), '${joinYear}', '${joinMonth}',
         '${householdRegisterType}',
@@ -457,7 +460,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         '${subsectionCulture}',
         '${trailingChildrenFlag}', '${from}', '${nameOfMember}', '${memberRelationship}', '${isGuardian}',
         '${memberTelephoneNumber}', '${graduationSchool}',
-        '${fromArmy}','${ruralHouseholdRegistratio}','${orderTraining}','${documentaryLikaPoorFamilie}')
+        '${fromArmy}','${ruralHouseholdRegistratio}','${orderTraining}','${documentaryLikaPoorFamilie}','${duringEmployment}','${totalEnrollmentScore}')
     </insert>
     <update id="updateStudent" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student
@@ -529,6 +532,8 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
             external_teaching_point=#{externalTeachingPoint},
             subsection_culture=#{subsectionCulture},
             trailing_children_flag=#{trailingChildrenFlag},
+            during_employment = #{duringEmployment},
+            TOTAL_ENROLLMENT_SCORE = #{totalEnrollmentScore},
             "FROM" = #{from}
         WHERE student_id = #{studentId}
     </update>

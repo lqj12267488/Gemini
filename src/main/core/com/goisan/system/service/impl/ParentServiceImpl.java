@@ -110,8 +110,8 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
-    public List<Parent> getStudentList(Parent parent) {
-        return parentDao.getStudentList(parent);
+    public List<Parent> getParentStudentList(Parent parent) {
+        return parentDao.getParentStudentList(parent);
     }
 
 

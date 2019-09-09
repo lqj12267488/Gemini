@@ -34,5 +34,5 @@ public interface ParentDao {
 
     void updateStudentId(Parent parent);
 
-    List<Parent> getStudentList(Parent parent);
+    List<Parent> getParentStudentList(Parent parent);
 }
