@@ -138,7 +138,13 @@
         })
     }
     function backIndex() {
-        window.location.reload();
+        var url = window.location.href;
+        var index = url.indexOf("&tid");
+        if(index>-1){
+            window.location.href = url.substring(0, index);
+        }else {
+            window.location.reload();
+        }
     }
 
 </script>

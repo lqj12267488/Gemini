@@ -642,4 +642,14 @@
         });
 </script>
 
+<script>
+    <c:if test="${tid!=\"null\" and tid!=null}">
+    viewNotice("${tid}","${type}","${abc}")
+    </c:if>
+
+    <c:if test="${businessId!=\"null\" and tid!=null}">
+    loadAudit("${url}","${tableName}","${businessId}","${flag}","${abc}","${state}","${editUrl}");
+    </c:if>
+</script>
+
 </html>

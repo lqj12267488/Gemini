@@ -129,6 +129,11 @@
                 /common/** = anon
                 /pageoffice/** = anon
                 /login = anon
+                /casLogin = anon
+                /userLogin = anon
+                /getList = anon
+                /casToIndexAudit = anon
+                /CasNoticeListIndexNotice = anon
                 /loginApp/loginJsp = anon
                 /resourceLibrary/toIndex = anon
                 /loginApp/login = anon

@@ -121,8 +121,10 @@
         r.resource_type resourcetype,
         r.resource_order resourceorder
         FROM t_sys_role_resource rr, t_sys_resource r
-        WHERE rr.role_id in (${roles})
-        AND r.resource_id = rr.resource_id
+        WHERE  r.resource_id = rr.resource_id
+        <if test="roles !=null and roles !=''">
+           and rr.role_id in (${roles})
+        </if>
         AND r.resource_type = '1'
         AND SYSTEM = #{system}
         <if test="parentId != null and parentId !='' ">
