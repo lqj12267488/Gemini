@@ -6,6 +6,7 @@ import com.goisan.educational.exam.dao.ExamDao;
 import com.goisan.educational.exam.service.ExamService;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.educational.place.classroom.bean.Classroom;
+import com.goisan.educational.score.bean.ScoreImport;
 import com.goisan.system.bean.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,11 @@ import java.util.List;
 public class ExamServiceImpl implements ExamService {
     @Resource
     private ExamDao examDao;
+
+    @Override
+    public List<ScoreImport> checkImport(String examId) {
+        return examDao.checkImport(examId);
+    }
 
     @Override
     public String getExamMethod(String courseId,String termId) {
@@ -58,8 +64,15 @@ public class ExamServiceImpl implements ExamService {
         examDao.updateExam(exam);
     }
 
+    @Transactional
     public void delExamById(String id) {
         examDao.delExamById(id);
+        examDao.delExamTime(id);
+        examDao.delExamTeacher(id);
+        examDao.delExamCourseClass(id);
+        examDao.delExamStudent(id);
+        examDao.delExamRoomTeacher(id);
+        examDao.delExamExamination(id);
     }
 
     public List<ExamCourse> getExamCourseList(ExamCourse examCourse) {

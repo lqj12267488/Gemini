@@ -18,6 +18,8 @@ import java.util.Map;
  */
 @Repository
 public interface ScoreImportDao {
+    List<Map<String, String>> getCourseClass2(@Param("id") String id, @Param("personId") String personId);
+    Integer getKCFailNum(ScoreImport scoreImport);
     void sumbitById(ScoreImport scoreImport);
     List<ScoreImport> getScoreImportList(ScoreImport scoreImport);
     List<ScoreImport> getScoreImportListByIdAndSumbit(ScoreImport scoreImport);

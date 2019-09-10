@@ -121,6 +121,7 @@ public interface ScoreImportService {
     List<Map<String, String>> getDetails(String id);
 
     List<Map<String, String>> getCourseClass(String id, String personId);
+    List<Map<String, String>> getCourseClass2(String id,String personId);
 
     List<String> check(String termId, String classId, String course);
 

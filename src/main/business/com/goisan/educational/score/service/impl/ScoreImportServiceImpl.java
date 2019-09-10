@@ -454,7 +454,9 @@ public class ScoreImportServiceImpl implements ScoreImportService {
                             if (makeupCount == null) {
 
                                 makeupCount = new MakeupCount();
-                                makeupCount.setFailNum(1);
+                                //                                如果是第一次，则加上考查不及格
+                                Integer kcFailNum = scoreImportDao.getKCFailNum(scoreImport);
+                                makeupCount.setFailNum(1+kcFailNum);
 
                                 if ("1".equals(scoreImport.getExamMethod())) {
 
@@ -637,6 +639,11 @@ public class ScoreImportServiceImpl implements ScoreImportService {
     @Override
     public List<Map<String, String>> getDetails(String id) {
         return scoreImportDao.getDetails(id);
+    }
+
+    @Override
+    public List<Map<String, String>> getCourseClass2(String id, String personId) {
+        return scoreImportDao.getCourseClass2(id, personId);
     }
 
     @Override

@@ -400,7 +400,7 @@
     //返回
     function back() {
         <%--$("#right").load("<%=request.getContextPath()%>/scoreMakeup/examList?type=3");--%>
-        $("#right").load("<%=request.getContextPath()%>/scoreExam/toCourseClass?id=${scoreExamId}&type=${type}");
+        $("#right").load("<%=request.getContextPath()%>/scoreExam/toCourseClass?id=${scoreExamId}&type=${type}&queryFlag=2");
         $("#right").modal("show");
     }
 

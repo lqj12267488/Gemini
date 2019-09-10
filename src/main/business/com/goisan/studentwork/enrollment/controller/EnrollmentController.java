@@ -391,13 +391,17 @@ public class EnrollmentController {
          * 修改, 如果没有年份，默认是今年
          * 如果有年份，则按年份进行过滤
          */
-//        if (enrollment.getYear()==null || "".equals(enrollment.getYear())){
-//            SimpleDateFormat formatDate = new SimpleDateFormat("yyyy");
-//            String year = formatDate.format(new java.util.Date());
-//            enrollment.setYear(year);
-//        }else {
+        if (enrollment.getYear()==null || "".equals(enrollment.getYear())){
+            SimpleDateFormat formatDate = new SimpleDateFormat("yyyy");
+            String year = formatDate.format(new java.util.Date());
+            enrollment.setYear(year);
+        }else {
+            //            YearFlag 1 为请选择
+            if ("0".equals(enrollment.getYear())){
+                enrollment.setYearFlag("1");
+            }
             enrollment.setYear(enrollment.getYear());
-//        }
+        }
         if("undefined".equals(enrollment.getMajorCode()) || "0".equals(enrollment.getMajorCode()) || "请选择系部".equals(enrollment.getMajorCode())){
             enrollment.setMajorCode(null);
         }

@@ -262,6 +262,9 @@
         var tid = $("#tid option:selected").val();
         var system = $("#system option:selected").val();
         var year = $("#f_year option:selected").val();
+        if (year==""){
+            year = 0;
+        }
         if (mid!= null  || system != null || year != null || tid!= null) {
             table.ajax.url("<%=request.getContextPath()%>/enrollment/getEnrollmentList?departmentsId="+did+"&majorCode="+mid+"&trainingLevel="+tid+"&schoolSystem="+system+"&year="+year+"&flag=plan").load();
         }

@@ -698,6 +698,7 @@
         INSERT INTO
             T_JW_SCORE_IMPORT
         (id,
+          exam_method,
          score_class_id,
          subject_id,
          class_id,
@@ -721,7 +722,7 @@
          graduate_makeup_status,
          creator, create_time, create_dept)
         values
-        (FUNC_GET_UUID, '${scoreClassId}',
+        (FUNC_GET_UUID,'${examMethod}','${scoreClassId}',
          '${subjectId}', '${classId}', '${departmentsId}',
          '${majorCode}', '${majorDirection}',
          '${trainingLevel}', '${planId}', '${courseId}',
@@ -1412,6 +1413,7 @@
     <select id="getScoreImportByClassId" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         select distinct departments_id,
+                        exam_method,
                         major_code,
                         major_direction,
                         training_level,
@@ -1781,6 +1783,43 @@
             and t6.TEACHER_ID =#{personId}
         </if>
     </select>
+
+    <!--毕业前补考-->
+    <select id="getCourseClass2" parameterType="string" resultType="map">
+        select t2.* ,
+        t.TEACHER_ID,
+        t.EXAM_METHOD "examMethod",
+        FUNC_GET_USERNAME(t.TEACHER_ID) "userName" from
+        (select distinct
+        e.EXAM_ID "examId",EXAM_NAME,
+        SCORE_START_TIME "scoreStartTime",
+        SCORE_END_TIME "scoreEndTime",
+        NORMAL_SCORE_START_TIME "normalScoreStartTime",
+        NORMAL_SCORE_END_TIME "normalScoreEndTime",
+        c.class_id "classId",
+        c.course_id "courseId",
+        FUNC_GET_TABLEVALUE(c.course_id,
+        'T_JW_COURSE',
+        'COURSE_ID',
+        'COURSE_NAME') "courseName",
+        FUNC_GET_TABLEVALUE( c.class_id,
+        'T_XG_CLASS',
+        'CLASS_ID',
+        'CLASS_NAME') "className",
+        s.term "termId",
+        FUNC_GET_DICVALUE(s.term, 'XQ') "term",
+        c.EXAM_METHOD examMethod
+        from T_JW_TEACHINGTASK t
+        inner join  T_JW_EXAM e on t.semester = e.term
+        left join T_JW_EXAM_COURSE_CLASS  c on e.exam_id = c.exam_id
+        left join T_JW_EXAM_STUDENT s on s.exam_id = c.exam_id and s.class_id = c.class_id and s.course_id = c.course_id
+        where e.exam_id = #{id}) t2,T_JW_TEACHINGTASK t
+        where t.semester = t2."termId" and t.class_info = t2."classId" and t.course_id = t2."courseId"
+        <if test="personId != null and personId != ''">
+            and t.TEACHER_ID =#{personId}
+        </if>
+    </select>
+
     <!--<select id="getDetails" parameterType="String" resultType="map">-->
         <!--select FUNC_GET_USERNAME(t2.TEACHER_ID)                                             "userName",-->
                <!--FUNC_GET_TABLEVALUE(t2.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') "courseName",-->
@@ -1928,6 +1967,17 @@
             and FUNC_GET_USERNAME(PERSON_ID) like '%' || #{personId} || '%'
         </if>
         group by CLASS_ID,SCORE_EXAM_ID,OPEN_FLAG,COURSE_ID,PERSON_ID
+
+    </select>
+
+    <select id="getKCFailNum" parameterType="com.goisan.educational.score.bean.ScoreImport" resultType="java.lang.Integer">
+        select count(*)
+      from T_JW_SCORE_IMPORT t, T_JW_EXAM ex
+     where t.student_id = #{studentId}
+       and t.term_id = #{termId}
+       and t.score_exam_id = ex.exam_id
+       and ex.exam_types = '1'
+       and t.exam_method='2' and t.score = '不合格'
 
     </select>
 </mapper>

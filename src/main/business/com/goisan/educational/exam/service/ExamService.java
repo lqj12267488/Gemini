@@ -4,12 +4,14 @@ import com.goisan.educational.course.bean.Course;
 import com.goisan.educational.exam.bean.*;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.educational.place.classroom.bean.Classroom;
+import com.goisan.educational.score.bean.ScoreImport;
 import com.goisan.system.bean.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface ExamService {
+    List<ScoreImport> checkImport (String examId);
     String getExamMethod (String courseId,String tremId);
     List<Select2> getRoomsByExamId (String examId);
     //考试信息

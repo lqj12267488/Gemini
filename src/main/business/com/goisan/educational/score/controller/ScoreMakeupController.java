@@ -2607,7 +2607,7 @@ public class ScoreMakeupController {
 
     @ResponseBody
     @RequestMapping("/scoreExam/getCourseClass")
-    public Map<String, List<Map<String, String>>> getCourseClass(String id) {
+    public Map<String, List<Map<String, String>>> getCourseClass(String id,String queryFlag) {
         List<EmpDeptRelation> list = scoreChangeService.getEmployeeDeptByDeptIdPersonId(CommonUtil.getPersonId());
         Map<String, List<Map<String, String>>> map = new HashMap<>();
         boolean b = false;
@@ -2617,20 +2617,29 @@ public class ScoreMakeupController {
             }
         }
         if (b) {
-            map.put("data", scoreImportService.getCourseClass(id, null));
+            if ("2".equals(queryFlag))  {
+                map.put("data", scoreImportService.getCourseClass2(id, null));
+            }else {
+                map.put("data", scoreImportService.getCourseClass(id, null));
+            }
         } else {
-            map.put("data", scoreImportService.getCourseClass(id, CommonUtil.getPersonId()));
+            if ("2".equals(queryFlag)){
+                map.put("data", scoreImportService.getCourseClass2(id, CommonUtil.getPersonId()));
+            }else {
+                map.put("data", scoreImportService.getCourseClass(id, CommonUtil.getPersonId()));
+            }
         }
         return map;
     }
 
     @RequestMapping("/scoreExam/toCourseClass")
-    public ModelAndView toCourseClass(String id, String type, String openFlag) {
+    public ModelAndView toCourseClass(String id, String type, String openFlag,String queryFlag) {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/business/educational/score/courseClass");
         mv.addObject("id", id);
         mv.addObject("type", type);
         mv.addObject("openFlag", openFlag);
+        mv.addObject("queryFlag", queryFlag);
 //        带上考查方式
         return mv;
     }

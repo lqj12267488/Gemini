@@ -221,6 +221,7 @@ public class StudentController {
                     scoreImport.setStudentId(student.getIdcard());
                     scoreImport.setStudentName(student.getName());
                     scoreImport.setTermId(list.getTermId());
+                    scoreImport.setExamMethod(list.getExamMethod());
                     scoreImportService.insertScoreImport(scoreImport);
                 }
                 LoginUser loginUser = new LoginUser();

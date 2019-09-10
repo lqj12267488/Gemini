@@ -31,8 +31,9 @@
         m.training_level = t.training_level and
         m.departments_id = t.departments_id and
         m.valid_flag = '1'
+        and m.year= #{year}
         where  1=1
-        <if test="year != null and year != '' ">
+        <if test='year != null and year != "" and yearFlag!="1"'>
             and m.year= #{year}
         </if>
         <if test="departmentsId != null and departmentsId != '' ">

@@ -71,7 +71,13 @@
             var scoreExamName = data.examName;
             var openFlag = data.openFlag;
             var term = data.termShow;
-            $("#right").load("<%=request.getContextPath()%>/scoreExam/toCourseClass?type=${type}&id=" + scoreExamId + "&openFlag=" + openFlag);
+            if (this.id == "list" ) {
+                if("${type}"=="3" || "${type}"=="4" ){
+                    $("#right").load("<%=request.getContextPath()%>/scoreExam/toCourseClass?type=${type}&queryFlag=2&id=" + scoreExamId + "&openFlag=" + openFlag);
+                }else {
+                    $("#right").load("<%=request.getContextPath()%>/scoreExam/toCourseClass?type=${type}&queryFlag=1&id=" + scoreExamId + "&openFlag=" + openFlag);
+                }
+            }
         });
     })
 
@@ -126,8 +132,18 @@
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
-                        return "<a id='list' class='icon-align-justify' title='期末补考成绩'></a>&nbsp;&nbsp;&nbsp;"
-                            + '<span class=\'icon-search\' onclick=seeDetails("' + row.examId + '") title="查看详情"></span>';
+                        if("${type}"=="2"){
+                            return "<a id='list' class='icon-align-justify'  title='期末补考成绩' ></a>&nbsp;&nbsp;&nbsp;"
+                                + '<span class=\'icon-search\' onclick=seeDetails("' + row.examId + '") title="查看详情"></span>';
+                        }
+                        if("${type}"=="3"){
+                            return "<a id='list' class='icon-align-justify' title='毕业前补考'></a>&nbsp;&nbsp;&nbsp;"
+                                + '<span class=\'icon-search\' onclick=seeDetails("' + row.examId + '") title="查看详情"></span>';
+                        }
+                        if("${type}"=="4"){
+                            return "<a id='list' class='icon-align-justify' title='毕业后补考'></a>&nbsp;&nbsp;&nbsp;"
+                                + '<span class=\'icon-search\' onclick=seeDetails("' + row.examId + '") title="查看详情"></span>';
+                        }
                     }
                 }
             ],

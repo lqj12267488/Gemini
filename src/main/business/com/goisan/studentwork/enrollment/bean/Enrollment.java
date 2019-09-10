@@ -38,7 +38,15 @@ public class Enrollment extends BaseBean {
     private String learningTypeShow;
     private String issuingUnit;
     private String issuingUnitShow;
+    private String yearFlag;
 
+    public String getYearFlag() {
+        return yearFlag;
+    }
+
+    public void setYearFlag(String yearFlag) {
+        this.yearFlag = yearFlag;
+    }
     public String getIssuingUnitShow() {
         return issuingUnitShow;
     }

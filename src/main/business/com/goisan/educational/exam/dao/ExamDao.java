@@ -4,6 +4,7 @@ import com.goisan.educational.course.bean.Course;
 import com.goisan.educational.exam.bean.*;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.educational.place.classroom.bean.Classroom;
+import com.goisan.educational.score.bean.ScoreImport;
 import com.goisan.system.bean.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,14 @@ import java.util.Map;
 
 @Repository
 public interface ExamDao {
+
+    List<ScoreImport> checkImport (@Param("examId") String examId);
+    void delExamTime (@Param("examId") String examId);
+    void delExamTeacher (@Param("examId") String examId);
+    void delExamCourseClass (@Param("examId") String examId);
+    void delExamStudent (@Param("examId") String examId);
+    void delExamRoomTeacher (@Param("examId") String examId);
+    void delExamExamination (@Param("examId") String examId);
     //考试信息
     String getExamMethod (@Param("courseId") String courseId,@Param("tremId") String tremId);
     List<Exam> getExamList(Exam exam);

@@ -86,13 +86,27 @@
         case
         when
         (select count(id) from T_JW_SCORE_IMPORT where SCORE_EXAM_ID = t.EXAM_ID and SUBMIT_FLAG = 1) = 0 then '0'
-        when
-        ((SELECT
-        min(sc.submit_flag)
-        FROM T_JW_SCORE_IMPORT sc
-        where  sc.score_exam_id =t.exam_id and t.term = sc.term_id ) = '1' ) then
+        when ((select min( status)
+        from (select  t1.exam_id , case
+        when (select min(sc.submit_flag) from T_JW_SCORE_IMPORT sc where sc.SCORE_EXAM_ID = t3.EXAM_ID  and sc.SUBMIT_FLAG = '1' and t3.term = sc.term_id
+        and sc.class_id = t2.class_info
+        and sc.course_id = t2.course_id) = '1' then
         '1'
-        else '2' end as status
+        else
+        '0'
+        end as status
+        from T_JW_EXAM_COURSE_CLASS t1,
+        T_JW_TEACHINGTASK      t2,
+        T_JW_EXAM              t3
+        where t1.CLASS_ID = t2.CLASS_INFO
+        and t2.COURSE_ID = t1.COURSE_ID
+        and t3.EXAM_ID = t1.EXAM_ID
+        and t3.TERM = t2.SEMESTER
+        ) q where q.exam_id = t.exam_id )  = '1') then
+        '1'
+        else
+        '2'
+        end as status
         from T_JW_EXAM t
         where 1 = 1
         <if test="examTypes != null and examTypes != ''">
@@ -249,6 +263,11 @@
         from T_JW_EXAM_COURSE
         where exam_id = #{examId}
     </select>
+
+    <select id="checkImport" resultType="com.goisan.educational.score.bean.ScoreImport">
+         select * from T_JW_SCORE_IMPORT t where  SCORE_EXAM_ID = #{examId}
+    </select>
+
     <select id="getExamCourseClassByExamCourseId" parameterType="java.lang.String"
             resultType="com.goisan.educational.exam.bean.ExamCourseClass">
         select *
@@ -2200,4 +2219,30 @@
     <select id="getExamMethod" resultType="java.lang.String">
         select distinct  exam_method  from T_JW_TEACHINGTASK t where t.course_id = #{courseId} and t.semester = #{tremId}
     </select>
+
+    <!--删除考试相关信息-->
+    <delete id="delExamTime">
+        delete  from  T_JW_EXAM_TIME where EXAM_ID =#{examId}
+    </delete>
+
+    <delete id="delExamTeacher">
+        delete  from  T_JW_EXAM_TEACHER where EXAM_ID =#{examId}
+    </delete>
+
+    <delete id="delExamCourseClass">
+        delete  from  T_JW_EXAM_COURSE_CLASS where EXAM_ID =#{examId}
+    </delete>
+
+    <delete id="delExamStudent">
+        delete  from  T_JW_EXAM_COURSE_CLASS where EXAM_ID =#{examId}
+    </delete>
+
+    <delete id="delExamRoomTeacher">
+        delete  from  T_JW_EXAM_ROOM_TEACHER where EXAM_ID =#{examId}
+    </delete>
+
+    <delete id="delExamExamination">
+        delete  from  T_JW_EXAM_EXAMINATION where EXAM_ID =#{examId}
+    </delete>
+
 </mapper>

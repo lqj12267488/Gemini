@@ -81,7 +81,7 @@
                         <span class="iconBtx">*</span> 发证单位
                     </div>
                     <div class="col-md-9">
-                        <input  id="f_issuingUnit" name="skillTicket" value="${enrollment.issuingUnit}"/>
+                        <select  id="f_issuingUnit" name="skillTicket" value="${enrollment.issuingUnit}"/>
                     </div>
                 </div>
             </div>
@@ -98,6 +98,10 @@
 
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=XXXS", function (data) {
             addOption(data, 'learningType',$("#type").val());
+        });
+
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=BYZFFDW", function (data) {
+            addOption(data, 'f_issuingUnit',$("#f_type").val());
         });
 
     })

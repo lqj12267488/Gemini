@@ -48,7 +48,7 @@
         table11 = $("#table11").DataTable({
             ajax: {
                 type: "post",
-                url: '<%=request.getContextPath()%>/scoreExam/getCourseClass?id=${id}',
+                url: '<%=request.getContextPath()%>/scoreExam/getCourseClass?id=${id}&queryFlag=${queryFlag}',
             },
             columns: [
                 {

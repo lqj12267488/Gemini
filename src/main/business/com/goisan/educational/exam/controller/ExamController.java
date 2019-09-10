@@ -7,6 +7,7 @@ import com.goisan.educational.exam.bean.*;
 import com.goisan.educational.exam.service.ExamService;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.educational.place.classroom.bean.Classroom;
+import com.goisan.educational.score.bean.ScoreImport;
 import com.goisan.system.bean.*;
 import com.goisan.system.service.CommonService;
 import com.goisan.system.tools.CommonUtil;
@@ -237,8 +238,9 @@ public class ExamController {
     @ResponseBody
     @RequestMapping("/exam/del")
     public Message delExam(String id) {
-        List<ExamCourse> courseList = examService.getExamCourseByExamId(id);
-        if (courseList.size() > 0) {
+//        List<ExamCourse> courseList = examService.getExamCourseByExamId(id);
+        List<ScoreImport> scoreImports = examService.checkImport(id);
+        if (scoreImports.size() > 0) {
             return new Message(1, "该考试信息存在考试科目,不可删除！", "error");
         } else {
             examService.delExamById(id);
