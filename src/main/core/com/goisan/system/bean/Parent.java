@@ -14,7 +14,7 @@ public class Parent extends BaseBean {
     private String idcard;
     private String parentTel;
     private String studentName;//学生姓名
-    private String idcardType;//学生身份证件类型
+    private String idcardStudentType;//学生身份证件类型
     private String idCardTypeShow;//家长身份证件类型
     private String idCardTypeSecondShow;
     private String studentId;//学生身份证件号码
@@ -27,12 +27,13 @@ public class Parent extends BaseBean {
     private String householdRegisterPlace;//户籍地址
     private String idCardTypeStudentShow;
 
-    public String getIdcardType() {
-        return idcardType;
+
+    public String getIdcardStudentType() {
+        return idcardStudentType;
     }
 
-    public void setIdcardType(String idcardType) {
-        this.idcardType = idcardType;
+    public void setIdcardStudentType(String idcardStudentType) {
+        this.idcardStudentType = idcardStudentType;
     }
 
     public String getDuringEmployment() {

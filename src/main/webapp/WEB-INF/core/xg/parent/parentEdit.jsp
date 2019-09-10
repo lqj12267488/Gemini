@@ -61,7 +61,7 @@
                         <span class="iconBtx">*</span> 父母或监护人1身份证件类型
                     </div>
                     <div class="col-md-9">
-                        <select id="idCardType" />
+                        <select id="idCardTypeSel" />
                     </div>
                 </div>
                 <div class="form-row">
@@ -136,13 +136,11 @@
             }
         })
         $.get("<%=request.getContextPath()%>/common/getUserDict?name=JZZJLX", function (data) {
-            addOption(data, "idCardType",'${data.idCardType}');
+            addOption(data, "idCardTypeSel",'${data.idCardType}');
         });
-
         $.get("<%=request.getContextPath()%>/common/getUserDict?name=JZZJLX", function (data) {
             addOption(data, "idCardTypeSecond",'${data.idCardTypeSecond}' );
         });
-
     });
 
     function save() {
@@ -153,7 +151,7 @@
         var idcardSecond = $("#idcardSecond").val();
         var parentTel = $("#parentTel").val();
         var parentTelSecond = $("#parentTelSecond").val();
-        var idCardType = $("#idCardType").val();
+        var idCardType = $("#idCardTypeSel").val();
         var idCardTypeSecond = $("#idCardTypeSecond").val();
         var parentNameSecond = $("#parentNameSecond").val();
         var householdRegisterPlace = $("#householdRegisterPlace").val();

@@ -204,7 +204,7 @@
     <select id="getParentStudentList" parameterType="com.goisan.system.bean.Parent" resultType="com.goisan.system.bean.Parent">
 
        select s.name studentName,
-              s.IDCARD_TYPE idcardType,
+              s.IDCARD_TYPE idcardStudentType,
               t.STUDENT_ID,
               s.DURING_EMPLOYMENT duringEmployment,
               FUNC_GET_DICVALUE(s.DURING_EMPLOYMENT,'SF') duringEmploymentShow,

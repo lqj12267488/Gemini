@@ -846,7 +846,7 @@ public class ParentController {
             //创建HSSFCell对象
             row.createCell(0).setCellValue(i);
             row.createCell(1).setCellValue(parent1.getStudentName());
-            row.createCell(2).setCellValue(parent1.getIdcardType());
+            row.createCell(2).setCellValue(parent1.getIdcardStudentType());
             row.createCell(3).setCellValue(parent1.getStudentId());
             row.createCell(4).setCellValue(parent1.getDuringEmploymentShow());
             row.createCell(5).setCellValue(parent1.getYear());
