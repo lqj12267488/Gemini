@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.synergy.notice.dao.CasNoticeDao">
+    <select id="CasNoticeListIndexNotice" resultType="com.goisan.synergy.notice.bean.Notice">
+      select r.* ,
+              (case when mod(ROWNUM, 2)=0 then 'inbox' else
+                case  when mod(ROWNUM, 2) &lt;> 0 then '' end end  ) AS messagesClass
+       from (
+        select a.*, decode(u.photo_url||'.'||u.photo_type,'.','dmitry_b.jpg' , u.photo_url ) AS photoUrl
+            from (
+        SELECT '1' abc,
+            t.id,
+            t.title,
+            t.isdean,
+            to_char(t.content) content,
+            t.type,
+            t.public_time publicTime,
+            FUNC_GET_DICVALUE(t.type, 'GGLX') typeShow,
+            t.create_time createTime,
+            t.dept_id deptId,
+            FUNC_GET_USERNAME(t.creator) requester ,t.creator
+            FROM T_SYS_NOTICE t
+            WHERE 1 = 1 AND valid_flag = '1' and t.publish_flag = '1'
+            and t.DEPT_ID LIKE FUNC_GET_SCHOOL_RANGE('${arg1}','${arg2}')
+            and t.title is not null
+            and t.ID NOT IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${arg0}')
+        UNION
+        SELECT '2' abc,
+            tt.id,
+            tt.title,
+            tt.isdean,
+            tt.content,
+            tt.type,
+            tt.public_time publicTime,
+            FUNC_GET_DICVALUE(tt.type, 'TZLX') typeShow,
+            tt.create_time createTime,
+            tt.dept_id deptId,
+            FUNC_GET_USERNAME(tt.creator) requester , tt.creator
+            FROM T_SYS_MESSAGE tt
+            WHERE 1 = 1
+            --and tt.request_flag = '2'
+            and tt.publish_flag = '1'
+            and (tt.emp_id LIKE '%'||'${arg0}'||'%' OR tt.creator = '${arg0}' OR tt.dept_id LIKE '%'||'${arg1}'||'%')
+            and tt.id not in (select message_id from T_SYS_MESSAGE_LOG l where l.creator ='${arg0}')
+            and tt.title is not null
+            and tt.valid_flag = '1'
+        ) a  , t_sys_user u where a.creator = u.user_id ORDER BY createTime DESC
+      ) r WHERE ROWNUM &lt; 7
+    </select>
+
+    <select id="selectUserAccount" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.user_id from T_SYS_USER t where t.user_account = #{userName}
+    </select>
+
+    <select id="selectDeptId" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.default_dept from T_SYS_USER t where t.user_account = #{userName}
+    </select>
+
+    <select id="selectLevel" parameterType="java.lang.String" resultType="java.lang.String">
+          select t.user_level from T_SYS_USER t where t.user_account = #{userName}
+    </select>
+
+    <select id="selectPersonId" parameterType="java.lang.String"  resultType="java.lang.String">
+        select t.user_id from T_SYS_USER t where t.user_account = #{userName}
+    </select>
+
+    <select id="selectIndexUnAudtiList" parameterType="java.lang.String"
+            resultType="com.goisan.workflow.bean.IndexUnAudti">
+         SELECT *
+            FROM (
+              SELECT
+                c.*, decode(u.photo_url||'.'||u.photo_type,'.','dmitry_b.jpg' , u.photo_url ) AS photoUrl,
+                rownum rn
+              FROM (
+                     SELECT b.*
+                     FROM (SELECT
+                             '3' AS                                        abc,
+                             e.NAME                                        creator,
+                             w.WORKFLOW_NAME,
+                             wr.URL,
+                             to_char(ws.CREATE_TIME, 'yyyy-mm-dd') createTime,
+                             ws.TABLE_NAME,
+                             ws.BUSINESS_ID,
+                             wh.STATE,
+                             wr.edit_url,
+                             e.person_id                                   personId
+                           FROM
+                             T_SYS_WORKFLOW_HANDLE wh, T_SYS_WORKFLOW_START ws, T_SYS_WORKFLOW_RELATION wr, T_SYS_WORKFLOW w,
+                             T_RS_EMPLOYEE e
+                           WHERE
+                             wh.HANDLE_USER = #{id} AND (wh.STATE = '1' OR wh.STATE = '3') AND ws.START_ID = wh.START_ID
+                             AND ws.WORKFLOW_ID = wr.WORKFLOW_ID AND
+                             w.WORKFLOW_ID = ws.WORKFLOW_ID AND ws.CREATOR = e.PERSON_ID
+                              and ws.state != '4'
+                           UNION
+                           SELECT
+                             '1' AS                                     abc,
+                             FUNC_GET_USERNAME(t.person_id)             creator,
+                             '【通知】' || t.TASK_TITLE                     WORKFLOW_NAME,
+                             t.task_url                                 URL,
+                             to_char(t.task_time, 'yyyy-mm-dd') createTime,
+                             t.task_table                               TABLE_NAME,
+                             t.task_id                                  BUSINESS_ID,
+                             '0'                                        state,
+                             ''                                         edit_url,
+                             t.creator                                  personId
+                           FROM T_SYS_TASK t
+                           WHERE t.VALID_FLAG = '1'
+                                 AND t.person_id = #{id}
+
+
+                           UNION
+                           SELECT
+                             '2' AS                                             abc,
+                             FUNC_GET_USERNAME(m.person_id)                     creator,
+                             '参加' || FUNC_GET_DICVALUE(r.training_form, 'PXXS') WORKFLOW_NAME,
+                             t.task_url                                         URL,
+                             to_char(r.request_date, 'yyyy-mm-dd') createTime,
+                             t.task_table                                       TABLE_NAME,
+                             t.task_id                                          BUSINESS_ID,
+                             '0'                                                state,
+                             ''                                                 edit_url,
+                             t.creator                                          personId
+                           FROM T_SYS_TASK t, T_RS_TRAINING_WF r, T_RS_TRAINING_MEMBER m
+                           WHERE t.task_business_id = r.id
+                                 AND r.ID = m.TRAINING_ID
+                                 AND t.TASK_FLAG = '0'
+                                 AND m.person_id = #{id}
+                                 AND t.person_id = #{id}
+
+                           UNION
+                           SELECT '4' as abc,
+                              FUNC_GET_USERNAME(t.creator) creator,
+                              '【报修】' || FUNC_GET_USERDICVALUE(t.repair_type, 'BXLXGL')  WORKFLOW_NAME,
+                              ''  URL,
+                              to_char(t.create_time,'yyyy-mm-dd') createTime,
+                              'T_ZW_REPAIR'  TABLE_NAME,
+                              t.repair_id BUSINESS_ID,
+                              t.request_flag state,
+                              ''  edit_url,
+                              t.creator  personId
+                           from T_ZW_REPAIR t
+                           where (REPAIRMAN_PERSON_ID=#{id}
+                              or #{id}=(
+                              select r.person_id from t_zw_repairadmin r where person_id=#{id}))
+                              and t.repair_id not in (select l.repair_id from T_ZW_REPAIRSUPPLIES_LOG l where l.CREATOR=#{id})
+                              and t.request_flag!='0'
+                           union
+                           select '4' as abc,
+                              FUNC_GET_USERNAME(t.creator) creator,
+                              '【报修】' || FUNC_GET_USERDICVALUE(t.repair_type, 'BXLXGL') WORKFLOW_NAME,
+                              '' URL,
+                              to_char(t.create_time, 'yyyy-mm-dd') createTime,
+                              'T_ZW_REPAIR' TABLE_NAME,
+                              t.repair_id BUSINESS_ID,
+                              t.request_flag state,
+                              '' edit_url,
+                              t.creator personId
+                              from t_zw_repair t,t_zw_repair_execute e
+                           where t.repair_id=e.repair_id and  #{id} =e.person_id
+                              and e.repair_id not in (select l.repair_id
+                             from T_ZW_REPAIRSUPPLIES_LOG l
+                           where l.CREATOR =#{id})
+                           union
+                           select '5' as abc,
+                              FUNC_GET_USERNAME(t.creator) creator,
+                              '【回捡】' || FUNC_GET_USERDICVALUE(t.repair_type, 'BXLXGL') WORKFLOW_NAME,
+                              '' URL,
+                              to_char(t.create_time, 'yyyy-mm-dd') createTime,
+                              'T_ZW_REPAIR' TABLE_NAME,
+                              t.repair_id BUSINESS_ID,
+                              t.request_flag state,
+                              '' edit_url,
+                              t.creator personId
+                              from t_zw_repair t
+                           where #{id} =t.checker
+                              and t.repair_id not in (select l.repair_id
+                             from T_ZW_REPAIRSUPPLIES_LOG l
+                           where l.CREATOR =#{id} and l.status='3')
+                          ) b
+                     ORDER BY b.createTime DESC, b.abc
+                   ) c  , t_sys_user u where c.personId = u.user_id
+            )
+            WHERE rn BETWEEN 0 AND 5
+
+
+    </select>
+</mapper>
