@@ -148,6 +148,8 @@
     }
 
     function selectName() {
-        sysDicMappingGrid.ajax.url("<%=request.getContextPath()%>/sysDic/sysDicInfo?dicname=" +$("#dname").val() +"&diccode=" +$("#dcode").val()).load();
+        var dnames = $("#dname").val();
+        var dcodes = $("#dcode").val();
+        sysDicMappingGrid.ajax.url("<%=request.getContextPath()%>/sysDic/sysDicInfo?dicname=" +dnames+"&diccode=" +dcodes).load();
     }
 </script>

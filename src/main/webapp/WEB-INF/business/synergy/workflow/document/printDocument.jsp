@@ -35,7 +35,7 @@
         </h2>
     </div>--%>
     <div style="margin-left: 30%;margin-top: 5%;">
-        <h2>吉林水利电力职业学院发文单</h2>
+        <h2>新疆现代职业技术学院发文单</h2>
     </div>
     <tr>
         <td class="left" align="center" style="padding-left: 2%;text-align:center; width: 140px;">签发：</td>

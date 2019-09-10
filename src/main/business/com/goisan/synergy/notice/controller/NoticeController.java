@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.goisan.synergy.notice.bean.Notice;
 import com.goisan.synergy.notice.service.NoticeService;
+import com.goisan.synergy.workflow.bean.HallUse;
+import com.goisan.synergy.workflow.service.HallUseService;
 import com.goisan.synergy.workflow.service.StampService;
 import com.goisan.system.bean.ClassBean;
 import com.goisan.system.service.ClassService;
@@ -41,7 +43,8 @@ public class NoticeController {
     private StampService stampService;
     @Resource
     private DeptService deptService;
-
+    @Resource
+    private HallUseService hallUseService;
     @ResponseBody
     @RequestMapping("/noticeList")
     public ModelAndView noticeList() {
@@ -169,6 +172,28 @@ public class NoticeController {
         mv.addObject("data", noticeList);
         return mv;
     }
+
+    @ResponseBody
+    @RequestMapping("/meetingInfo")
+    public ModelAndView meetingInfo(String id, String type) {
+        ModelAndView mv = new ModelAndView("/core/notice/viewNotice");
+        HallUse hallUse = hallUseService.getHallUseById(id);
+        Notice notice = new Notice();
+        notice.setId(hallUse.getId());
+        notice.setRequester(CommonUtil.getPersonId());
+        notice.setRequestDept(CommonUtil.getDefaultDept());
+        notice.setType(type);
+        notice.setContent(hallUse.getContent());
+        notice.setTypeShow(hallUse.getMeetingRequestShow());
+        notice.setCreator(hallUse.getRequester());
+        notice.setTitle(hallUse.getTitle());
+        noticeService.insertNoticeLog(notice);
+        mv.addObject("notice", notice);
+        mv.addObject("head", "");
+        mv.addObject("type", type);
+        return mv;
+    }
+
 
     @ResponseBody
     @RequestMapping("/indexGetNoticeById")

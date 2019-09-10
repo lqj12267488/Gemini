@@ -27,7 +27,7 @@ public class HallUse extends BaseBean {
     private String meetingSiteShow;
     private String meetingRequest;
     private String meetingRequestShow;
-
+    private String title;
     public String getMeetingRequestShow() {
         return meetingRequestShow;
     }
@@ -194,5 +194,13 @@ public class HallUse extends BaseBean {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

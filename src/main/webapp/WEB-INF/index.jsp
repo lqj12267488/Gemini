@@ -450,7 +450,9 @@
     }
 
     function viewNotice(id, type, abc) {
-        if ("2" == abc) {
+        if ("3" == abc) {
+            $("#dialog").load("<%=request.getContextPath()%>/meetingInfo?id=" + id + "&type=" + '0')
+        }else if ("2" == abc) {
             $("#dialog").load("<%=request.getContextPath()%>/messageInfo?id=" + id + "&type=" + '0')
         } else if ("1" == abc) {
             $("#dialog").load("<%=request.getContextPath()%>/indexGetNoticeById?id=" + id + "&type=" + '0')

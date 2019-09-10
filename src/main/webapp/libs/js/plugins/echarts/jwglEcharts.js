@@ -646,10 +646,10 @@ function jwglCol(liListFlag, liList, liListAll, myCharts, myChartFlag, options, 
         myCharts[6].resize();
     }
 
-    $("#right").append("<a class=\"btn\" href=\"http://www.moe.gov.cn/\">中华人民共和国教育部</a>\n" +
+/*    $("#right").append("<a class=\"btn\" href=\"http://www.moe.gov.cn/\">中华人民共和国教育部</a>\n" +
         "        <a class=\"btn\" href=\"http://www.moe.gov.cn/s78/A07/\">教育部职业教育与成人教育司</a>\n" +
         "        <a class=\"btn\" href=\"https://www.tech.net.cn/web/index.aspx\">中国高职高专网</a>\n" +
         "        <a class=\"btn\" href=\"http://www.zyjyzg.org/\">职业教育诊改网</a>\n" +
         "        <a class=\"btn\" href=\"http://www.jledu.gov.cn/jyt/\">吉林省教育厅</a>\n" +
-        "        <a class=\"btn\" href=\"http://www.bcvit.cn/\">白城职业技术学院</a>")
+        "        <a class=\"btn\" href=\"http://www.bcvit.cn/\">白城职业技术学院</a>")*/
 }

@@ -104,32 +104,6 @@
         }
         if(joinTime ==""){
             loginLogTable = $("#loginLogGrid").DataTable({
-                "processing": true,
-                "serverSide": true,
-                "ajax": {
-                    "url": '<%=request.getContextPath()%>/loginLog/getLoginLogByAccountTime',
-                    "data":{
-                        userAccount : memberNumber,
-                    }
-
-                },
-                "destroy": true,
-                "columns": [
-                    {"data": "id", "visible": false},
-                    {"data": "userId", "visible": false},
-                    {"width": "25%", "data": "userAccount", "title": "登录账号"},
-                    {"width": "25%", "data": "loginTimeShow", "title": "登录时间"},
-                    {"width": "25%", "data": "ip", "title": "ip地址"},
-/*
-                    {"width": "25%", "data": "mac", "title": "mac地址"},
-*/
-                ],
-                'order' : [[1,'desc'],[2,'desc']],
-                 paging: true,
-                "dom": 'rtlip',
-                language: language
-            });
-        }else{loginLogTable = $("#loginLogGrid").DataTable({
             "processing": true,
             "serverSide": true,
             "ajax": {

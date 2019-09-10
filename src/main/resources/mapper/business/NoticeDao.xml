@@ -148,6 +148,7 @@
                FUNC_GET_USERNAME(t.creator) requester ,t.creator
         FROM T_BG_HALLUSE_WF t
         WHERE valid_flag = '1' and t.request_flag ='2'
+          and t.ID NOT IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${loginID}')
         ) a  , t_sys_user u where a.creator = u.user_id ORDER BY createTime DESC
       ) r WHERE ROWNUM &lt; 7
     </select>
