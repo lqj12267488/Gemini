@@ -164,30 +164,7 @@
         // }
     }
 
-    <%--function mt(id, mtFlag) {--%>
-        <%--if (mtFlag == "1") {--%>
-            <%--swal({title: "已经过维护", type: "warning"})--%>
-        <%--} else {--%>
-            <%--swal({--%>
-                <%--title: "您确定要维护本条信息?",--%>
-                <%--type: "warning",--%>
-                <%--showCancelButton: true,--%>
-                <%--cancelButtonText: "取消",--%>
-                <%--confirmButtonColor: "#DD6B55",--%>
-                <%--confirmButtonText: "维护",--%>
-                <%--closeOnConfirm: false--%>
-            <%--}, function () {--%>
-                <%--$.post("<%=request.getContextPath()%>/mtRelation/mtMRDetail", {--%>
-                    <%--id: id--%>
-                <%--}, function (msg) {--%>
-                    <%--if (msg.status == 1) {--%>
-                        <%--swal({title: msg.msg, type: "success"});--%>
-                        <%--$('#mRDetailGrid').DataTable().ajax.reload();--%>
-                    <%--}--%>
-                <%--})--%>
-            <%--})--%>
-        <%--}--%>
-    <%--}--%>
+
 
     function importMRDetailTemplate() {
         window.location.href = "<%=request.getContextPath()%>/mtRelation/export";
@@ -195,6 +172,11 @@
     function importMRDetail() {
         $("#dialog").load("<%=request.getContextPath()%>/mtRelation/importMRDetail?relId=${relId}");
         $("#dialog").modal("show");
+    }
+    function searchClear() {
+      $("#mtSel").val("");
+      $("#goodNameSel").val("");
+      search();
     }
 
 </script>
