@@ -415,6 +415,10 @@ public class EnrollmentController {
             enrollment.setTrainingLevel(null);
         }
         List<Enrollment> list = enrollmentService.getEnrollmentList(enrollment);
+        for (Enrollment enrollment1 : list) {
+            String aNull = enrollment1.getYear().equals("null") ? "" : enrollment1.getYear();
+            enrollment1.setYear(aNull);
+        }
         PageInfo<List<Enrollment>> info = new PageInfo(list);
         enrollmentList.put("draw", draw);
         enrollmentList.put("recordsTotal", info.getTotal());
