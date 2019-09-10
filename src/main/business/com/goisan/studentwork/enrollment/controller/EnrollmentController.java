@@ -415,10 +415,10 @@ public class EnrollmentController {
             enrollment.setTrainingLevel(null);
         }
         List<Enrollment> list = enrollmentService.getEnrollmentList(enrollment);
-        for (Enrollment enrollment1 : list) {
-            String aNull = enrollment1.getYear().equals("null") ? "" : enrollment1.getYear();
-            enrollment1.setYear(aNull);
-        }
+//        for (Enrollment enrollment1 : list) {
+//            String aNull = enrollment1.getYear().equals("null") ? "" : enrollment1.getYear();
+//            enrollment1.setYear(aNull);
+//        }
         PageInfo<List<Enrollment>> info = new PageInfo(list);
         enrollmentList.put("draw", draw);
         enrollmentList.put("recordsTotal", info.getTotal());
@@ -526,12 +526,30 @@ public class EnrollmentController {
     public Message saveSinglePlan(Enrollment enrollment) {
         String majorId=enrollment.getMajorId();
         String year=enrollment.getYear();
-        String number=enrollment.getPlanNumber();
-        Enrollment  old= enrollmentService.selectEnrollmentByMajorId(majorId,year);
-        if(old!=null){
+//        String number=enrollment.getPlanNumber();
+//        Enrollment  old= enrollmentService.selectEnrollmentByMajorId(majorId,year);
+//        if(old!=null){
+//            CommonUtil.update(enrollment);
+//            enrollmentService.updateEnrollment(enrollment);
+//        }else{
+//            Major major=majorService.getMajorByMajorId(majorId);
+//            enrollment.setId(CommonUtil.getUUID());
+//            enrollment.setDepartmentsId(major.getDepartmentsId());
+//            enrollment.setMajorCode(major.getMajorCode());
+//            enrollment.setMajorDirection(major.getMajorDirection());
+//            enrollment.setSchoolSystem(major.getSchoolSystem());
+//            enrollment.setTrainingLevel(major.getTrainingLevel());
+//            enrollment.setRealNumber("0");
+//            CommonUtil.save(enrollment);
+//            enrollmentService.saveEnrollment(enrollment);
+//        }
+        if (!"null".equals(year)){
             CommonUtil.update(enrollment);
             enrollmentService.updateEnrollment(enrollment);
-        }else{
+        }else {
+            SimpleDateFormat formatDate = new SimpleDateFormat("yyyy");
+            year = formatDate.format(new java.util.Date());
+            enrollment.setYear(year);
             Major major=majorService.getMajorByMajorId(majorId);
             enrollment.setId(CommonUtil.getUUID());
             enrollment.setDepartmentsId(major.getDepartmentsId());
