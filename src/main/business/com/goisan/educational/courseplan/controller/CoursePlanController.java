@@ -7,15 +7,12 @@ import com.goisan.educational.courseplan.bean.CoursePlanDetail;
 import com.goisan.educational.courseplan.bean.CoursePlanExcel;
 import com.goisan.educational.courseplan.bean.CourseplanTerm;
 import com.goisan.educational.courseplan.service.CoursePlanService;
-import com.goisan.educational.textbook.bean.TextBook;
 import com.goisan.educational.textbook.service.TextBookService;
 import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
+import com.goisan.system.tools.PoiUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -26,16 +23,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.sql.Date;
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1099,6 +1090,11 @@ public class CoursePlanController {
             Cell cellf18 = rowi5.createCell(19);
             cellf18.setCellValue(format.format((totalPracticeHours) / (totalTotalHours + 0.00)));
             cellf18.setCellStyle(cellStyle0);
+        }
+        try {
+            PoiUtils.setBorder(workbook, sheet, 0, 12, 26, (short) 0, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         OutputStream os = null;
         response.setContentType("application/vnd.ms-excel");

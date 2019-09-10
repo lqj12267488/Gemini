@@ -563,4 +563,14 @@
     }
 
 </script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        <c:if test="${norole==1}">
+        swal({
+            title: "当前用户没有设置角色！",
+            type: "warning"
+        })
+        </c:if>
+    });
+</script>
 </html>

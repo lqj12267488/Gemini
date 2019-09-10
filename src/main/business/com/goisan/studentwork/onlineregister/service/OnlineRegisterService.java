@@ -1,7 +1,6 @@
 package com.goisan.studentwork.onlineregister.service;
 
 import com.goisan.studentwork.onlineregister.bean.OnlineRegister;
-import com.goisan.system.bean.BaseBean;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

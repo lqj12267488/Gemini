@@ -33,102 +33,154 @@
 
     <select id="getSchoolReportList" resultType="com.goisan.educational.schoolreport.bean.SchoolReport"
             parameterType="com.goisan.educational.schoolreport.bean.SchoolReport">
-        select t1.SCORE studentSource, FUNC_GET_TABLEVALUE(t1.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseName,
-        CASE WHEN score.START_TIME is not null THEN to_char(score.START_TIME, 'yyyy-MM')
-        ELSE to_char(t2.START_TIME, 'yyyy-MM') END testTime
-        from T_JW_SCORE_IMPORT t1
-        inner join T_JW_EXAM t2 on  t1.SCORE_EXAM_ID = t2.EXAM_ID
-        and t2.term = t1.term_id
-        AND t1.score_type = '0'
-        <if test="studentName != null and studentName != '' ">
-            AND STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
-        </if>
-        <if test="studentId != null and studentId != '' ">
-            AND STUDENT_ID = #{studentId}
-        </if>
-        left join (select i.student_id,i.term_id, i.class_id, i.course_id, i.plan_id, e.START_TIME  from T_JW_SCORE_IMPORT i, T_JW_EXAM e where i.score_exam_id=e.exam_id and e.exam_types=1 and STUDENT_ID = '320382200512258112' and i.score_type=1) score
-        on t1.student_id=score.student_id and t1.term_id=score.term_id
-        and t1.class_id=score.class_id and t1.course_id=score.course_id and t1.plan_id=score.plan_id
+        <!-- select t1.SCORE studentSource, FUNC_GET_TABLEVALUE(t1.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseName,
+         CASE WHEN score.START_TIME is not null THEN to_char(score.START_TIME, 'yyyy-MM')
+         ELSE to_char(t2.START_TIME, 'yyyy-MM') END testTime
+         from T_JW_SCORE_IMPORT t1
+         inner join T_JW_EXAM t2 on  t1.SCORE_EXAM_ID = t2.EXAM_ID
+         and t2.term = t1.term_id
+         AND t1.score_type = '0'
+         <if test="studentName != null and studentName != '' ">
+             AND STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
+         </if>
+         <if test="studentId != null and studentId != '' ">
+             AND STUDENT_ID = #{studentId}
+         </if>
+         left join (select i.student_id,i.term_id, i.class_id, i.course_id, i.plan_id, e.START_TIME  from T_JW_SCORE_IMPORT i, T_JW_EXAM e where i.score_exam_id=e.exam_id and e.exam_types=1 and STUDENT_ID = '320382200512258112' and i.score_type=1) score
+         on t1.student_id=score.student_id and t1.term_id=score.term_id
+         and t1.class_id=score.class_id and t1.course_id=score.course_id and t1.plan_id=score.plan_id
+         union all
+         select t1.SCORE                                                                     studentSource,
+         COURSE_ID courseName,
+         to_char(t1.upload_time, 'yyyy-MM')                                            testTime
+         from T_JW_SCORE_IMPORT t1 where  ORDER_EXAM_FLAG = '2'
+         <if test="studentName != null and studentName != '' ">
+             AND STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
+         </if>
+         <if test="studentId != null and studentId != '' ">
+             AND STUDENT_ID = #{studentId}
+         </if>-->
+
+        select * from (
+            select t1.courseName, case when t1.score_type=0 then t1.score else t2.score end studentSource, to_char(t1.start_time, 'yyyy-MM') testTime
+            from (select i.COURSE_ID, FUNC_GET_TABLEVALUE(i.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseName,i.score, i.score_type, e.start_time, term_id
+                from t_jw_score_import i, t_jw_exam e where i.score_exam_id=e.exam_id and ORDER_EXAM_FLAG=1 and i.exam_method=1 and e.exam_types=1
+                <if test="studentName != null and studentName != '' ">
+                    AND i.STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
+                </if>
+                <if test="studentId != null and studentId != '' ">
+                    AND i.STUDENT_ID = #{studentId}
+                </if>
+                ) t1
+            left join (select temp.* from (select i.id, i.course_id, i.term_id, i.score, i.create_time
+                from t_jw_score_import i, t_jw_exam e where i.score_exam_id=e.exam_id and ORDER_EXAM_FLAG=1 and i.exam_method=1 and e.exam_types!=1
+                <if test="studentName != null and studentName != '' ">
+                    AND i.STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
+                </if>
+                <if test="studentId != null and studentId != '' ">
+                    AND i.STUDENT_ID = #{studentId}
+                </if>
+                ) temp,
+                (select i.course_id, i.term_id, max(i.create_time) create_time
+                from t_jw_score_import i, t_jw_exam e where i.score_exam_id=e.exam_id and ORDER_EXAM_FLAG=1 and i.exam_method=1 and e.exam_types!=1
+                <if test="studentName != null and studentName != '' ">
+                    AND i.STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
+                </if>
+                <if test="studentId != null and studentId != '' ">
+                    AND i.STUDENT_ID = #{studentId}
+                </if>
+                group by i.course_id, i.term_id) tg
+                where temp.course_id=tg.course_id and temp.term_id=tg.term_id and temp.create_time=tg.create_time) t2
+            on t1.term_id=t2.term_id and t1.COURSE_ID=t2.COURSE_ID
         union all
-        select t1.SCORE                                                                     studentSource,
-        COURSE_ID courseName,
-        to_char(t1.upload_time, 'yyyy-MM')                                            testTime
-        from T_JW_SCORE_IMPORT t1 where  ORDER_EXAM_FLAG = '2'
-        <if test="studentName != null and studentName != '' ">
-            AND STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
-        </if>
-        <if test="studentId != null and studentId != '' ">
-            AND STUDENT_ID = #{studentId}
-        </if>
-    </select>
+            select FUNC_GET_TABLEVALUE(i.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseName,i.score studentSource, to_char(e.start_time, 'yyyy-MM') testTime
+            from t_jw_score_import i, t_jw_exam e where i.score_exam_id=e.exam_id and ORDER_EXAM_FLAG=1 and i.exam_method=2
+            <if test="studentName != null and studentName != '' ">
+                AND i.STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
+            </if>
+            <if test="studentId != null and studentId != '' ">
+                AND i.STUDENT_ID = #{studentId}
+            </if>
+        union all
+            select COURSE_ID courseName, t1.SCORE studentSource, to_char(t1.upload_time, 'yyyy-MM') testTime
+            from T_JW_SCORE_IMPORT t1
+            where ORDER_EXAM_FLAG = '2'
+            <if test="studentName != null and studentName != '' ">
+                AND STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
+            </if>
+            <if test="studentId != null and studentId != '' ">
+                AND STUDENT_ID = #{studentId}
+            </if>
+        ) t order by t.testTime
+     </select>
 
-    <select id="getStudentInfo" resultType="com.goisan.educational.schoolreport.bean.SchoolReport"
-            parameterType="com.goisan.educational.schoolreport.bean.SchoolReport">
-        select distinct
-        si.STUDENT_NAME studentName,
-        decode(FUNC_GET_TABLEVALUE(si.class_id,'T_XG_CLASS','CLASS_ID','year'),'','0年',FUNC_GET_TABLEVALUE(si.class_id,'T_XG_CLASS','CLASS_ID','year')||'年') ||'9月' enrolmentTime,
-        FUNC_GET_TABLEVALUE(si.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') className,
-        FUNC_GET_TABLEVALUE(si.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentName,
-        STUDENT_ID studentId,
-        CLASS_ID classId,
-        DEPARTMENTS_ID departmentsId,
-        FUNC_GET_TABLEVALUE(si.major_code,'t_xg_major','major_code','major_name') majorName,
-        FUNC_GET_TABLEVALUE(si.STUDENT_ID,'T_XG_STUDENT','IDCARD','STUDENT_NUMBER') studentNumber
-        from T_JW_SCORE_IMPORT si
-        WHERE 1=1
-        <if test="studentName != null and studentName != '' ">
-            AND STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
-        </if>
-        <if test="departmentsId != null and departmentsId != '' ">
-            AND departments_id = #{departmentsId}
-        </if>
-        <if test="studentId != null and studentId != '' ">
-            AND student_id = #{studentId}
-        </if>
-        <if test="classId != null and classId != '' ">
-            AND class_id in (${classId})
-        </if>
-        <if test="majorId != null and majorId != '' ">
-            AND MAJOR_CODE = #{majorId}
-        </if>
-        <if test="className != null and className != '' ">
-            AND FUNC_GET_TABLEVALUE(si.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') LIKE '%'|| #{className} ||'%'
-        </if>
-    </select>
-    <select id="getRoleByPersonId" parameterType="java.lang.String"
-            resultType="com.goisan.system.bean.RoleEmpDeptRelation">
-        select * from T_RS_EMPLOYEE_DEPT_ROLE t where  t.role_id='c3adf12b-58f3-494d-be28-660dea49f546' and   #{id} in person_id
-    </select>
-    <select id="getClassBeanByPersonId" parameterType="java.lang.String" resultType="com.goisan.system.bean.ClassBean">
-        SELECT * from T_XG_CLASS t where t.HEAD_TEACHER = #{id}
-    </select>
+     <select id="getStudentInfo" resultType="com.goisan.educational.schoolreport.bean.SchoolReport"
+             parameterType="com.goisan.educational.schoolreport.bean.SchoolReport">
+         select distinct
+         si.STUDENT_NAME studentName,
+         decode(FUNC_GET_TABLEVALUE(si.class_id,'T_XG_CLASS','CLASS_ID','year'),'','0年',FUNC_GET_TABLEVALUE(si.class_id,'T_XG_CLASS','CLASS_ID','year')||'年') ||'9月' enrolmentTime,
+         FUNC_GET_TABLEVALUE(si.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') className,
+         FUNC_GET_TABLEVALUE(si.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentName,
+         STUDENT_ID studentId,
+         CLASS_ID classId,
+         DEPARTMENTS_ID departmentsId,
+         FUNC_GET_TABLEVALUE(si.major_code,'t_xg_major','major_code','major_name') majorName,
+         FUNC_GET_TABLEVALUE(si.STUDENT_ID,'T_XG_STUDENT','IDCARD','STUDENT_NUMBER') studentNumber
+         from T_JW_SCORE_IMPORT si
+         WHERE 1=1
+         <if test="studentName != null and studentName != '' ">
+             AND STUDENT_NAME LIKE '%'|| #{studentName} ||'%'
+         </if>
+         <if test="departmentsId != null and departmentsId != '' ">
+             AND departments_id = #{departmentsId}
+         </if>
+         <if test="studentId != null and studentId != '' ">
+             AND student_id = #{studentId}
+         </if>
+         <if test="classId != null and classId != '' ">
+             AND class_id in (${classId})
+         </if>
+         <if test="majorId != null and majorId != '' ">
+             AND MAJOR_CODE = #{majorId}
+         </if>
+         <if test="className != null and className != '' ">
+             AND FUNC_GET_TABLEVALUE(si.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') LIKE '%'|| #{className} ||'%'
+         </if>
+     </select>
+     <select id="getRoleByPersonId" parameterType="java.lang.String"
+             resultType="com.goisan.system.bean.RoleEmpDeptRelation">
+         select * from T_RS_EMPLOYEE_DEPT_ROLE t where  t.role_id='c3adf12b-58f3-494d-be28-660dea49f546' and   #{id} in person_id
+     </select>
+     <select id="getClassBeanByPersonId" parameterType="java.lang.String" resultType="com.goisan.system.bean.ClassBean">
+         SELECT * from T_XG_CLASS t where t.HEAD_TEACHER = #{id}
+     </select>
 
-    <select id="getStudentIds" resultType="string">
-        select t1.STUDENT_ID
-        from (select distinct T_JW_SCORE_IMPORT.STUDENT_ID,STUDENT_NAME
-        from T_JW_SCORE_IMPORT) t1,
-        T_XG_CLASS t2,
-        T_XG_STUDENT_CLASS t3,
-        T_XG_MAJOR t4,
-        T_SYS_DEPT t5
-        where t1.STUDENT_ID = t3.STUDENT_ID
-        and t3.CLASS_ID = t2.CLASS_ID
-        and t2.MAJOR_CODE = t4.MAJOR_CODE
-        and t2.MAJOR_DIRECTION = t4.MAJOR_DIRECTION
-        and t4.DEPARTMENTS_ID = t5.DEPT_ID
-        <if test="deptId != null and deptId != ''">
-            and t4.DEPARTMENTS_ID = #{deptId}
-        </if>
-        <if test="classId != null and classId != ''">
-            and t2.CLASS_NAME like '%' || #{classId} || '%'
-        </if>
-        <if test="majorId != null and majorId != ''">
-            and t4.MAJOR_CODE = #{majorId}
-        </if>
-        <if test="studentName != null and studentName != ''">
-            and t1.STUDENT_NAME like '%' || #{studentName} || '%'
-        </if>
-    </select>
+     <select id="getStudentIds" resultType="string">
+         select t1.STUDENT_ID
+         from (select distinct T_JW_SCORE_IMPORT.STUDENT_ID,STUDENT_NAME
+         from T_JW_SCORE_IMPORT) t1,
+         T_XG_CLASS t2,
+         T_XG_STUDENT_CLASS t3,
+         T_XG_MAJOR t4,
+         T_SYS_DEPT t5
+         where t1.STUDENT_ID = t3.STUDENT_ID
+         and t3.CLASS_ID = t2.CLASS_ID
+         and t2.MAJOR_CODE = t4.MAJOR_CODE
+         and t2.MAJOR_DIRECTION = t4.MAJOR_DIRECTION
+         and t4.DEPARTMENTS_ID = t5.DEPT_ID
+         <if test="deptId != null and deptId != ''">
+             and t4.DEPARTMENTS_ID = #{deptId}
+         </if>
+         <if test="classId != null and classId != ''">
+             and t2.CLASS_NAME like '%' || #{classId} || '%'
+         </if>
+         <if test="majorId != null and majorId != ''">
+             and t4.MAJOR_CODE = #{majorId}
+         </if>
+         <if test="studentName != null and studentName != ''">
+             and t1.STUDENT_NAME like '%' || #{studentName} || '%'
+         </if>
+     </select>
 
 
-</mapper>
+ </mapper>

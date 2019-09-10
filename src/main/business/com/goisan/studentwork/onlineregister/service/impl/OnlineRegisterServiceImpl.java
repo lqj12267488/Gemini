@@ -5,7 +5,6 @@ import com.goisan.studentwork.onlineregister.dao.OnlineRegisterDao;
 import com.goisan.studentwork.onlineregister.service.OnlineRegisterService;
 import com.goisan.system.bean.PathBean;
 import com.goisan.system.tools.CommonUtil;
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class OnlineRegisterServiceImpl implements OnlineRegisterService {

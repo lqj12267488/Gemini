@@ -7,12 +7,12 @@ import com.goisan.studentwork.onlineregister.service.OnlineRegisterService;
 import com.goisan.system.bean.PathBean;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,17 +24,12 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +50,7 @@ public class OnlineRegisterController {
 
     @ResponseBody
     @RequestMapping("/onlineregister/getOnlineRegisterList")
-    public Map<String,Object> getList(OnlineRegister onlineRegister,int draw, int start, int length) {
+    public Map<String,Object> getList(OnlineRegister onlineRegister, int draw, int start, int length) {
         PageHelper.startPage(start / length + 1, length);
         Map<String, Object> result = new HashMap();
         List<OnlineRegister> list = onlineRegisterService.getOnlineRegisterList(onlineRegister);

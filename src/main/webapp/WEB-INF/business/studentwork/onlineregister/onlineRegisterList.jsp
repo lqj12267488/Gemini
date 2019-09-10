@@ -139,17 +139,18 @@
         $.get(baseUrl + "/common/getSysDict?name=XSLB", function (data) {
             addOption(data, 'examType');
         });
+        var queryData = {
+            registerType:'${type}',
+            registerOrigin:'${origin}'
+        }
+        if($("#f_year").val()!=undefined) queryData.year = $("#f_year").val()
         table = $("#table").DataTable({
             "processing": true,
             "serverSide": true,
             "ajax": {
                 "type": "post",
                 "url": '<%=request.getContextPath()%>/onlineregister/getOnlineRegisterList',
-                "data": {
-                    registerType:${type},
-                    registerOrigin:${origin},
-                    year:$("#f_year").val()
-                },
+                "data": queryData,
             },
             "destroy": true,
             "columns": [

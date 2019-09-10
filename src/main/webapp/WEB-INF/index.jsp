@@ -624,6 +624,12 @@
 <script type="text/javascript">
     $(document).ready(
         function () {
+            <c:if test="${norole==1}">
+            swal({
+                title: "当前所在默认部门没有设置角色！",
+                type: "warning"
+            })
+            </c:if>
             document.onkeydown = function () {
                 var oEvent = window.event;
                 if (oEvent.altKey && oEvent.keyCode == 81) {

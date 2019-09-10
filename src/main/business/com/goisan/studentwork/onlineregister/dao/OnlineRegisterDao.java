@@ -2,7 +2,6 @@ package com.goisan.studentwork.onlineregister.dao;
 
 import com.goisan.studentwork.onlineregister.bean.OnlineRegister;
 import com.goisan.system.bean.BaseBean;
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

@@ -591,7 +591,7 @@
 
     //查询方法
     function searchResult() {
-        window.location.href = "/summerCamp/signUpResult";
+        window.location.href = "/onlineregister/signUpResult";
     }
 
     function fileChange(target) {

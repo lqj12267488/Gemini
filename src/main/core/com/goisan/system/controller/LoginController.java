@@ -193,6 +193,10 @@ public class LoginController {
                     roles = new StringBuilder(roles.substring(0, roles.length() - 1));
                 }
             }
+            if (roles.length() == 0){
+                roles.append("''");
+                mv.addObject("norole", "1");
+            }
             menus = menuService.getMenuListByRoles(roles.toString(), system, id);
         }
         if (null == loginUser.getUserType() || "".equals(loginUser.getUserType()) || "0".equals(loginUser.getUserType())) {//教职员工
