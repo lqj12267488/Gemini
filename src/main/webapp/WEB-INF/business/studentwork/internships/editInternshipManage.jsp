@@ -384,13 +384,13 @@
             });
             return;
         }
-        if(!reg.test($("#studentNumber").val())){
+       /* if(!reg.test($("#studentNumber").val())){
             swal({
                 title: "学籍号填写错误，请填写数字！",
                 type: "info"
             });
             return;
-        }
+        }*/
         if ($("#internshipType").val() == "" || $("#internshipType").val() == undefined || $("#internshipType").val() == null) {
             swal({
                 title: "请选择实习形式！",
