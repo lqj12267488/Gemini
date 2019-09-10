@@ -47,7 +47,10 @@
                        placeholder="密码" onKeyPress="if(event.keyCode==13) {login();}"/>
             </form>
             <div id="msg"></div>
-            <button class="bt" onclick="login()">登&nbsp;&nbsp;&nbsp;录</button>
+            <div class="loginBox">
+            <button class="loginBtn" onclick="login()">登&nbsp;&nbsp;&nbsp;录</button>
+            <button class="loginBtn" onclick="forgotPwd()" style="float:right">忘记密码</button>
+            </div>
         </div>
     </div>
     <%--<div class="foot">Copyright © 吉林省勾陈科技有限公司版权所有 .com All rights reserved</div>--%>
@@ -76,6 +79,9 @@
         })
     }
 
+    function forgotPwd() {
+        window.location.href = "<%=request.getContextPath()%>/resetPwd";
+    }
 </script>
 </body>
 </html>

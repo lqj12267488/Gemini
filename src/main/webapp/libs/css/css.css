@@ -131,6 +131,28 @@ body {
 .dl .bt:hover {
     box-shadow: none;
 }
+.dl .loginBox {
+    width:60%;
+    margin: 0 auto;
+}
+.dl .loginBtn {
+    width:45%;
+    height: 42px;
+    display: block;
+    border: 0;
+    margin: 0px auto;
+    border-radius: 4px;
+    background: #0c7dc7;
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 16px;
+    box-shadow: 0px 4px 0px #065488;
+    float: left;
+}
+
+.dl .loginBtn:hover {
+    box-shadow: none;
+}
 
 .foot {
     text-align: center;
