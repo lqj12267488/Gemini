@@ -6,10 +6,41 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <div class="container">
     <div class="row">
         <div class="col-md-12">
             <div class="block">
+                <div class="block block-drop-shadow">
+                    <div class="content block-fill-white">
+                        <div class="form-row">
+                            <div class="col-md-1 tar">
+                                <c:if test='${relType == 1}'>教室号</c:if>
+                                <c:if test='${relType == 2}'>寝室号</c:if>
+                            </div>
+                            <div class="col-md-2">
+                                <input id="relNameSel">
+                            </div>
+                            <div class="col-md-1 tar">
+                                状态：
+                            </div>
+                            <div class="col-md-2">
+                                <select id="statusSel">
+                                    <option value="请选择">请选择</option>
+                                    <option value="0">未维护</option>
+                                    <option value="1">已维护</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 tar">
+                                <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
+                                <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div class="block block-drop-shadow content">
                     <div class="form-row block" style="overflow-y:auto;">
                         <table id="mtRelationGrid" cellpadding="0" cellspacing="0" width="100%"
@@ -28,17 +59,26 @@
         search();
     })
 
-
+function searchClear() {
+   $("#relNameSel").val("");
+   $("#statusSel").val("")
+    search();
+}
 
     function search() {
 
         if ("${relType}"=="1"){
-            var table =  $("#mtRelationGrid").DataTable({
+              $("#mtRelationGrid").DataTable({
                 "processing": true,
                 "serverSide": true,
                 "ajax": {
                     "type": "post",
-                    "url": '<%=request.getContextPath()%>/mtRelation/getMRList?relType=${relType}'
+                    "url": '<%=request.getContextPath()%>/mtRelation/getMRList',
+                    "data":{
+                        relType:"${relType}",
+                        relName:$("#relNameSel").val(),
+                        mtStatus:$("#statusSel").val()
+                    }
                 },
                 "destroy": true,
                 "columns": [
@@ -64,7 +104,12 @@
                 "serverSide": true,
                 "ajax": {
                     "type": "post",
-                    "url": '<%=request.getContextPath()%>/mtRelation/getMRList?relType=${relType}'
+                    "url": '<%=request.getContextPath()%>/mtRelation/getMRList',
+                    "data":{
+                        relType:"${relType}",
+                        relName:$("#relNameSel").val(),
+                        mtStatus:$("#statusSel").val()
+                    }
                 },
                 "destroy": true,
                 "columns": [

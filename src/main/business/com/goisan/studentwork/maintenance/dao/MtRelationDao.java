@@ -10,8 +10,8 @@ import java.util.List;
  */
 @Repository
 public interface MtRelationDao {
-   List<MtRelation> getMRClassList();
-   List<MtRelation> getMRDormList();
+   List<MtRelation> getMRClassList(MtRelation mtRelation);
+   List<MtRelation> getMRDormList(MtRelation mtRelation);
    List<MtRelation> getMRListByRelId(MtRelation mtRelation);
   MtRelation getMRDetailById(String id);
    void insertMRDetail(MtRelation mtRelation);

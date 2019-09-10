@@ -53,14 +53,12 @@ public class MtRelationController {
         return modelAndView;
     }
 
-
-
     @ResponseBody
     @RequestMapping("/mtRelation/getMRList")
-    public Map<String,Object> getMRList(String relType, int draw, int start, int length){
+    public Map<String,Object> getMRList(MtRelation mtRelation, int draw, int start, int length){
         PageHelper.startPage(start / length + 1, length);
         Map<String, Object> map = new HashMap();
-        List<MtRelation> list = mtRelationService.getMRList(relType);
+        List<MtRelation> list = mtRelationService.getMRList(mtRelation);
         PageInfo<List<MtType>> info = new PageInfo(list);
         map.put("draw", draw);
         map.put("recordsTotal", info.getTotal());

@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface MtRelationService {
 
-    List<MtRelation> getMRList(String relType);
+    List<MtRelation> getMRList(MtRelation mtRelation);
     List<MtRelation> getMRListByRelId(MtRelation mtRelation);
     void insertMRDetail(MtRelation mtRelation);
     MtRelation getMRDetailById(String id);

@@ -19,11 +19,11 @@ public class MtRelationServiceImpl implements MtRelationService {
     private MtRelationDao mtRelationDao;
 
     @Override
-    public List<MtRelation> getMRList(String relType) {
-        if ("1".equals(relType)){
-            return mtRelationDao.getMRClassList();
+    public List<MtRelation> getMRList(MtRelation mtRelation) {
+        if ("1".equals(mtRelation.getRelType())){
+            return mtRelationDao.getMRClassList(mtRelation);
         }else {
-            return mtRelationDao.getMRDormList();
+            return mtRelationDao.getMRDormList(mtRelation);
         }
     }
 

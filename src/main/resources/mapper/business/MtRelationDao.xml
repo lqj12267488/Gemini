@@ -6,13 +6,28 @@
     <select id="getMRClassList" resultType="com.goisan.studentwork.maintenance.bean.MtRelation">
        select t.id as relId,
        t.class_room_name as relName,
-        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c,T_JW_CLASSROOM r where r.id = c.rel_id  and t.id = r.id and c.valid_flag='1' )  = 0
+        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c where t.id = c.rel_id and c.valid_flag='1' )  = 0
           then '未维护'
           else '已维护'
           end mtStatus
        from T_JW_CLASSROOM t
       left join T_XG_MAINTENANCE_RELATION mr
      on t.id = mr.rel_id
+     where 1=1
+     <if test='relName!="" and null!= relName'>
+      and  t.class_room_name like '%'|| #{relName} ||'%'
+     </if>
+     <if test='mtStatus=="0"'>
+         and (select count(c.id)
+         from T_XG_MAINTENANCE_RELATION c
+         where t.id = c.rel_id
+         and c.valid_flag = '1') = 0
+     </if><if test='mtStatus=="1"'>
+            and (select count(c.id)
+            from T_XG_MAINTENANCE_RELATION c
+            where t.id = c.rel_id
+            and c.valid_flag = '1') != 0
+        </if>
     group by t.id, class_room_name
      order by mtStatus
     </select>
@@ -20,13 +35,29 @@
     <select id="getMRDormList" resultType="com.goisan.studentwork.maintenance.bean.MtRelation">
         select d.id as relId,
        d.dorm_name as relName,
-        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c,T_JW_DORM r where r.id = c.rel_id  and d.id = r.id and c.valid_flag='1')  = 0
+        case when  (select count(c.id) from T_XG_MAINTENANCE_RELATION c  where d.id = c.rel_id  and c.valid_flag='1')  = 0
           then '未维护'
            else '已维护'
              end mtStatus
        from T_JW_DORM d
       left join T_XG_MAINTENANCE_RELATION mr
       on d.id = mr.rel_id
+      where 1=1
+        <if test='relName!="" and null!= relName'>
+            and  d.DORM_NAME like '%'|| #{relName} ||'%'
+        </if>
+        <if test='mtStatus=="0"'>
+            and (select count(c.id)
+            from T_XG_MAINTENANCE_RELATION c
+            where d.id = c.rel_id
+            and c.valid_flag = '1') = 0
+        </if>
+        <if test='mtStatus=="1"'>
+        and (select count(c.id)
+        from T_XG_MAINTENANCE_RELATION c
+        where d.id = c.rel_id
+        and c.valid_flag = '1') != 0
+    </if>
     group by d.id, dorm_name
      order by mtStatus
     </select>
