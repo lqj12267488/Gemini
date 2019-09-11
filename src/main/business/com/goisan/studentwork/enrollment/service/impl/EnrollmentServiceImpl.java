@@ -224,7 +224,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             //存学生表
             EnrollmentStudent enrollmentStudent = enrollmentDao.getEnrollmentStudentById(id);
             Student student = new Student();
-            student.setStudentId(id);
+            student.setStudentId(enrollmentStudent.getIdcard());
             student.setBirthday(enrollmentStudent.getBirthday());
             student.setHomePhone(enrollmentStudent.getHomePhone());
             student.setAddress(enrollmentStudent.getAddress());
@@ -246,7 +246,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             //插入学生班级关系表
             ClassStudentRelation relation = new ClassStudentRelation();
             relation.setClassId(classId);
-            relation.setStudentId(id);
+            relation.setStudentId(enrollmentStudent.getIdcard());
             CommonUtil.save(relation);
             studentDao.addRelation(relation);
             //存登录表
