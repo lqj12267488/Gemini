@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,12 @@ public class CasNoticeController {
         //解密
         byte[] bytes = AESUtil.parseHexStr2Byte(userName);
         byte[] decrypt1 = AESUtil.decrypt(bytes, "12345");
-        String s = new String(decrypt1);
+        String s = null;
+        try {
+            s = new String(decrypt1, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         //获取loginID
         String loginID =  casNoticeService.selectUserAccount(s);
         //获取deptId
@@ -74,7 +80,13 @@ public class CasNoticeController {
         //解密
         byte[] bytes = AESUtil.parseHexStr2Byte(userName);
         byte[] decrypt1 = AESUtil.decrypt(bytes, "12345");
-        String s = new String(decrypt1);
+        //String s = new String(decrypt1);
+        String s = null;
+        try {
+            s = new String(decrypt1,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         //获取personId
        String personId =  casNoticeService.selectPersonId(s);
        return casNoticeService.selectIndexUnAudtiList(personId);
@@ -95,7 +107,12 @@ public class CasNoticeController {
         //解密
         byte[] bytes = AESUtil.parseHexStr2Byte(userName);
         byte[] decrypt1 = AESUtil.decrypt(bytes, "12345");
-        String s = new String(decrypt1);
+        String s = null;
+        try {
+            s = new String(decrypt1,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String deptId = casNoticeService.selectDeptId(s);
         String personId = casNoticeService.selectPersonId(s);
         String level = casNoticeService.selectLevel(s);

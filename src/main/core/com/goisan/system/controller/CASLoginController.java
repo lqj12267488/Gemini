@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.*;
 
 @Controller
@@ -66,7 +67,7 @@ public class CASLoginController {
         //用户名解密
         byte[] bytes = AESUtil.parseHexStr2Byte(loginId);
         byte[] decrypt1 = AESUtil.decrypt(bytes, "12345");
-        loginId = new String(decrypt1);
+        loginId = new String(decrypt1, "utf-8");
         //密码解密
         byte[] decode = AESUtil.parseHexStr2Byte(password);
         byte[] decrypt = AESUtil.decrypt(decode, "123456");
@@ -163,7 +164,7 @@ public class CASLoginController {
         //用户名解密
         byte[] bytes = AESUtil.parseHexStr2Byte(loginId);
         byte[] decrypt1 = AESUtil.decrypt(bytes, "12345");
-        loginId = new String(decrypt1);
+        loginId = new String(decrypt1, "utf-8");
         //密码解密
         byte[] decode = AESUtil.parseHexStr2Byte(password);
         byte[] decrypt = AESUtil.decrypt(decode, "123456");
