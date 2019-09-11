@@ -46,7 +46,7 @@
             and tt.title is not null
             and tt.valid_flag = '1'
         ) a  , t_sys_user u where a.creator = u.user_id ORDER BY createTime DESC
-      ) r WHERE ROWNUM &lt; 7
+      ) r WHERE ROWNUM &lt;= 5
     </select>
 
     <select id="selectUserAccount" parameterType="java.lang.String" resultType="java.lang.String">

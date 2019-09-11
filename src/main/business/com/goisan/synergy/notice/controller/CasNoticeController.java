@@ -106,11 +106,11 @@ public class CasNoticeController {
         //待办未办
         List<IndexUnAudti> indexUnAudtiMoreList = workflowService.getIndexUnAudtiMoreList(personId);
         ArrayList<String> list = new ArrayList<>();
-        list.add("通知任务");
+        list.add("通知任务,u69.png,title-innerRed");
         list.add(noticeList.size()+"");
-        list.add("待办任务");
+        list.add("待办任务,u72.png,title-innerOrange");
         list.add(indexUnAudtiMoreList.size()+"");
-        list.add("已办任务");
+        list.add("已办任务,u75.png,title-innerPurple");
         list.add(indexAudtiMoreList.size()+"");
 
         return list;
