@@ -461,7 +461,7 @@
         creator,create_time,create_dept,valid_flag,id_card_photo_url,PROGRAM_DURATION,GRADATION
         , student_source, from_army, rural_household_registratio, order_training, documentary_lika_poor_familie, admissions_way)
         VALUES
-        ('${studentId}','${joinYear}','${joinMonth}','${majorDirection}','${departmentsId}','${majorCode}',
+        ('${idcard}','${joinYear}','${joinMonth}','${majorDirection}','${departmentsId}','${majorCode}',
         '${trainingLevel}','${name}','${sex}','${idcard}','${studentNumber}',to_date('${birthday}','yyyy-mm-dd'),
         '${nationality}','${nation}','${address}','${housePlace}','${houseProvince}','${houseCity}','${houseCounty}',
         '${politicalStatus}','${homePhone}','${tel}','${studentStatus}','${cutFlag}',
