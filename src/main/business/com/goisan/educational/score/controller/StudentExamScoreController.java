@@ -96,7 +96,7 @@ public class StudentExamScoreController {
         map.put("data", studentExamScoreService.getStudentExamScoreList(scoreImport));
         return map;
     }
-//    导出成绩表
+    //    导出成绩表
     @RequestMapping("/studentExamScore/exportList")
     public void exportStudent(HttpServletRequest request, HttpServletResponse response,String scoreExamId,String scoreExamName) {
         ScoreImport scoreImport = new ScoreImport();
@@ -119,14 +119,14 @@ public class StudentExamScoreController {
             HSSFRow row1 = sheet.createRow(rowNum);
             //创建HSSFCell对象
             row1.createCell(0).setCellValue("姓名："+s.getStudentName());
-            row1.createCell(3).setCellValue("学号："+s.getStudentId());
+            row1.createCell(3).setCellValue("学号："+s.getStudentNum());
             rowNum++;
 
             HSSFRow row2 = sheet.createRow(rowNum);
             //创建HSSFCell对象
             row2.createCell(0).setCellValue("系部："+s.getDepartmentsId());
             row2.createCell(3).setCellValue("专业："+s.getMajorCode());
-            row2.createCell(6).setCellValue("班级："+s.getClassId());
+            row2.createCell(6).setCellValue("班级："+s.getClassName());
             rowNum++;
 
             HSSFRow row3 = sheet.createRow(rowNum);

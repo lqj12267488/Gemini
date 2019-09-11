@@ -78,129 +78,12 @@ public class Student extends BaseBean {
     private String month;
     private String year;
     private String from;
+    private String graduationYear;
     private String nameOfMember;
     private String memberRelationship;
     private String isGuardian;
     private String MemberTelephoneNumber;
     private String graduationSchool;
-    private String stuSourceAddr;
-    private String fromArmy;//来自军队
-    private String fromArmyShow;
-    private String ruralHouseholdRegistratio; //是否常住户口在农村
-    private String orderTraining; //是否订单（定向）培养
-    private String documentaryLikaPoorFamilie;//是否建档立卡贫困家庭
-    private String studyModeDz; //大专就业形式
-    private String totalPoints;//大专总分
-    private String idCardType; //身份证件类型
-    private String spellName;  //姓名拼音
-    private String className;  //班级名称
-    private String learnMode;  //学习形式
-    private String enrollmentType; //入学方式
-    private String studyingWay;    //就读方式
-    private String maritalStatus;  //婚姻状况
-    private String trainInterval;  //乘火车区间
-    private String trailingChildrenFlag;   //是否随迁子女
-    private String sourcePlaceDivisionCode;    //生源地行政区划码
-    private String birthPlaceDivisionCode;     //出生地行政区划码
-    private String nativePlaceDivisionCode;    //籍贯地行政区划码
-    private String subordinateStation;     //所属派出所
-    private String residenceDivisionCode;    //户口所在地行政区划码
-    private String studentResidenceType;   //学生居住地类型
-    private String professionalExpertise;  //专业简称
-    private String eductionalSystem;   //学制
-    private String healthCondition;    //健康状况
-    private String enrollmentTarget;   //招生对象
-    private String admissionsWay;  //招生方式
-    private String cooperationType;    //联招合作类型
-    private String examinationCardNumber;  //准考证号
-    private String candidateNumber;        //考生号
-    private String testScores;           //考试总分
-    private String formCooperativeEducation; //联招合作办学形式
-    private String codeCooperativeEducation;  //联招合作学校代码
-    private String externalTeachingPoint;  //校外教学点
-    private String subsectionCulture; //分段培养方式
-    private String duringEmployment;//学生是否在职
-    private String duringEmploymentShow;
-    private String idCardTypeStudentShow;
-    private String totalEnrollmentScore;//入学总分
-
-    public String getTotalEnrollmentScore() {
-        return totalEnrollmentScore;
-    }
-
-    public void setTotalEnrollmentScore(String totalEnrollmentScore) {
-        this.totalEnrollmentScore = totalEnrollmentScore;
-    }
-    public String getDuringEmployment() {
-        return duringEmployment;
-    }
-
-    public void setDuringEmployment(String duringEmployment) {
-        this.duringEmployment = duringEmployment;
-    }
-
-    public String getDuringEmploymentShow() {
-        return duringEmploymentShow;
-    }
-
-    public void setDuringEmploymentShow(String duringEmploymentShow) {
-        this.duringEmploymentShow = duringEmploymentShow;
-    }
-
-    public String getIdCardTypeStudentShow() {
-        return idCardTypeStudentShow;
-    }
-
-    public void setIdCardTypeStudentShow(String idCardTypeStudentShow) {
-        this.idCardTypeStudentShow = idCardTypeStudentShow;
-    }
-
-    public String getFromArmy() {
-        return fromArmy;
-    }
-
-    public void setFromArmy(String fromArmy) {
-        this.fromArmy = fromArmy;
-    }
-
-    public String getFromArmyShow() {
-        return fromArmyShow;
-    }
-
-    public void setFromArmyShow(String fromArmyShow) {
-        this.fromArmyShow = fromArmyShow;
-    }
-
-    public String getRuralHouseholdRegistratio() {
-        return ruralHouseholdRegistratio;
-    }
-
-    public void setRuralHouseholdRegistratio(String ruralHouseholdRegistratio) {
-        this.ruralHouseholdRegistratio = ruralHouseholdRegistratio;
-    }
-
-    public String getOrderTraining() {
-        return orderTraining;
-    }
-
-    public void setOrderTraining(String orderTraining) {
-        this.orderTraining = orderTraining;
-    }
-
-    public String getDocumentaryLikaPoorFamilie() {
-        return documentaryLikaPoorFamilie;
-    }
-
-    public void setDocumentaryLikaPoorFamilie(String documentaryLikaPoorFamilie) {
-        this.documentaryLikaPoorFamilie = documentaryLikaPoorFamilie;
-    }
-    public String getStuSourceAddr() {
-        return stuSourceAddr;
-    }
-
-    public void setStuSourceAddr(String stuSourceAddr) {
-        this.stuSourceAddr = stuSourceAddr;
-    }
 
     public String getNameOfMember() {
         return nameOfMember;
@@ -258,7 +141,36 @@ public class Student extends BaseBean {
         this.studyModeDz = studyModeDz;
     }
 
-
+    private String studyModeDz; //大专就业形式
+    private String totalPoints;//大专总分
+    private String idCardType; //身份证件类型
+    private String spellName;  //姓名拼音
+    private String className;  //班级名称
+    private String learnMode;  //学习形式
+    private String enrollmentType; //入学方式
+    private String studyingWay;    //就读方式
+    private String maritalStatus;  //婚姻状况
+    private String trainInterval;  //乘火车区间
+    private String trailingChildrenFlag;   //是否随迁子女
+    private String sourcePlaceDivisionCode;    //生源地行政区划码
+    private String birthPlaceDivisionCode;     //出生地行政区划码
+    private String nativePlaceDivisionCode;    //籍贯地行政区划码
+    private String subordinateStation;     //所属派出所
+    private String residenceDivisionCode;    //户口所在地行政区划码
+    private String studentResidenceType;   //学生居住地类型
+    private String professionalExpertise;  //专业简称
+    private String eductionalSystem;   //学制
+    private String healthCondition;    //健康状况
+    private String enrollmentTarget;   //招生对象
+    private String admissionsWay;  //招生方式
+    private String cooperationType;    //联招合作类型
+    private String examinationCardNumber;  //准考证号
+    private String candidateNumber;        //考生号
+    private String testScores;           //考试总分
+    private String formCooperativeEducation; //联招合作办学形式
+    private String codeCooperativeEducation;  //联招合作学校代码
+    private String externalTeachingPoint;  //校外教学点
+    private String subsectionCulture; //分段培养方式
 
 
     public String getFormCooperativeEducation() {
@@ -1062,5 +974,13 @@ public class Student extends BaseBean {
 
     public void setTrainingLevelShow(String trainingLevelShow) {
         this.trainingLevelShow = trainingLevelShow;
+    }
+
+    public String getGraduationYear() {
+        return graduationYear;
+    }
+
+    public void setGraduationYear(String graduationYear) {
+        this.graduationYear = graduationYear;
     }
 }

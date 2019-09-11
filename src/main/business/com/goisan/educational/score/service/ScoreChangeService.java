@@ -5,6 +5,7 @@ import com.goisan.educational.score.bean.ScoreImport;
 import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.EmpDeptRelation;
 import com.goisan.system.bean.RoleEmpDeptRelation;
+import com.goisan.system.bean.Student;
 import com.goisan.workflow.bean.Handle;
 
 import java.util.List;
@@ -47,4 +48,6 @@ public interface ScoreChangeService {
     List<RoleEmpDeptRelation> getRoleByPersonId(String id);
 
     List<String> getStudentEndTime(String studentId);
+
+    Student getStudentByStudentId(String studentId);
 }

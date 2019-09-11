@@ -134,7 +134,7 @@
                         <select id="salary" />
                     </div>
                     <div class="col-md-2 tar">
-                        <span class="iconBtx">*</span> 签订合同否
+                        <span class="iconBtx">*</span> 专业对口否
                     </div>
                     <div class="col-md-4">
                         <select id="majorMatchFlag" />
@@ -142,7 +142,7 @@
                 </div>
                 <div class="form-row" id="s_signContract">
                     <div class="col-md-2 tar">
-                        <span class="iconBtx">*</span> 专业对口否
+                        <span class="iconBtx">*</span> 签订合同否
                     </div>
                     <div class="col-md-4">
                         <select id="signContract" />
@@ -380,13 +380,13 @@
             });
             return;
         }
-       /* if(!reg.test($("#studentNumber").val())){
-            swal({
-                title: "学籍号填写错误，请填写数字！",
-                type: "info"
-            });
-            return;
-        }*/
+        /* if(!reg.test($("#studentNumber").val())){
+             swal({
+                 title: "学籍号填写错误，请填写数字！",
+                 type: "info"
+             });
+             return;
+         }*/
         if ($("#employmentType").val() == "" || $("#employmentType").val() == undefined || $("#employmentType").val() == null) {
             swal({
                 title: "请选择就业形式！",

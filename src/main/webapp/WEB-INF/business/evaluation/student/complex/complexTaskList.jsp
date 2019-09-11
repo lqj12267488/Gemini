@@ -164,7 +164,7 @@
                     insertResult(data.complexTaskId);
                 }
             }else if(this.id == "checkEmpsList"){// 被考评人校验列表
-                $("#right").load( "<%=request.getContextPath()%>/evaluation/complex/checkEmpsList?" +
+                $("#right").load( "<%=request.getContextPath()%>/evaluation/complex/checkStudentList?" +
                     "complexTaskId="+data.complexTaskId+"&complexTaskName="+data.complexTaskName+
                     "&evaluationType="+eType);
             }
@@ -183,7 +183,7 @@
     }
 
     function add() {
-        $("#dialog").load("<%=request.getContextPath()%>/xgEvaluation/complex/addComplexTask");
+        $("#dialog").load("<%=request.getContextPath()%>/xgEvaluation/complex/addComplexTask?evaluationType=" + eType);
         $("#dialog").modal("show");
     }
 

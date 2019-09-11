@@ -134,7 +134,7 @@
                         <select id="salary" />
                     </div>
                     <div class="col-md-2 tar">
-                        <span class="iconBtx">*</span>    签订合同否
+                        <span class="iconBtx">*</span>   专业对口否
                     </div>
                     <div class="col-md-4">
                         <select id="majorMatchFlag" />
@@ -142,7 +142,7 @@
                 </div>
                 <div class="form-row" id="s_signContract">
                     <div class="col-md-2 tar">
-                        <span class="iconBtx">*</span>   专业对口否
+                        <span class="iconBtx">*</span>  签订合同否
                     </div>
                     <div class="col-md-4">
                         <select id="signContract" />
@@ -302,13 +302,13 @@
             addOption(data, 'departmentsId', '${data.departmentsId}');
         });
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF",function (data) {
-           addOption(data,'signContract',$("#signContractShow").val());
+            addOption(data,'signContract',$("#signContractShow").val());
         });
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=JYMYD",function(data){
-           addOption(data,'employmentSatisfaction',$("#employmentSatisfactionShow").val());
+            addOption(data,'employmentSatisfaction',$("#employmentSatisfactionShow").val());
         });
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=JYBXXZ",function (data) {
-           addOption(data,'employmentInsuranceType',$("#employmentInsuranceTypeShow").val());
+            addOption(data,'employmentInsuranceType',$("#employmentInsuranceTypeShow").val());
         });
         //      专业回显
         /*if ('{studentGrants.majorCode}' != "") {//判断需要回显的专业Code是否为空
@@ -320,52 +320,52 @@
             $("#majorCode").append("<option value='' selected>请选择</option>")
         }*/
         //       班级回显
-       /* if ('{studentGrants.classId}' != "") {
-            var majorCode = '{studentGrants.majorCode}';
-            $.post("/common/getTableDict", {
-                id: " class_id",
-                text: " class_name ",
-                tableName: " t_xg_class ",
-                where: " WHERE 1 = 1 and major_code = '"+ majorCode +"'" ,
-                orderby: " order by create_time desc"
-            },function (data) {
-                addOption(data, "classId", '{studentGrants.classId}');
-            });
-        } else {
-            $("#classId").append("<option value='' selected>请选择</option>");
-        }*/
+        /* if ('{studentGrants.classId}' != "") {
+             var majorCode = '{studentGrants.majorCode}';
+             $.post("/common/getTableDict", {
+                 id: " class_id",
+                 text: " class_name ",
+                 tableName: " t_xg_class ",
+                 where: " WHERE 1 = 1 and major_code = '"+ majorCode +"'" ,
+                 orderby: " order by create_time desc"
+             },function (data) {
+                 addOption(data, "classId", '{studentGrants.classId}');
+             });
+         } else {
+             $("#classId").append("<option value='' selected>请选择</option>");
+         }*/
         //      学生和培养层次回显
-       /* if ('{studentGrants.studentId}' != "") {
-            var classId = '{studentGrants.classId}';
-            $.post("/studentGrants/getTrainingLevelByClassId",{
-                classId:classId
-            },function (data) {
-                $("#trainingLevel").val(data.showValue);
-                $("#trainingLevel").attr("storeValue",data.storeValue);
-            })
-            $.post("/studentGrants/getStudentByClassId", {
-                classId:classId
-            },function (data) {
-                addOption(data, "studentId", '{studentGrants.studentId}');
-            });
-        }else {
-            $("#studentId").append("<option value='' selected>请选择</option>");
-        }
-        $("#studentId").blur(function () {
-            if($("#studentId option:selected").val()!=""){
-                $.get("/student/getStudentByStudentId?studentId="+$("#studentId option:selected").val(),
-                    function (data) {
-                        if(data!= null){
-                            console.log(data);
-                            console.log(data.idcard);
-                            console.log(data.sex);
-                            $("#f_idcard").val(data.idcard);
-                            $("#sex").val(data.sex);
+        /* if ('{studentGrants.studentId}' != "") {
+             var classId = '{studentGrants.classId}';
+             $.post("/studentGrants/getTrainingLevelByClassId",{
+                 classId:classId
+             },function (data) {
+                 $("#trainingLevel").val(data.showValue);
+                 $("#trainingLevel").attr("storeValue",data.storeValue);
+             })
+             $.post("/studentGrants/getStudentByClassId", {
+                 classId:classId
+             },function (data) {
+                 addOption(data, "studentId", '{studentGrants.studentId}');
+             });
+         }else {
+             $("#studentId").append("<option value='' selected>请选择</option>");
+         }
+         $("#studentId").blur(function () {
+             if($("#studentId option:selected").val()!=""){
+                 $.get("/student/getStudentByStudentId?studentId="+$("#studentId option:selected").val(),
+                     function (data) {
+                         if(data!= null){
+                             console.log(data);
+                             console.log(data.idcard);
+                             console.log(data.sex);
+                             $("#f_idcard").val(data.idcard);
+                             $("#sex").val(data.sex);
 
-                        }
-                    })
-            }
-        });*/
+                         }
+                     })
+             }
+         });*/
 
     })
 
@@ -424,13 +424,13 @@
                 });
                 return;
             }
-           /* if ($("#departmentsId option:selected").val() == "" ) {
-                swal({
-                    title: "请填写实习工资！",
-                    type: "info"
-                });
-                return;
-            }*/
+            /* if ($("#departmentsId option:selected").val() == "" ) {
+                 swal({
+                     title: "请填写实习工资！",
+                     type: "info"
+                 });
+                 return;
+             }*/
             if ($("#employmentUnitId option:selected").val() == "") {
                 swal({
                     title: "请选择就业单位！",

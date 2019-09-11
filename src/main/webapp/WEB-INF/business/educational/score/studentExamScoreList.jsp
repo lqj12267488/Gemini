@@ -66,14 +66,14 @@
                 {"data": "scoreExamId", "visible": false},
                 {"data": "createTime", "visible": false},
                 {"width":"12%","data": "courseId", "title": "课程名称"},
-                {"width":"12%","data": "totalScore", "title": "总分"},
-                {"width":"12%","data": "passScore", "title": "及格分"},
+                /*     {"width":"12%","data": "totalScore", "title": "总分"},
+                     {"width":"12%","data": "passScore", "title": "及格分"},*/
                 {"width":"8%","data": "examinationStatus", "title": "考试状态"},
-                {"width":"12%","data": "score", "title": "成绩"},
-                {"width":"8%","data": "makeupStatus", "title": "补考状态"},
-                {"width":"8%","data": "makeupScore", "title": "补考成绩"},
-                {"width":"12%","data": "graduateMakeupStatus", "title": "毕业补考状态"},
-                {"width":"12%","data": "graduateMakeupScore", "title": "毕业补考成绩"}
+                {"width":"12%","data": "score", "title": "成绩"}
+                /*  {"width":"8%","data": "makeupStatus", "title": "补考状态"},
+                  {"width":"8%","data": "makeupScore", "title": "补考成绩"},
+                  {"width":"12%","data": "graduateMakeupStatus", "title": "毕业补考状态"},
+                  {"width":"12%","data": "graduateMakeupScore", "title": "毕业补考成绩"}*/
             ],
             'order' : [1,'desc'],
             "dom": 'rtlip',

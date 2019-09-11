@@ -463,7 +463,23 @@
             and tt.id not in (select message_id from T_SYS_MESSAGE_LOG l where l.creator ='${loginID}')
             and tt.title is not null
             and tt.valid_flag = '1'
-        ) a  ORDER BY createTime DESC
+         UNION
+         SELECT '3' abc,
+                t.id,
+                '【'||FUNC_GET_DICVALUE(t.MEETING_REQUEST, 'HYSQ')||'】'||to_char(t.start_time,'yyyy')||'年'||to_char(t.start_time,'MM')||'月'||to_char(t.start_time,'dd')||'日，在'||FUNC_GET_TABLEVALUE(t.MEETING_SITE, 'T_JW_MEETINGROOM', 'id', 'MEETING_ROOM_NAME')||'举行'||t.content||'会议，请参会人员准时参加。' title,
+                FUNC_GET_DEPTNAME(t.create_dept) isdean,
+                to_char(t.content) content,
+                t.MEETING_REQUEST type,
+                t.create_time publicTime,
+                '会议通知' typeShow,
+                t.create_time createTime,
+                t.create_dept deptId,
+                FUNC_GET_USERNAME(t.creator) requester ,t.creator
+         FROM T_BG_HALLUSE_WF t
+         WHERE valid_flag = '1' and t.request_flag ='2'
+           and t.ID NOT IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${loginID}')
+
+                      ) a  ORDER BY createTime DESC
     </select>
     <!--首页通知公告更多(已读)-->
     <select id="getNoticeMoreReaded" resultType="com.goisan.synergy.notice.bean.Notice">
@@ -504,7 +520,23 @@
             and tt.id in (select message_id from T_SYS_MESSAGE_LOG l where l.creator ='${loginID}')
             and tt.title is not null
             and tt.valid_flag = '1'
-        ) a  ORDER BY createTime DESC
+      UNION
+      SELECT '3' abc,
+             t.id,
+             '【'||FUNC_GET_DICVALUE(t.MEETING_REQUEST, 'HYSQ')||'】'||to_char(t.start_time,'yyyy')||'年'||to_char(t.start_time,'MM')||'月'||to_char(t.start_time,'dd')||'日，在'||FUNC_GET_TABLEVALUE(t.MEETING_SITE, 'T_JW_MEETINGROOM', 'id', 'MEETING_ROOM_NAME')||'举行'||t.content||'会议，请参会人员准时参加。' title,
+             FUNC_GET_DEPTNAME(t.create_dept) isdean,
+             to_char(t.content) content,
+             t.MEETING_REQUEST type,
+             t.create_time publicTime,
+             '会议通知' typeShow,
+             t.create_time createTime,
+             t.create_dept deptId,
+             FUNC_GET_USERNAME(t.creator) requester ,t.creator
+      FROM T_BG_HALLUSE_WF t
+      WHERE valid_flag = '1' and t.request_flag ='2'
+        and t.ID IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${loginID}')
+
+                     ) a  ORDER BY createTime DESC
     </select>
     <select id="getProcessList" resultType="com.goisan.synergy.notice.bean.Notice"
             parameterType="com.goisan.synergy.notice.bean.Notice">

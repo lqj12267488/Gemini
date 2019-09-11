@@ -1675,7 +1675,17 @@ public class EvaluationController {
         evaluationService.setStartFlagByTaskId(taskId, startFlag);
         return new Message(1, "修改成功！", null);
     }
-
+    @RequestMapping("/evaluation/complex/checkStudentList")
+    public ModelAndView checkStudentList(String complexTaskId, String complexTaskName, String evaluationType) {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/business/evaluation/student/complex/result/complexCheckEmpsList");
+        List<EvaluationComplexDetail> details = evaluationService.getEvaluationComplexDetail(complexTaskId);
+        mv.addObject("details", details);
+        mv.addObject("complexTaskId", complexTaskId);
+        mv.addObject("complexTaskName", complexTaskName);
+        mv.addObject("evaluationType", evaluationType);
+        return mv;
+    }
     @RequestMapping("/evaluation/complex/checkEmpsList")
     public ModelAndView checkEmpsList(String complexTaskId, String complexTaskName, String evaluationType) {
         ModelAndView mv = new ModelAndView();

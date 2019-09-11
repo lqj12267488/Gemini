@@ -1273,7 +1273,7 @@ public class StudentEvaluationController {
     public Message checkChildTask(String complexTaskId) {
         Integer weights = evaluationService.getDetailWeights(complexTaskId);
         if (weights == 0) {
-            return new Message(0, "当前评教未添加自评教！", null);
+            return new Message(0, "当前评教未添加子评教！", null);
         } else if (weights == 100) {
             evaluationService.checkComplexTask(complexTaskId);
             evaluationService.delComplexResult(complexTaskId);

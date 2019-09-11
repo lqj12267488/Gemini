@@ -4,7 +4,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.goisan.educational.exam.bean.ExamCourse;
 import com.goisan.educational.exam.service.ExamService;
+import com.goisan.educational.schoolreport.bean.SchoolReport;
+import com.goisan.educational.schoolreport.dao.SchoolReportDao;
 import com.goisan.educational.score.bean.*;
+import com.goisan.educational.score.service.ScoreChangeService;
 import com.goisan.educational.score.service.ScoreClassService;
 import com.goisan.educational.score.service.ScoreImportService;
 import com.goisan.evaluation.bean.EvaluationComplexDetail;
@@ -22,6 +25,7 @@ import com.goisan.system.tools.Message;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -840,7 +844,10 @@ public class ScoreImportController {
     /**
      * 学生个人总成绩单/student/studentScoreList
      */
-
+    @Resource
+    private ScoreChangeService scoreChangeService;
+    @Autowired
+    SchoolReportDao schoolReportDao;
     @RequestMapping("/student/studentScoreList")
     public ModelAndView selectStudentCourse(String studentId) {
         ModelAndView mv = new ModelAndView();
@@ -855,19 +862,24 @@ public class ScoreImportController {
         if (student.size() > 0) {
             if (list1.size() > 0) {
                 mv.setViewName("/business/educational/score/studentPersonScoreList");
-
+                SchoolReport report = new SchoolReport();
+                report.setStudentId(studentId);
+                //获取学生的个人信息
+                List<SchoolReport> schoolReportList = schoolReportDao.getStudentInfo(report);
 /*
                 List<ScoreImport> weekShow  = scoreImportService.getTermIdByScoreExamId(studentId);
                 mv.addObject("weekShow",weekShow);
 */
-
+                Student student1 = scoreChangeService.getStudentByStudentId(studentId);
+                List<String> time = scoreChangeService.getStudentEndTime(studentId);
+                List<SchoolReport> infoList = schoolReportDao.getSchoolReportList(report);
                 List<ScoreImport> studentArrayClassLooks = scoreImportService.getScoreByStudentIdScoreExamId(studentId);
-                mv.addObject("arrayclassResultClassList", JsonUtils.toJson(studentArrayClassLooks));
+                mv.addObject("arrayclassResultClassList", JsonUtils.toJson(infoList));
                 ScoreImport scoreImport = null;
                 if (studentArrayClassLooks.size() > 0) {
                     studentArrayClassLooks.get(0);
                 }
-                mv.addObject("arrayclassResultClass", scoreImport);
+                mv.addObject("arrayclassResultClass", student1);
 
                 List row = new ArrayList();
                 int L = (studentArrayClassLooks.size() / 2 + 1) > 30 ? studentArrayClassLooks.size() / 2 + 1 + 1 : 30;

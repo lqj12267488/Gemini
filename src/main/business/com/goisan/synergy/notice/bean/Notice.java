@@ -32,7 +32,7 @@ public class Notice extends BaseBean {
     private String photoUrl;
     private String messagesClass;
     private String isDean;
-
+    private String meetingRequest;
     public String getMessagesClass() {
         return messagesClass;
     }
@@ -220,4 +220,12 @@ public class Notice extends BaseBean {
     public String getIsDean() { return isDean; }
 
     public void setIsDean(String isDean) { this.isDean = isDean; }
+
+    public String getMeetingRequest() {
+        return meetingRequest;
+    }
+
+    public void setMeetingRequest(String meetingRequest) {
+        this.meetingRequest = meetingRequest;
+    }
 }

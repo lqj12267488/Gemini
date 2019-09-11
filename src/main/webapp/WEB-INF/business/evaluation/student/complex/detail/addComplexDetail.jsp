@@ -21,40 +21,40 @@
         <div class="modal-body clearfix">
             <div id="layout" style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
             <div class="controls">
-                    <div class="form-row">
-                        <div class="col-md-3 tar">
-                            <span class="iconBtx">*</span>
-                            考评子项名称
-                        </div>
-                        <div class="col-md-9">
-                            <input id="taskShowName" type="text"
-                                   onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" maxlength="15" placeholder="最多输入15个字"/>
-                        </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>
+                        考评子项名称
                     </div>
-                    <div class="form-row">
-                        <div class="col-md-3 tar">
-                            <span class="iconBtx">*</span>
-                            权重
-                        </div>
-                        <div class="col-md-9">
-                            <input id="weights" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" maxlength="10" placeholder="最多输入10位数字"/>
-                        </div>
+                    <div class="col-md-9">
+                        <input id="taskShowName" type="text"
+                               onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" maxlength="15" placeholder="最多输入15个字"/>
                     </div>
-                    <div class="form-row">
-                        <div class="col-md-3 tar">
-                            <span class="iconBtx">*</span>
-                            添加考评任务
-                        </div>
-                        <div class="col-md-9">
-                            <div>
-                                <input id="itemTaskShow" type="text" onclick="showTree()" />
-                            </div>
-                            <div id="menuContent" class="menuContent">
-                                <ul id="itemTaskTree" class="ztree"></ul>
-                            </div>
-                            <input id="itemTask" type="hidden" />
-                        </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>
+                        权重
                     </div>
+                    <div class="col-md-9">
+                        <input id="weights" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" maxlength="10" placeholder="最多输入10位数字"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>
+                        添加考评任务
+                    </div>
+                    <div class="col-md-9">
+                        <div>
+                            <input id="itemTaskShow" type="text" onclick="showTree()" />
+                        </div>
+                        <div id="menuContent" class="menuContent">
+                            <ul id="itemTaskTree" class="ztree"></ul>
+                        </div>
+                        <input id="itemTask" type="hidden" />
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -78,8 +78,8 @@
                 id: " task_id",
                 text: " task_name ",
                 tableName: "T_KH_EVALUATION_TASK ",
-                where: " WHERE  ( START_FLAG = 2 or  END_TIME  <  sysdate )  and term = '"+$("#term").val()+"'" +
-                                " and EVALUATION_TYPE = '"+$("#evaluationType").val()+"'"// END_TIME >sysdate and
+                where: " WHERE  ( START_FLAG = 2 or  END_TIME  <=  sysdate )  and term = '"+$("#term").val()+"'" +
+                    " and EVALUATION_TYPE = '"+$("#evaluationType").val()+"'"// END_TIME >sysdate and
             },
             function (data) {
                 zTree = $.fn.zTree.init($("#itemTaskTree"), setting, data);

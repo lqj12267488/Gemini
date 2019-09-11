@@ -166,91 +166,91 @@
         update T_JW_SCORE_IMPORT
         set SUBMIT_FLAG = 1
         where
-        course_id = #{courseId}
-        AND term_id = #{termId}
-        AND class_id = #{classId}
-        and SCORE_EXAM_ID = #{scoreExamId}
+            course_id = #{courseId}
+          AND term_id = #{termId}
+          AND class_id = #{classId}
+          and SCORE_EXAM_ID = #{scoreExamId}
     </update>
 
     <update id="sumbitById" parameterType="com.goisan.educational.score.bean.ScoreImport">
-       update T_JW_SCORE_IMPORT t
-    set    PEACETIME_SCORE_A = #{peacetimeScoreA},
-            PEACETIME_SCORE_B = #{peacetimeScoreB},
-            PEACETIME_SCORE_C = #{peacetimeScoreC},
-            PEACETIME_SCORE_D = #{peacetimeScoreD},
-       t.score              = #{score},
-       t.EXAM_SCORE    = #{examScore},
-       t.examination_status = #{examinationStatus},
-       t.score_type         = #{scoreType},
-       t.submit_flag        = #{submitFlag},
-       changer= #{changer},
-            change_time= sysdate,
-            change_dept= #{changeDept}
- where t.id = #{id}
+        update T_JW_SCORE_IMPORT t
+        set    PEACETIME_SCORE_A = #{peacetimeScoreA},
+               PEACETIME_SCORE_B = #{peacetimeScoreB},
+               PEACETIME_SCORE_C = #{peacetimeScoreC},
+               PEACETIME_SCORE_D = #{peacetimeScoreD},
+               t.score              = #{score},
+               t.EXAM_SCORE    = #{examScore},
+               t.examination_status = #{examinationStatus},
+               t.score_type         = #{scoreType},
+               t.submit_flag        = #{submitFlag},
+               changer= #{changer},
+               change_time= sysdate,
+               change_dept= #{changeDept}
+        where t.id = #{id}
     </update>
 
     <!--<select id="getScoreImportList2" resultType="com.goisan.educational.score.bean.ScoreImport"-->
-            <!--parameterType="com.goisan.educational.score.bean.ScoreImport">-->
-        <!--SELECT-->
-        <!--id id,-->
-        <!--score_class_id scoreClassId,-->
-        <!--subject_id subjectId,-->
-        <!--FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,-->
-        <!--FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,-->
-        <!--FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCode,-->
-        <!--FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevel,-->
-        <!--major_direction majorDirection,-->
-        <!--plan_id planId,-->
-        <!--FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,-->
-        <!--COURSE_ID,-->
-        <!--score_exam_id scoreExamId,-->
-        <!--score_exam_name scoreExamName,-->
-        <!--student_id studentId,-->
-        <!--FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentName,-->
-        <!--FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'STUDENT_NUMBER') studentNum,-->
-        <!--score,-->
-        <!--PEACETIME_SCORE_A,-->
-        <!--PEACETIME_SCORE_B,-->
-        <!--PEACETIME_SCORE_C,-->
-        <!--PEACETIME_SCORE_D,-->
-        <!--makeup_score makeupScore,-->
-        <!--decode(exam_method,'1',FUNC_GET_DICVALUE(examination_status, 'KSZT'),'2',FUNC_GET_DICVALUE(examination_status, 'BKZT'),'3',FUNC_GET_DICVALUE(examination_status, 'BKZT'),'4',FUNC_GET_DICVALUE(examination_status, 'BKZT')) examinationStatus,-->
-        <!--FUNC_GET_DICVALUE(examination_status, 'KSZT') examinationStatus,-->
-        <!--term_id termId,-->
-        <!--FUNC_GET_DICVALUE(term_id,'XQ') AS termShow,-->
-        <!--FUNC_GET_DICVALUE(exam_method, 'KHFS') examMethod,-->
-        <!--FUNC_GET_DICVALUE(score_type, 'CJZT') scoreType-->
-        <!--FROM-->
-        <!--T_JW_SCORE_IMPORT-->
-        <!--where 1 = 1-->
-        <!--<if test="scoreExamId != null and scoreExamId != '' ">-->
-            <!--AND score_exam_id = #{scoreExamId}-->
-        <!--</if>-->
-        <!--<if test="classId != null and classId != '' ">-->
-            <!--AND class_id = #{classId}-->
-        <!--</if>-->
-        <!--<if test="majorCode != null and majorCode != '' and majorCode != 'undefined'">-->
-            <!--AND major_code = #{majorCode}-->
-        <!--</if>-->
-        <!--<if test="termId != null and termId != '' ">-->
-            <!--AND term_id = #{termId}-->
-        <!--</if>-->
-        <!--<if test="examMethod != null and examMethod != '' ">-->
-            <!--AND exam_method = #{examMethod}-->
-        <!--</if>-->
-        <!--<if test="courseId != null and courseId != '' ">-->
-            <!--AND course_id = #{courseId}-->
-        <!--</if>-->
-        <!--<if test="teachingTeacherId != null and teachingTeacherId != '' ">-->
-            <!--AND teaching_teacher_id = #{teachingTeacherId}-->
-        <!--</if>-->
-        <!--<if test="studentId != null and studentId != '' ">-->
-            <!--AND student_id = #{studentId}-->
-        <!--</if>-->
-        <!--<if test="studentName != null and studentName != '' ">-->
-            <!--AND student_name like '%'|| #{studentName} ||'%'-->
-        <!--</if>-->
-        <!--ORDER BY major_code-->
+    <!--parameterType="com.goisan.educational.score.bean.ScoreImport">-->
+    <!--SELECT-->
+    <!--id id,-->
+    <!--score_class_id scoreClassId,-->
+    <!--subject_id subjectId,-->
+    <!--FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,-->
+    <!--FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,-->
+    <!--FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCode,-->
+    <!--FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevel,-->
+    <!--major_direction majorDirection,-->
+    <!--plan_id planId,-->
+    <!--FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,-->
+    <!--COURSE_ID,-->
+    <!--score_exam_id scoreExamId,-->
+    <!--score_exam_name scoreExamName,-->
+    <!--student_id studentId,-->
+    <!--FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentName,-->
+    <!--FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'STUDENT_NUMBER') studentNum,-->
+    <!--score,-->
+    <!--PEACETIME_SCORE_A,-->
+    <!--PEACETIME_SCORE_B,-->
+    <!--PEACETIME_SCORE_C,-->
+    <!--PEACETIME_SCORE_D,-->
+    <!--makeup_score makeupScore,-->
+    <!--decode(exam_method,'1',FUNC_GET_DICVALUE(examination_status, 'KSZT'),'2',FUNC_GET_DICVALUE(examination_status, 'BKZT'),'3',FUNC_GET_DICVALUE(examination_status, 'BKZT'),'4',FUNC_GET_DICVALUE(examination_status, 'BKZT')) examinationStatus,-->
+    <!--FUNC_GET_DICVALUE(examination_status, 'KSZT') examinationStatus,-->
+    <!--term_id termId,-->
+    <!--FUNC_GET_DICVALUE(term_id,'XQ') AS termShow,-->
+    <!--FUNC_GET_DICVALUE(exam_method, 'KHFS') examMethod,-->
+    <!--FUNC_GET_DICVALUE(score_type, 'CJZT') scoreType-->
+    <!--FROM-->
+    <!--T_JW_SCORE_IMPORT-->
+    <!--where 1 = 1-->
+    <!--<if test="scoreExamId != null and scoreExamId != '' ">-->
+    <!--AND score_exam_id = #{scoreExamId}-->
+    <!--</if>-->
+    <!--<if test="classId != null and classId != '' ">-->
+    <!--AND class_id = #{classId}-->
+    <!--</if>-->
+    <!--<if test="majorCode != null and majorCode != '' and majorCode != 'undefined'">-->
+    <!--AND major_code = #{majorCode}-->
+    <!--</if>-->
+    <!--<if test="termId != null and termId != '' ">-->
+    <!--AND term_id = #{termId}-->
+    <!--</if>-->
+    <!--<if test="examMethod != null and examMethod != '' ">-->
+    <!--AND exam_method = #{examMethod}-->
+    <!--</if>-->
+    <!--<if test="courseId != null and courseId != '' ">-->
+    <!--AND course_id = #{courseId}-->
+    <!--</if>-->
+    <!--<if test="teachingTeacherId != null and teachingTeacherId != '' ">-->
+    <!--AND teaching_teacher_id = #{teachingTeacherId}-->
+    <!--</if>-->
+    <!--<if test="studentId != null and studentId != '' ">-->
+    <!--AND student_id = #{studentId}-->
+    <!--</if>-->
+    <!--<if test="studentName != null and studentName != '' ">-->
+    <!--AND student_name like '%'|| #{studentName} ||'%'-->
+    <!--</if>-->
+    <!--ORDER BY major_code-->
     <!--</select>-->
 
     <!--KSZTCX-->
@@ -318,99 +318,99 @@
         ORDER BY major_code
     </select>
     <!--<select id="getScoreImportList3" resultType="com.goisan.educational.score.bean.ScoreImport"-->
-            <!--parameterType="com.goisan.educational.score.bean.ScoreImport">-->
-        <!--SELECT-->
-        <!--id id,-->
-        <!--score_class_id scoreClassId,-->
-        <!--subject_id subjectId,-->
-        <!--FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,-->
-        <!--FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,-->
-        <!--FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCode,-->
-        <!--FUNC_GET_USERNAME(TEACHING_TEACHER_ID) teachingTeacherId,-->
-        <!--FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevel,-->
-        <!--major_direction majorDirection,-->
-        <!--plan_id planId,-->
-        <!--FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,-->
-        <!--COURSE_ID,-->
-        <!--score_exam_id scoreExamId,-->
-        <!--score_exam_name scoreExamName,-->
-        <!--student_id studentId,-->
-        <!--FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentName,-->
-        <!--FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'STUDENT_NUMBER') studentNum,-->
-        <!--score,-->
-        <!--PEACETIME_SCORE_A,-->
-        <!--PEACETIME_SCORE_B,-->
-        <!--PEACETIME_SCORE_C,-->
-        <!--PEACETIME_SCORE_D,-->
-        <!--makeup_score makeupScore,-->
-        <!--FUNC_GET_DICVALUE(examination_status, 'KSZT') examinationStatus,-->
-        <!--term_id termId,-->
-        <!--FUNC_GET_DICVALUE(term_id,'XQ') AS termShow,-->
-        <!--FUNC_GET_DICVALUE(makeup_status, 'KSZT') makeupStatus,-->
-        <!--FUNC_GET_DICVALUE(exam_method, 'KHFS') examMethod,-->
-        <!--FUNC_GET_DICVALUE(score_type, 'CJZT') scoreType-->
-        <!--FROM-->
-        <!--(select score_class_id,subject_id,major_direction,plan_id,score_exam_name,makeup_score,-->
-        <!--id,SCORE_EXAM_ID,-->
-        <!--CLASS_ID,-->
-        <!--DEPARTMENTS_ID,-->
-        <!--MAJOR_CODE,-->
-        <!--TRAINING_LEVEL,-->
-        <!--COURSE_ID,-->
-        <!--t2.STUDENT_ID,-->
-        <!--t2.TERM_ID,-->
-        <!--EXAM_METHOD,-->
-        <!--PEACETIME_SCORE_A,-->
-        <!--PEACETIME_SCORE_B,-->
-        <!--PEACETIME_SCORE_C,-->
-        <!--PEACETIME_SCORE_D,-->
-        <!--teaching_teacher_id,-->
-        <!--examination_status,-->
-        <!--makeup_status,-->
-        <!--SCORE_TYPE,-->
-        <!--CREATE_TIME,-->
-        <!--decode(t2.SCORE, '违纪', '0', '补违纪', '0', '补缺考', '0', '补不及', '0', '不合格', '0', '补不合格', '0','补不及格', '0', '不及格', '0',-->
-        <!--'不及', '0', '超旷', '0', '缓考', '0', '缺考', '0',-->
-        <!--'合格', '60', '及格', '60', '补及', '60', '补合格', '60', '补及格', '60', SCORE) score-->
-        <!--from T_JW_SCORE_IMPORT t2) t1-->
-        <!--where 1 = 1-->
-        <!--<if test="scoreExamId != null and scoreExamId != '' ">-->
-            <!--AND score_exam_id = #{scoreExamId}-->
-        <!--</if>-->
-        <!--<if test="classId != null and classId != '' ">-->
-            <!--AND class_id = #{classId}-->
-        <!--</if>-->
-        <!--<if test="majorCode != null and majorCode != '' ">-->
-            <!--AND major_code = #{majorCode}-->
-        <!--</if>-->
-        <!--<if test="termId != null and termId != '' ">-->
-            <!--AND term_id = #{termId}-->
-        <!--</if>-->
-        <!--<if test="examMethod != null and examMethod != '' ">-->
-            <!--AND exam_method = #{examMethod}-->
-        <!--</if>-->
-        <!--<if test="courseId != null and courseId != '' ">-->
-            <!--AND course_id = #{courseId}-->
-        <!--</if>-->
-        <!--<if test="teachingTeacherId != null and teachingTeacherId != '' ">-->
-            <!--AND teaching_teacher_id = #{teachingTeacherId}-->
-        <!--</if>-->
-        <!--<if test="studentId != null and studentId != '' ">-->
-            <!--AND student_id = #{studentId}-->
-        <!--</if>-->
-        <!--<if test="studentName != null and studentName != '' ">-->
-            <!--AND student_name like '%'|| #{studentName} ||'%'-->
-        <!--</if>-->
-        <!--<if test="examMethod != null and examMethod != '' ">-->
-            <!--and EXAM_METHOD = #{examMethod}-->
-        <!--</if>-->
-        <!--<if test="scoreType != 1 and scoreType != 3 and scoreType != 5">-->
-            <!--AND SCORE &lt; 60-->
-        <!--</if>-->
-        <!--<if test="scoreType == 1 or scoreType == 3 ">-->
-            <!--and SCORE &gt;= 60-->
-        <!--</if>-->
-        <!--ORDER BY create_time desc-->
+    <!--parameterType="com.goisan.educational.score.bean.ScoreImport">-->
+    <!--SELECT-->
+    <!--id id,-->
+    <!--score_class_id scoreClassId,-->
+    <!--subject_id subjectId,-->
+    <!--FUNC_GET_TABLEVALUE(class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,-->
+    <!--FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsId,-->
+    <!--FUNC_GET_TABLEVALUE(major_code,'t_xg_major','major_code','major_name') majorCode,-->
+    <!--FUNC_GET_USERNAME(TEACHING_TEACHER_ID) teachingTeacherId,-->
+    <!--FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') trainingLevel,-->
+    <!--major_direction majorDirection,-->
+    <!--plan_id planId,-->
+    <!--FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseShow,-->
+    <!--COURSE_ID,-->
+    <!--score_exam_id scoreExamId,-->
+    <!--score_exam_name scoreExamName,-->
+    <!--student_id studentId,-->
+    <!--FUNC_GET_TABLEVALUE(student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentName,-->
+    <!--FUNC_GET_TABLEVALUE(student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'STUDENT_NUMBER') studentNum,-->
+    <!--score,-->
+    <!--PEACETIME_SCORE_A,-->
+    <!--PEACETIME_SCORE_B,-->
+    <!--PEACETIME_SCORE_C,-->
+    <!--PEACETIME_SCORE_D,-->
+    <!--makeup_score makeupScore,-->
+    <!--FUNC_GET_DICVALUE(examination_status, 'KSZT') examinationStatus,-->
+    <!--term_id termId,-->
+    <!--FUNC_GET_DICVALUE(term_id,'XQ') AS termShow,-->
+    <!--FUNC_GET_DICVALUE(makeup_status, 'KSZT') makeupStatus,-->
+    <!--FUNC_GET_DICVALUE(exam_method, 'KHFS') examMethod,-->
+    <!--FUNC_GET_DICVALUE(score_type, 'CJZT') scoreType-->
+    <!--FROM-->
+    <!--(select score_class_id,subject_id,major_direction,plan_id,score_exam_name,makeup_score,-->
+    <!--id,SCORE_EXAM_ID,-->
+    <!--CLASS_ID,-->
+    <!--DEPARTMENTS_ID,-->
+    <!--MAJOR_CODE,-->
+    <!--TRAINING_LEVEL,-->
+    <!--COURSE_ID,-->
+    <!--t2.STUDENT_ID,-->
+    <!--t2.TERM_ID,-->
+    <!--EXAM_METHOD,-->
+    <!--PEACETIME_SCORE_A,-->
+    <!--PEACETIME_SCORE_B,-->
+    <!--PEACETIME_SCORE_C,-->
+    <!--PEACETIME_SCORE_D,-->
+    <!--teaching_teacher_id,-->
+    <!--examination_status,-->
+    <!--makeup_status,-->
+    <!--SCORE_TYPE,-->
+    <!--CREATE_TIME,-->
+    <!--decode(t2.SCORE, '违纪', '0', '补违纪', '0', '补缺考', '0', '补不及', '0', '不合格', '0', '补不合格', '0','补不及格', '0', '不及格', '0',-->
+    <!--'不及', '0', '超旷', '0', '缓考', '0', '缺考', '0',-->
+    <!--'合格', '60', '及格', '60', '补及', '60', '补合格', '60', '补及格', '60', SCORE) score-->
+    <!--from T_JW_SCORE_IMPORT t2) t1-->
+    <!--where 1 = 1-->
+    <!--<if test="scoreExamId != null and scoreExamId != '' ">-->
+    <!--AND score_exam_id = #{scoreExamId}-->
+    <!--</if>-->
+    <!--<if test="classId != null and classId != '' ">-->
+    <!--AND class_id = #{classId}-->
+    <!--</if>-->
+    <!--<if test="majorCode != null and majorCode != '' ">-->
+    <!--AND major_code = #{majorCode}-->
+    <!--</if>-->
+    <!--<if test="termId != null and termId != '' ">-->
+    <!--AND term_id = #{termId}-->
+    <!--</if>-->
+    <!--<if test="examMethod != null and examMethod != '' ">-->
+    <!--AND exam_method = #{examMethod}-->
+    <!--</if>-->
+    <!--<if test="courseId != null and courseId != '' ">-->
+    <!--AND course_id = #{courseId}-->
+    <!--</if>-->
+    <!--<if test="teachingTeacherId != null and teachingTeacherId != '' ">-->
+    <!--AND teaching_teacher_id = #{teachingTeacherId}-->
+    <!--</if>-->
+    <!--<if test="studentId != null and studentId != '' ">-->
+    <!--AND student_id = #{studentId}-->
+    <!--</if>-->
+    <!--<if test="studentName != null and studentName != '' ">-->
+    <!--AND student_name like '%'|| #{studentName} ||'%'-->
+    <!--</if>-->
+    <!--<if test="examMethod != null and examMethod != '' ">-->
+    <!--and EXAM_METHOD = #{examMethod}-->
+    <!--</if>-->
+    <!--<if test="scoreType != 1 and scoreType != 3 and scoreType != 5">-->
+    <!--AND SCORE &lt; 60-->
+    <!--</if>-->
+    <!--<if test="scoreType == 1 or scoreType == 3 ">-->
+    <!--and SCORE &gt;= 60-->
+    <!--</if>-->
+    <!--ORDER BY create_time desc-->
     <!--</select>-->
     <!--考试不合格情况修改-->
     <select id="getScoreImportList3" resultType="com.goisan.educational.score.bean.ScoreImport"
@@ -468,7 +468,7 @@
         t2.SCORE
         from T_JW_SCORE_IMPORT t2 where 1=1
         <if test='scoreType =="1" or scoreType =="3" '>
-        and t2.score_type='0'
+            and t2.score_type='0'
         </if>
         <if test='scoreType =="2" or scoreType =="4" '>
             and t2.score_type='1'
@@ -572,7 +572,7 @@
             AND examination_status = #{examinationStatus}
         </if>
         <if test="scoreType!=null and scoreType!= ''">
-           and  score_type = '1'
+            and  score_type = '1'
         </if>
         ORDER BY major_code
     </select>
@@ -654,9 +654,9 @@
     <select id="getScoreImportById" resultType="com.goisan.educational.score.bean.ScoreImport"
             parameterType="com.goisan.educational.score.bean.ScoreImport">
         SELECT
-               *
+            *
         FROM
-             T_JW_SCORE_IMPORT t
+            T_JW_SCORE_IMPORT t
         WHERE id = #{id}
     </select>
     <insert id="insertScoreImportByScoreClass" parameterType="com.goisan.educational.score.bean.ScoreImport">
@@ -698,7 +698,7 @@
         INSERT INTO
             T_JW_SCORE_IMPORT
         (id,
-          exam_method,
+         exam_method,
          score_class_id,
          subject_id,
          class_id,
@@ -722,7 +722,7 @@
          graduate_makeup_status,
          creator, create_time, create_dept)
         values
-        (FUNC_GET_UUID,'${examMethod}','${scoreClassId}',
+        (FUNC_GET_UUID,'${examMethod}', '${scoreClassId}',
          '${subjectId}', '${classId}', '${departmentsId}',
          '${majorCode}', '${majorDirection}',
          '${trainingLevel}', '${planId}', '${courseId}',
@@ -737,23 +737,23 @@
     </delete>
     <select id="selectScoreClassByScoreClass" parameterType="com.goisan.educational.score.bean.ScoreClass"
             resultType="com.goisan.educational.score.bean.ScoreClass">
-          SELECT distinct
-                        t.score_class_id  scoreClassId,
-                        t.SUBJECT_ID      subjectId,
-                        t.SCORE_EXAM_ID   scoreExamId,
-                        t.SCORE_EXAM_NAME scoreExamName,
-                        t.departments_id  departmentsId,
-                        t.major_code      majorCode,
-                        t.training_level  trainingLevel,
-                        t.major_direction majorDirection,
-                        t.plan_id         planId,
-                        t.COURSE_ID       courseId,
-                        t.person_id       personId,
-                        t.class_id        classId,
-                        s.student_id      studentId
-          from T_JW_SCORE_CLASS t,
+        SELECT distinct
+            t.score_class_id  scoreClassId,
+            t.SUBJECT_ID      subjectId,
+            t.SCORE_EXAM_ID   scoreExamId,
+            t.SCORE_EXAM_NAME scoreExamName,
+            t.departments_id  departmentsId,
+            t.major_code      majorCode,
+            t.training_level  trainingLevel,
+            t.major_direction majorDirection,
+            t.plan_id         planId,
+            t.COURSE_ID       courseId,
+            t.person_id       personId,
+            t.class_id        classId,
+            s.student_id      studentId
+        from T_JW_SCORE_CLASS t,
              T_XG_STUDENT_CLASS s
-          where t.class_id = (select class_id from t_jw_score_class where score_class_id = #{scoreClassId})
+        where t.class_id = (select class_id from t_jw_score_class where score_class_id = #{scoreClassId})
           and t.class_id = s.class_id
           and FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') = #{courseId}
           and t.subject_id = #{subjectId}
@@ -1153,178 +1153,178 @@
     <select id="getScoreByStudentIdScoreExamId" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         SELECT DISTINCT
-                        i.score_class_id                                                                                                                                   scoreClassId,
-                        FUNC_GET_TABLEVALUE(FUNC_GET_TABLEVALUE(i.subject_id, 'T_JW_SCORE_SUBJECT', 'SUBJECT_ID', 'COURSE_ID'), 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') subjectId,
-                        FUNC_GET_TABLEVALUE(i.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')                                                                            classId,
-                        FUNC_GET_TABLEVALUE(i.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')                                                                        departmentsId,
-                        FUNC_GET_TABLEVALUE(i.major_code, 't_xg_major', 'major_code', 'major_name')                                                                        majorCode,
-                        FUNC_GET_DICVALUE(i.training_level, 'ZXZYPYCC')                                                                                                    trainingLevel,
-                        i.major_direction                                                                                                                                  majorDirection,
-                        i.plan_id                                                                                                                                          planId,
-                        FUNC_GET_TABLEVALUE(i.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')                                                                        courseId,
-                        FUNC_GET_USERNAME(i.person_id)                                                                                                                     personId,
-                        i.score_exam_id                                                                                                                                    scoreExamId,
-                        i.score_exam_name                                                                                                                                  scoreExamName,
-                        i.student_id                                                                                                                                       studentId,
-                        case
-                            when i.EXAMINATION_STATUS = '1' AND subject.course_flag = '01' AND i.SCORE !='05'
-                                then FUNC_GET_DICVALUE(i.score, 'KCCJ')
-                            else case when i.EXAMINATION_STATUS = '1' AND subject.course_flag != '01' AND to_number(i.SCORE) > to_number(subject.PASS_SCORE)
-                        then
-                        i
+            i.score_class_id                                                                                                                                   scoreClassId,
+            FUNC_GET_TABLEVALUE(FUNC_GET_TABLEVALUE(i.subject_id, 'T_JW_SCORE_SUBJECT', 'SUBJECT_ID', 'COURSE_ID'), 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') subjectId,
+            FUNC_GET_TABLEVALUE(i.class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')                                                                            classId,
+            FUNC_GET_TABLEVALUE(i.departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')                                                                        departmentsId,
+            FUNC_GET_TABLEVALUE(i.major_code, 't_xg_major', 'major_code', 'major_name')                                                                        majorCode,
+            FUNC_GET_DICVALUE(i.training_level, 'ZXZYPYCC')                                                                                                    trainingLevel,
+            i.major_direction                                                                                                                                  majorDirection,
+            i.plan_id                                                                                                                                          planId,
+            FUNC_GET_TABLEVALUE(i.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME')                                                                        courseId,
+            FUNC_GET_USERNAME(i.person_id)                                                                                                                     personId,
+            i.score_exam_id                                                                                                                                    scoreExamId,
+            i.score_exam_name                                                                                                                                  scoreExamName,
+            i.student_id                                                                                                                                       studentId,
+            case
+                when i.EXAMINATION_STATUS = '1' AND subject.course_flag = '01' AND i.SCORE !='05'
+                    then FUNC_GET_DICVALUE(i.score, 'KCCJ')
+                else case when i.EXAMINATION_STATUS = '1' AND subject.course_flag != '01' AND to_number(i.SCORE) > to_number(subject.PASS_SCORE)
+                              then
+                              i
+                                  .
+                                  score
+                          else
+                              case
+                                  when
+                                              i
+                                                  .
+                                                  MAKEUP_STATUS =
+                                              '1'
+                                          AND
+                                              i
+                                                  .
+                                                  MAKEUP_SCORE =
+                                              '1'
+                                      then
+                                      FUNC_GET_DICVALUE(
+                                              i
+                                                  .
+                                                  MAKEUP_SCORE,
+                                              'BKCJZT')
+                                  else
+                                      case
+                                          when
+                                                      i
+                                                          .
+                                                          GRADUATE_MAKEUP_STATUS =
+                                                      '1'
+                                                  AND
+                                                      i
+                                                          .
+                                                          GRADUATE_MAKEUP_SCORE =
+                                                      '1'
+                                              then
+                                              FUNC_GET_DICVALUE(
+                                                      i
+                                                          .
+                                                          GRADUATE_MAKEUP_SCORE,
+                                                      'BKCJZT')
+                                          else
+                                              case
+                                                  when
+                                                              i
+                                                                  .
+                                                                  AFTER_GRADUATE_MAKEUP_STATUS =
+                                                              '1'
+                                                          AND
+                                                              i
+                                                                  .
+                                                                  AFTER_GRADUATE_MAKEUP_SCORE =
+                                                              '1'
+                                                      then
+                                                      FUNC_GET_DICVALUE(
+                                                              i
+                                                                  .
+                                                                  AFTER_GRADUATE_MAKEUP_SCORE,
+                                                              'BKCJZT')
+                                                  end
+                                          end
+                                  end
+                    end
+                end
+                                                                                                                                                               score
+                ,
+            i
+                .
+                makeup_score
+                                                                                                                                                               makeupScore,
+            i
+                .
+                graduate_makeup_score
+                                                                                                                                                               graduateMakeupScore,
+            FUNC_GET_DICVALUE
+                (
+                    i
                         .
-                        score
-                        else
-                        case
-                        when
-                        i
+                        examination_status,
+                    'KSZT'
+                )
+                                                                                                                                                               examinationStatus,
+            FUNC_GET_DICVALUE
+                (
+                    i
                         .
-                        MAKEUP_STATUS =
-                        '1'
-                        AND
-                        i
+                        term_id,
+                    'XQ'
+                )
+                                                                                                                                                               termId,
+            FUNC_GET_DICVALUE
+                (
+                    i
                         .
-                        MAKEUP_SCORE =
-                        '1'
-                        then
-                        FUNC_GET_DICVALUE(
+                        makeup_status,
+                    'KSZT'
+                )
+                                                                                                                                                               makeupStatus,
+            (
+                select
+                    to_char
+                        (
+                            START_TIME ,
+                            'yyyy-mm'
+                        )
+                FROM
+                    T_JW_SCORE_EXAM
+                        e
+                WHERE
                         i
-                        .
-                        MAKEUP_SCORE,
-                        'BKCJZT')
-                        else
-                        case
-                        when
-                        i
-                        .
-                        GRADUATE_MAKEUP_STATUS =
-                        '1'
-                        AND
-                        i
-                        .
-                        GRADUATE_MAKEUP_SCORE =
-                        '1'
-                        then
-                        FUNC_GET_DICVALUE(
-                        i
-                        .
-                        GRADUATE_MAKEUP_SCORE,
-                        'BKCJZT')
-                        else
-                        case
-                        when
-                        i
-                        .
-                        AFTER_GRADUATE_MAKEUP_STATUS =
-                        '1'
-                        AND
-                        i
-                        .
-                        AFTER_GRADUATE_MAKEUP_SCORE =
-                        '1'
-                        then
-                        FUNC_GET_DICVALUE(
-                        i
-                        .
-                        AFTER_GRADUATE_MAKEUP_SCORE,
-                        'BKCJZT')
-        end
-        end
-        end
-        end
-        end
-        score
-        ,
-        i
-        .
-        makeup_score
-        makeupScore,
-        i
-        .
-        graduate_makeup_score
-        graduateMakeupScore,
-        FUNC_GET_DICVALUE
-        (
-        i
-        .
-        examination_status,
-        'KSZT'
-        )
-        examinationStatus,
-        FUNC_GET_DICVALUE
-        (
-        i
-        .
-        term_id,
-        'XQ'
-        )
-        termId,
-        FUNC_GET_DICVALUE
-        (
-        i
-        .
-        makeup_status,
-        'KSZT'
-        )
-        makeupStatus,
-        (
-        select
-        to_char
-        (
-        START_TIME ,
-        'yyyy-mm'
-        )
+                            .
+                            SCORE_EXAM_ID
+                        =
+                        e
+                            .
+                            score_exam_id
+            )
+                                                                                                                                                               examTime
         FROM
-        T_JW_SCORE_EXAM
-        e
-        WHERE
-        i
-        .
-        SCORE_EXAM_ID
-        =
-        e
-        .
-        score_exam_id
-        )
-        examTime
-        FROM
-        T_JW_SCORE_IMPORT
-        i ,
-        T_JW_SCORE_SUBJECT
-        subject
+            T_JW_SCORE_IMPORT
+                i ,
+            T_JW_SCORE_SUBJECT
+                subject
         where
-        class_id
-        IN
-        (
-        select
-        class_id
-        from
-        t_xg_student_class
-        where
-        student_id
-        =
-        #{studentId}
-        )
-        AND
-        student_id
-        =
-        #{studentId}
-        AND
-        i
-        .
-        subject_id
-        =
-        subject
-        .
-        subject_id
-        AND
-        i
-        .
-        score_exam_id
-        =
-        subject
-        .
-        score_exam_id
+                class_id
+                IN
+                (
+                    select
+                        class_id
+                    from
+                        t_xg_student_class
+                    where
+                            student_id
+                            =
+                            #{studentId}
+                )
+          AND
+                student_id
+                =
+                #{studentId}
+          AND
+                i
+                    .
+                    subject_id
+                =
+                subject
+                    .
+                    subject_id
+          AND
+                i
+                    .
+                    score_exam_id
+                =
+                subject
+                    .
+                    score_exam_id
     </select>
     <select id="getTermIdByScoreExamId" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
@@ -1342,49 +1342,49 @@
     <select id="getStudentByStudentId" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         SELECT
-               student_id                      studentId,
-               name                            studentName,
-               func_get_dicvalue(sex, 'XB')    sex,
-               to_char(birthday, 'yyyy-mm-dd') birthday
+            student_id                      studentId,
+            name                            studentName,
+            func_get_dicvalue(sex, 'XB')    sex,
+            to_char(birthday, 'yyyy-mm-dd') birthday
         from
-             T_XG_STUDENT
+            T_XG_STUDENT
         where student_id = #{studentId}
     </select>
     <select id="getCourseIdBy" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         SELECT DISTINCT
-                        FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
-                        course_id                                                                 course
+            FUNC_GET_TABLEVALUE(COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
+            course_id                                                                 course
         FROM
-             T_JW_SCORE_IMPORT
+            T_JW_SCORE_IMPORT
         WHERE
             student_id = #{studentId}
     </select>
     <select id="getStudentById" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         SELECT
-               year
-               ||
-               '年8月'
-               entranceTime,
-            (
-               year
-               +
-               3)
-               ||
-               '年6月'
-               graduationTime,
-               class_name
-               className,
-               FUNC_GET_TABLEVALUE(
-               major_code,
-               't_xg_major',
-               'major_code',
-               'major_name')
-               majorCode
-        from
-             t_xg_class
-        where class_name like (select class_name from t_xg_student where student_id=#{studentId})
+                year
+                ||
+                '年8月'
+                entranceTime,
+                (
+                        year
+                        +
+                        3)
+                    ||
+                '年6月'
+                graduationTime,
+                class_name
+                className,
+                FUNC_GET_TABLEVALUE(
+                        major_code,
+                        't_xg_major',
+                        'major_code',
+                        'major_name')
+                majorCode
+        from t_xg_class
+        where class_id =
+              (select class_id from t_xg_student_class where student_id = #{studentId})
     </select>
     <select id="getStudentScore" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
@@ -1413,7 +1413,6 @@
     <select id="getScoreImportByClassId" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         select distinct departments_id,
-                        exam_method,
                         major_code,
                         major_direction,
                         training_level,
@@ -1462,37 +1461,37 @@
     <select id="getCourseClassScoreList" parameterType="com.goisan.educational.score.bean.ScoreImport"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         SELECT
-               LPAD(rank() over(order by x.STUDENT_NUMBER), 3, '0') studentId,
-               x.NAME                                               studentName,
-               CASE
-                   WHEN t.EXAMINATION_STATUS = '1' AND
-                        (subject.course_flag = '01' AND t.score = '01') OR
-                        (subject.course_flag = '02' AND to_number(t.score) > to_number(subject.pass_score)) OR MAKEUP_STATUS IS NULL
-                       THEN DECODE(subject.course_flag, '01', FUNC_GET_DICVALUE(t.score, 'KCCJ'), t.score)
-                   ELSE CASE
-                            WHEN t.MAKEUP_STATUS = '1' OR t.GRADUATE_MAKEUP_STATUS IS NULL
-                                THEN FUNC_GET_DICVALUE(t.MAKEUP_SCORE, 'BKCJZT')
-                            ELSE CASE
-                                     WHEN t.GRADUATE_MAKEUP_SCORE = '1' OR t.AFTER_GRADUATE_MAKEUP_STATUS IS NULL
-                                         THEN FUNC_GET_DICVALUE(t.GRADUATE_MAKEUP_SCORE, 'BKCJZT')
-                                     ELSE CASE
-                                              WHEN t.AFTER_GRADUATE_MAKEUP_STATUS IS NOT NULL
-                                                  THEN FUNC_GET_DICVALUE(t.AFTER_GRADUATE_MAKEUP_SCORE, 'BKCJZT')
-                                              ELSE CASE WHEN 1 = 1 THEN FUNC_GET_DICVALUE(t.EXAMINATION_STATUS, 'KSZT') END
-                                         END
-                                END
-                       END
-                   END                                              score,
-               CASE
-                   WHEN t.EXAMINATION_STATUS = '1' AND t.score > subject.pass_score
-                       THEN '01'
-                   ELSE CASE WHEN 1 = 1 THEN '02' END
-                   END                                              examinationStatus,
-               subject.course_flag                                  courseFlag,
-               nvl(PEACETIME_SCORE_A, ' ')                          peacetimeScoreA,
-               nvl(PEACETIME_SCORE_B, ' ')                          peacetimeScoreB,
-               nvl(PEACETIME_SCORE_C, ' ')                          peacetimeScoreC,
-               nvl(PEACETIME_SCORE_D, ' ')                          peacetimeScoreD
+            LPAD(rank() over(order by x.STUDENT_NUMBER), 3, '0') studentId,
+            x.NAME                                               studentName,
+            CASE
+                WHEN t.EXAMINATION_STATUS = '1' AND
+                     (subject.course_flag = '01' AND t.score = '01') OR
+                     (subject.course_flag = '02' AND to_number(t.score) > to_number(subject.pass_score)) OR MAKEUP_STATUS IS NULL
+                    THEN DECODE(subject.course_flag, '01', FUNC_GET_DICVALUE(t.score, 'KCCJ'), t.score)
+                ELSE CASE
+                         WHEN t.MAKEUP_STATUS = '1' OR t.GRADUATE_MAKEUP_STATUS IS NULL
+                             THEN FUNC_GET_DICVALUE(t.MAKEUP_SCORE, 'BKCJZT')
+                         ELSE CASE
+                                  WHEN t.GRADUATE_MAKEUP_SCORE = '1' OR t.AFTER_GRADUATE_MAKEUP_STATUS IS NULL
+                                      THEN FUNC_GET_DICVALUE(t.GRADUATE_MAKEUP_SCORE, 'BKCJZT')
+                                  ELSE CASE
+                                           WHEN t.AFTER_GRADUATE_MAKEUP_STATUS IS NOT NULL
+                                               THEN FUNC_GET_DICVALUE(t.AFTER_GRADUATE_MAKEUP_SCORE, 'BKCJZT')
+                                           ELSE CASE WHEN 1 = 1 THEN FUNC_GET_DICVALUE(t.EXAMINATION_STATUS, 'KSZT') END
+                                      END
+                             END
+                    END
+                END                                              score,
+            CASE
+                WHEN t.EXAMINATION_STATUS = '1' AND t.score > subject.pass_score
+                    THEN '01'
+                ELSE CASE WHEN 1 = 1 THEN '02' END
+                END                                              examinationStatus,
+            subject.course_flag                                  courseFlag,
+            nvl(PEACETIME_SCORE_A, ' ')                          peacetimeScoreA,
+            nvl(PEACETIME_SCORE_B, ' ')                          peacetimeScoreB,
+            nvl(PEACETIME_SCORE_C, ' ')                          peacetimeScoreC,
+            nvl(PEACETIME_SCORE_D, ' ')                          peacetimeScoreD
         FROM T_JW_SCORE_IMPORT t,
              T_JW_SCORE_CLASS s,
              T_JW_SCORE_SUBJECT subject,
@@ -1537,13 +1536,13 @@
                         FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC')                             majorCode
         FROM T_JW_SCORE_IMPORT
     </select>
-<!--修改，必须学期还要相同-->
+    <!--修改，必须学期还要相同-->
     <select id="getStudentImportInfo" parameterType="com.goisan.educational.score.bean.ScoreImport"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         SELECT
-               *
+            *
         FROM
-             T_JW_SCORE_IMPORT
+            T_JW_SCORE_IMPORT
         WHERE
             departments_id = #{departmentsId}
           AND
@@ -1651,11 +1650,11 @@
         SELECT distinct t.teaching_teacher_id                                                                                 AS id,
                         FUNC_GET_TABLEVALUE(t.teaching_teacher_id, 'T_RS_EMPLOYEE', 'PERSON_ID', 'NAME') || '--' || DEPT_NAME as text
         FROM
-             T_JW_SCORE_IMPORT t
-                 LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID
-                            FROM T_RS_EMPLOYEE_DEPT R,
-                                 T_SYS_DEPT D
-                            WHERE R.DEPT_ID = D.DEPT_ID) ON t.teaching_teacher_id = PERSON
+            T_JW_SCORE_IMPORT t
+                LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID
+                           FROM T_RS_EMPLOYEE_DEPT R,
+                                T_SYS_DEPT D
+                           WHERE R.DEPT_ID = D.DEPT_ID) ON t.teaching_teacher_id = PERSON
         WHERE
             SCORE_EXAM_ID = #{scoreExamId}
     </select>
@@ -1683,13 +1682,13 @@
     <select id="getOtherScoreImport2" parameterType="com.goisan.educational.score.bean.ScoreImport"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         SELECT
-        *
+            *
         FROM
-        T_JW_SCORE_IMPORT
+            T_JW_SCORE_IMPORT
         WHERE
-        TERM_ID = #{termId}
-        AND COURSE_ID = #{courseId}
-        AND STUDENT_ID = #{studentId}
+            TERM_ID = #{termId}
+          AND COURSE_ID = #{courseId}
+          AND STUDENT_ID = #{studentId}
         ORDER BY CREATE_TIME
     </select>
 
@@ -1699,49 +1698,49 @@
             FUNC_GET_TABLEVALUE(t6.CLASS_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME') className,
             FUNC_GET_TABLEVALUE(t6.COURSE_ID, 'T_JW_COURSE', 'course_id', 'course_name') courseName,
             FUNC_GET_TABLEVALUE(t6.STUDENT_ID,'T_XG_STUDENT','STUDENT_ID','NAME') studentName
-          from (select t4.*, t5.SCORE
-                  from (select t1.EXAM_ID,
-                               EXAM_NAME,
-                               t2.CLASS_ID,
-                               t2.COURSE_ID,
-                               t3.STUDENT_ID,
-                               case t1.EXAM_TYPES
-                                 when '1' then
-                                  t1.TERM
-                                 when '2' then
-                                  t1.TERM
-                                 when '3' then
-                                  t3.TERM
-                                 when '4' then
-                                  t3.TERM
+        from (select t4.*, t5.SCORE
+              from (select t1.EXAM_ID,
+                           EXAM_NAME,
+                           t2.CLASS_ID,
+                           t2.COURSE_ID,
+                           t3.STUDENT_ID,
+                           case t1.EXAM_TYPES
+                               when '1' then
+                                   t1.TERM
+                               when '2' then
+                                   t1.TERM
+                               when '3' then
+                                   t3.TERM
+                               when '4' then
+                                   t3.TERM
                                end term
-                          from T_JW_EXAM              t1,
-                               T_JW_EXAM_COURSE_CLASS t2,
-                               T_JW_EXAM_STUDENT      t3
-                         where t1.EXAM_ID = t2.EXAM_ID
-                           and t1.EXAM_ID = t3.EXAM_ID
-                           and t2.CLASS_ID = #{classId}
-                           and t2.CLASS_ID = t3.CLASS_ID
-                           and t1.EXAM_ID = #{examId}) t4,
-                       T_JW_SCORE_IMPORT t5
-                 where t4.EXAM_ID = t5.SCORE_EXAM_ID(+)
-                   and t4.STUDENT_ID = t5.STUDENT_ID(+)) t6,
-               T_JW_TEACHINGTASK t7
-         where t6.COURSE_ID = t7.COURSE_ID
-           and t6.term = t7.SEMESTER
-           and t6.SCORE is null
-           and t7.TEACHER_ID = #{teacherId}
+                    from T_JW_EXAM              t1,
+                         T_JW_EXAM_COURSE_CLASS t2,
+                         T_JW_EXAM_STUDENT      t3
+                    where t1.EXAM_ID = t2.EXAM_ID
+                      and t1.EXAM_ID = t3.EXAM_ID
+                      and t2.CLASS_ID = #{classId}
+                      and t2.CLASS_ID = t3.CLASS_ID
+                      and t1.EXAM_ID = #{examId}) t4,
+                   T_JW_SCORE_IMPORT t5
+              where t4.EXAM_ID = t5.SCORE_EXAM_ID(+)
+                and t4.STUDENT_ID = t5.STUDENT_ID(+)) t6,
+             T_JW_TEACHINGTASK t7
+        where t6.COURSE_ID = t7.COURSE_ID
+          and t6.term = t7.SEMESTER
+          and t6.SCORE is null
+          and t7.TEACHER_ID = #{teacherId}
 
     </select>
     <update id="updateOpenFlag" parameterType="java.lang.String">
         UPDATE
-        T_JW_SCORE_IMPORT
+            T_JW_SCORE_IMPORT
         SET
-        open_flag = #{openFlag}
+            open_flag = #{openFlag}
         WHERE
-        score_exam_id = #{scoreExamId}
-        and CLASS_ID = #{classId}
-        and COURSE_ID = #{courseId}
+            score_exam_id = #{scoreExamId}
+          and CLASS_ID = #{classId}
+          and COURSE_ID = #{courseId}
     </update>
 
     <!--修改git 提交merge 以下两段为李海涛代码-->
@@ -1821,50 +1820,50 @@
     </select>
 
     <!--<select id="getDetails" parameterType="String" resultType="map">-->
-        <!--select FUNC_GET_USERNAME(t2.TEACHER_ID)                                             "userName",-->
-               <!--FUNC_GET_TABLEVALUE(t2.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') "courseName",-->
-               <!--FUNC_GET_TABLEVALUE(t2.CLASS_INFO, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')   "className",-->
-               <!--case-->
-                 <!--when (select count(*)-->
-                       <!--from T_JW_EXAM_STUDENT t5-->
-                       <!--where t5.CLASS_ID = t1.CLASS_ID-->
-                         <!--and t5.EXAM_ID = t3.EXAM_ID) =-->
-                      <!--(select count(id)-->
-                       <!--from T_JW_SCORE_IMPORT t4-->
-                       <!--where SCORE_EXAM_ID = t3.EXAM_ID-->
-                         <!--and t2.COURSE_ID = t4.COURSE_ID-->
-                         <!--and t2.CLASS_INFO = t4.CLASS_ID and SUBMIT_FLAG = 1) then '1'-->
-                   <!--when  (select count(id)-->
-                       <!--from T_JW_SCORE_IMPORT t4-->
-                       <!--where SCORE_EXAM_ID = t3.EXAM_ID-->
-                         <!--and t2.COURSE_ID = t4.COURSE_ID-->
-                         <!--and t2.CLASS_INFO = t4.CLASS_ID and SUBMIT_FLAG = 1) &gt; 0 then '2'-->
+    <!--select FUNC_GET_USERNAME(t2.TEACHER_ID)                                             "userName",-->
+    <!--FUNC_GET_TABLEVALUE(t2.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') "courseName",-->
+    <!--FUNC_GET_TABLEVALUE(t2.CLASS_INFO, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')   "className",-->
+    <!--case-->
+    <!--when (select count(*)-->
+    <!--from T_JW_EXAM_STUDENT t5-->
+    <!--where t5.CLASS_ID = t1.CLASS_ID-->
+    <!--and t5.EXAM_ID = t3.EXAM_ID) =-->
+    <!--(select count(id)-->
+    <!--from T_JW_SCORE_IMPORT t4-->
+    <!--where SCORE_EXAM_ID = t3.EXAM_ID-->
+    <!--and t2.COURSE_ID = t4.COURSE_ID-->
+    <!--and t2.CLASS_INFO = t4.CLASS_ID and SUBMIT_FLAG = 1) then '1'-->
+    <!--when  (select count(id)-->
+    <!--from T_JW_SCORE_IMPORT t4-->
+    <!--where SCORE_EXAM_ID = t3.EXAM_ID-->
+    <!--and t2.COURSE_ID = t4.COURSE_ID-->
+    <!--and t2.CLASS_INFO = t4.CLASS_ID and SUBMIT_FLAG = 1) &gt; 0 then '2'-->
 
-                 <!--else '0' end as                                                            "status"-->
-        <!--from T_JW_EXAM_COURSE_CLASS t1,-->
-             <!--T_JW_TEACHINGTASK t2,-->
-             <!--T_JW_EXAM t3-->
-        <!--where t1.CLASS_ID = t2.CLASS_INFO-->
-          <!--and t2.COURSE_ID = t1.COURSE_ID-->
-          <!--and t3.EXAM_ID = t1.EXAM_ID-->
-          <!--and t3.TERM = t2.SEMESTER-->
-          <!--and t1.EXAM_ID = #{id}-->
+    <!--else '0' end as                                                            "status"-->
+    <!--from T_JW_EXAM_COURSE_CLASS t1,-->
+    <!--T_JW_TEACHINGTASK t2,-->
+    <!--T_JW_EXAM t3-->
+    <!--where t1.CLASS_ID = t2.CLASS_INFO-->
+    <!--and t2.COURSE_ID = t1.COURSE_ID-->
+    <!--and t3.EXAM_ID = t1.EXAM_ID-->
+    <!--and t3.TERM = t2.SEMESTER-->
+    <!--and t1.EXAM_ID = #{id}-->
     <!--</select>-->
 
     <select id="getDetails" parameterType="String" resultType="map">
         select FUNC_GET_USERNAME(t2.TEACHER_ID)                                             "userName",
                FUNC_GET_TABLEVALUE(t2.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') "courseName",
                FUNC_GET_TABLEVALUE(t2.CLASS_INFO, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')   "className",
-                case
-             when ( select min(sc.submit_flag)
-               from T_JW_SCORE_IMPORT sc
-               where sc.SCORE_EXAM_ID = t3.EXAM_ID and sc.SUBMIT_FLAG = '1'
-               and t3.term = sc.term_id and sc.class_id = t2.class_info and
-               sc.course_id = t2.course_id ) = '1'  then
-              '1'
-             else
-              '0'
-              end as "status"
+               case
+                   when ( select min(sc.submit_flag)
+                          from T_JW_SCORE_IMPORT sc
+                          where sc.SCORE_EXAM_ID = t3.EXAM_ID and sc.SUBMIT_FLAG = '1'
+                            and t3.term = sc.term_id and sc.class_id = t2.class_info and
+                              sc.course_id = t2.course_id ) = '1'  then
+                       '1'
+                   else
+                       '0'
+                   end as "status"
         from T_JW_EXAM_COURSE_CLASS t1,
              T_JW_TEACHINGTASK t2,
              T_JW_EXAM t3
@@ -1876,8 +1875,8 @@
     </select>
 
     <select id="check" resultType="String">
-         select id from T_JW_TESTPAPERANALYSIS where CLASS_ID = #{classId} and COURSE_ID = #{course} and SCHOOL_YEAR = #{termId}
-     </select>
+        select id from T_JW_TESTPAPERANALYSIS where CLASS_ID = #{classId} and COURSE_ID = #{course} and SCHOOL_YEAR = #{termId}
+    </select>
     <select id="getCount" parameterType="com.goisan.educational.exam.bean.Exam"
             resultType="com.goisan.educational.exam.bean.Exam">
         select s.* from T_JW_SCORE_IMPORT s,T_JW_EXAM t
@@ -1897,9 +1896,9 @@
     <select id="getExaminationStatus" parameterType="com.goisan.educational.score.bean.ScoreImport"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         SELECT
-              *
+            *
         FROM
-             T_JW_SCORE_IMPORT
+            T_JW_SCORE_IMPORT
         WHERE
             TERM_ID = #{termId}
           AND COURSE_ID = #{courseId}
@@ -1972,12 +1971,12 @@
 
     <select id="getKCFailNum" parameterType="com.goisan.educational.score.bean.ScoreImport" resultType="java.lang.Integer">
         select count(*)
-      from T_JW_SCORE_IMPORT t, T_JW_EXAM ex
-     where t.student_id = #{studentId}
-       and t.term_id = #{termId}
-       and t.score_exam_id = ex.exam_id
-       and ex.exam_types = '1'
-       and t.exam_method='2' and t.score = '不合格'
+        from T_JW_SCORE_IMPORT t, T_JW_EXAM ex
+        where t.student_id = #{studentId}
+          and t.term_id = #{termId}
+          and t.score_exam_id = ex.exam_id
+          and ex.exam_types = '1'
+          and t.exam_method='2' and t.score = '不合格'
 
     </select>
 </mapper>

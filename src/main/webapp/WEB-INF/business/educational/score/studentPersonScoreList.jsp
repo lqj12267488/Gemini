@@ -85,17 +85,17 @@
                         <td class="FangSong" style="font-size:18.7px; font-family:FangSong"><b>姓  名</b></td>
                         <td colspan="2" style="font-size:18.7px;font-family:KaiTi">${studentName}</td>
                         <td class="FangSong" style="font-size:18.7px; font-family:FangSong"><b>入学时间</b></td>
-                        <td colspan="2" style="font-size:18.7px;font-family:KaiTi">${entranceTime}</td>
+                        <td colspan="2" style="font-size:18.7px;font-family:KaiTi">${arrayclassResultClass.year}</td>
                         <td class="FangSong" style="font-size:18.7px; font-family:FangSong"><b>毕业时间</b></td>
-                        <td style="font-size:18.7px;font-family:KaiTi">${graduationTime}</td>
+                        <td style="font-size:18.7px;font-family:KaiTi">${arrayclassResultClass.graduationYear}</td>
                     </tr>
                     <tr>
                         <td class="FangSong" style="font-size:18.7px; font-family:FangSong"><b>院系名</b></td>
-                        <td colspan="2" style="font-size:18.7px;font-family:KaiTi">${arrayclassResultClass.departmentsId}</td>
+                        <td colspan="2" style="font-size:18.7px;font-family:KaiTi">${arrayclassResultClass.departmentShow}</td>
                         <td class="FangSong" style="font-size:18.7px; font-family:FangSong"><b>专    业</b></td>
-                        <td colspan="2" style="font-size:18.7px;font-family:KaiTi">${arrayclassResultClass.majorCode}</td>
+                        <td colspan="2" style="font-size:18.7px;font-family:KaiTi">${arrayclassResultClass.majorShow}</td>
                         <td class="FangSong" style="font-size:18.7px; font-family:FangSong"><b>班   级</b></td>
-                        <td style="font-size:18.7px;font-family:KaiTi">${arrayclassResultClass.classId}</td>
+                        <td style="font-size:18.7px;font-family:KaiTi">${arrayclassResultClass.classShow}</td>
                     </tr>
                     <tr>
                         <td class="FangSong" colspan="2" style="font-size:18.7px; font-family:FangSong"><b>课程名</b></td>
@@ -162,9 +162,9 @@
         }else if( size <=60 && size > 30 ){
             for(var i =0 ;i< 30;i++){
                 if( i+1 <= size-30 ){
-                    htm = getHtml(courseClassScoreList[i]) +  getHtml(courseClassScoreList[30+i]);
+                    htm = getHtml(arrayclassResultClassList[i]) +  getHtml(arrayclassResultClassList[30+i]);
                 }else{
-                    htm = getHtml(courseClassScoreList[i]) +
+                    htm = getHtml(arrayclassResultClassList[i]) +
                         "<td colspan='2' style='font-size:16px;font-family:KaiTi'></td><td style='font-size:16px;font-family:KaiTi'></td><td style='font-size:16px;font-family:KaiTi'></td>";
                 }
                 $("#rowNum_"+i).append(htm);
@@ -174,9 +174,9 @@
             var L = parseInt(size/2) +2 ;
             for(var i =0 ;i< L ;i++){
                 if( i+1 <= size- L ){
-                    htm = getHtml(courseClassScoreList[i]) +  getHtml(courseClassScoreList[ L +i]);
+                    htm = getHtml(arrayclassResultClassList[i]) +  getHtml(arrayclassResultClassList[ L +i]);
                 }else{
-                    htm = getHtml(courseClassScoreList[i]) +
+                    htm = getHtml(arrayclassResultClassList[i]) +
                         "<td colspan='2' style='font-size:16px;font-family:KaiTi'></td><td style='font-size:16px;font-family:KaiTi'></td><td style='font-size:16px;font-family:KaiTi'></td>";
                 }
                 $("#rowNum_"+i).append(htm);
@@ -191,28 +191,10 @@
                 content.score = "";
             }
         }else{
-            if(parseInt(content.score)>89 && (content.score)<101){
-                content.score = "优秀";
-            }else if(parseInt(content.score)>79 && parseInt(content.score)<90){
-                content.score = "良好";
-            }else if(parseInt(content.score)>69 && parseInt(content.score)<80){
-                content.score = "中等";
-            }else if(parseInt(content.score)>59 && parseInt(content.score)<70){
-                if( '1' == content.examinationStatus){
-                    content.score = "合格";
-                }else{
-                    content.score = "补合格";
-                }
-            }else{
-                if(null == (content.score)){
-                    content.score = "";
-                }else{
-                    content.score = "不合格";
-                }
-            }
+            content.studentSource;
         }
-        return htm ="<td  colspan='2' style='font-size:16px;font-family:KaiTi'>"+content.subjectId+"</td>" +
-            "<td style='font-size:16px;font-family:KaiTi'>"+content.score+"</td>" + "<td style='font-size:16px;font-family:KaiTi'>"+content.examTime+"&nbsp;&nbsp;&nbsp;</td>" ;
+        return htm ="<td  colspan='2' style='font-size:16px;font-family:KaiTi'>"+content.courseName+"</td>" +
+            "<td style='font-size:16px;font-family:KaiTi'>"+content.studentSource+"</td>" + "<td style='font-size:16px;font-family:KaiTi'>"+content.testTime+"&nbsp;&nbsp;&nbsp;</td>" ;
     }
     function back() {
         $("#right").load("<%=request.getContextPath()%>/scoreExam/getStudentList");
