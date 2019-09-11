@@ -365,7 +365,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success btn-clean" onclick="testEvent()">读卡</button>
+            <%--<button type="button" class="btn btn-success btn-clean" onclick="testEvent()">读卡</button>--%>
             <button type="button" id="saveBtn" class="btn btn-success btn-clean" onclick="saveEnrollmentStudent()">保存</button>
             <button type="button" class="btn btn-default btn-clean" data-dismiss="modal">关闭
             </button>
