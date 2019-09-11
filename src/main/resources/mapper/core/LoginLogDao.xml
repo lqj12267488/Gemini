@@ -85,8 +85,8 @@
         <if test="userAccount != null and userAccount != ''">
             AND user_account LIKE '%'||#{userAccount}||'%'
         </if>
-        <if test="loginTime != null">
-            AND to_char(login_time,'yyyy-mm-dd') LIKE '%'||to_char(#{loginTime},'yyyy-mm-dd')||'%'
+        <if test="loginTimeShow != null">
+            AND to_char(login_time,'yyyy-mm-dd') LIKE '%'||#{loginTimeShow}||'%'
         </if>
         ORDER BY login_time DESC
     </select>

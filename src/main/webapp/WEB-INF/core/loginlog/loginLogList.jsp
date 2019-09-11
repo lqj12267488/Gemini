@@ -92,7 +92,6 @@
             language: language
         });
     }
-
     function search() {
         var memberNumber = $("#userAccount1").val();
         if(memberNumber != ""){
@@ -102,17 +101,17 @@
         if(joinTime != ""){
             joinTime = joinTime;
         }
-        if(joinTime ==""){
+        // if(joinTime ==""){
             loginLogTable = $("#loginLogGrid").DataTable({
             "processing": true,
             "serverSide": true,
             "ajax": {
+                "type": "post",
                 "url": '<%=request.getContextPath()%>/loginLog/getLoginLogByAccountTime',
                 "data":{
                     userAccount : memberNumber,
-                    loginTime :joinTime,
+                    loginTimeShow :joinTime,
                 }
-
             },
             "destroy": true,
             "columns": [
@@ -125,12 +124,12 @@
                 {"width": "25%", "data": "mac", "title": "mac地址"},
 */
             ],
-            'order' : [[1,'desc'],[2,'desc']],
-             paging: true,
-            "dom": 'rtlip',
-            language: language
-        });}
-
+                'order' : [[1,'desc'],[2,'desc']],
+                paging: true,
+                "dom": 'rtlip',
+                language: language
+        });
+    // }
     }
 
 
