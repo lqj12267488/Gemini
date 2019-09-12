@@ -89,7 +89,7 @@
             "columns": [
                 {"data": "id", "visible": false},
                 {"data": "createTime", "visible": false },
-                {"width": "11%", "data": "suppliesname", "title": "耗材名称"},
+                {"width": "11%", "data": "suppliesnameShow", "title": "耗材名称"},
                 {"width": "9%", "data": "suppliestypeShow", "title": "耗材类型"},
                 {"width": "11%", "data": "suppliesnum", "title": "耗材数量"},
                 {"width": "11%", "data": "suppliesInnum", "title": "库存数量"},
