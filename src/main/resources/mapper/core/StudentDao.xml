@@ -796,7 +796,6 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
              (SELECT t.dept_id id, t.dept_name name,t.parent_dept_id pId,0 checked1
               FROM T_SYS_DEPT t
               WHERE t.dept_type = 8
-                 or t.dept_type &lt; 8
               UNION ALL
               SELECT d.major_code id, d.major_name || ' -- ' || FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,d.departments_id pId,0 checked1
               FROM T_XG_MAJOR d
