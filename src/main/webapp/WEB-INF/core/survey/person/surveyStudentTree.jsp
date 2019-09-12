@@ -43,7 +43,7 @@
         var nodes=surveyPersonTree.getCheckedNodes(true);
         var checkList="";
         for(var i=0;i<nodes.length;i++){
-            if(nodes[i].level == 4){
+            if(nodes[i].level == 3){
                 checkList += nodes[i].id+"@";
             }
         }

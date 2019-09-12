@@ -177,7 +177,7 @@
 
     <select id="getSurveyStudentTree" parameterType="java.lang.String" resultType="com.goisan.system.bean.Tree">
         SELECT t.dept_id id , t.dept_name name,t.parent_dept_id pid,0 checked
-        FROM T_SYS_DEPT t WHERE t.dept_type &lt; 9
+        FROM T_SYS_DEPT t WHERE t.dept_type = 8
         UNION ALL
         SELECT d.major_code id, d.major_name || ' -- '|| FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name ,d.departments_id pid,0 checked
         FROM T_XG_MAJOR d WHERE d.valid_flag =1

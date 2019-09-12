@@ -56,6 +56,10 @@ public class SurveyPersonServiceImpl implements SurveyPersonService {
                 surveyPerson.setPersonId(b[1].toString());
                 surveyPerson.setPersonDept(b[0].toString());
                 surveyPerson.setPersonType(personType);
+                surveyPerson.setAnswerFlag("0");
+                surveyPerson.setSurveyId(surveyId);
+                surveyPerson.setCreator(CommonUtil.getPersonId());
+                surveyPerson.setCreateDept(CommonUtil.getLoginUser().getDefaultDeptId());
                 surveyPersonDao.saveSurveyPerson(surveyPerson);
             }
         }
