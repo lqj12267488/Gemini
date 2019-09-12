@@ -1063,7 +1063,7 @@ public class EmpController {
         tableDict1.setTableName("t_sys_administrative_divisions");
         tableDict1.setWhere("  WHERE VALID_FLAG='1' and type = '1'  ");
         List<String> list7 = commonService.getTableDictNameBy(tableDict1);
-        String[] strs6 = new String[list.size()];
+        String[] strs6 = new String[list7.size()];
 
         int end6 = list7.size();
         for (int i = 0; i < end6; i++) {
