@@ -550,16 +550,22 @@ public class EnrollmentController {
             SimpleDateFormat formatDate = new SimpleDateFormat("yyyy");
             year = formatDate.format(new java.util.Date());
             enrollment.setYear(year);
-            Major major=majorService.getMajorByMajorId(majorId);
-            enrollment.setId(CommonUtil.getUUID());
-            enrollment.setDepartmentsId(major.getDepartmentsId());
-            enrollment.setMajorCode(major.getMajorCode());
-            enrollment.setMajorDirection(major.getMajorDirection());
-            enrollment.setSchoolSystem(major.getSchoolSystem());
-            enrollment.setTrainingLevel(major.getTrainingLevel());
-            enrollment.setRealNumber("0");
-            CommonUtil.save(enrollment);
-            enrollmentService.saveEnrollment(enrollment);
+            Enrollment  old= enrollmentService.selectEnrollmentByMajorId(majorId,year);
+            if(old!=null){
+            CommonUtil.update(enrollment);
+            enrollmentService.updateEnrollment(enrollment);
+        }else {
+                Major major = majorService.getMajorByMajorId(majorId);
+                enrollment.setId(CommonUtil.getUUID());
+                enrollment.setDepartmentsId(major.getDepartmentsId());
+                enrollment.setMajorCode(major.getMajorCode());
+                enrollment.setMajorDirection(major.getMajorDirection());
+                enrollment.setSchoolSystem(major.getSchoolSystem());
+                enrollment.setTrainingLevel(major.getTrainingLevel());
+                enrollment.setRealNumber("0");
+                CommonUtil.save(enrollment);
+                enrollmentService.saveEnrollment(enrollment);
+            }
         }
         return new Message(1, "保存成功", null);
 
@@ -1090,7 +1096,6 @@ public class EnrollmentController {
                 //批量分班
                 enrollmentService.doDistributeClasses(ids,deptId,majorCode,trainingLevel,classId,majorDirection);
             }
-
         }
         if(id!=null && !"".equals(id)){
             //分班
@@ -1104,7 +1109,6 @@ public class EnrollmentController {
             }
 
         }
-
         return new Message(0, "分班成功", null);
     }
 

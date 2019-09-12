@@ -195,6 +195,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     //学生分班
+    @Transactional
     public void doDistributeClass(String id, String deptId, String majorCode, String trainingLevel, String classId,
                                   String majorDirection) {
         //更新登记学生记录表

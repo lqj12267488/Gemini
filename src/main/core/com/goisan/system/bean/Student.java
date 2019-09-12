@@ -84,6 +84,60 @@ public class Student extends BaseBean {
     private String isGuardian;
     private String MemberTelephoneNumber;
     private String graduationSchool;
+    private String ruralHouseholdRegistratio;
+    private String orderTraining;
+    private String documentaryLikaPoorFamilie;
+    private String duringEmployment;
+    private String totalEnrollmentScore;
+    private String fromArmy;
+
+    public String getRuralHouseholdRegistratio() {
+        return ruralHouseholdRegistratio;
+    }
+
+    public void setRuralHouseholdRegistratio(String ruralHouseholdRegistratio) {
+        this.ruralHouseholdRegistratio = ruralHouseholdRegistratio;
+    }
+
+    public String getOrderTraining() {
+        return orderTraining;
+    }
+
+    public void setOrderTraining(String orderTraining) {
+        this.orderTraining = orderTraining;
+    }
+
+    public String getDocumentaryLikaPoorFamilie() {
+        return documentaryLikaPoorFamilie;
+    }
+
+    public void setDocumentaryLikaPoorFamilie(String documentaryLikaPoorFamilie) {
+        this.documentaryLikaPoorFamilie = documentaryLikaPoorFamilie;
+    }
+
+    public String getDuringEmployment() {
+        return duringEmployment;
+    }
+
+    public void setDuringEmployment(String duringEmployment) {
+        this.duringEmployment = duringEmployment;
+    }
+
+    public String getTotalEnrollmentScore() {
+        return totalEnrollmentScore;
+    }
+
+    public void setTotalEnrollmentScore(String totalEnrollmentScore) {
+        this.totalEnrollmentScore = totalEnrollmentScore;
+    }
+
+    public String getFromArmy() {
+        return fromArmy;
+    }
+
+    public void setFromArmy(String fromArmy) {
+        this.fromArmy = fromArmy;
+    }
 
     public String getNameOfMember() {
         return nameOfMember;
