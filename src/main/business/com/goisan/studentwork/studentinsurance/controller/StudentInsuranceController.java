@@ -112,17 +112,19 @@ public class StudentInsuranceController {
 //    导出以及导出模板
     @RequestMapping("/studentInsurance/exportStudentInsurance")
     public void exportStudentInsurance(HttpServletRequest request, HttpServletResponse response) {
+        //一个Excel文件对应于一个workbook(HSSFWorkbook)
         HSSFWorkbook wb = new HSSFWorkbook();
         String insuranceType = request.getParameter("insuranceType");
         String export = request.getParameter("export");
         HSSFSheet sheet;
         String fileName;
         if ("1".equals(insuranceType)) {
+//   创建sheet
             sheet = wb.createSheet("新疆现代职业技术学院社保缴费名单");
             fileName = "新疆现代职业技术学院社保缴费名单";
         } else {
-            sheet = wb.createSheet("新疆现代职业技术学院商业保险缴费名单");
-            fileName = "新疆现代职业技术学院商业保险缴费名单";
+
+            fileName = "新疆现代职业技术学院商业保险缴费名单";  sheet = wb.createSheet("新疆现代职业技术学院商业保险缴费名单");
         }
 //        设置字体
         HSSFFont fontHead = this.createFont(wb, 14, "宋体", false);
@@ -134,9 +136,10 @@ public class StudentInsuranceController {
         HSSFCellStyle style12 = this.createBorderStyle(wb, font12);
 //        设置合并单元格
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 9));
-
+// 设置 默认样式，单元格宽度
        this.setColumnDefaultStyleAndWidth(sheet,style12);
 
+//      createRow 创建row
         HSSFRow row0 = sheet.createRow(0);
         row0.setHeightInPoints(28);
         this.createCellWithStyleAndValue(row0,0,fileName,styleHead);
@@ -162,6 +165,7 @@ public class StudentInsuranceController {
             int rowCount = 2;
             int index = 1;
             for (StudentInsurance studentInsurance:studentInsuranceList){
+
                 HSSFRow row = sheet.createRow(rowCount);
                 row.setHeightInPoints(28);
                 this.createCellWithStyleAndValue(row,0,String.valueOf(index),style12);
@@ -198,7 +202,7 @@ public class StudentInsuranceController {
             }
         }
     }
-
+//导入
     @ResponseBody
     @RequestMapping("/studentInsurance/importInsurance")
     public Message importInsurance(@RequestParam(value = "file", required = false)CommonsMultipartFile file,String insuranceType){
@@ -207,15 +211,21 @@ public class StudentInsuranceController {
         int errCount = 0 ;
         StringBuilder sb = new StringBuilder();
         try {
+//            创建HSSFWorkbook
             HSSFWorkbook workbook = new HSSFWorkbook(file.getInputStream());
+//
             Boolean checkExcel = this.checkExcel(workbook, insuranceType);
             if (!checkExcel){
                 return new Message(1,"请检查导入模板",null);
             }
+//            获取sheet
             HSSFSheet sheet = workbook.getSheetAt(0);
+
             int end = sheet.getLastRowNum();
             for (int i = 2; i <= end; i++) {
+//                获取行
                 HSSFRow row = sheet.getRow(i);
+//                获取该行单元格：row.getCell(6)
                 String studentId = row.getCell(6).toString();
 //                根据studentId，检查是否有此学生
                 if (null==studentId &&"".equals(studentId)){
@@ -256,18 +266,24 @@ public class StudentInsuranceController {
         }
     }
 
-
+// static
     private HSSFFont createFont ( HSSFWorkbook wb,int fontSize,String fontName,Boolean bold){
         HSSFFont font = wb.createFont();
+//       大小
         font.setFontHeightInPoints((short) fontSize);
+//        设置字体名
         font.setFontName(fontName);
+//        是否加粗
         font.setBold(bold);
         return font;
     }
 
     private HSSFCellStyle createStyle (HSSFWorkbook wb,HSSFFont font){
+//        HSSFCellStyle 设置样式
         HSSFCellStyle cellStyle = wb.createCellStyle();
+//        设置字体
         cellStyle.setFont(font);
+//        设置是否自动换行
         cellStyle.setWrapText(true);
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
@@ -280,6 +296,7 @@ public class StudentInsuranceController {
         cellStyle.setWrapText(true);
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+//        设置边框
         cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
         cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
@@ -289,12 +306,17 @@ public class StudentInsuranceController {
     }
 
     private void createCellWithStyleAndValue (HSSFRow row,Integer col,String value,HSSFCellStyle style){
+//       createCell生成单元格
         HSSFCell cell = row.createCell(col);
+//       setCellValue 设置单元格的值
         cell.setCellValue(value);
+//        设置 单元格样式
         cell.setCellStyle(style);
     }
 
     private void setColumnDefaultStyleAndWidth(HSSFSheet sheet,HSSFCellStyle style){
+
+//        设置setColumnWidth 宽度
         sheet.setColumnWidth(0,5* 256);
         sheet.setColumnWidth(1,33* 256);
         sheet.setColumnWidth(2,15* 256);
@@ -305,6 +327,7 @@ public class StudentInsuranceController {
         sheet.setColumnWidth(7,30* 256);
         sheet.setColumnWidth(8,9* 256);
         sheet.setColumnWidth(9,13* 256);
+//        设置高度
         sheet.setDefaultRowHeightInPoints(28);
         sheet.setDefaultColumnStyle(0,style);
         sheet.setDefaultColumnStyle(1,style);
