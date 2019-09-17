@@ -75,7 +75,7 @@
             T_XG_STUDENT_PROVE_WF t left join T_XG_STUDENT s on t.student_id=s.student_id
                                     left join  T_XG_STUDENT_CLASS c on s.student_id=c.student_id left join T_XG_CLASS d on
                 d.class_id = c.class_id left join T_XG_MAJOR m on m.major_code = d.major_code
-        WHERE t.id = '637fbaad-167a-4c1d-8c12-1bcc8f85d2e6'
+        WHERE t.id = #{id}
         ORDER BY t.create_time desc
     </select>
     <select id="getStudentProveById" resultType="com.goisan.studentwork.studentprove.bean.StudentProve" parameterType="com.goisan.studentwork.studentprove.bean.StudentProve">
