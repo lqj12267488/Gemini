@@ -1,5 +1,7 @@
 package com.goisan.tabular.controller;
 
+import com.goisan.studentwork.employments.bean.EmploymentManage;
+import com.goisan.studentwork.employments.service.EmploymentManageService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import com.goisan.tabular.bean.Tabular;
@@ -9,6 +11,15 @@ import com.goisan.tabular.service.TabularService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.ibatis.annotations.Param;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +48,10 @@ public class TabularController {
     private TabularService tabularService;
     @Resource
     private TableAttributeService tableAttributeService;
+
+    @Resource
+    private EmploymentManageService employmentManageService;
+
 
     /**
      * @function 表格种类URL
@@ -263,4 +278,8 @@ public class TabularController {
             return new Message(0, "", null);
         }
     }
+
+
+
+
 }
