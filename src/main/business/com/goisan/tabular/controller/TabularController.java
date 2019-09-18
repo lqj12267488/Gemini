@@ -242,7 +242,10 @@ public class TabularController {
                 }
             }
         }else{
-           this.tableAttributeService.expertExcel_A1(response,files);
+            if(tableAttribute.equals("")){
+
+                this.tableAttributeService.expertExcel_A1(response,files);
+            }
         }
 
     }

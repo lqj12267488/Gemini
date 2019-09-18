@@ -59,6 +59,37 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         }
     }
 
+
+    /**
+     * 导出带有数据得表格 命名expertExcel_A加上数字
+     * 例
+     * * @param response
+     */
+    public void expertExcel_A711(HttpServletResponse response,TabularFile tabularFile){
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        try {
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            os.write(FileUtils.readFileToByteArray(file));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * 例子
      */
