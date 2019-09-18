@@ -4,6 +4,7 @@ import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import com.goisan.tabular.bean.Tabular;
 import com.goisan.tabular.bean.TabularFile;
+import com.goisan.tabular.service.TableAttributeService;
 import com.goisan.tabular.service.TabularService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -34,7 +35,8 @@ import java.util.Map;
 public class TabularController {
     @Resource
     private TabularService tabularService;
-
+    @Resource
+    private TableAttributeService tableAttributeService;
 
     /**
      * @function 表格种类URL
@@ -143,6 +145,7 @@ public class TabularController {
     public void insertTabularFiles(@RequestParam("id") String id,
                                    @RequestParam("tabularName") String tabularName,
                                    @RequestParam("tabularType") String tabularType,
+                                   @RequestParam("tableAttribute") String tableAttribute,
                                    @RequestParam(value = "file") CommonsMultipartFile files,
                                    HttpServletRequest request) {
         COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
@@ -175,6 +178,7 @@ public class TabularController {
             tabular.setId(CommonUtil.getUUID());
             tabular.setTabularName(tabularName);
             tabular.setTabularType(tabularType);
+            tabular.setTableAttribute(tableAttribute);
             tabular.setCreator(CommonUtil.getPersonId());
             tabular.setCreateDept(CommonUtil.getLoginUser().getDefaultDeptId());
             tabularService.insertTabular(tabular);
@@ -194,33 +198,38 @@ public class TabularController {
 
     @ResponseBody
     @RequestMapping("/tabular/downloadTabularFile")
-    public void downloadTabularFile(@Param("id") String id, HttpServletResponse response) {
+    public void downloadTabularFile(@Param("id") String id,@Param("tableAttribute") String tableAttribute,HttpServletResponse response) {
         COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
                 .getParentFile().getPath();
         String fileId = tabularService.getFileIdByTabularId(id);
         TabularFile files = tabularService.getTabularFileById(fileId);
-        String filePath = COM_REPORT_PATH + files.getFileUrl();
-        File file = FileUtils.getFile(filePath);
-        OutputStream os = null;
-        try {
-            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(files.getFileName(),
-                    "utf-8"));
-            os = response.getOutputStream();
-            os.write(FileUtils.readFileToByteArray(file));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        if(null == tableAttribute){
+            String filePath = COM_REPORT_PATH + files.getFileUrl();
+            File file = FileUtils.getFile(filePath);
+            OutputStream os = null;
             try {
-                if (os != null) {
-                    os.flush();
-                    os.close();
-                }
+                response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(files.getFileName(),
+                        "utf-8"));
+                os = response.getOutputStream();
+                os.write(FileUtils.readFileToByteArray(file));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (os != null) {
+                        os.flush();
+                        os.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        }else{
+           this.tableAttributeService.expertExcel_A1(response,files);
         }
+
     }
 
     /**

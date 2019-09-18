@@ -9,6 +9,7 @@ public class Tabular extends BaseBean {
     private String fileName;
     private String uploadTime;
     private String serialNumber;
+    private String tableAttribute;
 
     public String getId() {
         return id;
@@ -56,5 +57,13 @@ public class Tabular extends BaseBean {
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public String getTableAttribute() {
+        return tableAttribute;
+    }
+
+    public void setTableAttribute(String tableAttribute) {
+        this.tableAttribute = tableAttribute;
     }
 }

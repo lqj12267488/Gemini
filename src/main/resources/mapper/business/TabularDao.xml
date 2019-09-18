@@ -21,6 +21,7 @@
         to_char(upload_time,'yyyy-mm-dd hh24:mi') uploadTime,
         creator creator,
         create_time createTime,
+        table_attribute tableAttribute,
         serial_number serialNumber
         FROM
         T_JW_TABULAR
@@ -39,6 +40,7 @@
         tabular_name,
         tabular_type,
         upload_time,
+        table_attribute,
         creator,
         create_time,
         create_dept) VALUES
@@ -46,6 +48,7 @@
         '${tabularName}',
         '${tabularType}',
          sysdate,
+        '${tableAttribute}',
         '${creator}',
          sysdate,
         '${createDept}')
@@ -90,6 +93,7 @@
         UPDATE T_JW_TABULAR SET
         tabular_name =#{tabularName},
         tabular_type=#{tabularType},
+        table_attribute =#{tableAttribute},
         upload_time= sysdate,
         change_time= sysdate,
         changer = #{changer},

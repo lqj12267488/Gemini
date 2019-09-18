@@ -53,7 +53,8 @@
                         <th>time</th>
                         <th width="30%">表格名称</th>
                         <th width="20%">表格种类</th>
-                        <th width="30%">上传时间</th>
+                        <th width="20%">上传时间</th>
+                        <th width="20%">表格属性</th>
                         <th width="10%">操作</th>
                     </tr>
                     </thead>
@@ -79,10 +80,11 @@
                 {"data": "tabularName"},
                 {"data": "tabularType"},
                 {"data": "uploadTime"},
+                {"data": "tableAttribute"},
                 {
                     "render": function (data, type, row) {
 
-                        var str = "<a id='upload' class='icon-download' title='下载' href='<%=request.getContextPath()%>/tabular/downloadTabularFile?id="+row.id+"'></a>";
+                        var str = "<a id='upload' class='icon-download' title='下载' href='<%=request.getContextPath()%>/tabular/downloadTabularFile?id="+row.id+"&tableAttribute="+row.tableAttribute+"'></a>";
                         return str;
                     },
                 },

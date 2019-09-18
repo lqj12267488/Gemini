@@ -39,6 +39,15 @@
                     </div>
                 </div>
                 <div class="form-row">
+                    <div class="col-md-3 tar">
+                        表格属性：
+                    </div>
+                    <div class="col-md-9">
+                        <input id="tableAttribute" placeholder="请填写表格属性" type="text"
+                               value="${tabular.tableAttribute}"/>
+                    </div>
+                </div>
+                <div class="form-row">
                     <div class="form-row">
                         <div class="col-md-3 tar">
                             <span class="iconBtx">*</span> 文件上传：
@@ -107,7 +116,7 @@
                 $.ajax({
                     url: '<%=request.getContextPath()%>/tabular/saveTabular' +
                     '?id=' + $("#id").val() +
-                    '&tabularName=' + tabularName + '&tabularType=' + tabularType,
+                    '&tabularName=' + tabularName + '&tabularType=' + tabularType +'&tableAttribute=' + $("#tableAttribute").val(),
                     type: "post",
                     processData: false,
                     contentType: false,
