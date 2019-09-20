@@ -75,4 +75,28 @@ public interface TableAttributeService {
     /**
      * modify by yinzijian end
      */
+
+    /**
+     * modify by lizhipeng start
+     */
+
+    /**
+     * modify by lizhipeng end
+     */
+
+    /**
+     * modify by hanjie start
+     */
+
+    /**
+     * modify by hanjie end
+     */
+
+    /**
+     * modify by wangxue start
+     */
+
+    /**
+     * modify by wangxue end
+     */
 }
