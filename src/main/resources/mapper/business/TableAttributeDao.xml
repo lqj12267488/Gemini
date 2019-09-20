@@ -3,5 +3,62 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.goisan.tabular.dao.TableAttributeDao">
-
+    <!--modify by yinzijian start-->
+<select id="getZhaoshengList" resultType="com.goisan.educational.major.bean.Major" parameterType="com.goisan.educational.major.bean.Major">
+        SELECT
+        M.MAJOR_ID,
+        FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') MAJOR_SCHOOL,
+        M.MAJOR_CODE,
+        M.MAJOR_NAME,
+        M.MAJOR_DIRECTION_CODE,
+        M.MAJOR_DIRECTION,
+        P.PLAN_NUMBER,
+        P.REAL_NUMBER
+        FROM T_XG_MAJOR M LEFT JOIN T_XG_ENROLLMENT_PLAN P ON M.MAJOR_ID=P.MAJOR_ID
+    </select>
+<select id="getGraduationList" resultType="com.goisan.educational.major.bean.Major" parameterType="com.goisan.educational.major.bean.Major">
+      SELECT
+        M.MAJOR_ID,
+        FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') MAJOR_SCHOOL,
+        M.MAJOR_CODE,
+        M.MAJOR_NAME,
+        M.MAJOR_DIRECTION_CODE,
+        M.MAJOR_DIRECTION,
+        DECODE(STUDENT_STATUS,'6', COUNT(STUDENT_STATUS),0) graduation, <!-- DECODE(STUDENT_STATUS,'1',10,'2',2,'3',3) S  过滤作用 判断如果是毕业的 查询显示毕业的人数-->
+        COUNT(ES.EMPLOYMENT_ID) EMPLOYMENT
+        FROM T_XG_MAJOR M LEFT JOIN T_XG_CLASS C ON M.MAJOR_CODE=C.MAJOR_CODE LEFT JOIN T_XG_STUDENT_CLASS SC ON C.CLASS_ID=SC.CLASS_ID  LEFT JOIN  T_XG_STUDENT S ON SC.STUDENT_ID=S.STUDENT_ID
+          LEFT JOIN T_XG_EMPLOYMENT_STUDENT ES ON S.STUDENT_ID=ES.STUDENT_ID
+        GROUP BY  M.MAJOR_ID,
+        M.MAJOR_SCHOOL,
+        M.DEPARTMENTS_ID,
+        M.MAJOR_CODE,
+        M.MAJOR_NAME,
+        M.MAJOR_DIRECTION_CODE,
+        M.MAJOR_DIRECTION,
+        STUDENT_STATUS,
+        ES.EMPLOYMENT_ID
+</select>
+    <select id="getPastgraduationList" parameterType="com.goisan.educational.major.bean.Major" resultType="com.goisan.educational.major.bean.Major">
+        SELECT
+        M.MAJOR_ID,
+        FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') MAJOR_SCHOOL,
+        M.MAJOR_CODE,
+        M.MAJOR_NAME,
+        M.MAJOR_DIRECTION_CODE,
+        M.MAJOR_DIRECTION,
+        DECODE(STUDENT_STATUS,'6', COUNT(STUDENT_STATUS),0) graduation,
+        COUNT(ES.EMPLOYMENT_ID) EMPLOYMENT
+        FROM T_XG_MAJOR M LEFT JOIN T_XG_CLASS C ON M.MAJOR_CODE=C.MAJOR_CODE LEFT JOIN T_XG_STUDENT_CLASS SC ON C.CLASS_ID=SC.CLASS_ID  LEFT JOIN  T_XG_STUDENT S ON SC.STUDENT_ID=S.STUDENT_ID
+        LEFT JOIN T_XG_EMPLOYMENT_STUDENT ES ON S.STUDENT_ID=ES.STUDENT_ID
+        GROUP BY  M.MAJOR_ID,
+        M.MAJOR_SCHOOL,
+        M.DEPARTMENTS_ID,
+        M.MAJOR_CODE,
+        M.MAJOR_NAME,
+        M.MAJOR_DIRECTION_CODE,
+        M.MAJOR_DIRECTION,
+        STUDENT_STATUS,
+        ES.EMPLOYMENT_ID
+    </select>
+    <!--modify by yinzijian end-->
 </mapper>

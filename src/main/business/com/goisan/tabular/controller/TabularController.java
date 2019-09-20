@@ -134,6 +134,7 @@ public class TabularController {
         mv.addObject("tabular", tabular);
         return mv;
     }
+
     /**
      * @function 表格信息修改保存方法
      * @author FanNing
@@ -142,10 +143,10 @@ public class TabularController {
     @ResponseBody
     @RequestMapping("/tabular/updateTabular")
     public Message updateTabular(Tabular tabular) {
-            tabular.setChanger(CommonUtil.getPersonId());
-            tabular.setChangeDept(CommonUtil.getLoginUser().getDefaultDeptId());
-            tabularService.updateTabular(tabular);
-            return new Message(1, "修改成功！", "success");
+        tabular.setChanger(CommonUtil.getPersonId());
+        tabular.setChangeDept(CommonUtil.getLoginUser().getDefaultDeptId());
+        tabularService.updateTabular(tabular);
+        return new Message(1, "修改成功！", "success");
 
     }
 
@@ -189,23 +190,23 @@ public class TabularController {
             }
         }
 
-            Tabular tabular = new Tabular();
-            tabular.setId(CommonUtil.getUUID());
-            tabular.setTabularName(tabularName);
-            tabular.setTabularType(tabularType);
-            tabular.setTableAttribute(tableAttribute);
-            tabular.setCreator(CommonUtil.getPersonId());
-            tabular.setCreateDept(CommonUtil.getLoginUser().getDefaultDeptId());
-            tabularService.insertTabular(tabular);
+        Tabular tabular = new Tabular();
+        tabular.setId(CommonUtil.getUUID());
+        tabular.setTabularName(tabularName);
+        tabular.setTabularType(tabularType);
+        tabular.setTableAttribute(tableAttribute);
+        tabular.setCreator(CommonUtil.getPersonId());
+        tabular.setCreateDept(CommonUtil.getLoginUser().getDefaultDeptId());
+        tabularService.insertTabular(tabular);
 
-            TabularFile uploadFile = new TabularFile();
-            uploadFile.setTabularId(tabular.getId());
-            uploadFile.setFileName(fileName);
-            uploadFile.setFileUrl(url);
-            uploadFile.setFileSuffix(fileName.substring(fileName.lastIndexOf(".") + 1));
-            uploadFile.setCreator(CommonUtil.getPersonId());
-            uploadFile.setCreateDept(CommonUtil.getLoginUser().getDefaultDeptId());
-            tabularService.insertTabularFile(uploadFile);
+        TabularFile uploadFile = new TabularFile();
+        uploadFile.setTabularId(tabular.getId());
+        uploadFile.setFileName(fileName);
+        uploadFile.setFileUrl(url);
+        uploadFile.setFileSuffix(fileName.substring(fileName.lastIndexOf(".") + 1));
+        uploadFile.setCreator(CommonUtil.getPersonId());
+        uploadFile.setCreateDept(CommonUtil.getLoginUser().getDefaultDeptId());
+        tabularService.insertTabularFile(uploadFile);
 
     }
 
@@ -213,12 +214,12 @@ public class TabularController {
 
     @ResponseBody
     @RequestMapping("/tabular/downloadTabularFile")
-    public void downloadTabularFile(@Param("id") String id,@Param("tableAttribute") String tableAttribute,HttpServletResponse response) {
+    public void downloadTabularFile(@Param("id") String id, @Param("tableAttribute") String tableAttribute, HttpServletResponse response) {
         COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
                 .getParentFile().getPath();
         String fileId = tabularService.getFileIdByTabularId(id);
         TabularFile files = tabularService.getTabularFileById(fileId);
-        if(null == tableAttribute){
+        if (null == tableAttribute) {
             String filePath = COM_REPORT_PATH + files.getFileUrl();
             File file = FileUtils.getFile(filePath);
             OutputStream os = null;
@@ -241,10 +242,24 @@ public class TabularController {
                     e.printStackTrace();
                 }
             }
-        }else{
-           this.tableAttributeService.expertExcel_A1(response,files);
-        }
+        } else {
+            if ("expertExcel_A7_6_1".equals(tableAttribute)) {
 
+                this.tableAttributeService.expertExcel_A7_6_1(response, files);//表格属性 下载导出时如果有表格属性导出的表里有数据
+
+            } else if ("expertExcel_A7_6_2".equals(tableAttribute)) {
+
+                this.tableAttributeService.expertExcel_A7_6_2(response, files);
+
+            } else if ("expertExcel_A7_6_3".equals(tableAttribute)) {
+
+                this.tableAttributeService.expertExcel_A7_6_3(response, files);
+
+            } else {
+
+                this.tableAttributeService.expertExcel_A1(response, files);//否则为空表
+            }
+        }
     }
 
     /**
@@ -265,21 +280,20 @@ public class TabularController {
         ModelAndView mv = new ModelAndView("/business/tabular/tabularDownloadList");
         return mv;
     }
+
     /**
      * 字典类别名称查重
      */
     @ResponseBody
     @RequestMapping("/tabular/checkName")
-    public Message archivesTypeCheckName(Tabular tabular){
+    public Message archivesTypeCheckName(Tabular tabular) {
         List size = tabularService.checkName(tabular);
-        if(size.size()>0){
+        if (size.size() > 0) {
             return new Message(1, "名称重复，请重新填写！", null);
-        }else{
+        } else {
             return new Message(0, "", null);
         }
     }
-
-
 
 
 }
