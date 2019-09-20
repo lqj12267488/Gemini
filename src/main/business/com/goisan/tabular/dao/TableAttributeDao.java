@@ -3,6 +3,7 @@ package com.goisan.tabular.dao;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.educational.skillappraisal.bean.SkillAppraisal;
 import com.goisan.evaluation.bean.EvaluationTask;
+import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.Dept;
 import com.goisan.system.bean.Emp;
 import com.goisan.tabular.bean.TabularFile;
@@ -68,6 +69,8 @@ public interface TableAttributeDao {
     List<EvaluationTask> getExpertExcel_A8_7(String term);
 
     void expertExcel_A8_8(HttpServletResponse response, TabularFile tabularFile);//A8-8奖助学情况表1	    
+
+    List<SchoolBurse> getExpertExcel_A8_8();
 
     void expertExcel_A8_9(HttpServletResponse response, TabularFile tabularFile);//A8-9重大制度创新表1
     /**

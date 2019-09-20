@@ -5,6 +5,7 @@ import com.goisan.educational.major.bean.TalentTrain;
 import com.goisan.educational.major.bean.TeachingTeamMember;
 import com.goisan.educational.skillappraisal.bean.SkillAppraisal;
 import com.goisan.evaluation.bean.EvaluationTask;
+import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.CommonBean;
 import com.goisan.system.bean.Dept;
 import com.goisan.system.bean.Emp;
@@ -1015,21 +1016,19 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<SkillAppraisal> list = tableAttributeDao.getExpertExcel_A4_3();
+            List<SchoolBurse> list = tableAttributeDao.getExpertExcel_A8_8();
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
                 Row row = sheet.getRow(rowIndex+i);
                 row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getIssuingOffice());
-                row.getCell(3).setCellValue(list.get(i).getPreAppProfession());
+                row.getCell(2).setCellValue(list.get(i).getName());
+                row.getCell(3).setCellValue(list.get(i).getType());
                 row.getCell(4).setCellValue("");
-                row.getCell(5).setCellValue("");
-                row.getCell(6).setCellValue("");
-                row.getCell(7).setCellValue("");
-                row.getCell(8).setCellValue("");
+                row.getCell(5).setCellValue(list.get(i).getNums());
+                row.getCell(6).setCellValue(list.get(i).getBurseSum());
                 count++;
-            }*/
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();
@@ -1048,6 +1047,10 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 e.printStackTrace();
             }
         }
+    }
+
+    public List<SchoolBurse> getExpertExcel_A8_8(){
+        return tableAttributeDao.getExpertExcel_A8_8();
     }
 
     public void expertExcel_A8_9(HttpServletResponse response, TabularFile tabularFile) {
