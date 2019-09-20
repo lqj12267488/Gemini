@@ -278,17 +278,11 @@ public class TabularController {
             } else if ("expertExcel_A8_9".equals(tableAttribute)) {
                 this.tableAttributeService.expertExcel_A8_9(response, files);
             } else if ("expertExcel_A7_6_1".equals(tableAttribute)) {
-
                 this.tableAttributeService.expertExcel_A7_6_1(response, files);//表格属性 下载导出时如果有表格属性导出的表里有数据
-
             } else if ("expertExcel_A7_6_2".equals(tableAttribute)) {
-
                 this.tableAttributeService.expertExcel_A7_6_2(response, files);
-
             } else if ("expertExcel_A7_6_3".equals(tableAttribute)) {
-
                 this.tableAttributeService.expertExcel_A7_6_3(response, files);
-
             } else {
                 this.tableAttributeService.expertExcel_A1(response, files);
             }
@@ -314,6 +308,7 @@ public class TabularController {
         ModelAndView mv = new ModelAndView("/business/tabular/tabularDownloadList");
         return mv;
     }
+
     /**
      * 字典类别名称查重
      */
@@ -327,8 +322,6 @@ public class TabularController {
             return new Message(0, "", null);
         }
     }
-
-
 
 
 }
