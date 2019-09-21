@@ -58,6 +58,34 @@ public class Export {
     private String singing;
     private String majorYear,majorDate,majorGrade,majorName2,majorDept;
 
+    private String internshipUnitName;
+    private String contactPerson;
+    private String contactNumber;
+
+
+    public String getInternshipUnitName() {
+        return internshipUnitName;
+    }
+
+    public void setInternshipUnitName(String internshipUnitName) {
+        this.internshipUnitName = internshipUnitName;
+    }
+
+    public String getContactPerson() {
+        return contactPerson;
+    }
+
+    public void setContactPerson(String contactPerson) {
+        this.contactPerson = contactPerson;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
 
     private String careerGettime,careerGrade,careerName,careerDept;
     //专业技术职务等级，专业技术职务名称，发证单位，职业资格证获取日期，职业资格证书等级，职业资格证书名称，发证单位
@@ -67,6 +95,10 @@ public class Export {
 
     private String sfzyTeacher,sfssTeacher,sfmsTeacher,sfggTeacher,politicsMajorCode,politicsMajorName;
     //是否专业教师,是否双师素质教师,是否教学名师,是否骨干教师,行政所属专业代码,行政所属专业名称,专业技术获取日期
+
+
+
+
 
 
     public String getSinging() {

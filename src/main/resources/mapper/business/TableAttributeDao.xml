@@ -559,6 +559,13 @@
           and k.course_id = r.course_id
           and e.TEACHER_CATEGORY = 2
     </select>
+
+    <select id="expertExcel_A9_4" resultType="com.goisan.tabular.bean.export.Export">
+        select  internship_unit_name internshipUnitName,
+          contact_person contactPerson,
+          contact_number contactNumber
+        from T_XG_EMPLOYMENT_UNIT u
+    </select>
     <!--modify by hanjie end-->
 
 

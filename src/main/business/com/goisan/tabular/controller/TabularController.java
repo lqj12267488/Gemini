@@ -222,7 +222,7 @@ public class TabularController {
                 .getParentFile().getPath();
         String fileId = tabularService.getFileIdByTabularId(id);
         TabularFile files = tabularService.getTabularFileById(fileId);
-        if (null == tableAttribute) {
+        if (null == tableAttribute || "null".equals(tableAttribute)) {
             String filePath = COM_REPORT_PATH + files.getFileUrl();
             File file = FileUtils.getFile(filePath);
             OutputStream os = null;
