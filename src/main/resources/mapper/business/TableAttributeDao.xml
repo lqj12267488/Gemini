@@ -17,7 +17,7 @@
                POSITIONAL_TITLES                                        positionalTitles,
                func_get_dicvalue(EDUCATIONAL_LEVEL, 'WHCD')             educationalLevel,
                func_get_dicvalue(sex, 'XB')                             sex,
-               to_char(BIRTHDAY, 'yyyyMMdd')                            birthday,
+               to_char(BIRTHDAY, 'yyyyMMdd')                            birthdayShow,
                wmsys.wm_concat(FUNC_GET_DICVALUE(s.resultType, 'CGLX')) educationalResearch,
                TEL                                                      tel
         from t_rs_employee e
@@ -240,6 +240,47 @@
         select count(*) nums,sum(GRANT_SUM)/10000 burseSum,'助学金' type,'助学金' name from T_XG_STUDENTREWARD_GRANTS
         union
         select count(*) nums,sum(LOAN_SUM)/10000 burseSum,'助学贷款' type,'助学贷款' name from T_XG_STUDENTREWARD_LOAN
+    </select>
+    <select id="getExpertExcel_A10_1_2" resultType="com.goisan.studentwork.employments.bean.EmploymentManage">
+        SELECT
+            FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'name') studentId,
+            FUNC_GET_TABLEVALUE(t.employment_unit_id,
+                                'T_XG_EMPLOYMENT_UNIT',
+                                'EMPLOYMENT_UNIT_ID',
+                                'INTERNSHIP_UNIT_NAME') employmentUnitIdShow,
+            t.student_number studentNumber,
+            func_get_dicvalue(n.EMPLOYMENT_PLACE,'JYDD') employmentPlace,
+            func_get_dicvalue(n.UNIT_PROPERTY,'JYDWXZ') unitProperty,
+            func_get_dicvalue(n.ENTERPRISE_SCALE,'QYGM') enterpriseScale,
+            func_get_dicvalue(t.SALARY,'GZSRSP') SALARY,
+            func_get_dicvalue(t.MAJOR_MATCH_FLAG,'SF') majorMatchFlag
+        FROM T_XG_EMPLOYMENT_STUDENT t left join T_XG_EMPLOYMENT_UNIT n on t.employment_id = n.employment_unit_id
+    </select>
+    <select id="getExpertExcel_A10_1" resultType="com.goisan.system.bean.Student">
+        select
+            t.student_number,
+            t.name,
+            func_get_dicvalue(t.sex,'XB') sex,
+            func_get_dicvalue(t.nation,'MZ') nation,
+            func_get_dicvalue(t.student_status,'XJZT') studentStatus,
+            t.SOURCE_PLACE_DIVISION_CODE,
+            func_get_dicvalue(t.FROM_ARMY,'LZJD') fromArmy,
+            func_get_dicvalue(t.ADMISSIONS_WAY,'ZSFS') admissionsWay,
+            func_get_dicvalue(t.STUDENT_SOURCE,'SYLB') studentSource,
+            func_get_dicvalue(t.RURAL_HOUSEHOLD_REGISTRATIO,'SF') ruralHouseholdRegisratio,
+            func_get_dicvalue(t.ORDER_TRAINING,'SF') orderTraining,
+            func_get_dicvalue(t.DOCUMENTARY_LIKA_POOR_FAMILIE,'SF') documentaryLikaPoorFamilie,
+            func_get_dicvalue(m.SCHOOL_SYSTEM,'XZ') schoolSystem,
+            c.year||'08' years,
+            t.TEST_SCORES,
+            func_get_tablevalue(m.departments_id,'T_SYS_DEPT','dept_id','dept_name') deptId,
+            c.class_name,
+            c.major_code,
+            m.major_name,
+            m.MAJOR_DIRECTION,
+            func_get_dicvalue(m.major_direction,'ZXZYFX') majorDirectionShow
+
+        from t_xg_student t left join t_xg_student_class sc on t.student_id=sc.student_id left join t_xg_class c on sc.class_id = c.class_id left join t_xg_major m on c.major_code=m.major_code
     </select>
     <!--modify by lihanyue end-->
     <!--modify by yinzijian start-->

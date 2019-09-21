@@ -3,9 +3,11 @@ package com.goisan.tabular.service;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.educational.skillappraisal.bean.SkillAppraisal;
 import com.goisan.evaluation.bean.EvaluationTask;
+import com.goisan.studentwork.employments.bean.EmploymentManage;
 import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.Dept;
 import com.goisan.system.bean.Emp;
+import com.goisan.system.bean.Student;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
 
@@ -73,6 +75,22 @@ public interface TableAttributeService {
     List<SchoolBurse> getExpertExcel_A8_8();
 
     void expertExcel_A8_9(HttpServletResponse response, TabularFile tabularFile);//A8-9重大制度创新表1
+
+    void expertExcel_A10_1_2(HttpServletResponse response, TabularFile tabularFile);//A10-1-2在校生就业情况表1
+
+    List<EmploymentManage> getExpertExcel_A10_1_2();
+
+    void expertExcel_A10_1(HttpServletResponse response, TabularFile tabularFile);//A10-1在校生信息表1
+
+    List<Student> getExpertExcel_A10_1();
+
+    void expertExcel_A10_2_1(HttpServletResponse response, TabularFile tabularFile);//A10-2-1辍学学生明细表1	    
+
+    void expertExcel_A10_3(HttpServletResponse response, TabularFile tabularFile);//A10-3学生社团表1
+
+    void expertExcel_A10_4(HttpServletResponse response, TabularFile tabularFile);//A10-4红十字会表1
+
+    void expertExcel_A10_5(HttpServletResponse response, TabularFile tabularFile);//A10-5志愿者（义工社工）活动表1
     /**
      * modify by lihanyue end
      */

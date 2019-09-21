@@ -90,7 +90,7 @@ public class Student extends BaseBean {
     private String duringEmployment;
     private String totalEnrollmentScore;
     private String fromArmy;
-
+    private String schoolSystem;
     public String getRuralHouseholdRegistratio() {
         return ruralHouseholdRegistratio;
     }
@@ -225,8 +225,10 @@ public class Student extends BaseBean {
     private String codeCooperativeEducation;  //联招合作学校代码
     private String externalTeachingPoint;  //校外教学点
     private String subsectionCulture; //分段培养方式
-
-
+    private String years;
+    private String deptId;
+    private String majorName;
+    private String majorDirectionShow;
     public String getFormCooperativeEducation() {
         return formCooperativeEducation;
     }
@@ -1036,5 +1038,46 @@ public class Student extends BaseBean {
 
     public void setGraduationYear(String graduationYear) {
         this.graduationYear = graduationYear;
+    }
+
+
+    public String getSchoolSystem() {
+        return schoolSystem;
+    }
+
+    public void setSchoolSystem(String schoolSystem) {
+        this.schoolSystem = schoolSystem;
+    }
+
+    public String getYears() {
+        return years;
+    }
+
+    public void setYears(String years) {
+        this.years = years;
+    }
+
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getMajorName() {
+        return majorName;
+    }
+
+    public void setMajorName(String majorName) {
+        this.majorName = majorName;
+    }
+
+    public String getMajorDirectionShow() {
+        return majorDirectionShow;
+    }
+
+    public void setMajorDirectionShow(String majorDirectionShow) {
+        this.majorDirectionShow = majorDirectionShow;
     }
 }

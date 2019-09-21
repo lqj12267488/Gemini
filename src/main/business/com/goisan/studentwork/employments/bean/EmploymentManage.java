@@ -43,7 +43,7 @@ public class EmploymentManage extends Employments{
     private String employmentPersonNumber;
     private String salaryPersonNumber;
     private String departmentsIdShow3;
-
+    private String enterpriseScale;
     public String getDepartmentsIdPersonNumber() {
         return departmentsIdPersonNumber;
     }
@@ -358,5 +358,15 @@ public class EmploymentManage extends Employments{
 
     public void setDepartmentsIdShow3(String departmentsIdShow3) {
         this.departmentsIdShow3 = departmentsIdShow3;
+    }
+
+    @Override
+    public String getEnterpriseScale() {
+        return enterpriseScale;
+    }
+
+    @Override
+    public void setEnterpriseScale(String enterpriseScale) {
+        this.enterpriseScale = enterpriseScale;
     }
 }
