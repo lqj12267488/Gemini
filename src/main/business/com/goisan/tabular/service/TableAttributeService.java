@@ -18,7 +18,6 @@ public interface TableAttributeService {
      * modify by lihanyue start
      */
     void expertExcel_A1(HttpServletResponse response, TabularFile tabularFile);
-<<<<<<< Updated upstream
 
     void expertExcel_A1_6(HttpServletResponse response, TabularFile tabularFile);//A1-6机构设置表
 
@@ -41,19 +40,7 @@ public interface TableAttributeService {
     void expertExcel_A5_1(HttpServletResponse response, TabularFile tabularFile);//A5-1经费收入表1
 
     void expertExcel_A5_2(HttpServletResponse response, TabularFile tabularFile);//A5-2经费支出表1
-=======
-    void expertExcel_A1_6(HttpServletResponse response,TabularFile tabularFile);//A1-6机构设置表
-    List<Dept> getExpertExcel_A1_6();
-    void expertExcel_A2(HttpServletResponse response,TabularFile tabularFile);//A2院校领导表
-    List<Emp> getExpertExcel_A2();
-    void expertExcel_A3(HttpServletResponse response,TabularFile tabularFile);//A3基本办学条件表1
-    void expertExcel_A4_1(HttpServletResponse response,TabularFile tabularFile);//A4-1校内实线基地表
-    void expertExcel_A4_2(HttpServletResponse response,TabularFile tabularFile);//A4-2校外实习实训基地表1
-    void expertExcel_A4_3(HttpServletResponse response,TabularFile tabularFile);//A4-3职业技能鉴定机构部1
-    List<SkillAppraisal> getExpertExcel_A4_3();
-    void expertExcel_A5_1(HttpServletResponse response,TabularFile tabularFile);//A5-1经费收入表1
-    void expertExcel_A5_2(HttpServletResponse response,TabularFile tabularFile);//A5-2经费支出表1
->>>>>>> Stashed changes
+
 
     void expertExcel_A8_1(HttpServletResponse response, TabularFile tabularFile);//A8-1教学与学生管理文件表1	    
 
@@ -94,7 +81,6 @@ public interface TableAttributeService {
      * modify by yinzijian start
      */
     void expertExcel_A7_6_1(HttpServletResponse response, TabularFile tabularFile);
-<<<<<<< Updated upstream
 
     List<Major> getZhaoshengList();
 
@@ -104,14 +90,6 @@ public interface TableAttributeService {
 
     void expertExcel_A7_6_3(HttpServletResponse response, TabularFile tabularFile);
 
-=======
-    List<Major> getZhaoshengList();
-
-    void expertExcel_A7_6_2(HttpServletResponse response, TabularFile tabularFile);
-    List<Major> getGraduationList();
-
-    void expertExcel_A7_6_3(HttpServletResponse response, TabularFile tabularFile);
->>>>>>> Stashed changes
     List<Major> getPastgraduationList();
     /**
      * modify by yinzijian end
@@ -121,13 +99,12 @@ public interface TableAttributeService {
      * modify by lizhipeng start
      */
     void expertExcel_A7_1_1(HttpServletResponse response, TabularFile tabularFile);//A7-1-1专业设置表
-    void expertExcel_A7_1_2(HttpServletResponse response, TabularFile tabularFile);//A7-1-2专业带头人表1
-    void expertExcel_A7_1_3(HttpServletResponse response, TabularFile tabularFile);//A7-1-3专业负责人表1
-<<<<<<< Updated upstream
 
-=======
+    void expertExcel_A7_1_2(HttpServletResponse response, TabularFile tabularFile);//A7-1-2专业带头人表1
+
+    void expertExcel_A7_1_3(HttpServletResponse response, TabularFile tabularFile);//A7-1-3专业负责人表1
+
     void expertExcel_A7_2(HttpServletResponse response, TabularFile tabularFile);//A7-1-3开设课程表
->>>>>>> Stashed changes
     /**
      * modify by lizhipeng end
      */
@@ -135,7 +112,6 @@ public interface TableAttributeService {
     /**
      * modify by hanjie start
      */
-<<<<<<< Updated upstream
     void expertExcel_A6_1_1(HttpServletResponse response, TabularFile tabularFile);
 
     void expertExcel_A6_1_2_1(HttpServletResponse response, TabularFile tabularFile);
@@ -155,9 +131,7 @@ public interface TableAttributeService {
     void expertExcel_A6_4_1(HttpServletResponse response, TabularFile tabularFile);
 
     void expertExcel_A6_4_2_1(HttpServletResponse response, TabularFile tabularFile);
-=======
 
->>>>>>> Stashed changes
     /**
      * modify by hanjie end
      */
@@ -165,15 +139,12 @@ public interface TableAttributeService {
     /**
      * modify by wangxue start
      */
-<<<<<<< Updated upstream
     void expertExcel_A7_3_1(HttpServletResponse response, TabularFile tabularFile);
 
     void expertExcel_A7_3_2(HttpServletResponse response, TabularFile tabularFile);
 
     void expertExcel_A7_4(HttpServletResponse response, TabularFile tabularFile);
-=======
 
->>>>>>> Stashed changes
     /**
      * modify by wangxue end
      */

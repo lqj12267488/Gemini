@@ -1,5 +1,6 @@
 package com.goisan.tabular.service.impl;
 
+import com.goisan.educational.course.bean.Course;
 import com.goisan.educational.course.service.CourseService;
 import com.goisan.educational.major.bean.*;
 import com.goisan.educational.major.service.MajorLeaderService;
@@ -1529,8 +1530,88 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     }
 
     @Override
-    public void expertExcel_A7_2(HttpServletResponse response, TabularFile tabularFile) {
+    public void expertExcel_A7_2(HttpServletResponse response,TabularFile tabularFile){
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        List<Course> selectCourseList = courseService.selectCourseList(new Course());
+        OutputStream os = null;
+        try {
+            FileInputStream in  = new FileInputStream(file);
+            //      判断文件后缀名是xls,还是xlsx
+            //    如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            Workbook wb = null;
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10 ;
+            int end = 2+selectCourseList.size();
+            int count = 1;
+            for (int i = 0; i < selectCourseList.size(); i++) {
 
+                Row row = sheet.getRow(rowIndex+i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(selectCourseList.get(i).getDepartmentsIdShow());
+                row.getCell(3).setCellValue(selectCourseList.get(i).getMajorCode());
+                row.getCell(4).setCellValue(selectCourseList.get(i).getMajorName());
+                row.getCell(5).setCellValue(selectCourseList.get(i).getMajorDirection());
+                row.getCell(6).setCellValue(selectCourseList.get(i).getMajorDirectionShow());
+                row.getCell(7).setCellValue(selectCourseList.get(i).getCourseCode());
+                row.getCell(8).setCellValue(selectCourseList.get(i).getCourseName());
+                row.getCell(9).setCellValue(selectCourseList.get(i).getCourseType());
+                row.getCell(10).setCellValue(selectCourseList.get(i).getCourseProperties());
+                row.getCell(11).setCellValue("");
+                row.getCell(12).setCellValue(selectCourseList.get(i).getPrescribedPeriods());
+                row.getCell(13).setCellValue(selectCourseList.get(i).getPracticeClass());
+                row.getCell(14).setCellValue("");
+                row.getCell(15).setCellValue(selectCourseList.get(i).getCoreCurriculum());
+                row.getCell(16).setCellValue(selectCourseList.get(i).getSchoolEnterpriseCooperation());
+                row.getCell(17).setCellValue(selectCourseList.get(i).getExcellentCourse());
+                row.getCell(18).setCellValue("");
+                row.getCell(19).setCellValue("");
+                row.getCell(20).setCellValue("");
+                row.getCell(21).setCellValue("");
+                row.getCell(22).setCellValue("");
+                row.getCell(23).setCellValue("");
+                row.getCell(24).setCellValue("");
+                row.getCell(25).setCellValue("");
+                row.getCell(26).setCellValue("");
+                row.getCell(27).setCellValue("");
+                row.getCell(28).setCellValue("");
+                row.getCell(29).setCellValue("");
+                row.getCell(30).setCellValue(selectCourseList.get(i).getVenue());
+                row.getCell(31).setCellValue(selectCourseList.get(i).getTeachingMethod());
+                row.getCell(32).setCellValue(selectCourseList.get(i).getTestMethod());
+                row.getCell(33).setCellValue(selectCourseList.get(i).getClassCertifiate());
+
+                count++;
+
+
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName+".xlsx",
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
