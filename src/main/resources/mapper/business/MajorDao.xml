@@ -664,8 +664,6 @@
         order by s.major_code, classNumber
     </select>
 
-
-
     <select id="getSourceTypeList" resultType="com.goisan.educational.major.bean.Major" parameterType="com.goisan.educational.major.bean.Major">
         SELECT s.major_code                                              majorCode,
                count(case when t.STUDENT_SOURCE = '1' then '普通高中起点' end) sourceNumberOne,

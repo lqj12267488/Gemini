@@ -43,4 +43,6 @@ public interface CourseDao {
     List<Course> getCourseByCourseName(@Param("courseName") String courseName);
 
     Integer selCourseCountByCN(String courseName);
+
+    List<Course> selectCourseList(Course course);
 }

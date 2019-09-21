@@ -36,4 +36,6 @@ public interface CourseService {
     List<SelectGroupForExcel> getMajorClassList();
 
     String getMajorCodeByMajorName(String id);
+
+    List<Course> selectCourseList(Course course);
 }

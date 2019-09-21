@@ -23,6 +23,78 @@ public class Course extends BaseBean {
     private String teachingMethod;
     private String testMethod;
     private String classCertifiate;
+    private String departmentsIdShow;
+    private String majorName;
+    private String majorDirection;
+    private String majorDirectionShow;
+    private String textbookName;
+    private String versionDate;
+    private String publishingHouse;
+    private String textbookType;
+
+    public String getDepartmentsIdShow() {
+        return departmentsIdShow;
+    }
+
+    public void setDepartmentsIdShow(String departmentsIdShow) {
+        this.departmentsIdShow = departmentsIdShow;
+    }
+
+    public String getMajorName() {
+        return majorName;
+    }
+
+    public void setMajorName(String majorName) {
+        this.majorName = majorName;
+    }
+
+    public String getMajorDirection() {
+        return majorDirection;
+    }
+
+    public void setMajorDirection(String majorDirection) {
+        this.majorDirection = majorDirection;
+    }
+
+    public String getMajorDirectionShow() {
+        return majorDirectionShow;
+    }
+
+    public void setMajorDirectionShow(String majorDirectionShow) {
+        this.majorDirectionShow = majorDirectionShow;
+    }
+
+    public String getTextbookName() {
+        return textbookName;
+    }
+
+    public void setTextbookName(String textbookName) {
+        this.textbookName = textbookName;
+    }
+
+    public String getVersionDate() {
+        return versionDate;
+    }
+
+    public void setVersionDate(String versionDate) {
+        this.versionDate = versionDate;
+    }
+
+    public String getPublishingHouse() {
+        return publishingHouse;
+    }
+
+    public void setPublishingHouse(String publishingHouse) {
+        this.publishingHouse = publishingHouse;
+    }
+
+    public String getTextbookType() {
+        return textbookType;
+    }
+
+    public void setTextbookType(String textbookType) {
+        this.textbookType = textbookType;
+    }
 
     public String getCourseProperties() {
         return courseProperties;

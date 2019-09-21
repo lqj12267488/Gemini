@@ -72,4 +72,9 @@ public class CourseServiceImpl implements CourseService {
     }
 
     public  String getMajorCodeByMajorName(String id){ return courseDao.getMajorCodeByMajorName(id);}
+
+    @Override
+    public List<Course> selectCourseList(Course course) {
+        return courseDao.selectCourseList(course);
+    }
 }
