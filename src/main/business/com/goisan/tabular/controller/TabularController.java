@@ -241,11 +241,65 @@ public class TabularController {
                     e.printStackTrace();
                 }
             }
-        }else{
-            if(tableAttribute.equals("")){
-
-                this.tableAttributeService.expertExcel_A1(response,files);
+        } else {
+            Class<?> classType = TableAttributeServiceImpl.class;
+            Method m = null;
+            try {
+                m = classType.getDeclaredMethod(tableAttribute,HttpServletResponse.class, TabularFile.class);
+                m.invoke(ApplicationContextRegister.getApplicationContext().getBean("tableAttributeServiceImpl"),response,files);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+         /*
+            if ("expertExcel_A1_6".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A1_6(response, files);
+            } else if ("expertExcel_A2".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A2(response, files);
+            } else if ("expertExcel_A3".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A3(response, files);
+            } else if ("expertExcel_A4_1".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A4_1(response, files);
+            } else if ("expertExcel_A4_2".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A4_2(response, files);
+            } else if ("expertExcel_A4_3".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A4_3(response, files);
+            } else if ("expertExcel_A5_1".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A5_1(response, files);
+            } else if ("expertExcel_A5_2".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A5_2(response, files);
+            } else if ("expertExcel_A8_1".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_1(response, files);
+            } else if ("expertExcel_A8_2".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_2(response, files);
+            } else if ("expertExcel_A8_3".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_3(response, files);
+            } else if ("expertExcel_A8_4".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_4(response, files);
+            } else if ("expertExcel_A8_5".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_5(response, files);
+            } else if ("expertExcel_A8_6".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_6(response, files);
+            } else if ("expertExcel_A8_7".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_7(response, files);
+            } else if ("expertExcel_A8_8".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_8(response, files);
+            } else if ("expertExcel_A8_9".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A8_9(response, files);
+            } else if ("expertExcel_A7_3_1".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_3_1(response, files);
+            } else if ("expertExcel_A7_3_2".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_3_2(response, files);
+            } else if ("expertExcel_A7_4".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_4(response, files);
+            } else if ("expertExcel_A7_6_1".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_6_1(response, files);//表格属性 下载导出时如果有表格属性导出的表里有数据
+            } else if ("expertExcel_A7_6_2".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_6_2(response, files);
+            } else if ("expertExcel_A7_6_3".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_6_3(response, files);
+            } else {
+                this.tableAttributeService.expertExcel_A1(response, files);
+            }*/
         }
 
     }

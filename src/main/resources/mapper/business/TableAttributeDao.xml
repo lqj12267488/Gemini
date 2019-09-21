@@ -3,5 +3,611 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.goisan.tabular.dao.TableAttributeDao">
+    <!--modify by lihanyue start-->
+    <select id="getExpertExcel_A1_6" resultType="com.goisan.system.bean.Dept">
+        select t.dept_id, t.dept_name
+        from T_SYS_DEPT t
+        where t.dept_id != '001'
+    </select>
+    <select id="getExpertExcel_A2" resultType="com.goisan.system.bean.Emp">
+        select STAFF_ID                                                 staffId,
+               "NAME"                                                   name,
+               func_get_dicvalue(NATION, 'MZ')                          nation,
+               POST                                                     post,
+               POSITIONAL_TITLES                                        positionalTitles,
+               func_get_dicvalue(EDUCATIONAL_LEVEL, 'WHCD')             educationalLevel,
+               func_get_dicvalue(sex, 'XB')                             sex,
+               to_char(BIRTHDAY, 'yyyyMMdd')                            birthday,
+               wmsys.wm_concat(FUNC_GET_DICVALUE(s.resultType, 'CGLX')) educationalResearch,
+               TEL                                                      tel
+        from t_rs_employee e
+                 left join (select personId,
+                                   resultType
+                            FROM (select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_PROJECT pr
+                                  UNION ALL
+                                  select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_STANDARD st
+                                  UNION ALL
+                                  select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_MEDICINE me
+                                  UNION ALL
+                                  select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_PAPER pa
+                                  UNION ALL
+                                  select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_ART ar
+                                  UNION ALL
+                                  select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_GUIDE gu
+                                  UNION ALL
+                                  select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_WRITING wr
+                                  UNION ALL
+                                  select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_PATENT pa
+                                  UNION ALL
+                                  select id          id,
+                                         person_id   personId,
+                                         RESULT_TYPE resultType
+                                  from T_JW_TEACHINGRESULT_REPORT re)) s on e.person_id = s.personId
+            and person_id in
+                (select distinct person_id
+                 from t_rs_employee_dept_role
+                 where role_id in (select t.role_id
+                                   from T_SYS_ROLE t
+                                   where t.role_name like '%领导%'
+                                      or t.role_name like '%院长%'
+                                      or t.role_name like '%主任%'))
+        group by STAFF_ID,
+                 name,
+                 nation,
+                 post,
+                 POSITIONAL_TITLES,
+                 EDUCATIONAL_LEVEL,
+                 sex,
+                 BIRTHDAY,
+                 TEL
+    </select>
+    <select id="getExpertExcel_A4_3" resultType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
+        select ISSUING_OFFICE,
+               PROJECT_LEVEL,
+               PROFESSION_LEVEL,
+               FUNC_GET_TABLEVALUE(pre_app_profession, 'T_JW_SKILL', 'ID', 'PROJECT_NAME') preAppProfession
+        from T_JW_SKILLAPPRAISAL
+    </select>
+    <select id="getExpertExcel_A8_2" resultType="com.goisan.system.bean.Emp">
+        select t.STAFF_ID,
+               t.name                                         name,
+               func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
+               func_get_dicvalue(t.sex, 'XB')                 sex,
+               to_char(t.BIRTHDAY, 'yyyyMMdd')                birthdayShow,
+               func_get_dicvalue(t.nation, 'MZ')              nation,
+               func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW')     academicDegree,
+               func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+               t.POSITIONAL_TITLES                            positionalTitles,
+               func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB')  positionalLevel,
+               func_get_dicvalue(t.WORK_YEAR, 'QYGZSC')       workYear,
+               s.dept_name                                    deptName,
+               POST
+        from T_RS_EMPLOYEE t
+                 left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id
+    </select>
+    <select id="getExpertExcel_A8_3" resultType="com.goisan.system.bean.Emp">
+        select t.STAFF_ID,
+               t.name                                         name,
+               func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
+               func_get_dicvalue(t.sex, 'XB')                 sex,
+               to_char(t.BIRTHDAY, 'yyyyMMdd')                birthdayShow,
+               func_get_dicvalue(t.nation, 'MZ')              nation,
+               func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW')     academicDegree,
+               func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+               t.POSITIONAL_TITLES                            positionalTitles,
+               func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB')  positionalLevel,
+               func_get_dicvalue(t.WORK_YEAR, 'QYGZSC')       workYear,
+               s.dept_name                                    deptName,
+               POST
+        from T_RS_EMPLOYEE t
+                 left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id
+    </select>
+    <select id="getExpertExcel_A8_4" resultType="com.goisan.system.bean.Emp">
+        select t.STAFF_ID,
+               t.name                                         name,
+               func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
+               func_get_dicvalue(t.sex, 'XB')                 sex,
+               to_char(t.BIRTHDAY, 'yyyyMMdd')                birthdayShow,
+               func_get_dicvalue(t.nation, 'MZ')              nation,
+               func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW')     academicDegree,
+               func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+               t.POSITIONAL_TITLES                            positionalTitles,
+               func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB')  positionalLevel,
+               func_get_dicvalue(t.WORK_YEAR, 'QYGZSC')       workYear,
+               s.dept_name                                    deptName,
+               POST
+        from T_RS_EMPLOYEE t
+                 left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id
+    </select>
+    <select id="getExpertExcel_A8_5" resultType="com.goisan.system.bean.Emp">
+        select t.STAFF_ID,
+               t.name                                         name,
+               func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
+               func_get_dicvalue(t.sex, 'XB')                 sex,
+               to_char(t.BIRTHDAY, 'yyyyMMdd')                birthdayShow,
+               func_get_dicvalue(t.nation, 'MZ')              nation,
+               func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW')     academicDegree,
+               func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+               t.POSITIONAL_TITLES                            positionalTitles,
+               func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB')  positionalLevel,
+               func_get_dicvalue(t.WORK_YEAR, 'QYGZSC')       workYear,
+               s.dept_name                                    deptName,
+               POST
+        from T_RS_EMPLOYEE t
+                 left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id
+    </select>
+    <select id="getExpertExcel_A8_6" resultType="com.goisan.system.bean.Emp">
+        select t.STAFF_ID,
+               t.name                                         name,
+               func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
+               func_get_dicvalue(t.sex, 'XB')                 sex,
+               to_char(t.BIRTHDAY, 'yyyyMMdd')                birthdayShow,
+               func_get_dicvalue(t.nation, 'MZ')              nation,
+               func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW')     academicDegree,
+               func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+               t.POSITIONAL_TITLES                            positionalTitles,
+               func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB')  positionalLevel,
+               func_get_dicvalue(t.WORK_YEAR, 'QYGZSC')       workYear,
+               s.dept_name                                    deptName,
+               POST
+        from T_RS_EMPLOYEE t
+                 left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id
+    </select>
+    <select id="getExpertExcel_A8_7" parameterType="java.lang.String"
+            resultType="com.goisan.evaluation.bean.EvaluationTask">
+        SELECT Distinct t.task_type,
+                        t.task_name                                                                                         name,
+                        to_char(t.start_time, 'yyyymm')                                                                     starts,
+                        to_char(t.end_time, 'yyyymm')                                                                       end,
+                        (SELECT Count(*)
+                         FROM T_KH_EVALUATION_EMPSLIST t
+                         WHERE t.group_id in (SELECT k.emp_group_id
+                                              FROM T_KH_EVALUATION_TASK k
+                                              WHERE k.task_id in
+                                                    (select t.task_id from T_KH_EVALUATION_TASK t where t.term = #{term}))) totalNumberEmp,
+                        (SELECT Count(*)
+                         FROM T_KH_EVALUATION_EMPSLIST t
+                         WHERE t.group_id in (SELECT k.emp_group_id
+                                              FROM T_KH_EVALUATION_TASK k,
+                                                   t_kh_evaluation_emps_members m
+                                              WHERE k.task_id in
+                                                    (select t.task_id from T_KH_EVALUATION_TASK t where t.term = #{term})
+                                                AND m.task_id = t.task_id
+                                                AND m.emps_id = e.emps_id
+                                                AND m.evaluation_flag = '1')
+                           and t.emps_id in (SELECT m.emps_id
+                                             FROM T_KH_EVALUATION_TASK k,
+                                                  t_kh_evaluation_emps_members m
+                                             WHERE k.task_id in
+                                                   (select t.task_id from T_KH_EVALUATION_TASK t where t.term = #{term})
+                                               AND m.task_id = t.task_id
+                                               AND m.evaluation_flag = '1')
+                        )                                                                                                   numberEmp,
+                        (SELECT count(*)
+                         FROM t_kh_evaluation_emps_members m
+                         WHERE m.task_id = t.task_id
+                           AND m.emps_id = e.emps_id)                                                                       totalNumber,
+                        (SELECT count(*)
+                         FROM t_kh_evaluation_emps_members m
+                         WHERE m.task_id = t.task_id
+                           AND m.emps_id = e.emps_id
+                           AND m.evaluation_flag = '1') as                                                                  "number",
+                        t.term
+        FROM T_KH_EVALUATION_EMPSLIST e,
+             T_KH_EVALUATION_TASK t
+        where e.group_id = t.emp_group_id
+          and t.task_id in (select t.task_id from T_KH_EVALUATION_TASK t where t.term = #{term})
+        order by t.term
+    </select>
+    <select id="getExpertExcel_A8_8" resultType="com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse">
+        select count(*) nums,sum(BURSE_SUM)/10000 burseSum,'奖学金' type,'学校奖学金' name from T_XG_STUDENTREWARD_SCHOOLBURSE
+        union
+        select count(*) nums,sum(BURSE_SUM)/10000 burseSum,'奖学金' type,'政府奖学金' name from T_XG_STUDENTREWARD_STATEBURSE
+        union
+        select count(*) nums,sum(BURSE_SUM)/10000 burseSum,'奖学金' type,'全日制奖学金' name from T_XG_STUDENTREWARD_FULLBURSE
+        union
+        select count(*) nums,sum(FREE_SUM)/10000 burseSum,'减免学杂费' type,'免学费' name from T_XG_STUDENTREWARD_TUITIONFREE
+        union
+        select count(*) nums,sum(GRANT_SUM)/10000 burseSum,'助学金' type,'助学金' name from T_XG_STUDENTREWARD_GRANTS
+        union
+        select count(*) nums,sum(LOAN_SUM)/10000 burseSum,'助学贷款' type,'助学贷款' name from T_XG_STUDENTREWARD_LOAN
+    </select>
+    <!--modify by lihanyue end-->
+    <!--modify by yinzijian start-->
+    <select id="getZhaoshengList" resultType="com.goisan.educational.major.bean.Major"
+            parameterType="com.goisan.educational.major.bean.Major">
+        SELECT M.MAJOR_ID,
+               FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') MAJOR_SCHOOL,
+               M.MAJOR_CODE,
+               M.MAJOR_NAME,
+               M.MAJOR_DIRECTION_CODE,
+               M.MAJOR_DIRECTION,
+               P.PLAN_NUMBER,
+               P.REAL_NUMBER
+        FROM T_XG_MAJOR M
+                 LEFT JOIN T_XG_ENROLLMENT_PLAN P ON M.MAJOR_ID = P.MAJOR_ID
+    </select>
+    <select id="getGraduationList" resultType="com.goisan.educational.major.bean.Major"
+            parameterType="com.goisan.educational.major.bean.Major">
+        SELECT
+        M.MAJOR_ID,
+        FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') MAJOR_SCHOOL,
+        M.MAJOR_CODE,
+        M.MAJOR_NAME,
+        M.MAJOR_DIRECTION_CODE,
+        M.MAJOR_DIRECTION,
+        DECODE(STUDENT_STATUS,'6', COUNT(STUDENT_STATUS),0)
+        graduation, <!-- DECODE(STUDENT_STATUS,'1',10,'2',2,'3',3) S  过滤作用 判断如果是毕业的 查询显示毕业的人数-->
+        COUNT(ES.EMPLOYMENT_ID) EMPLOYMENT
+        FROM T_XG_MAJOR M LEFT JOIN T_XG_CLASS C ON M.MAJOR_CODE=C.MAJOR_CODE LEFT JOIN T_XG_STUDENT_CLASS SC ON
+        C.CLASS_ID=SC.CLASS_ID LEFT JOIN T_XG_STUDENT S ON SC.STUDENT_ID=S.STUDENT_ID
+        LEFT JOIN T_XG_EMPLOYMENT_STUDENT ES ON S.STUDENT_ID=ES.STUDENT_ID
+        GROUP BY M.MAJOR_ID,
+        M.MAJOR_SCHOOL,
+        M.DEPARTMENTS_ID,
+        M.MAJOR_CODE,
+        M.MAJOR_NAME,
+        M.MAJOR_DIRECTION_CODE,
+        M.MAJOR_DIRECTION,
+        STUDENT_STATUS,
+        ES.EMPLOYMENT_ID
+    </select>
+    <select id="getPastgraduationList" parameterType="com.goisan.educational.major.bean.Major"
+            resultType="com.goisan.educational.major.bean.Major">
+        SELECT M.MAJOR_ID,
+               FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') MAJOR_SCHOOL,
+               M.MAJOR_CODE,
+               M.MAJOR_NAME,
+               M.MAJOR_DIRECTION_CODE,
+               M.MAJOR_DIRECTION,
+               DECODE(STUDENT_STATUS, '6', COUNT(STUDENT_STATUS), 0)                       graduation,
+               COUNT(ES.EMPLOYMENT_ID)                                                     EMPLOYMENT
+        FROM T_XG_MAJOR M
+                 LEFT JOIN T_XG_CLASS C ON M.MAJOR_CODE = C.MAJOR_CODE
+                 LEFT JOIN T_XG_STUDENT_CLASS SC ON C.CLASS_ID = SC.CLASS_ID
+                 LEFT JOIN T_XG_STUDENT S ON SC.STUDENT_ID = S.STUDENT_ID
+                 LEFT JOIN T_XG_EMPLOYMENT_STUDENT ES ON S.STUDENT_ID = ES.STUDENT_ID
+        GROUP BY M.MAJOR_ID,
+                 M.MAJOR_SCHOOL,
+                 M.DEPARTMENTS_ID,
+                 M.MAJOR_CODE,
+                 M.MAJOR_NAME,
+                 M.MAJOR_DIRECTION_CODE,
+                 M.MAJOR_DIRECTION,
+                 STUDENT_STATUS,
+                 ES.EMPLOYMENT_ID
+    </select>
+    <!--modify by yinzijian end-->
 
+    <!--modify by lizhipeng start-->
+
+    <!--modify by lizhipeng end-->
+
+
+    <!--modify by hanjie start-->
+    <select id="expertExcel_A6_1_2_1" resultType="com.goisan.tabular.bean.export.Export">
+        select FUNC_GET_DEPTNAME(k.DEPARTMENT) departmentName,
+               FUNC_GET_DICVALUE(semester,'XQ') semester,
+               STAFF_ID,
+               e.name teacherName,
+               c.YEAR || '级' as schoolYear,
+               c.MAJOR_CODE,
+               FUNC_GET_TABLEVALUE(c.MAJOR_CODE,'t_xg_major','major_code','major_name') majorName,
+               c.MAJOR_DIRECTION,
+               FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
+               FUNC_GET_DICVALUE( r.COURSE_TYPE, 'KCLX') COURSE_TYPE,
+               r.COURSE_NAME
+        from T_JW_TEACHINGTASK k, t_rs_employee e, T_XG_CLASS c,T_JW_COURSE r
+        where k.teacher_id = e.person_id
+          and c.class_id = k.class_info
+          and k.course_id = r.course_id
+    </select>
+
+    <select id="expertExcel_A6_1_3" resultType="com.goisan.tabular.bean.export.Export">
+        select distinct
+            STAFF_ID,
+            teacherName,
+            TRAINING_CONTENT,
+            TRAINING_DAY,
+            TRAINING_PLACE,
+            rewordTime,
+            REWORD_NAME,
+            AWARD_UNIT,
+            rewordLevel
+        from (
+                 select
+                     STAFF_ID,
+                     e.person_id,
+                     e.name teacherName,
+                     TRAINING_CONTENT ,
+                     TRAINING_DAY,
+                     TRAINING_PLACE
+                 from t_rs_employee e left join T_JW_TRAINING t
+                                                on e.person_id = t.teacher_id) L1 left join
+             (
+                 select
+                     e.person_id,
+                     to_char( d.REWORD_TIME, 'yyyymmdd') rewordTime,
+                     REWORD_NAME,
+                     AWARD_UNIT,
+                     FUNC_GET_DICVALUE(REWORD_LEVEL, 'JSJLJB') rewordLevel
+                 from t_rs_employee e left join  T_JW_TEACHERREWORD d
+                                                 on  e.person_id = d.reword_person_id
+             ) L2 on L1.person_id = L2.person_id
+        order by STAFF_ID
+
+    </select>
+
+    <select id="expertExcel_A6_2_1" resultType="com.goisan.tabular.bean.export.Export">
+        SELECT c.teacher_id staffId,FUNC_GET_TABLEVALUE(c.department_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departmentName,FUNC_GET_USERNAME(c.NAME) teacherName,FUNC_GET_DICVALUE(TEACHER_SEX, 'XB') teacherSex,
+               to_char(BIRTHDAY, 'yyyymmdd') BIRTHDAY,FUNC_GET_DICVALUE(NATION, 'MZ') nationShow,
+               FUNC_GET_DICVALUE(DEGEE,'XW') DEGEE,
+               FUNC_GET_DICVALUE(c.FINAL_EDUCATION, 'XL') finalEducation,
+               MAJOR_FIELD,MAJOR_SPECIALTY,WORK_YEAR,MAJOR_YEAR,MAJOR_GRADE,MAJOR_NAME majorName2,MAJOR_DEPT,CAREER_DEPT,
+               to_char(MAJOR_DATE,'yyyymmdd')majorDate,
+               to_char(GETTIME,'yyyymmdd')getTime,
+               LICENCE,
+               to_char(CAREER_GETTIME,'yyyymmdd')careerGettime,
+               EXPERT_WORK, FUNC_GET_DICVALUE(SFZY_TEACHER, 'SF') sfzyTeacher,FUNC_GET_DICVALUE(SFSS_TEACHER, 'SF') sfssTeacher,POLITICS_MAJORCODE,POLITICS_MAJORNAME
+        FROM T_JW_TEACHER_CONDITION c
+        where TEACHER_CATEGORY = 4
+    </select>
+
+    <select id="expertExcel_A6_2_2_1" resultType="com.goisan.tabular.bean.export.Export">
+        select FUNC_GET_DEPTNAME(k.DEPARTMENT) departmentName,
+               FUNC_GET_DICVALUE(semester,'XQ') semester,
+               TEACHER_NUM staffId,
+               FUNC_GET_USERNAME(e.NAME) teacherName,
+               c.YEAR || '级' as schoolYear,
+               c.MAJOR_CODE,
+               FUNC_GET_TABLEVALUE(c.MAJOR_CODE,'t_xg_major','major_code','major_name') majorName,
+               c.MAJOR_DIRECTION,
+               FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
+               FUNC_GET_DICVALUE( r.COURSE_TYPE, 'KCLX') COURSE_TYPE,
+               r.COURSE_NAME
+        from T_JW_TEACHINGTASK k, T_JW_TEACHER_CONDITION e, T_XG_CLASS c,T_JW_COURSE r
+        where k.teacher_id = e.name
+          and c.class_id = k.class_info
+          and k.course_id = r.course_id
+          and e.TEACHER_CATEGORY = 4
+    </select>
+
+    <select id="expertExcel_A6_2_3" resultType="com.goisan.tabular.bean.export.Export">
+        select distinct
+            staffId,
+            teacherName,
+            TRAINING_CONTENT,
+            TRAINING_DAY,
+            TRAINING_PLACE,
+            rewordTime,
+            REWORD_NAME,
+            AWARD_UNIT,
+            rewordLevel
+        from (
+                 select
+                     TEACHER_NUM staffId,
+                     e.name,
+                     FUNC_GET_USERNAME(e.NAME) teacherName,
+                     TRAINING_CONTENT,
+                     t.TRAINING_DAY,
+                     t.TRAINING_PLACE
+                 from T_JW_TEACHER_CONDITION e left join T_JW_TRAINING t
+                                                         on e.name = t.teacher_id where e.TEACHER_CATEGORY = 4) L1 left join
+             (
+                 select
+                     e.name,
+                     to_char( d.REWORD_TIME, 'yyyymmdd') rewordTime,
+                     REWORD_NAME,
+                     AWARD_UNIT,
+                     FUNC_GET_DICVALUE(REWORD_LEVEL, 'JSJLJB') rewordLevel
+                 from T_JW_TEACHER_CONDITION e left join  T_JW_TEACHERREWORD d
+                                                          on  e.name = d.reword_person_id
+                 where e.TEACHER_CATEGORY = 4
+             ) L2 on L1.name = L2.name
+        order by staffId
+    </select>
+
+    <select id="expertExcel_A6_3_1" resultType="com.goisan.tabular.bean.export.Export">
+        SELECT TEACHER_NUM staffId,
+               FUNC_GET_TABLEVALUE(c.department_id,
+                                   'T_SYS_DEPT',
+                                   'DEPT_ID',
+                                   'DEPT_NAME') departmentName,
+               FUNC_GET_USERNAME(c.NAME) teacherName,
+               FUNC_GET_DICVALUE(TEACHER_SEX, 'XB') teacherSex,
+               to_char(BIRTHDAY, 'yyyymmdd') BIRTHDAY,
+               FUNC_GET_DICVALUE(NATION, 'MZ') nationShow,
+               to_char(WORK_DATE,'yyyymmdd') workDate,
+
+               FUNC_GET_DICVALUE(DEGEE, 'XW') DEGEE,
+               FUNC_GET_DICVALUE(c.FINAL_EDUCATION, 'XL') finalEducation,
+               SIGNING,
+               MAJOR_FIELD,
+               MAJOR_SPECIALTY,
+               WORK_YEAR,
+               MAJOR_YEAR,
+               MAJOR_GRADE,
+               MAJOR_NAME majorName2,
+               MAJOR_DEPT,
+               to_char(MAJOR_DATE, 'yyyymmdd') majorDate,
+               CAREER_GRADE,
+               CAREER_NAME,
+               CAREER_DEPT,
+               to_char(CAREER_GETTIME, 'yyyymmdd') careerGettime,
+               to_char(GETTIME, 'yyyymmdd') getTime,
+               LICENCE,
+               EXPERT_DEPT,
+               EXPERT_WORK,
+               to_char(EXPERT_DATE, 'yyyymmdd') expertDate,
+               FUNC_GET_DICVALUE(SFZY_TEACHER, 'SF') sfzyTeacher,
+               FUNC_GET_DICVALUE(SFSS_TEACHER, 'SF') sfssTeacher,
+               POLITICS_MAJORCODE,
+               POLITICS_MAJORNAME,
+               TRAINING_NAME,
+               TRAINING_DAY,
+               TRAINING_PLACE
+        FROM T_JW_TEACHER_CONDITION c
+        where TEACHER_CATEGORY = 3
+    </select>
+
+    <select id="expertExcel_A6_3_2_1" resultType="com.goisan.tabular.bean.export.Export">
+        select FUNC_GET_DEPTNAME(k.DEPARTMENT) departmentName,
+               FUNC_GET_DICVALUE(semester,'XQ') semester,
+               TEACHER_NUM staffId,
+               FUNC_GET_USERNAME(e.NAME) teacherName,
+               c.YEAR || '级' as schoolYear,
+               c.MAJOR_CODE,
+               FUNC_GET_TABLEVALUE(c.MAJOR_CODE,'t_xg_major','major_code','major_name') majorName,
+               c.MAJOR_DIRECTION,
+               FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
+               FUNC_GET_DICVALUE( r.COURSE_TYPE, 'KCLX') COURSE_TYPE,
+               r.COURSE_NAME
+        from T_JW_TEACHINGTASK k, T_JW_TEACHER_CONDITION e, T_XG_CLASS c,T_JW_COURSE r
+        where k.teacher_id = e.name
+          and c.class_id = k.class_info
+          and k.course_id = r.course_id
+          and e.TEACHER_CATEGORY = 3
+    </select>
+
+    <select id="expertExcel_A6_4_1" resultType="com.goisan.tabular.bean.export.Export">
+        SELECT TEACHER_NUM staffId,
+               FUNC_GET_TABLEVALUE(c.department_id,
+                                   'T_SYS_DEPT',
+                                   'DEPT_ID',
+                                   'DEPT_NAME') departmentName,
+               FUNC_GET_USERNAME(c.NAME) teacherName,
+               FUNC_GET_DICVALUE(TEACHER_SEX, 'XB') teacherSex,
+               to_char(BIRTHDAY, 'yyyymmdd') BIRTHDAY,
+               FUNC_GET_DICVALUE(NATION, 'MZ') nationShow,
+               to_char(WORK_DATE,'yyyymmdd') workDate,
+
+               FUNC_GET_DICVALUE(DEGEE, 'XW') DEGEE,
+               FUNC_GET_DICVALUE(c.FINAL_EDUCATION, 'XL') finalEducation,
+               SIGNING,
+               MAJOR_FIELD,
+               MAJOR_SPECIALTY,
+               WORK_YEAR,
+               MAJOR_YEAR,
+               MAJOR_GRADE,
+               MAJOR_NAME majorName2,
+               MAJOR_DEPT,
+               to_char(MAJOR_DATE, 'yyyymmdd') majorDate,
+               CAREER_GRADE,
+               CAREER_NAME,
+               CAREER_DEPT,
+               to_char(CAREER_GETTIME, 'yyyymmdd') careerGettime,
+               to_char(GETTIME, 'yyyymmdd') getTime,
+               LICENCE,
+               EXPERT_DEPT,
+               EXPERT_WORK,
+               to_char(EXPERT_DATE, 'yyyymmdd') expertDate,
+               FUNC_GET_DICVALUE(SFZY_TEACHER, 'SF') sfzyTeacher,
+               FUNC_GET_DICVALUE(SFSS_TEACHER, 'SF') sfssTeacher,
+               POLITICS_MAJORCODE,
+               POLITICS_MAJORNAME,
+               TRAINING_NAME,
+               TRAINING_DAY,
+               TRAINING_PLACE
+        FROM T_JW_TEACHER_CONDITION c
+        where TEACHER_CATEGORY = 2
+    </select>
+
+    <select id="expertExcel_A6_4_2_1" resultType="com.goisan.tabular.bean.export.Export">
+        select FUNC_GET_DEPTNAME(k.DEPARTMENT) departmentName,
+               FUNC_GET_DICVALUE(semester,'XQ') semester,
+               TEACHER_NUM staffId,
+               FUNC_GET_USERNAME(e.NAME) teacherName,
+               c.YEAR || '级' as schoolYear,
+               c.MAJOR_CODE,
+               FUNC_GET_TABLEVALUE(c.MAJOR_CODE,'t_xg_major','major_code','major_name') majorName,
+               c.MAJOR_DIRECTION,
+               FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
+               FUNC_GET_DICVALUE( r.COURSE_TYPE, 'KCLX') COURSE_TYPE,
+               r.COURSE_NAME
+        from T_JW_TEACHINGTASK k, T_JW_TEACHER_CONDITION e, T_XG_CLASS c,T_JW_COURSE r
+        where k.teacher_id = e.name
+          and c.class_id = k.class_info
+          and k.course_id = r.course_id
+          and e.TEACHER_CATEGORY = 2
+    </select>
+    <!--modify by hanjie end-->
+
+
+    <!--modify by wangxue start-->
+    <select id="expertExcel_A7_3_1" parameterType="com.goisan.educational.major.bean.Major"
+            resultType="com.goisan.educational.major.bean.Major">
+        select
+            t.major_name majorName,
+            t.major_code majorCode,
+            t.major_direction majorDirection,
+            t.departments_id departmentsId,
+            t.MAJOR_DIRECTION_CODE majorDirectionCode,
+            FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+            FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE,'T_RS_EMPLOYEE','person_id','name') directionCodeShow
+        from t_xg_major t
+        WHERE 1 = 1
+          and t.valid_flag = '1'
+        order by t.create_time desc
+    </select>
+
+    <select id="expertExcel_A7_3_2" parameterType="com.goisan.educational.major.bean.Major"
+            resultType="com.goisan.educational.major.bean.Major">
+        select
+            t.major_name majorName,
+            t.major_code majorCode,
+            t.major_direction majorDirection,
+            t.departments_id departmentsId,
+            t.MAJOR_DIRECTION_CODE majorDirectionCode,
+            FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+            FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE,'T_RS_EMPLOYEE','person_id','name') directionCodeShow
+        from t_xg_major t
+        WHERE 1 = 1
+          and t.valid_flag = '1'
+        order by t.create_time desc
+    </select>
+
+    <select id="expertExcel_A7_4" parameterType="com.goisan.educational.major.bean.Major"
+            resultType="com.goisan.educational.major.bean.Major">
+        select
+            t.major_name majorName,
+            t.major_code majorCode,
+            t.major_direction majorDirection,
+            t.departments_id departmentsId,
+            t.MAJOR_DIRECTION_CODE majorDirectionCode,
+            a.internship_positions  internshipPositions,
+            a.posts_time  poststime,
+            FUNC_GET_TABLEVALUE(internship_unit_id,'T_XG_INTERNSHIP_UNIT','INTERNSHIP_UNIT_ID','INTERNSHIP_UNIT_NAME') internshipUnitIdShow
+        from t_xg_major t left join T_XG_INTERNSHIP_STUDENT a
+                                    on t.major_code = a.major_code
+    </select>
+    <!--modify by wangxue end-->
 </mapper>

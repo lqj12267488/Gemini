@@ -643,4 +643,44 @@
             resultType="com.goisan.system.bean.Files">
         SELECT * FROM T_SYS_FILES WHERE file_id = #{fileId}
     </select>
+
+    <select id="getStudentNumberList" resultType="com.goisan.educational.major.bean.Major" parameterType="com.goisan.educational.major.bean.Major" >
+        SELECT s.major_code                                              majorCode,
+               to_char(SYSDATE, 'YYYY') - t.year                         classNumber,
+               t.year,
+               count(case
+                         when to_char(SYSDATE, 'MM') &lt; '08'
+                             then to_char(SYSDATE, 'YYYY') - t.year end) studentNumber
+        FROM t_xg_student t,
+             T_XG_STUDENT_CLASS r,
+             T_XG_CLASS s,
+             t_xg_major m
+        where t.student_id = r.student_id
+          and s.class_id = r.class_id
+          and s.graduation_flag = '1'
+          and t.year &lt; to_char(SYSDATE, 'YYYY')
+          and s.major_code = #{majorCode}
+        GROUP BY t.year, s.major_code
+        order by s.major_code, classNumber
+    </select>
+
+
+
+    <select id="getSourceTypeList" resultType="com.goisan.educational.major.bean.Major" parameterType="com.goisan.educational.major.bean.Major">
+        SELECT s.major_code                                              majorCode,
+               count(case when t.STUDENT_SOURCE = '1' then '普通高中起点' end) sourceNumberOne,
+               count(case when t.STUDENT_SOURCE = '2' then '中职起点' end)   sourceNumberTwo,
+               count(case when t.STUDENT_SOURCE = '3' then '其他' end)     sourceNumberThree
+        FROM t_xg_student t,
+             T_XG_STUDENT_CLASS r,
+             T_XG_CLASS s,
+             t_xg_major m
+        where t.student_id = r.student_id
+          and s.class_id = r.class_id
+          and s.graduation_flag = '1'
+          and t.year &lt; to_char(SYSDATE, 'YYYY')
+          and s.major_code = #{majorCode}
+        GROUP BY s.major_code
+        order by s.major_code
+    </select>
 </mapper>

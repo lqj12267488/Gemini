@@ -102,4 +102,8 @@ public interface MajorService {
      * @return
      */
     List<Files> getFilesByFileId(String fileId);
+
+    Major getStudentNumberList(Major major);
+
+    Major getSourceTypeList(Major major);
 }

@@ -20,10 +20,19 @@ public class EvaluationTask extends BaseBean {
         this.end = end;
     }
 
+    public String getStarts() {
+        return starts;
+    }
+
+    public void setStarts(String starts) {
+        this.starts = starts;
+    }
+
     private String groupName;
     private String taskType;
     private Date startTime;
     private Date endTime;
+    private String starts;
     private String end;
     private String remark;
     private String schedule;

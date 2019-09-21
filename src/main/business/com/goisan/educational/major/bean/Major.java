@@ -10,7 +10,7 @@ public class Major extends BaseBean {
     private String majorName;//专业名称
     private String majorCode;//专业代码
     private String majorSchool;//所属学院
-    private String majorDirection;//专业方向
+    private String majorDirection;//专业方向名称
     private String majorDirectionCode;//专业方向代码
     private String ordersStudentnum;//订单培养学生数
     private String schoolSystem;//学制
@@ -56,6 +56,55 @@ public class Major extends BaseBean {
     private String majorNumber;//专业人数
     private String classNumber;//年级数
     private String maxYearShow;
+
+    private String planNumber;//计划招生数
+    private String realNumber;//报道人数
+
+    private String graduationNumber;//毕业人数
+    private String employmentNumber;//就业人数
+    private String internshipUnitId;//实习单位ID
+    private String internshipPositions;//实习岗位
+    private String internshipUnitIdShow;
+    private String postsTime;//实习时间
+
+    public String getGraduationNumber() {
+        return graduationNumber;
+    }
+
+    public void setGraduationNumber(String graduationNumber) {
+        this.graduationNumber = graduationNumber;
+    }
+
+    public String getEmploymentNumber() {
+        return employmentNumber;
+    }
+
+    public void setEmploymentNumber(String employmentNumber) {
+        this.employmentNumber = employmentNumber;
+    }
+
+    public String getRealNumber() {
+        return realNumber;
+    }
+
+    public void setRealNumber(String realNumber) {
+        this.realNumber = realNumber;
+    }
+
+    public String getPlanNumber() {
+        return planNumber;
+    }
+
+    public void setPlanNumber(String planNumber) {
+        this.planNumber = planNumber;
+    }
+
+
+
+
+
+
+
     public String getFileUrl() {
         return fileUrl;
     }
@@ -455,5 +504,37 @@ public class Major extends BaseBean {
 
     public void setMaxYearShow(String maxYearShow) {
         this.maxYearShow = maxYearShow;
+    }
+
+    public String getInternshipUnitId() {
+        return internshipUnitId;
+    }
+
+    public void setInternshipUnitId(String internshipUnitId) {
+        this.internshipUnitId = internshipUnitId;
+    }
+
+    public String getInternshipPositions() {
+        return internshipPositions;
+    }
+
+    public void setInternshipPositions(String internshipPositions) {
+        this.internshipPositions = internshipPositions;
+    }
+
+    public String getInternshipUnitIdShow() {
+        return internshipUnitIdShow;
+    }
+
+    public void setInternshipUnitIdShow(String internshipUnitIdShow) {
+        this.internshipUnitIdShow = internshipUnitIdShow;
+    }
+
+    public String getPostsTime() {
+        return postsTime;
+    }
+
+    public void setPostsTime(String postsTime) {
+        this.postsTime = postsTime;
     }
 }

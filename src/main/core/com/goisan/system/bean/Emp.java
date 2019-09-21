@@ -99,7 +99,7 @@ public class Emp extends BaseBean {
     private String toSchoolTimeShow;
     private String entryDateShow;
     private String graduateTimeShow;
-
+    private String educationalResearch;//教科研成果
     public String getWorkTimeShow() {
         return workTimeShow;
     }
@@ -849,5 +849,13 @@ public class Emp extends BaseBean {
 
     public void setBirthdayShow(String birthdayShow) {
         this.birthdayShow = birthdayShow;
+    }
+
+    public String getEducationalResearch() {
+        return educationalResearch;
+    }
+
+    public void setEducationalResearch(String educationalResearch) {
+        this.educationalResearch = educationalResearch;
     }
 }

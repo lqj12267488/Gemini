@@ -22,7 +22,9 @@ public class SchoolBurse extends BaseBean {
     private String grantUnit;
     private String grantTime;
     private String rewardpunishType;
-
+    private String nums;//人数
+    private String type;//项目种类
+    private String name;//项目全称
     public String getId() {
         return id;
     }
@@ -149,5 +151,29 @@ public class SchoolBurse extends BaseBean {
 
     public void setRewardpunishType(String rewardpunishType) {
         this.rewardpunishType = rewardpunishType;
+    }
+
+    public String getNums() {
+        return nums;
+    }
+
+    public void setNums(String nums) {
+        this.nums = nums;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
