@@ -222,6 +222,8 @@ public class StudentController {
                     scoreImport.setStudentName(student.getName());
                     scoreImport.setTermId(list.getTermId());
                     scoreImport.setExamMethod(list.getExamMethod());
+                    //                    添加授课老师
+                    scoreImport.setTeachingTeacherId(list.getTeachingTeacherId());
                     scoreImportService.insertScoreImport(scoreImport);
                 }
                 LoginUser loginUser = new LoginUser();
