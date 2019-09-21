@@ -125,6 +125,9 @@ public interface TableAttributeService {
     void expertExcel_A7_1_3(HttpServletResponse response, TabularFile tabularFile);//A7-1-3专业负责人表1
 
     void expertExcel_A7_2(HttpServletResponse response, TabularFile tabularFile);//A7-1-3开设课程表
+
+    void expertExcel_A11_5(HttpServletResponse response, TabularFile tabularFile);//A11-5补充当年9月后开设专业1*/
+
     /**
      * modify by lizhipeng end
      */

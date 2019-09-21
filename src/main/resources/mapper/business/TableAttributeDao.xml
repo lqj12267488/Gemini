@@ -695,4 +695,5 @@
                                     on t.major_code = a.major_code
     </select>
     <!--modify by wangxue end-->
+
 </mapper>

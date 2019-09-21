@@ -1966,6 +1966,82 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         }
     }
 
+    public void expertExcel_A11_5(HttpServletResponse response,TabularFile tabularFile){
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        List<Major> getMajorListExport = majorService.getMajorListExport(new Major());
+
+        OutputStream os = null;
+        try {
+            FileInputStream in  = new FileInputStream(file);
+            //      判断文件后缀名是xls,还是xlsx
+            //    如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            Workbook wb = null;
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10 ;
+            int end = 2+getMajorListExport.size();
+            int count = 1;
+            for (int i = 0; i < getMajorListExport.size(); i++) {
+                Major major = new Major();
+                major.setMajorCode(getMajorListExport.get(i).getMajorCode());
+                Major major2 = majorService.getSourceTypeList(major);
+                Row row = sheet.getRow(rowIndex+i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(getMajorListExport.get(i).getDepartmentsIdShow());
+                row.getCell(3).setCellValue(getMajorListExport.get(i).getMajorCode());
+                row.getCell(4).setCellValue(getMajorListExport.get(i).getMajorName());
+                row.getCell(5).setCellValue(getMajorListExport.get(i).getMajorDirectionCode());
+                row.getCell(6).setCellValue(getMajorListExport.get(i).getMajorDirectionShow());
+                row.getCell(7).setCellValue(getMajorListExport.get(i).getApprovalTime());
+                row.getCell(8).setCellValue(getMajorListExport.get(i).getFirstRecruitTime());
+                row.getCell(9).setCellValue(getMajorListExport.get(i).getMaxYearShow());
+                row.getCell(10).setCellValue("");
+                if (major2!=null) {
+                    row.getCell(11).setCellValue(major2.getSourceNumberOne());
+                    row.getCell(12).setCellValue(major2.getSourceNumberTwo());
+                    row.getCell(14).setCellValue(major2.getSourceNumberThree());
+                }
+                row.getCell(13).setCellValue("");
+                row.getCell(15).setCellValue(getMajorListExport.get(i).getFocusTypeShow());
+                row.getCell(16).setCellValue(getMajorListExport.get(i).getUniqueTypeShow());
+                row.getCell(17).setCellValue(getMajorListExport.get(i).getMajorNow());
+                row.getCell(18).setCellValue(getMajorListExport.get(i).getMajorGlobal());
+                row.getCell(19).setCellValue(getMajorListExport.get(i).getClassNum());
+                row.getCell(20).setCellValue(getMajorListExport.get(i).getOrdersClassnum());
+                row.getCell(21).setCellValue(getMajorListExport.get(i).getOrdersStudentnum());
+                row.getCell(22).setCellValue("");
+                row.getCell(23).setCellValue("");
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName+".xlsx",
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * modify by lizhipeng end
      */
