@@ -560,6 +560,7 @@
           and e.TEACHER_CATEGORY = 2
     </select>
 
+
     <select id="expertExcel_A9_4" resultType="com.goisan.tabular.bean.export.Export">
         select  internship_unit_name internshipUnitName,
           contact_person contactPerson,
