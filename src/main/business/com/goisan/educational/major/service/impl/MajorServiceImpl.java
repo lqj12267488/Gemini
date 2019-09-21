@@ -186,4 +186,14 @@ public class MajorServiceImpl implements MajorService {
     public List<Files> getFilesByFileId(String fileId){
         return majorDao.getFilesByFileId(fileId);
     }
+
+    @Override
+    public Major getStudentNumberList(Major major) {
+        return majorDao.getStudentNumberList(major);
+    }
+
+    @Override
+    public Major getSourceTypeList(Major major) {
+        return majorDao.getSourceTypeList(major);
+    }
 }

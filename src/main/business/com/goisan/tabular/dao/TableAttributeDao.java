@@ -7,6 +7,7 @@ import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.Dept;
 import com.goisan.system.bean.Emp;
 import com.goisan.tabular.bean.TabularFile;
+import com.goisan.tabular.bean.export.Export;
 import org.springframework.stereotype.Repository;
 
 import javax.servlet.http.HttpServletResponse;
@@ -96,6 +97,9 @@ public interface TableAttributeDao {
     /**
      * modify by lizhipeng start
      */
+    void expertExcel_A7_1_1(HttpServletResponse response, TabularFile tabularFile);//A7-1-1专业设置表
+    void expertExcel_A7_1_2(HttpServletResponse response, TabularFile tabularFile);//A7-1-2专业带头人表1
+    void expertExcel_A7_1_3(HttpServletResponse response, TabularFile tabularFile);//A7-1-3专业负责人表1
 
     /**
      * modify by lizhipeng end
@@ -104,6 +108,15 @@ public interface TableAttributeDao {
     /**
      * modify by hanjie start
      */
+    List<Export> expertExcel_A6_1_2_1();
+    List<Export> expertExcel_A6_1_3();
+    List<Export> expertExcel_A6_2_1();
+    List<Export> expertExcel_A6_2_2_1();
+    List<Export> expertExcel_A6_2_3();
+    List<Export> expertExcel_A6_3_1();
+    List<Export> expertExcel_A6_3_2_1();
+    List<Export> expertExcel_A6_4_1();
+    List<Export> expertExcel_A6_4_2_1();
 
     /**
      * modify by hanjie end
@@ -112,6 +125,11 @@ public interface TableAttributeDao {
     /**
      * modify by wangxue start
      */
+    List<Major> expertExcel_A7_3_1(Major major);//A7-3-1职业资格证书表
+
+    List<Major> expertExcel_A7_3_2(Major major);//A7-3-2应届毕业生获证及社会技术培训情况表
+
+    List<Major> expertExcel_A7_4(Major major);//A7-4顶岗实习表
 
     /**
      * modify by wangxue end

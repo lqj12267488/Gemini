@@ -1,22 +1,24 @@
 package com.goisan.tabular.service.impl;
 
 import com.goisan.educational.major.bean.Major;
-import com.goisan.educational.major.bean.TalentTrain;
-import com.goisan.educational.major.bean.TeachingTeamMember;
+import com.goisan.educational.major.bean.MajorLeader;
+import com.goisan.educational.major.bean.MajorResponsible;
+import com.goisan.educational.major.service.MajorLeaderService;
+import com.goisan.educational.major.service.MajorService;
 import com.goisan.educational.skillappraisal.bean.SkillAppraisal;
 import com.goisan.evaluation.bean.EvaluationTask;
 import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
-import com.goisan.system.bean.CommonBean;
 import com.goisan.system.bean.Dept;
 import com.goisan.system.bean.Emp;
+import com.goisan.system.dao.EmpDao;
 import com.goisan.system.dao.ParameterDao;
 import com.goisan.tabular.bean.TabularFile;
+import com.goisan.tabular.bean.export.Export;
 import com.goisan.tabular.dao.TableAttributeDao;
 import com.goisan.tabular.service.TableAttributeService;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,12 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     private TableAttributeDao tableAttributeDao;
     @Resource
     private ParameterDao parameterDao;
+    @Resource
+    private EmpDao empDao;
+    @Resource
+    private MajorService majorService;
+    @Resource
+    private MajorLeaderService majorLeaderService;
     /**
      * modify by lihanyue start
      */
@@ -1020,7 +1028,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
-                Row row = sheet.getRow(rowIndex+i);
+                Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(count);
                 row.getCell(2).setCellValue(list.get(i).getName());
                 row.getCell(3).setCellValue(list.get(i).getType());
@@ -1049,7 +1057,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         }
     }
 
-    public List<SchoolBurse> getExpertExcel_A8_8(){
+    public List<SchoolBurse> getExpertExcel_A8_8() {
         return tableAttributeDao.getExpertExcel_A8_8();
     }
 
@@ -1300,6 +1308,236 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     /**
      * modify by lizhipeng start
      */
+    public void expertExcel_A7_1_1(HttpServletResponse response,TabularFile tabularFile){
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        List<Major> getMajorListExport = majorService.getMajorListExport(new Major());
+
+        OutputStream os = null;
+        try {
+            FileInputStream in  = new FileInputStream(file);
+            //      判断文件后缀名是xls,还是xlsx
+            //    如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            Workbook wb = null;
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10 ;
+            int end = 2+getMajorListExport.size();
+            int count = 1;
+            for (int i = 0; i < getMajorListExport.size(); i++) {
+                Major major = new Major();
+                major.setMajorCode(getMajorListExport.get(i).getMajorCode());
+                Major major1 = majorService.getStudentNumberList(major);
+                Major major2 = majorService.getSourceTypeList(major);
+                Row row = sheet.getRow(rowIndex+i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(getMajorListExport.get(i).getDepartmentsIdShow());
+                row.getCell(3).setCellValue(getMajorListExport.get(i).getSpringAutumnFlagShow());
+                row.getCell(4).setCellValue(getMajorListExport.get(i).getMajorCode());
+                row.getCell(5).setCellValue(getMajorListExport.get(i).getMajorName());
+                row.getCell(6).setCellValue(getMajorListExport.get(i).getMajorDirectionCode());
+                row.getCell(7).setCellValue(getMajorListExport.get(i).getMajorDirectionShow());
+                row.getCell(8).setCellValue(getMajorListExport.get(i).getApprovalTime());
+                row.getCell(9).setCellValue(getMajorListExport.get(i).getFirstRecruitTime());
+                row.getCell(10).setCellValue(getMajorListExport.get(i).getMaxYearShow());
+                if (major1!=null) {
+                    row.getCell(11).setCellValue(major1.getStudentNumber());
+                }
+                row.getCell(12).setCellValue("");
+                row.getCell(13).setCellValue("");
+                row.getCell(14).setCellValue("");
+                if (major2!=null) {
+                    row.getCell(15).setCellValue(major2.getSourceNumberOne());
+                    row.getCell(16).setCellValue(major2.getSourceNumberTwo());
+                    row.getCell(18).setCellValue(major2.getSourceNumberThree());
+                }
+                row.getCell(17).setCellValue("");
+                row.getCell(19).setCellValue(getMajorListExport.get(i).getFocusTypeShow());
+                row.getCell(20).setCellValue(getMajorListExport.get(i).getUniqueTypeShow());
+                row.getCell(21).setCellValue(getMajorListExport.get(i).getMajorNow());
+                row.getCell(22).setCellValue(getMajorListExport.get(i).getMajorGlobal());
+                row.getCell(23).setCellValue(getMajorListExport.get(i).getClassNum());
+                row.getCell(24).setCellValue(getMajorListExport.get(i).getOrdersClassnum());
+                row.getCell(25).setCellValue(getMajorListExport.get(i).getOrdersStudentnum());
+                row.getCell(26).setCellValue("");
+                row.getCell(27).setCellValue("");
+                count++;
+
+
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName+".xlsx",
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void expertExcel_A7_1_2(HttpServletResponse response,TabularFile tabularFile){
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        MajorLeader majorLeader = new MajorLeader();
+        majorLeader.setPersonType("1");
+        List<MajorLeader> list =  majorLeaderService.getMajorLeaderList(majorLeader);
+
+        OutputStream os = null;
+        try {
+            FileInputStream in  = new FileInputStream(file);
+            //      判断文件后缀名是xls,还是xlsx
+            //    如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            Workbook wb = null;
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10 ;
+            int end = 2+list.size();
+            int count = 1;
+            for (int i = 0; i < list.size(); i++) {
+
+                Row row = sheet.getRow(rowIndex+i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(list.get(i).getDepartmentsIdShow());
+                row.getCell(3).setCellValue(list.get(i).getMajorCode());
+                row.getCell(4).setCellValue(list.get(i).getMajorIdShow());
+                row.getCell(5).setCellValue(list.get(i).getTeacherCategoryShow());
+                row.getCell(6).setCellValue(list.get(i).getTeacherNum());
+                row.getCell(7).setCellValue(list.get(i).getPersonIdShow());
+                row.getCell(8).setCellValue(list.get(i).getSexShow());
+                row.getCell(9).setCellValue(list.get(i).getBirthdayShow());
+                row.getCell(10).setCellValue(list.get(i).getEducation());
+                row.getCell(11).setCellValue(list.get(i).getDegree());
+                row.getCell(12).setCellValue(list.get(i).getWorkDept());
+                row.getCell(13).setCellValue(list.get(i).getPosition());
+                row.getCell(14).setCellValue(list.get(i).getGuHua());
+                row.getCell(15).setCellValue(list.get(i).getEmail());
+                row.getCell(16).setCellValue(list.get(i).getZyWorkDate());
+                row.getCell(17).setCellValue(list.get(i).getPositionLeave());
+                row.getCell(18).setCellValue(list.get(i).getPositionName());
+                row.getCell(19).setCellValue(list.get(i).getOffice());
+                row.getCell(20).setCellValue(list.get(i).getPositionDate());
+                row.getCell(21).setCellValue("");
+                row.getCell(22).setCellValue("");
+                row.getCell(23).setCellValue("");
+                row.getCell(24).setCellValue("");
+                row.getCell(25).setCellValue("");
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName+".xlsx",
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void expertExcel_A7_1_3(HttpServletResponse response,TabularFile tabularFile){
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        MajorResponsible majorResponsible = new MajorResponsible();
+        majorResponsible.setPersonType("2");
+        List<MajorResponsible> list =  majorLeaderService.getMajorResponsibleList(majorResponsible);
+        OutputStream os = null;
+        try {
+            FileInputStream in  = new FileInputStream(file);
+            //      判断文件后缀名是xls,还是xlsx
+            //    如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            Workbook wb = null;
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10 ;
+            int end = 2+list.size();
+            int count = 1;
+            for (int i = 0; i < list.size(); i++) {
+
+                Row row = sheet.getRow(rowIndex+i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(list.get(i).getDepartmentsIdShow());
+                row.getCell(3).setCellValue(list.get(i).getMajorCode());
+                row.getCell(4).setCellValue(list.get(i).getMajorIdShow());
+                row.getCell(5).setCellValue(list.get(i).getTeacherCategoryShow());
+                row.getCell(6).setCellValue(list.get(i).getTeacherNum());
+                row.getCell(7).setCellValue(list.get(i).getPersonIdShow());
+                row.getCell(8).setCellValue(list.get(i).getSexShow());
+                row.getCell(9).setCellValue(list.get(i).getBirthdayShow());
+                row.getCell(10).setCellValue(list.get(i).getEducationShow());
+                row.getCell(11).setCellValue(list.get(i).getDegreeShow());
+                row.getCell(12).setCellValue(list.get(i).getWorkDept());
+                row.getCell(13).setCellValue(list.get(i).getPosition());
+                row.getCell(14).setCellValue(list.get(i).getGuhua());
+                row.getCell(15).setCellValue(list.get(i).getEmail());
+                row.getCell(16).setCellValue(list.get(i).getZyWorkdate());
+                row.getCell(17).setCellValue(list.get(i).getPositionLeave());
+                row.getCell(18).setCellValue(list.get(i).getPositionName());
+                row.getCell(19).setCellValue(list.get(i).getOffice());
+                row.getCell(20).setCellValue(list.get(i).getPositionDate());
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName+".xlsx",
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * modify by lizhipeng end
@@ -1308,7 +1546,582 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     /**
      * modify by hanjie start
      */
+    @Override
+    public void expertExcel_A6_1_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Emp> empList = empDao.getEmpList(new Emp());
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < empList.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(empList.get(i).getDeptName());
+                row.getCell(2).setCellValue(empList.get(i).getPersonId());
+                row.getCell(3).setCellValue(empList.get(i).getName());
+                row.getCell(4).setCellValue(empList.get(i).getSexShow());
+                String idCard = empList.get(i).getIdCard();
+                String birthday = idCard.substring(6, 14);
+                row.getCell(5).setCellValue(birthday);
+                row.getCell(6).setCellValue(empList.get(i).getNationShow());
+                row.getCell(7).setCellValue(empList.get(i).getEducationalLevelShow());
+                row.getCell(8).setCellValue(empList.get(i).getAcademicDegreeShow());
 
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_1_2_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_1_2_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
+                row.getCell(2).setCellValue(list.get(i).getStaffId());
+                row.getCell(3).setCellValue(list.get(i).getTeacherName());
+                row.getCell(4).setCellValue(list.get(i).getSchoolYear());
+                row.getCell(5).setCellValue(list.get(i).getMajorCode());
+                row.getCell(6).setCellValue(list.get(i).getMajorName());
+                row.getCell(7).setCellValue(list.get(i).getMajorDirection());
+                row.getCell(8).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(10).setCellValue(list.get(i).getCourseName());
+                row.getCell(12).setCellValue(list.get(i).getCourseType());
+                row.getCell(17).setCellValue(list.get(i).getSemester());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_1_3(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_1_3();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getStaffId());
+                row.getCell(2).setCellValue(list.get(i).getTeacherName());
+                row.getCell(3).setCellValue(list.get(i).getTrainingContent());
+                row.getCell(4).setCellValue(list.get(i).getTrainingDay());
+                row.getCell(5).setCellValue(list.get(i).getTrainingPlace());
+                row.getCell(13).setCellValue(list.get(i).getRewordTime());
+                row.getCell(14).setCellValue(list.get(i).getRewordName());
+                row.getCell(15).setCellValue(list.get(i).getRewordLevel());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_2_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_2_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
+                row.getCell(2).setCellValue(list.get(i).getStaffId());
+                row.getCell(3).setCellValue(list.get(i).getTeacherName());
+                row.getCell(4).setCellValue(list.get(i).getTeacherSex());
+                row.getCell(5).setCellValue(list.get(i).getBirthday());
+                row.getCell(6).setCellValue(list.get(i).getNationShow());
+                row.getCell(7).setCellValue(list.get(i).getFinalEducation());
+                row.getCell(8).setCellValue(list.get(i).getDegee());
+                row.getCell(9).setCellValue(list.get(i).getMajorField());
+                row.getCell(10).setCellValue(list.get(i).getMajorSpecialty());
+                row.getCell(11).setCellValue(list.get(i).getWorkYear());
+                row.getCell(12).setCellValue(list.get(i).getMajorYear());
+                row.getCell(13).setCellValue(list.get(i).getMajorGrade());
+                row.getCell(14).setCellValue(list.get(i).getMajorName2());
+                row.getCell(15).setCellValue(list.get(i).getMajorDept());
+                row.getCell(16).setCellValue(list.get(i).getMajorDate());
+                row.getCell(17).setCellValue(list.get(i).getLicence());
+                row.getCell(18).setCellValue(list.get(i).getGetTime());
+                row.getCell(19).setCellValue(list.get(i).getExpertWork());
+                row.getCell(19).setCellValue(list.get(i).getSfggTeacher());
+                row.getCell(20).setCellValue(list.get(i).getSfssTeacher());
+                row.getCell(21).setCellValue(list.get(i).getSfmsTeacher());
+                row.getCell(22).setCellValue(list.get(i).getPoliticsMajorCode());
+                row.getCell(23).setCellValue(list.get(i).getPoliticsMajorName());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_2_2_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_2_2_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
+                row.getCell(2).setCellValue(list.get(i).getStaffId());
+                row.getCell(3).setCellValue(list.get(i).getTeacherName());
+                row.getCell(4).setCellValue(list.get(i).getSchoolYear());
+                row.getCell(5).setCellValue(list.get(i).getMajorCode());
+                row.getCell(6).setCellValue(list.get(i).getMajorName());
+                row.getCell(7).setCellValue(list.get(i).getMajorDirection());
+                row.getCell(8).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(10).setCellValue(list.get(i).getCourseName());
+                row.getCell(12).setCellValue(list.get(i).getCourseType());
+                row.getCell(17).setCellValue(list.get(i).getSemester());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_2_3(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_2_3();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getStaffId());
+                row.getCell(2).setCellValue(list.get(i).getTeacherName());
+                row.getCell(3).setCellValue(list.get(i).getTrainingContent());
+                row.getCell(4).setCellValue(list.get(i).getTrainingDay());
+                row.getCell(5).setCellValue(list.get(i).getTrainingPlace());
+                row.getCell(13).setCellValue(list.get(i).getRewordTime());
+                row.getCell(14).setCellValue(list.get(i).getRewordName());
+                row.getCell(15).setCellValue(list.get(i).getRewordLevel());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_3_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_3_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
+                row.getCell(2).setCellValue(list.get(i).getStaffId());
+                row.getCell(3).setCellValue(list.get(i).getTeacherName());
+                row.getCell(4).setCellValue(list.get(i).getTeacherSex());
+                row.getCell(5).setCellValue(list.get(i).getBirthday());
+                row.getCell(6).setCellValue(list.get(i).getNationShow());
+                row.getCell(7).setCellValue(list.get(i).getWorkDate());
+                row.getCell(8).setCellValue(list.get(i).getFinalEducation());
+                row.getCell(9).setCellValue(list.get(i).getDegee());
+                row.getCell(10).setCellValue(list.get(i).getSinging());
+
+                row.getCell(11).setCellValue(list.get(i).getMajorGrade());
+                row.getCell(12).setCellValue(list.get(i).getMajorName2());
+                row.getCell(13).setCellValue(list.get(i).getMajorDept());
+                row.getCell(14).setCellValue(list.get(i).getMajorDate());
+
+                row.getCell(15).setCellValue(list.get(i).getCareerGrade());
+                row.getCell(16).setCellValue(list.get(i).getCareerName());
+                row.getCell(17).setCellValue(list.get(i).getCareerDept());
+                row.getCell(18).setCellValue(list.get(i).getCareerGettime());
+
+                row.getCell(19).setCellValue(list.get(i).getExpertDept());
+                row.getCell(20).setCellValue(list.get(i).getExpertWork());
+                row.getCell(21).setCellValue(list.get(i).getExpertDate());
+
+                row.getCell(22).setCellValue(list.get(i).getTrainingName());
+                row.getCell(23).setCellValue(list.get(i).getTrainingDay());
+                row.getCell(24).setCellValue(list.get(i).getTrainingPlace());
+
+                row.getCell(25).setCellValue(list.get(i).getPoliticsMajorCode());
+                row.getCell(26).setCellValue(list.get(i).getPoliticsMajorName());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_3_2_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_3_2_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
+                row.getCell(2).setCellValue(list.get(i).getStaffId());
+                row.getCell(3).setCellValue(list.get(i).getTeacherName());
+                row.getCell(4).setCellValue(list.get(i).getSchoolYear());
+                row.getCell(5).setCellValue(list.get(i).getMajorCode());
+                row.getCell(6).setCellValue(list.get(i).getMajorName());
+                row.getCell(7).setCellValue(list.get(i).getMajorDirection());
+                row.getCell(8).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(10).setCellValue(list.get(i).getCourseName());
+                row.getCell(12).setCellValue(list.get(i).getCourseType());
+                row.getCell(17).setCellValue(list.get(i).getSemester());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_4_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_4_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
+                row.getCell(2).setCellValue(list.get(i).getStaffId());
+                row.getCell(3).setCellValue(list.get(i).getTeacherName());
+                row.getCell(4).setCellValue(list.get(i).getTeacherSex());
+                row.getCell(5).setCellValue(list.get(i).getBirthday());
+                row.getCell(6).setCellValue(list.get(i).getNationShow());
+                row.getCell(7).setCellValue(list.get(i).getWorkDate());
+                row.getCell(8).setCellValue(list.get(i).getFinalEducation());
+                row.getCell(9).setCellValue(list.get(i).getDegee());
+                row.getCell(10).setCellValue(list.get(i).getSinging());
+
+                row.getCell(11).setCellValue(list.get(i).getMajorGrade());
+                row.getCell(12).setCellValue(list.get(i).getMajorName2());
+                row.getCell(13).setCellValue(list.get(i).getMajorDept());
+                row.getCell(14).setCellValue(list.get(i).getMajorDate());
+
+                row.getCell(15).setCellValue(list.get(i).getCareerGrade());
+                row.getCell(16).setCellValue(list.get(i).getCareerName());
+                row.getCell(17).setCellValue(list.get(i).getCareerDept());
+                row.getCell(18).setCellValue(list.get(i).getCareerGettime());
+
+                row.getCell(19).setCellValue(list.get(i).getExpertDept());
+                row.getCell(20).setCellValue(list.get(i).getExpertWork());
+                row.getCell(21).setCellValue(list.get(i).getExpertDate());
+
+                row.getCell(22).setCellValue(list.get(i).getTrainingName());
+                row.getCell(23).setCellValue(list.get(i).getTrainingDay());
+                row.getCell(24).setCellValue(list.get(i).getTrainingPlace());
+
+                row.getCell(25).setCellValue(list.get(i).getPoliticsMajorCode());
+                row.getCell(26).setCellValue(list.get(i).getPoliticsMajorName());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A6_4_2_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A6_4_2_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
+                row.getCell(2).setCellValue(list.get(i).getStaffId());
+                row.getCell(3).setCellValue(list.get(i).getTeacherName());
+                row.getCell(4).setCellValue(list.get(i).getSchoolYear());
+                row.getCell(5).setCellValue(list.get(i).getMajorCode());
+                row.getCell(6).setCellValue(list.get(i).getMajorName());
+                row.getCell(7).setCellValue(list.get(i).getMajorDirection());
+                row.getCell(8).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(10).setCellValue(list.get(i).getCourseName());
+                row.getCell(12).setCellValue(list.get(i).getCourseType());
+                row.getCell(17).setCellValue(list.get(i).getSemester());
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * modify by hanjie end
      */
@@ -1316,7 +2129,186 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     /**
      * modify by wangxue start
      */
+    public void expertExcel_A7_3_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        List<Major> majorList = tableAttributeDao.expertExcel_A7_3_1(new Major());
 
+        Workbook wb = null;
+
+        try {
+            //读入文件
+            FileInputStream in = new FileInputStream(file);
+//            判断文件后缀名是xls,还是xlsx
+//            如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10;
+            int end = 2 + majorList.size();
+            int count = 1;
+            for (int i = 0; i < majorList.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(majorList.get(i).getDepartmentsId());
+                row.getCell(3).setCellValue(majorList.get(i).getMajorCode());
+                row.getCell(4).setCellValue(majorList.get(i).getMajorName());
+                row.getCell(5).setCellValue(majorList.get(i).getMajorDirectionCode());
+                row.getCell(6).setCellValue(majorList.get(i).getMajorDirection());
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void expertExcel_A7_3_2(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        List<Major> majorList = tableAttributeDao.expertExcel_A7_3_2(new Major());
+
+        Workbook wb = null;
+
+        try {
+            //读入文件
+            FileInputStream in = new FileInputStream(file);
+//            判断文件后缀名是xls,还是xlsx
+//            如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10;
+            int end = 2 + majorList.size();
+            int count = 1;
+            for (int i = 0; i < majorList.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(majorList.get(i).getDepartmentsId());
+                row.getCell(3).setCellValue(majorList.get(i).getMajorCode());
+                row.getCell(4).setCellValue(majorList.get(i).getMajorName());
+                row.getCell(5).setCellValue(majorList.get(i).getMajorDirectionCode());
+                row.getCell(6).setCellValue(majorList.get(i).getMajorDirection());
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void expertExcel_A7_4(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        List<Major> majorList = tableAttributeDao.expertExcel_A7_4(new Major());
+        //List<InternshipManage> internshipManageList= tableAttributeDao.expertExcel_A7(new InternshipManage());
+        Workbook wb = null;
+
+        try {
+            //读入文件
+            FileInputStream in = new FileInputStream(file);
+//            判断文件后缀名是xls,还是xlsx
+//            如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10;
+            int end = 2 + majorList.size();
+
+            int count = 1;
+            for (int i = 0; i < majorList.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(majorList.get(i).getDepartmentsId());
+                row.getCell(3).setCellValue(majorList.get(i).getMajorCode());
+                row.getCell(4).setCellValue(majorList.get(i).getMajorName());
+                row.getCell(5).setCellValue(majorList.get(i).getMajorDirectionCode());
+                row.getCell(6).setCellValue(majorList.get(i).getMajorDirection());
+                row.getCell(17).setCellValue(majorList.get(i).getInternshipPositions());
+                row.getCell(18).setCellValue(majorList.get(i).getInternshipUnitIdShow());
+                row.getCell(20).setCellValue(majorList.get(i).getPostsTime());
+                count++;
+            }
+
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     /**
      * modify by wangxue end
      */

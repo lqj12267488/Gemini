@@ -2,12 +2,14 @@ package com.goisan.tabular.controller;
 
 import com.goisan.studentwork.employments.bean.EmploymentManage;
 import com.goisan.studentwork.employments.service.EmploymentManageService;
+import com.goisan.system.tools.ApplicationContextRegister;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import com.goisan.tabular.bean.Tabular;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.service.TableAttributeService;
 import com.goisan.tabular.service.TabularService;
+import com.goisan.tabular.service.impl.TableAttributeServiceImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.ibatis.annotations.Param;
@@ -33,6 +35,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -243,6 +246,15 @@ public class TabularController {
                 }
             }
         } else {
+            Class<?> classType = TableAttributeServiceImpl.class;
+            Method m = null;
+            try {
+                m = classType.getDeclaredMethod(tableAttribute,HttpServletResponse.class, TabularFile.class);
+                m.invoke(ApplicationContextRegister.getApplicationContext().getBean("tableAttributeServiceImpl"),response,files);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+         /*
             if ("expertExcel_A1_6".equals(tableAttribute)) {
                 this.tableAttributeService.expertExcel_A1_6(response, files);
             } else if ("expertExcel_A2".equals(tableAttribute)) {
@@ -277,6 +289,12 @@ public class TabularController {
                 this.tableAttributeService.expertExcel_A8_8(response, files);
             } else if ("expertExcel_A8_9".equals(tableAttribute)) {
                 this.tableAttributeService.expertExcel_A8_9(response, files);
+            } else if ("expertExcel_A7_3_1".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_3_1(response, files);
+            } else if ("expertExcel_A7_3_2".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_3_2(response, files);
+            } else if ("expertExcel_A7_4".equals(tableAttribute)) {
+                this.tableAttributeService.expertExcel_A7_4(response, files);
             } else if ("expertExcel_A7_6_1".equals(tableAttribute)) {
                 this.tableAttributeService.expertExcel_A7_6_1(response, files);//表格属性 下载导出时如果有表格属性导出的表里有数据
             } else if ("expertExcel_A7_6_2".equals(tableAttribute)) {
@@ -285,7 +303,7 @@ public class TabularController {
                 this.tableAttributeService.expertExcel_A7_6_3(response, files);
             } else {
                 this.tableAttributeService.expertExcel_A1(response, files);
-            }
+            }*/
         }
 
     }
