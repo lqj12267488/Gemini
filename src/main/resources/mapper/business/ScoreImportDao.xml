@@ -699,6 +699,7 @@
             T_JW_SCORE_IMPORT
         (id,
          exam_method,
+          TEACHING_TEACHER_ID,
          score_class_id,
          subject_id,
          class_id,
@@ -722,7 +723,7 @@
          graduate_makeup_status,
          creator, create_time, create_dept)
         values
-        (FUNC_GET_UUID,'${examMethod}', '${scoreClassId}',
+        (FUNC_GET_UUID,'${examMethod}', '${teachingTeacherId}' ,'${scoreClassId}',
          '${subjectId}', '${classId}', '${departmentsId}',
          '${majorCode}', '${majorDirection}',
          '${trainingLevel}', '${planId}', '${courseId}',
@@ -1413,6 +1414,7 @@
     <select id="getScoreImportByClassId" parameterType="java.lang.String"
             resultType="com.goisan.educational.score.bean.ScoreImport">
         select distinct departments_id,
+                      TEACHING_TEACHER_ID,
                         major_code,
                         major_direction,
                         training_level,
