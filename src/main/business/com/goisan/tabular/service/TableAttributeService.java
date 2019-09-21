@@ -86,6 +86,8 @@ public interface TableAttributeService {
 
     void expertExcel_A10_2_1(HttpServletResponse response, TabularFile tabularFile);//A10-2-1辍学学生明细表1	    
 
+    List<Student> getExpertExcel_A10_2_1();
+
     void expertExcel_A10_3(HttpServletResponse response, TabularFile tabularFile);//A10-3学生社团表1
 
     void expertExcel_A10_4(HttpServletResponse response, TabularFile tabularFile);//A10-4红十字会表1
