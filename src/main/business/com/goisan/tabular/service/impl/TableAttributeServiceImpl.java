@@ -2343,6 +2343,60 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         }
     }
 
+    @Override
+    public void expertExcel_A7_5(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A7_5();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            int count = 1;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(list.get(i).getDepartmentName());
+                row.getCell(3).setCellValue(list.get(i).getMajorCode());
+                row.getCell(4).setCellValue(list.get(i).getMajorName());
+                row.getCell(5).setCellValue(list.get(i).getMajorDirection());
+                row.getCell(6).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(8).setCellValue(list.get(i).getOrdersStudentNum());
+                row.getCell(12).setCellValue(list.get(i).getInternshipNum());
+                row.getCell(15).setCellValue(list.get(i).getEmploymentNum());
+                row.getCell(28).setCellValue(list.get(i).getNowMajor());
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     /**
      * modify by hanjie end

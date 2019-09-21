@@ -302,6 +302,4 @@ public class TabularController {
             return new Message(0, "", null);
         }
     }
-
-
 }

@@ -67,6 +67,43 @@ public class Export {
     private String awardTime;
     private String studentName;
 
+    private String internshipNum;
+    private String employmentNum;
+    private String ordersStudentNum;
+    private String nowMajor;
+
+    public String getOrdersStudentNum() {
+        return ordersStudentNum;
+    }
+
+    public void setOrdersStudentNum(String ordersStudentNum) {
+        this.ordersStudentNum = ordersStudentNum;
+    }
+
+    public String getNowMajor() {
+        return nowMajor;
+    }
+
+    public void setNowMajor(String nowMajor) {
+        this.nowMajor = nowMajor;
+    }
+
+    public String getInternshipNum() {
+        return internshipNum;
+    }
+
+    public void setInternshipNum(String internshipNum) {
+        this.internshipNum = internshipNum;
+    }
+
+    public String getEmploymentNum() {
+        return employmentNum;
+    }
+
+    public void setEmploymentNum(String employmentNum) {
+        this.employmentNum = employmentNum;
+    }
+
     public String getCompetitionName() {
         return competitionName;
     }

@@ -137,6 +137,8 @@ public interface TableAttributeService {
     void expertExcel_A9_6_1(HttpServletResponse response, TabularFile tabularFile);
 
     void expertExcel_A9_6_2(HttpServletResponse response, TabularFile tabularFile);
+
+    void expertExcel_A7_5(HttpServletResponse response, TabularFile tabularFile);
     /**
      * modify by hanjie end
      */

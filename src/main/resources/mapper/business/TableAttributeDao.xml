@@ -577,6 +577,19 @@
         where w.competition_name = p.id
     </select>
 
+    <select id="expertExcel_A7_5" resultType="com.goisan.tabular.bean.export.Export">
+        select FUNC_GET_TABLEVALUE(m.DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentName,m.MAJOR_CODE,MAJOR_NAME,MAJOR_DIRECTION,
+      FUNC_GET_DICVALUE(MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
+      NOW_MAJOR,
+      FUNC_GET_DICVALUE(NOW_MAJOR, 'SF') as nowMajor,
+      ORDERS_STUDENT_NUM,
+      count(s.internship_id) internshipNum,
+       count(es.EMPLOYMENT_ID) employmentNum
+       from T_XG_MAJOR m left join  T_XG_INTERNSHIP_STUDENT s
+       on m.major_code = s.major_code
+       left join T_XG_EMPLOYMENT_STUDENT es on es.major_code = s.major_code
+       group by m.MAJOR_CODE,m.DEPARTMENTS_ID,MAJOR_NAME,MAJOR_DIRECTION,NOW_MAJOR,NOW_MAJOR,ORDERS_STUDENT_NUM
+    </select>
     <!--modify by hanjie end-->
 
 
