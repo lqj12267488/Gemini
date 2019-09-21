@@ -567,6 +567,16 @@
           contact_number contactNumber
         from T_XG_EMPLOYMENT_UNIT u
     </select>
+
+    <select id="expertExcel_A9_6_1" resultType="com.goisan.tabular.bean.export.Export">
+        select   FUNC_GET_TABLEVALUE(competition_name,'T_JW_COMPETITION_PROJECT', 'ID','COMPETITION_PROJECT') competitionName,
+        FUNC_GET_DICVALUE(COMPETITION_LEVEL,'JSJB') competitionLevel,
+        to_char(AWARD_TIME, 'yyyymmdd') awardTime,
+        NAME studentName
+        from T_JW_AWARD_WINNING w ,T_JW_COMPETITION_PROJECT p
+        where w.competition_name = p.id
+    </select>
+
     <!--modify by hanjie end-->
 
 

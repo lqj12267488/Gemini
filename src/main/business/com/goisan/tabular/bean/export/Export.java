@@ -62,6 +62,42 @@ public class Export {
     private String contactPerson;
     private String contactNumber;
 
+    private String competitionName;
+    private String competitionLevel;
+    private String awardTime;
+    private String studentName;
+
+    public String getCompetitionName() {
+        return competitionName;
+    }
+
+    public void setCompetitionName(String competitionName) {
+        this.competitionName = competitionName;
+    }
+
+    public String getCompetitionLevel() {
+        return competitionLevel;
+    }
+
+    public void setCompetitionLevel(String competitionLevel) {
+        this.competitionLevel = competitionLevel;
+    }
+
+    public String getAwardTime() {
+        return awardTime;
+    }
+
+    public void setAwardTime(String awardTime) {
+        this.awardTime = awardTime;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
 
     public String getInternshipUnitName() {
         return internshipUnitName;

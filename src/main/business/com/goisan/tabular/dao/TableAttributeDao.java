@@ -120,6 +120,7 @@ public interface TableAttributeDao {
     List<Export> expertExcel_A6_4_1();
     List<Export> expertExcel_A6_4_2_1();
     List<Export> expertExcel_A9_4();
+    List<Export> expertExcel_A9_6_1();
 
     /**
      * modify by hanjie end

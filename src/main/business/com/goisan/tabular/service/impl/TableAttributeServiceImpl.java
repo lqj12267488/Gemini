@@ -2246,6 +2246,103 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         }
     }
 
+    @Override
+    public void expertExcel_A9_6_1(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A9_6_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            int count = 1;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(list.get(i).getCompetitionName());
+                row.getCell(4).setCellValue(list.get(i).getCompetitionLevel());
+                row.getCell(6).setCellValue(list.get(i).getAwardTime());
+                row.getCell(6).setCellValue(list.get(i).getStudentName());
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void expertExcel_A9_6_2(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Export> list = tableAttributeDao.expertExcel_A9_6_1();
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            int count = 1;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(list.get(i).getCompetitionName());
+                row.getCell(3).setCellValue(list.get(i).getCompetitionLevel());
+                row.getCell(4).setCellValue(list.get(i).getAwardTime());
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     /**
      * modify by hanjie end
