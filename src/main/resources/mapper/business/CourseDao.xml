@@ -225,5 +225,29 @@
         select count(t.course_id)  from T_JW_COURSE t where t.course_name=#{courseName}  group by t.course_name
     </select>
 
+    <select id="selectCourseList" parameterType="com.goisan.educational.course.bean.Course"
+            resultType="com.goisan.educational.course.bean.Course">
+select t.departments_id departmentsId,
+       FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID) departmentsIdShow,
+       t.major_code majorCode,
+       FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorName,
+       t.major_direction majorDirection,
+       FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') as majorDirectionShow,
+       t.course_code courseCode,
+       t.course_name courseName,
+      FUNC_GET_DICVALUE(t.course_type,'KCLX') AS courseType,
+      FUNC_GET_DICVALUE(t.COURSE_PROPERTIES,'KCJSSX')  courseProperties,
+       t.PRESCRIBED_PERIODS prescribedPeriods,
+       t.PRACTICE_CLASS practiceClass,
+       FUNC_GET_DICVALUE(t.CORE_CURRICULUM,'KCSF')  coreCurriculum,
+        FUNC_GET_DICVALUE(t.SCHOOL_ENTERPRISE_COOPERATION,'KCSF')  schoolEnterpriseCooperation,
+       FUNC_GET_DICVALUE(t.EXCELLENT_COURSE,'KCJPKC')  excellentCourse,
+       FUNC_GET_DICVALUE(t.VENUE,'KCSKDD')  venue,
+      FUNC_GET_DICVALUE(t.TEST_METHOD,'KCKSKHFF')  testMethod,
+      FUNC_GET_DICVALUE(t.TEACHING_METHOD,'ZYSKFS')  teachingMethod,
+        FUNC_GET_DICVALUE(t.CLASS_CERTIFIATE,'KCSF')  classCertifiate
+  from T_JW_COURSE t
+
+    </select>
 
 </mapper>

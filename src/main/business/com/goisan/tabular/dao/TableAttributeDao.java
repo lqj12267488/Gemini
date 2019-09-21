@@ -100,7 +100,7 @@ public interface TableAttributeDao {
     void expertExcel_A7_1_1(HttpServletResponse response, TabularFile tabularFile);//A7-1-1专业设置表
     void expertExcel_A7_1_2(HttpServletResponse response, TabularFile tabularFile);//A7-1-2专业带头人表1
     void expertExcel_A7_1_3(HttpServletResponse response, TabularFile tabularFile);//A7-1-3专业负责人表1
-
+    void expertExcel_A7_2(HttpServletResponse response, TabularFile tabularFile);//A7-1-3开设课程表
     /**
      * modify by lizhipeng end
      */

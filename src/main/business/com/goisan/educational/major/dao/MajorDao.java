@@ -104,4 +104,5 @@ public interface MajorDao {
     Major getStudentNumberList(Major major);
 
     Major getSourceTypeList(Major major);
+
 }
