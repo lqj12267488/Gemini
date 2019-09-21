@@ -69,6 +69,33 @@ public class Major extends BaseBean {
     private String graduationNumber;//毕业人数
     private String employmentNumber;//就业人数
 
+    public void setInternshipUnitId(String internshipUnitId) {
+        this.internshipUnitId = internshipUnitId;
+    }
+
+    public String getInternshipPositions() {
+        return internshipPositions;
+    }
+
+    public void setInternshipPositions(String internshipPositions) {
+        this.internshipPositions = internshipPositions;
+    }
+
+    public String getInternshipUnitIdShow() {
+        return internshipUnitIdShow;
+    }
+
+    public void setInternshipUnitIdShow(String internshipUnitIdShow) {
+        this.internshipUnitIdShow = internshipUnitIdShow;
+    }
+
+    public String getPostsTime() {
+        return postsTime;
+    }
+
+    public void setPostsTime(String postsTime) {
+        this.postsTime = postsTime;
+    }
 
     public String getGraduationNumber() {
         return graduationNumber;
