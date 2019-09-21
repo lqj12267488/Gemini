@@ -6,6 +6,8 @@ import com.goisan.evaluation.bean.EvaluationTask;
 import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.Dept;
 import com.goisan.system.bean.Emp;
+import com.goisan.educational.major.bean.Major;
+import com.goisan.studentwork.internships.bean.InternshipManage;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
 import org.springframework.stereotype.Repository;
@@ -135,4 +137,5 @@ public interface TableAttributeDao {
     /**
      * modify by wangxue end
      */
+
 }

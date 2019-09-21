@@ -109,7 +109,7 @@ public class StudentInsuranceController {
     }
 
 
-//    导出以及导出模板
+//    导出以及导出模板  下载导出模板
     @RequestMapping("/studentInsurance/exportStudentInsurance")
     public void exportStudentInsurance(HttpServletRequest request, HttpServletResponse response) {
         //一个Excel文件对应于一个workbook(HSSFWorkbook)
@@ -205,7 +205,7 @@ public class StudentInsuranceController {
 //导入
     @ResponseBody
     @RequestMapping("/studentInsurance/importInsurance")
-    public Message importInsurance(@RequestParam(value = "file", required = false)CommonsMultipartFile file,String insuranceType){
+    public Message importInsurance(@RequestParam(value = "file", required = false)CommonsMultipartFile file,String insuranceType) {
         int count=3;
         int rightCount = 0 ;
         int errCount = 0 ;
