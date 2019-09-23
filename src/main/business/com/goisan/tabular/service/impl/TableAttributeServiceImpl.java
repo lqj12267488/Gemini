@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -1105,6 +1106,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         }
     }
 
+    @Transactional
     public void expertExcel_A10_1_2(HttpServletResponse response, TabularFile tabularFile){
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
@@ -1165,6 +1167,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         return tableAttributeDao.getExpertExcel_A10_1_2();
     }
 
+    @Transactional
     public void expertExcel_A10_1(HttpServletResponse response, TabularFile tabularFile){
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
