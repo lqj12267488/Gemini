@@ -5,35 +5,35 @@
     <select id="textBookInventoryLog" parameterType="com.goisan.educational.textbook.bean.TextBookLog"
             resultType="com.goisan.educational.textbook.bean.TextBookLog">
         SELECT id,
-        FUNC_GET_DICVALUE(t.TEXTBOOK_TYPE,'JCLX') as textbookType,
-        FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') textbookId,
-        FUNC_GET_DICVALUE(t.OPERATION_TYPE,'KCCZLX') as operationType,
-        t.OPERATION_NUM as operationNum,
-        FUNC_GET_USERNAME(t.creator) as creator,
-        to_char(t.create_time,'yyyy-MM-dd hh:mm:ss') createTime,
-        t.operation_time operationTime,
-        t.remark
+               FUNC_GET_DICVALUE(t.TEXTBOOK_TYPE,'JCLX') as textbookType,
+               FUNC_GET_TABLEVALUE(t.TEXTBOOK_ID,'T_JW_TEXTBOOK','TEXTBOOK_ID','TEXTBOOK_NAME') textbookId,
+               FUNC_GET_DICVALUE(t.OPERATION_TYPE,'KCCZLX') as operationType,
+               t.OPERATION_NUM as operationNum,
+               FUNC_GET_USERNAME(t.creator) as creator,
+               to_char(t.create_time,'yyyy-MM-dd hh:mm:ss') createTime,
+               t.operation_time operationTime,
+               t.remark
         FROM T_JW_TEXTBOOK_LOG t
         WHERE 1 = 1 AND  t.OPERATION_NUM !='0' AND  t.TEXTBOOK_ID = #{textbookId}
 
     </select>
     <insert id="insertTextBookLog" parameterType="com.goisan.educational.textbook.bean.TextBookLog">
         insert into
-        T_JW_TEXTBOOK_LOG t
+            T_JW_TEXTBOOK_LOG t
         (id,textbook_type,textbook_id,operation_type,operation_num,operation_time,creator,create_time,create_dept,remark)values
         (FUNC_GET_UUID,'${textbookType}','${textbookId}','${operationType}','${operationNum}',sysdate,'${creator}',sysdate,'${createDept}','${remark}')
     </insert>
     <update id="updateTextBookNum" parameterType="com.goisan.educational.textbook.bean.TextBookLog">
         update
-        T_JW_TEXTBOOK t
+            T_JW_TEXTBOOK t
         SET
-        t.TEXTBOOK_NUM_ALL=t.TEXTBOOK_NUM_ALL+to_number(#{operationNum}),
-        t.TEXTBOOK_NUM_IN=t.TEXTBOOK_NUM_IN+to_number(#{operationNum}),
-        t.changer = #{changer},
-        t.change_time = sysdate,
-        t.change_dept = #{changeDept}
+            t.TEXTBOOK_NUM_ALL=t.TEXTBOOK_NUM_ALL+to_number(#{operationNum}),
+            t.TEXTBOOK_NUM_IN=t.TEXTBOOK_NUM_IN+to_number(#{operationNum}),
+            t.changer = #{changer},
+            t.change_time = sysdate,
+            t.change_dept = #{changeDept}
         WHERE
-        t.textbook_id = #{textbookId}
+            t.textbook_id = #{textbookId}
     </update>
     <select id="getTextBookInventory" parameterType="com.goisan.educational.textbook.bean.TextBook" resultType="com.goisan.educational.textbook.bean.TextBook">
         SELECT
@@ -96,7 +96,7 @@
         WHERE   t1.TEXTBOOK_ID IN ('${ids}')
     </select>
     <select id="getTotalByTermTextBookId" parameterType="com.goisan.educational.textbook.bean.TextBookOrderLog" resultType="java.lang.String">
-        select sum(t.actual_num*t.discount) from T_JW_TEXTBOOK_ORDERLOG t where t.textbook_id = #{textbookId} and t.term = #{term}
+        select sum(trunc(t.actual_num*t.discount)) from T_JW_TEXTBOOK_ORDERLOG t where t.textbook_id = #{textbookId} and t.term = #{term}
     </select>
     <select id="getSumTextBookOrderLogGiveNum" parameterType="com.goisan.educational.textbook.bean.TextBookDeclare" resultType="java.lang.String">
         select sum(GIVE_NUM) from  T_JW_TEXTBOOK_DECLARE_LOG s where  s.TEXTBOOK_PLAN_ID = #{declareId}

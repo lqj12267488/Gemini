@@ -14,6 +14,8 @@ import com.goisan.system.service.FilesService;
 import com.goisan.system.service.RoleService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
+import org.apache.commons.io.FileUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,11 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -194,6 +195,37 @@ public class TeachingplanNewController {
         teachingplanNewService.changeTeachingplanNewStatus(id, "1");
         return new Message(0, "上传成功！", null);
     }
+
+    @ResponseBody
+    @RequestMapping("/teachingplanNew/downloadTeachingPlanFile")
+    public void downloadTabularFile(@Param("id") String id,@Param("url") String url, HttpServletResponse response) {
+        COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
+                .getParentFile().getPath();
+        Files files = teachingplanNewService.getFilesByBusinessId(id);
+        String filePath = COM_REPORT_PATH + url;
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        try {
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(files.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            os.write(FileUtils.readFileToByteArray(file));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     @RequestMapping("/teachingplanNew/toAudit")
     public String toAudit(String id, Model model) {

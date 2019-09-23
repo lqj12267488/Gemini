@@ -4,7 +4,9 @@ import com.goisan.educational.teachingplan.bean.TeachingplanNew;
 import com.goisan.educational.teachingplan.dao.TeachingplanNewDao;
 import com.goisan.educational.teachingplan.service.TeachingplanNewService;
 import com.goisan.system.bean.BaseBean;
+import com.goisan.system.bean.Files;
 import com.goisan.system.bean.Select2;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,5 +56,9 @@ public class TeachingplanNewServiceImpl implements TeachingplanNewService {
     @Override
     public List<Map<String, Object>> getCourseById(String id, String personId) {
         return teachingplanNewDao.getCourseById(id,personId);
+    }
+
+    public Files getFilesByBusinessId(@Param("id") String id){
+        return teachingplanNewDao.getFilesByBusinessId(id);
     }
 }

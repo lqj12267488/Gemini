@@ -246,26 +246,32 @@ public class TabularController {
                 }
             }
         } else {
-            Class<?> classType = TableAttributeServiceImpl.class;
-            Method m = null;
-            try {
-                m = classType.getDeclaredMethod(tableAttribute, HttpServletResponse.class, TabularFile.class);
-                m.invoke(ApplicationContextRegister.getApplicationContext().getBean("tableAttributeServiceImpl"), response, files);
-            } catch (Exception e) {
-                String filePath = COM_REPORT_PATH + files.getFileUrl();
-                File file = FileUtils.getFile(filePath);
-                OutputStream os = null;
+            if("expertExcel_A10_1".equals(tableAttribute)){
+                tableAttributeService.expertExcel_A10_1(response,files);
+            }else if("expertExcel_A10_1_2".equals(tableAttribute)){
+                tableAttributeService.expertExcel_A10_1_2(response,files);
+            }else{
+                Class<?> classType = TableAttributeServiceImpl.class;
+                Method m = null;
                 try {
-                response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(files.getFileName(),
-                        "utf-8"));
-                    os = response.getOutputStream();
-                    os.write(FileUtils.readFileToByteArray(file));
-                    os.flush();
-                    os.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                    m = classType.getDeclaredMethod(tableAttribute, HttpServletResponse.class, TabularFile.class);
+                    m.invoke(ApplicationContextRegister.getApplicationContext().getBean("tableAttributeServiceImpl"), response, files);
+                } catch (Exception e) {
+                    String filePath = COM_REPORT_PATH + files.getFileUrl();
+                    File file = FileUtils.getFile(filePath);
+                    OutputStream os = null;
+                    try {
+                        response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(files.getFileName(),
+                                "utf-8"));
+                        os = response.getOutputStream();
+                        os.write(FileUtils.readFileToByteArray(file));
+                        os.flush();
+                        os.close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    e.printStackTrace();
                 }
-                e.printStackTrace();
             }
         }
     }
