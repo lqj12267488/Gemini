@@ -4,45 +4,45 @@
 <mapper namespace="com.goisan.educational.teachingplan.dao.TeachingplanNewDao">
 
     <!--<select id="getTeachingplanNewList"-->
-            <!--parameterType="com.goisan.educational.teachingplan.bean.TeachingplanNew"-->
-            <!--resultType="com.goisan.educational.teachingplan.bean.TeachingplanNew">-->
-        <!--select-->
-        <!--id,-->
-        <!--FUNC_GET_DICVALUE(term, 'XQ') term,-->
-        <!--FUNC_GET_USERNAME(user_id) user_id,-->
-        <!--FUNC_GET_USERNAME(user_id) person,-->
-        <!--FUNC_GET_TABLEVALUE(dept_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') dept_id,-->
-        <!--FUNC_GET_TABLEVALUE(departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departments_id,-->
-        <!--FUNC_GET_TABLEVALUE(substr(major_id,1,instr(major_id,',',-1)-1), 'T_XG_MAJOR', ' MAJOR_CODE', 'MAJOR_NAME') || '&#45;&#45;' || FUNC_GET_DICVALUE(substr(major_id,instr(major_id,',',-1)+1), 'ZXZYPYCC') majorId,-->
-        <!--FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') course_id,-->
-        <!--FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') class_id,-->
-        <!--period,-->
-        <!--status,-->
-        <!--opinion,-->
-        <!--(select FILE_URL from T_SYS_FILES where BUSINESS_ID = T_JW_TEACHING_PLAN.ID) url-->
-        <!--from T_JW_TEACHING_PLAN-->
-        <!--where 1=1 and -->
-        <!--<if test="userId != null and userId != ''">-->
-            <!--and USER_ID = #{userId}-->
-        <!--</if>-->
-        <!--<if test="person != null and person != ''">-->
-            <!--and FUNC_GET_USERNAME(user_id) like  '%'||#{person}||'%'-->
-        <!--</if>-->
-        <!--<if test="departmentsId != null and departmentsId != ''">-->
-            <!--and departments_id = #{departmentsId}-->
-        <!--</if>-->
-        <!--<if test="majorId != null and majorId  != ''">-->
-            <!--and major_id = #{majorId}-->
-        <!--</if>-->
-        <!--<if test="classId != null and classId != ''">-->
-            <!--and class_id = #{classId}-->
-        <!--</if>-->
-        <!--<if test=" status != null and  status != ''">-->
-            <!--and  status = #{status}-->
-        <!--</if>-->
-        <!--<if test="term != null and term != ''">-->
-            <!--and term = #{term}-->
-        <!--</if>-->
+    <!--parameterType="com.goisan.educational.teachingplan.bean.TeachingplanNew"-->
+    <!--resultType="com.goisan.educational.teachingplan.bean.TeachingplanNew">-->
+    <!--select-->
+    <!--id,-->
+    <!--FUNC_GET_DICVALUE(term, 'XQ') term,-->
+    <!--FUNC_GET_USERNAME(user_id) user_id,-->
+    <!--FUNC_GET_USERNAME(user_id) person,-->
+    <!--FUNC_GET_TABLEVALUE(dept_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') dept_id,-->
+    <!--FUNC_GET_TABLEVALUE(departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') departments_id,-->
+    <!--FUNC_GET_TABLEVALUE(substr(major_id,1,instr(major_id,',',-1)-1), 'T_XG_MAJOR', ' MAJOR_CODE', 'MAJOR_NAME') || '&#45;&#45;' || FUNC_GET_DICVALUE(substr(major_id,instr(major_id,',',-1)+1), 'ZXZYPYCC') majorId,-->
+    <!--FUNC_GET_TABLEVALUE(course_id, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') course_id,-->
+    <!--FUNC_GET_TABLEVALUE(class_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') class_id,-->
+    <!--period,-->
+    <!--status,-->
+    <!--opinion,-->
+    <!--(select FILE_URL from T_SYS_FILES where BUSINESS_ID = T_JW_TEACHING_PLAN.ID) url-->
+    <!--from T_JW_TEACHING_PLAN-->
+    <!--where 1=1 and -->
+    <!--<if test="userId != null and userId != ''">-->
+    <!--and USER_ID = #{userId}-->
+    <!--</if>-->
+    <!--<if test="person != null and person != ''">-->
+    <!--and FUNC_GET_USERNAME(user_id) like  '%'||#{person}||'%'-->
+    <!--</if>-->
+    <!--<if test="departmentsId != null and departmentsId != ''">-->
+    <!--and departments_id = #{departmentsId}-->
+    <!--</if>-->
+    <!--<if test="majorId != null and majorId  != ''">-->
+    <!--and major_id = #{majorId}-->
+    <!--</if>-->
+    <!--<if test="classId != null and classId != ''">-->
+    <!--and class_id = #{classId}-->
+    <!--</if>-->
+    <!--<if test=" status != null and  status != ''">-->
+    <!--and  status = #{status}-->
+    <!--</if>-->
+    <!--<if test="term != null and term != ''">-->
+    <!--and term = #{term}-->
+    <!--</if>-->
     <!--</select>-->
 
     <select id="getTeachingplanNewList"
@@ -152,5 +152,8 @@
         group by department_id, major_id, class_id, course_name, course_teacher, start_week, end_week,course_teacher_id
 
     </select>
-
+    <select id="getFilesByBusinessId" parameterType="String"
+            resultType="com.goisan.system.bean.Files">
+        SELECT * FROM T_SYS_FILES WHERE BUSINESS_ID = #{id}
+    </select>
 </mapper>

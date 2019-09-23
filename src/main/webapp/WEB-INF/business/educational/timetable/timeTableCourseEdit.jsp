@@ -56,9 +56,9 @@
                     </div>
                     <div class="col-md-9">
                         <%--<input id="courseName" type="text" placeholder="请输入课程名称" value="${data.courseName}"/>--%>
-                            <input id="courseName" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
-                                   class="validate[required,maxSize[50]] form-control" value="${data.courseName}"/>
-                            <%--<input id="addOrEdit_courseId" type="hidden" value="${toEdit.courseId}">--%>
+                        <input id="courseName" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
+                               class="validate[required,maxSize[50]] form-control" value="${data.courseName}"/>
+                        <%--<input id="addOrEdit_courseId" type="hidden" value="${toEdit.courseId}">--%>
                     </div>
                 </div>
                 <div class="form-row">
@@ -67,8 +67,8 @@
                     </div>
                     <div class="col-md-9">
                         <%--<input id="courseTeacher" type="text" placeholder="请输入授课老师" value="${data.courseTeacher}"/>--%>
-                            <input id="courseTeacher" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
-                                   class="validate[required,maxSize[50]] form-control" value="${data.courseTeacher}"/>
+                        <input id="courseTeacher" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
+                               class="validate[required,maxSize[50]] form-control" value="${data.courseTeacher}"/>
                     </div>
                 </div>
                 <div class="form-row">
@@ -239,7 +239,7 @@
             return;
         }
 
-        if ((endWeek != "" || endWeek != undefined) && (startWeek != "" || startWeek != undefined)&&(startWeek>endWeek)){
+        if ((endWeek != "" || endWeek != undefined) && (startWeek != "" || startWeek != undefined)&&(parseInt(startWeek)>parseInt(endWeek))){
             swal({
                 title: "开始学周需小于结束学周 !",
                 type: "info"
