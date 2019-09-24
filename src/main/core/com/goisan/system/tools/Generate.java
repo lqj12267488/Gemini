@@ -9,34 +9,50 @@ import java.sql.*;
 import java.util.*;
 
 public class Generate {
+    private static String path = System.getProperty("user.dir");
     private static String driverClassName = "oracle.jdbc.driver.OracleDriver";
     private static String url = "jdbc:oracle:thin:@192.168.2.251:1521:orcl";
     private static String username = "goisan_xjxd";
     private static String password = "goisan_xjxd";
 
-    private static String path = System.getProperty("user.dir");
-
-//    public static void main(String[] args) {
-//        Map<String, Object> data = new HashMap<String, Object>();
-//        data.put("tableName", "T_XG_STU_ARCHIVESADDR");
-//        data.put("beanName", "TeachingplanNew");
-//        data.put("packageName", "com.goisan.educational.teachingplan");
-//        data.put("jspPath", "/teachingplanNew");
-//        data.put("primary", "id");
-//        data.put("moduleName", "business");
-//        data.put("url", "/teachingplanNew");
-//        createFile(data);
-//    }
+//   配置
+    /**
+     * 1.数据库表, 字段备注必填
+     * 2. 如果使用字典,备注使用{CodeValue}标识,如${ZJ}
+     * 3. 如果找不到oracle驱动, 项目设置（Libraries- '+' - 添加ojdbc包）
+     *
+     */
+    /**实体名*/
+    private static String BASE_NAME = "Atest";
+    /**数据库表名*/
+    private static String TABLE_NAME = "Atest";
+    /**1. 模块名,不填默认business （core,business）*/
+    private static String MODULE_NAME = "";
+    /** packageName 包所在位置;实际包生成所在位置=MODULE_NAME+PACKAGE_NAME*/
+    private static String PACKAGE_NAME = "com.goisan.Atest";
+    /** jsp 文件所在路径; jsp文件生成所在位置 = MODULE_NAME + JSP_PATH*/
+    private static String JSP_PATH = "/atest";
+    /** 表主键*/
+    private static String PRIMARY = "id";
 
     public static void main(String[] args) {
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("tableName", "T_XG_STU_ARCHIVESADDR");
-        data.put("beanName", "TeachingplanNew");
-        data.put("packageName", "com.goisan.studentwork.graduatearchivesaddress");
-        data.put("jspPath", "/studentwork/graduatearchivesaddress");
-        data.put("primary", "id");
-        data.put("moduleName", "business");
-        data.put("url", "/StuArcad");
+        data.put("tableName",TABLE_NAME);
+        data.put("beanName", BASE_NAME);
+        if ("".equals(MODULE_NAME)){
+            data.put("moduleName", "business");
+        }else {
+            data.put("moduleName", MODULE_NAME);
+        }
+        data.put("packageName", PACKAGE_NAME);
+
+        if ("".equals(JSP_PATH)){
+            data.put("jspPath", "/business/" + BASE_NAME);
+        }else {
+            data.put("jspPath",JSP_PATH);
+        }
+        data.put("primary", PRIMARY);
+        data.put("url", "/"+BASE_NAME);
         createFile(data);
     }
 
@@ -55,17 +71,30 @@ public class Generate {
         generateCode.createMapper(data, generateCode);
     }
 
+//    生成bean
     private void createBean(Map<String, Object> data) {
         String beanFtl = "/src/main/webapp/WEB-INF/template/bean.ftl";
         Map<String, Object> map = new HashMap<String, Object>();
         map.putAll(data);
-        List<String> cols = new ArrayList<String>();
-        for (String col : (List<String>) data.get("cols")) {
-            if (!check(col) && !"id".equals(col)) {
-                cols.add(colFormat(col));
+        List<Map<String,String>> cols  = new ArrayList<>();
+        for (Map<String,String> colMap: (List<Map<String,String>>) data.get("cols")){
+            if (!check(colMap.get("column_name")) || "id".equals(colMap.get("column_name"))) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                String comments = colMap.get("comments");
+                hashMap.put("column_name",colFormat(colMap.get("column_name")));
+                hashMap.put("comments",colFormat(comments));
+                if (null!= comments){
+                    if (comments.indexOf('{')!= -1 && comments.indexOf('}')!=-1 ) {
+                        String dic = comments.substring(comments.indexOf('{')+1, comments.indexOf('}'));
+                        if (dic != null && !"".equals(dic)) {
+                            colMap.put("dic", dic.toUpperCase());
+                            hashMap.put("dic", dic.toUpperCase());
+                        }
+                    }
+                }
+                cols.add(hashMap);
             }
         }
-        cols.remove("demo");
         map.put("cols", cols);
         String filePath = path + "/src/main/" + map.get("moduleName") + "/" + ((String)
                 map.get("packageName")).replace(".", "/") + "/bean/";
@@ -123,24 +152,26 @@ public class Generate {
         String mapperFtl = "/src/main/webapp/WEB-INF/template/mapper.ftl";
         Map<String, Object> map = new HashMap<String, Object>();
         map.putAll(data);
-        List<String> cols = (List<String>) data.get("cols");
+        List<String> cols = listMapToList(data.get("cols"));
+        List<Map<String,String>> colAll = (List<Map<String, String>>) data.get("cols");
         map.put("update", generateCode.getUpdateSql(cols, (String) map.get("tableName"), (String)
                 map.get("primary")));
         map.put("insert", generateCode.getInsertSql(cols, (String)
-                map.get("tableName")));
-        map.put("select", generateCode.getSelectSql(cols, (String)
-                map.get("tableName")));
+                map.get("tableName"), (String) map.get("primary")));
+        map.put("select", generateCode.getSelectSql(colAll, (String)
+                map.get("tableName"),(String) map.get("primary")));
         String filePath = path + "/src/main/resources/mapper/" + map.get("moduleName") + "/";
         createFile(mapperFtl, map, filePath + map.get("beanName") + "Dao.xml");
     }
 
     private void createList(Map<String, Object> data, Generate generateCode) {
         String listFtl = "/src/main/webapp/WEB-INF/template/list.ftl";
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.putAll(data);
-        List<String> cols = (List<String>) data.get("cols");
-        map.put("tableJson", generateCode.getTableJson(cols));
-        map.put("primary", colFormat((String) data.get("primary")));
+        String primary = colFormat((String) data.get("primary"));
+        List<Map<String,String>> colMap = (List<Map<String, String>>) data.get("cols");
+        map.put("primary", primary);
+        map.put("queryMapList",getQueryCol(colMap,primary));
         String filePath = path + "/src/main/webapp/WEB-INF/" + map.get("moduleName") + "/" + map.get("jspPath");
         File file = new File(filePath);
         file.mkdirs();
@@ -151,11 +182,12 @@ public class Generate {
         String editFtl = "/src/main/webapp/WEB-INF/template/edit.ftl";
         Map<String, Object> map = new HashMap<String, Object>();
         map.putAll(data);
-        List<String> cols = (List<String>) data.get("cols");
-        map.put("save", generateCode.save(cols));
+        List<String> cols = listMapToList(data.get("cols"));
+//        map.put("save", generateCode.save(cols));
         map.put("ajax", generateCode.ajaxJson(cols));
-        map.put("form", generateCode.form(cols, (String) data.get("primary")));
+//        map.put("form", generateCode.form(cols, (String) data.get("primary")));
         map.put("primary", colFormat((String) data.get("primary")));
+        map.put("queryMapList",getQueryCol((List<Map<String, String>>) data.get("cols"),colFormat((String) data.get("primary"))));
         String filePath = path + "/src/main/webapp/WEB-INF/" + map.get("moduleName") + "/" +
                 map.get("jspPath");
         File file = new File(filePath);
@@ -165,7 +197,6 @@ public class Generate {
     }
 
     public static boolean createFile(String ftl, Map<String, Object> data, String targetFile) {
-
         try {
             // 创建Template对象
             Configuration cfg = new Configuration(Configuration.VERSION_2_3_0);
@@ -193,14 +224,11 @@ public class Generate {
 
     /**
      * 连接数据库通过表名获取当前表字段
-     *
      * @param tableName 表名
      * @return 当前表字段名称List
      */
 
-    public List<String> getCols(String tableName) {
-
-
+    public List<Map<String,String>> getCols(String tableName) {
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException e) {
@@ -209,15 +237,18 @@ public class Generate {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
-        List<String> cols = new ArrayList<String>();
+        List<Map<String,String>> cols = new ArrayList<>();
         try {
             conn = DriverManager.getConnection(url, username, password);
             stmt = conn.createStatement();
-            String sql = "select column_name from user_tab_columns where table_name = '" +
-                    tableName.toUpperCase() + "' order by column_id";
+            String sql = "select column_name,comments from user_col_comments where table_name ='" +
+                    tableName.toUpperCase()+"'";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                cols.add(rs.getString("column_name").toLowerCase());
+                HashMap<String, String> column = new HashMap<>();
+                column.put("column_name",rs.getString("column_name").toLowerCase());
+                column.put("comments",rs.getString("comments").toLowerCase());
+                cols.add(column);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -229,7 +260,6 @@ public class Generate {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
         }
         if (cols.size() == 0) {
             throw new RuntimeException("表名输入有误！");
@@ -237,19 +267,38 @@ public class Generate {
         return cols;
     }
 
-    public String getSelectSql(List<String> cols, String tableName) {
-        String selectSql = "select ";
-        for (String col : cols) {
-            if (check(col) && !"id".equals(col)) {
-                continue;
-            } else {
-                selectSql += col + ",";
+
+    public String getSelectSql( List<Map<String,String>> cols, String tableName ,String primary) {
+        StringBuilder selectSql = new StringBuilder();
+        selectSql.append( "select ");
+        for (Map<String,String> colMap : cols) {
+            String col = colMap.get("column_name");
+            String dic = colMap.get("dic");
+                selectSql.append(col);
+                selectSql.append(",");
+                if (null!=dic && !"".equals(dic)){
+                    selectSql.append("func_get_dicvalue(");
+                    selectSql.append(col);
+                    selectSql.append(",'"+dic+"') "+colFormat(col)+"Show,");
+                }
+        }
+        selectSql.deleteCharAt(selectSql.length()-1);
+        selectSql.append(" from "+tableName+" where 1=1 \n");
+        for (Map<String,String> colMap : cols) {
+            String col = colMap.get("column_name");
+            if (!(check(col) && !"id".equals(col)) && !primary.equals(col) ) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                if (colMap.get("dic")!=null) {
+                    selectSql.append("<if test='" + colFormat(col) + " != \"\" and " + colFormat(col) + " != null'>");
+                    selectSql.append(" AND " + col + " = #{" + colFormat(col) + "} </if> \n");
+                }else {
+                    selectSql.append("<if test='" + colFormat(col) + " != \"\" and " + colFormat(col) + " != null'>");
+                    selectSql.append(" AND " + col + " like '%'||#{" + colFormat(col) + "}||'%' </if> \n");
+                }
             }
         }
-        selectSql = selectSql.substring(0, selectSql.length() - 1) + " from " + tableName;
-        return selectSql;
+        return selectSql.toString();
     }
-
     /**
      * 生成Insert语句
      *
@@ -257,7 +306,7 @@ public class Generate {
      * @param tableName 表名
      * @return Insert语句
      */
-    public String getInsertSql(List<String> cols, String tableName) {
+    public String getInsertSql(List<String> cols, String tableName,String primary) {
         String sql = "insert into " + tableName.toLowerCase() + " (";
         for (String col : cols) {
             if ("changer,change_time,change_dept,valid_flag".indexOf(col) != -1 && !"id".equals
@@ -274,7 +323,16 @@ public class Generate {
                     (col)) {
                 continue;
             } else {
-                sql += "#{" + colFormat(col) + "},";
+                if (primary.equals(col)){
+//                    第一个为id
+                    sql += "func_get_uuid ,";
+                }
+                else if ("create_time".equals(col)){
+                    sql += "sysdate ,";
+                }
+                else {
+                    sql += "#{" + colFormat(col) + "},";
+                }
             }
         }
         sql = sql.substring(0, sql.length() - 1) + ")";
@@ -283,7 +341,6 @@ public class Generate {
 
     /**
      * 生成Update语句
-     *
      * @param cols      字段List
      * @param tableName 表名
      * @return Update语句
@@ -294,29 +351,62 @@ public class Generate {
         for (String col : cols) {
             if (!("creator,create_time,create_dept,valid_flag".indexOf(col) != -1 || col
                     .toUpperCase().equals(primary.toUpperCase()))) {
-                sql += col + "=#{" + colFormat(col) + "},";
+                if ("change_time".equals(col)){
+                    sql += col + "= sysdate,";
+                }else {
+                    sql += col + "=#{" + colFormat(col) + "},";
+                }
             }
         }
         sql = sql.substring(0, sql.length() - 1);
         return sql;
     }
 
-    /**
-     * 生成datatable json串
-     *
-     * @param cols 字段List
-     * @return datatable json串
-     */
+//    /**
+//     * 生成datatable json串
+//     *
+//     * @param cols 字段List
+//     * @return datatable json串
+//     */
+//
+//    public String getTableJson( List<Map<String,String>> colMap,String primary) {
+//        StringBuilder tableJson = new StringBuilder();
+//        for (Map<String,String> map : colMap) {
+//            String col = map.get("column_name");
+//            String comments = map.get("comments");
+//            if (!(check(col) && !"id".equals(col))) {
+//                tableJson.append("{\"data\":\"" );
+//                tableJson.append(colFormat(col) );
+//                tableJson.append("\",\"title\":\"");
+//                tableJson.append(comments+"\"");
+//                if (primary.equals(col)) {
+//                    tableJson.append(", \"visible\": false");
+//                }
+//                tableJson.append("},\n");
+//            }
+//        }
+//        return tableJson.toString();
+//    }
 
-    public String getTableJson(List<String> cols) {
-        String tableJson = "";
-        for (String col : cols) {
-            if (!(check(col) && !"id".equals(col))) {
-                tableJson += "{\"data\":\"" + colFormat(col) + "\",\"title\":\"\"},\n";
+     /** 生成需要查询或者需要编辑的字段的字段*/
+    public List<Map<String,String>> getQueryCol(List<Map<String,String>> colMap,String primary){
+        ArrayList<Map<String,String>> queryMapList = new ArrayList<>();
+        for (Map<String,String> map : colMap) {
+            String col = map.get("column_name");
+            if (!(check(col) && !"id".equals(col)) && !primary.equals(col) ) {
+                HashMap<String, String> hashMap = new HashMap<>();
+                if (map.get("dic")!=null){
+                    hashMap.put("dic",map.get("dic"));
+                }
+                hashMap.put("queryCol",colFormat(col));
+                hashMap.put("comments",map.get("comments"));
+                hashMap.put("edit",("${data."+colFormat(col)+"}"));
+                queryMapList.add(hashMap);
             }
         }
-        return tableJson;
-    }
+        return queryMapList;
+    };
+
 
     /**
      * 生成ajax json串
@@ -340,51 +430,50 @@ public class Generate {
      * @param cols 字段List
      * @return save方法获取表单值和校验串
      */
-    public String save(List<String> cols) {
-        String save = "";
-        for (String col : cols) {
-            if (!(check(col) && !"id".equals(col))) {
-                save += "var " + colFormat(col) + " = $(\"#" + colFormat(col) + "\").val();\n";
-            }
-        }
-        for (String col : cols) {
-            if (!(check(col) && !"id".equals(col))) {
-                save += "if (" + colFormat(col) + " == \"\" || " + colFormat(col) + " == " +
-                        "undefined || " + colFormat(col) + " == null) {\n" +
-                        "\tswal({\n" +
-                        "                \ttitle: \"请选择网站类型！\",\n" +
-                        "                \ttype: \"info\"\n" +
-                        "            \t});\n\treturn;\n}\n";
-            }
-        }
-        return save;
+//    public String save(List<String> cols) {
+//        String save = "";
+//        for (String col : cols) {
+//            if (!(check(col) && !"id".equals(col))) {
+//                save += "var " + colFormat(col) + " = $(\"#" + colFormat(col) + "\").val();\n";
+//            }
+//        }
+//        for (String col : cols) {
+//            if (!(check(col) && !"id".equals(col))) {
+//                save += "if (" + colFormat(col) + " == \"\" || " + colFormat(col) + " == " +
+//                        "undefined || " + colFormat(col) + " == null) {\n" +
+//                        "\tswal({\n" +
+//                        "                \ttitle: \"请选择网站类型！\",\n" +
+//                        "                \ttype: \"info\"\n" +
+//                        "            \t});\n\treturn;\n}\n";
+//            }
+//        }
+//        return save;
+//    }
 
-    }
-
-    /**
-     * 生成form,都是input需要做部分修改
-     *
-     * @param cols 字段List
-     * @return from表单
-     */
-    public String form(List<String> cols, String primary) {
-
-        String form = "";
-        for (String col : cols) {
-            if (!(check(col) || col.toUpperCase().equals(primary.toUpperCase()))) {
-                form += "<div class=\"form-row\">\n";
-                form += "<div class=\"col-md-3 tar\">\n";
-                form += "name\n";
-                form += "</div>\n";
-                form += "<div class=\"col-md-9\">\n";
-                form += "<input id=\"" + colFormat(col) + "\" value=\"${data." + colFormat(col) +
-                        "}\"/>\n";
-                form += "</div>\n";
-                form += "</div>";
-            }
-        }
-        return form;
-    }
+//    /**
+//     * 生成form,都是input需要做部分修改
+//     *
+//     * @param cols 字段List
+//     * @return from表单
+//     */
+//    public String form(List<String> cols, String primary) {
+//
+//        String form = "";
+//        for (String col : cols) {
+//            if (!(check(col) || col.toUpperCase().equals(primary.toUpperCase()))) {
+//                form += "<div class=\"form-row\">\n";
+//                form += "<div class=\"col-md-3 tar\">\n";
+//                form += "name\n";
+//                form += "</div>\n";
+//                form += "<div class=\"col-md-9\">\n";
+//                form += "<input id=\"" + colFormat(col) + "\" value=\"${data." + colFormat(col) +
+//                        "}\"/>\n";
+//                form += "</div>\n";
+//                form += "</div>";
+//            }
+//        }
+//        return form;
+//    }
 
     /**
      * 格式化字段
@@ -406,6 +495,15 @@ public class Generate {
             }
         }
         return col.substring(0, 1).toLowerCase() + col.substring(1, col.length());
+    }
+
+    public List<String> listMapToList(Object list) {
+        List<Map<String,String>> clist = (List<Map<String, String>>) list;
+        List<String> cols = new ArrayList<>();
+            for (Map<String,String> colMap:clist){
+            cols.add(colMap.get("column_name"));
+        }
+        return  cols;
     }
 
 }

@@ -19,7 +19,20 @@
         </div>
         <div class="modal-body clearfix">
             <div class="controls">
-            ${form}
+            <#list queryMapList as col>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>${col.comments}
+                    </div>
+                    <div class="col-md-9">
+                        <#if col.dic??>
+                        <select id="${col.queryCol}Edit"/>
+                        <#else>
+                        <input id="${col.queryCol}Edit" value="${col.edit}"/>
+                        </#if>
+                    </div>
+                </div>
+            </#list>
             </div>
         </div>
         <div class="modal-footer">
@@ -33,14 +46,37 @@
 
 <script>
     $(document).ready(function () {
-
+ <#list queryMapList as col>
+     <#if col.dic??>
+            $.get("<%=request.getContextPath()%>/common/getSysDict?name=${col.dic}", function (data) {
+                addOption(data, '${col.queryCol}Edit','${col.edit}');
+            });
+     </#if>
+ </#list>
     });
 
-
     function save() {
-    ${save}
+        <#list queryMapList as col>
+        if ($("#${col.queryCol}Edit").val() == "" || $("#${col.queryCol}Edit").val() == undefined || $("#${col.queryCol}Edit").val() == null) {
+            swal({
+            <#if col.dic??>
+                title: "请选择${col.comments}！",
+            <#else >
+                title: "请填写${col.comments}！",
+            </#if>
+                type: "warning"
+            });
+            return;
+        }
+        </#list>
+         <#--${save}-->
         $.post("<%=request.getContextPath()%>${url}/save${beanName?cap_first}", {
-        ${ajax}}, function (msg) {
+            ${primary}: "${r'${data.'}${primary}}",
+        <#list queryMapList as col>
+            ${col.queryCol}: $("#${col.queryCol}Edit").val(),
+        </#list>
+        <#--${ajax}-->
+        }, function (msg) {
             swal({
                 title: msg.msg,
                 type: "success"
