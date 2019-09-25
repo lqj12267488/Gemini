@@ -104,7 +104,7 @@
         WHERE DEPT_NAME=#{deptName} AND DEPT_ID!=#{deptId} AND DEPT_ID!=#{parentDeptId}
     </select>
     <select id="getEmpByDeptId" parameterType="String" resultType="String">
-        SELECT PERSON_ID FROM T_RS_EMPLOYEE_DEPT WHERE DEPT_ID = #{id}
+        SELECT PERSON_ID FROM T_RS_EMPLOYEE_DEPT WHERE DEPT_ID = #{id} and VALID_FLAG !='0'
     </select>
     <update id="updateDeptLeaderFlag" parameterType="com.goisan.system.bean.Dept">
         UPDATE t_sys_dept SET

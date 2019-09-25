@@ -1183,10 +1183,6 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         where STUDENT_ID = #{studentId}
         union
         select STUDENT_ID
-        from T_XG_STUDENT
-        where STUDENT_ID = #{studentId}
-        union
-        select STUDENT_ID
         from T_XG_STUDENTPUNISH
         where STUDENT_ID = #{studentId}
         union
@@ -1224,10 +1220,6 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         union
         select STUDENT_ID
         from T_XG_STUDENT_CHANGE_LOG
-        where STUDENT_ID = #{studentId}
-        union
-        select STUDENT_ID
-        from T_XG_STUDENT_CLASS
         where STUDENT_ID = #{studentId}
         union
         select STUDENT_ID
