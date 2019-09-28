@@ -141,8 +141,9 @@ public class EmpServiceImpl implements EmpService {
                     roleEmpDeptRelation.setId(CommonUtil.getUUID());
                     roleEmpDeptRelation.setPersonid(person);
                     roleEmpDeptRelation.setRoleid(id);
-                    List list = empDao.getDeptByPersonId(person);
-                    roleEmpDeptRelation.setDeptid(list.get(0).toString());
+//                    List list = empDao.getDeptByPersonId(person);
+//                    roleEmpDeptRelation.setDeptid(list.get(0).toString());
+                    roleEmpDeptRelation.setDeptid(deptId);
                     roleEmpDeptRelation.setCreateDept(CommonUtil.getDefaultDept());
                     roleEmpDeptRelation.setCreator(CommonUtil.getPersonId());
                     roleDao.insertRoleEmpDeptRelation(roleEmpDeptRelation);
