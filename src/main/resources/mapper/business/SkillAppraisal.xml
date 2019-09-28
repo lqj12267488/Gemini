@@ -78,7 +78,7 @@
             func_get_dicvalue(t.school_system,'XZ') schoolSystemShow,
             FUNC_GET_TABLEVALUE(pre_app_profession, 'T_JW_SKILL', 'ID', 'PROJECT_NAME')  preAppProfession,
             profession_level   professionLevel,
-            student_name   studentName,
+            FUNC_GET_TABLEVALUE(t.student_name, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
             create_time   createTime,
             func_get_dicvalue(t.score,'CJQK') scoreShow,
             to_char(pre_app_date ,'yyyy-mm-dd') as preAppDate,
