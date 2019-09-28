@@ -43,7 +43,7 @@
           UNION ALL
           (SELECT t.*,nvl2(t3.member_id,'true','false') as checked1 FROM
             (SELECT t1.person_id id ,t1.name name ,t2.dept_id pid
-                FROM T_RS_EMPLOYEE t1,T_RS_EMPLOYEE_DEPT t2 WHERE t1.person_id = t2.person_id ORDER BY t2.person_order
+                FROM T_RS_EMPLOYEE t1,T_RS_EMPLOYEE_DEPT t2 WHERE t1.person_id = t2.person_id and t1.VALID_FLAG='1' ORDER BY t2.person_order
             ) t
             Left JOIN T_RS_GROUP_MEMBERS t3 on  t.id = t3.person_id and t.pid = t3.dept_id
                   AND  t3.group_id = #{groupId}
