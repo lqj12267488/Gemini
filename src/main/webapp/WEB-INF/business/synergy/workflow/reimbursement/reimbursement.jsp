@@ -142,7 +142,7 @@
         $("#dialog").modal("show");
     }
 
-    function searchclear() {
+        function searchclear() {
         $("#rdate").val("");
         search();
     }

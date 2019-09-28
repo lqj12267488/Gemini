@@ -1214,13 +1214,14 @@ public class EmpController {
         HSSFWorkbook workbook = null;
         try {
             workbook = new HSSFWorkbook(file.getInputStream());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             ++num;
         }
+
         if (num > 0) {
             return new Message(1, "导入失败！请重新导入", null);
-        } else {
+        }else {
             HSSFSheet sheet = workbook.getSheetAt(0);
             int end = getRealLastRowNum(workbook) + 2;
             for (int i = 3; i < end; i++) {

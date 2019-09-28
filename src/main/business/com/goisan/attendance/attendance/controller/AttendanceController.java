@@ -233,12 +233,15 @@ public class AttendanceController {
     public Message importStudent(@RequestParam(value = "file", required = false) CommonsMultipartFile file) {
         LoginUser loginUser = CommonUtil.getLoginUser();
         String coding = CommonUtil.getUUID();
+        int num = 0;
+        String msg = "第";
         try {
             HSSFWorkbook workbook = new HSSFWorkbook(file.getInputStream());
             HSSFSheet sheet = workbook.getSheetAt(0);
             int end = sheet.getLastRowNum();
             for (int i = 2; i <= end; i++) {
                 HSSFRow row = sheet.getRow(i);
+                int flag = 1;
                 AttendanceInfo attendanceInfo = new AttendanceInfo();
                 attendanceInfo.setYear(CommonUtil.changeToInteger(row.getCell(0)));
                 attendanceInfo.setMonth(CommonUtil.changeToInteger(row.getCell(1)));
@@ -269,7 +272,11 @@ public class AttendanceController {
             attendanceService.insertImplog(attendanceImplog);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Message(1, "导入成功！", null);
+            ++num;
+
+            if (num > 0){
+                return new Message(0, "导入失败！请重新导入", null);
+            }
         }
 
         return new Message(1, "导入成功！", null);

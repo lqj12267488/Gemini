@@ -55,7 +55,10 @@
             contentType:false,
             success:function(data){
                 hideSaveLoading();
-                swal({title: data.msg, type: "success"});
+                swal({
+                    title: data.msg,
+                    type: "info"
+                });
                 $("#dialog").modal("hide");
                 $('#infoGrid').DataTable().ajax.reload();
             }

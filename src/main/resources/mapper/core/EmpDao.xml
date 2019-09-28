@@ -469,6 +469,7 @@
         <if test="academicDegree != null and academicDegree != '' ">
             ACADEMIC_DEGREE=#{academicDegree},
         </if>
+        VALID_FLAG = '1',
         change_time=sysdate,
         changer=#{changer}
         WHERE person_id = #{personId}
