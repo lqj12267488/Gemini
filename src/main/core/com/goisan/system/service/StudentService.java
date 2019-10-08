@@ -82,4 +82,6 @@ public interface StudentService {
     List<Map<String, Object>> checkStudentById(String studentId);
 
     String getStudentNumByClassId(String classId);
+
+    void updateUser(@Param("studentId") String studentId,@Param("classId") String classId);
 }

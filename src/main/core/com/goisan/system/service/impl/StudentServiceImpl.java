@@ -7,6 +7,7 @@ import com.goisan.system.dao.StudentDao;
 import com.goisan.system.service.ClassService;
 import com.goisan.system.service.CommonService;
 import com.goisan.system.service.StudentService;
+import org.apache.ibatis.annotations.Param;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -108,6 +109,13 @@ public class StudentServiceImpl implements StudentService {
         studentDao.delClassStudentRelation(studentId);
         String[] idlist = relationids.split(",");
         studentDao.insertClassStudentRelation(studentId, idlist);
+        String classId = "";
+        if("".equals(idlist[0]) || null == idlist[0]){
+
+        }else{
+            classId = idlist[0];
+        }
+        studentDao.updateUser(studentId,classId);
     }
 
     public List<Student> getStudentListByDept(String deptId, String deptIdLike, String name, String idcard, String level) {
@@ -778,5 +786,10 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public String getStudentNumByClassId(String classId) {
         return studentDao.getStudentNumByClassId(classId);
+    }
+
+    @Override
+    public void updateUser(@Param("studentId") String studentId, @Param("classId") String classId){
+        studentDao.updateUser(studentId,classId);
     }
 }

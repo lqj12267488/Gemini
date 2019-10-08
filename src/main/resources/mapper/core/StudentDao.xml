@@ -1252,4 +1252,9 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         where t.idcard=#{idcard}
          and t.student_id = c.student_id
     </select>
+    <update id="updateUser" >
+        UPDATE T_SYS_USER SET
+        default_dept=#{classId}
+        WHERE user_id = #{studentId}
+    </update>
 </mapper>
