@@ -239,6 +239,7 @@ public class OnlineRegisterController {
         sheet.setColumnWidth(14,15* 256);
         sheet.setColumnWidth(15,15* 256);
         sheet.setColumnWidth(16,15* 256);
+        sheet.setColumnWidth(17,15* 256);
         sheet.setDefaultRowHeightInPoints(28);
 //        sheet.setDefaultColumnStyle(0,style);
 //        sheet.setDefaultColumnStyle(1,style);
@@ -280,7 +281,7 @@ public class OnlineRegisterController {
             style12 = this.createBorderStyle(wb, font12);
         }
         //        设置合并单元格
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 16));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 17));
         this.setColumnDefaultStyleAndWidth(sheet,style12);
 
         HSSFRow row0 = sheet.createRow(0);
@@ -306,6 +307,7 @@ public class OnlineRegisterController {
         this.createCellWithStyleAndValue(row1,14,"考生类别",style11);
         this.createCellWithStyleAndValue(row1,15,"毕业学校",style11);
         this.createCellWithStyleAndValue(row1,16,"备注",style11);
+        this.createCellWithStyleAndValue(row1,17,"审核状态",style11);
 
 
         setHSSFPrompt(sheet, "", "", 1, 65535, 0, 0);
@@ -325,6 +327,7 @@ public class OnlineRegisterController {
         setHSSFPrompt(sheet, "", "", 1, 65535, 14, 14);
         setHSSFPrompt(sheet, "", "", 1, 65535, 15, 15);
         setHSSFPrompt(sheet, "", "", 1, 65535, 16, 16);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 17, 17);
 
         for (int i = 0; i < list.size(); i++) {
             HSSFRow rowi = sheet.createRow(i+2);
@@ -345,6 +348,7 @@ public class OnlineRegisterController {
             this.createCellWithStyleAndValue(rowi,14,list.get(i).getExamTypeShow(),style11);
             this.createCellWithStyleAndValue(rowi,15,list.get(i).getGraduatedSchool(),style11);
             this.createCellWithStyleAndValue(rowi,16,list.get(i).getRemark(),style11);
+            this.createCellWithStyleAndValue(rowi,17,list.get(i).getAuditFlag(),style11);
         }
     }
 

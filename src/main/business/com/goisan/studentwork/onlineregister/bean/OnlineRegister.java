@@ -43,6 +43,8 @@ public class OnlineRegister extends BaseBean {
     private String examTypeShow;
     private String registerTypeShow;
 
+    private String postalAddress;
+
     public String getId() {
         return id;
     }
@@ -329,5 +331,13 @@ public class OnlineRegister extends BaseBean {
 
     public void setRegisterTypeShow(String registerTypeShow) {
         this.registerTypeShow = registerTypeShow;
+    }
+
+    public String getPostalAddress() {
+        return postalAddress;
+    }
+
+    public void setPostalAddress(String postalAddress) {
+        this.postalAddress = postalAddress;
     }
 }

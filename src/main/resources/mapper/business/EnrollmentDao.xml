@@ -589,7 +589,8 @@
         departments_id = #{departmentsId} and
         major_code = #{majorCode} and
         training_level = #{trainingLevel} and
-        major_direction = #{majorDirection}
+        major_direction = #{majorDirection} and
+        year= #{year}
     </update>
     <select id="findOverYearsList" parameterType="com.goisan.studentwork.enrollment.bean.Enrollment"
             resultType="com.goisan.studentwork.enrollment.bean.Enrollment">

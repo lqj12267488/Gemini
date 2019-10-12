@@ -60,8 +60,8 @@
         order by r.create_time
     </select>
     <insert id="saveOnlineRegister" parameterType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
-        insert into t_xg_online_register (id,name,sex,nation,language,idcard,birthday,departments_id,major_code,province,city,county,register_type,register_origin,examination_card_number,exam_score,exam_type,graduated_school,graduation_date,idcard_img,examination_img,score_img,hukou_img,graduated_img,father_tel,mother_tel,remark, year, audit_flag, img, create_time)
-        values (#{id},#{name},#{sex},#{nation},#{language},#{idcard},to_date('${birthday}','yyyy-mm-dd'),#{departmentsId},#{majorCode},#{province},#{city},#{county},#{registerType},#{registerOrigin},#{examinationCardNumber},#{examScore},#{examType},#{graduatedSchool},to_date('${graduationDate}','yyyy-mm-dd'),#{idcardImg},#{examinationImg},#{scoreImg},#{hukouImg},#{graduatedImg},#{fatherTel},#{motherTel},#{remark},#{year},'0',#{img}, sysdate)
+        insert into t_xg_online_register (id,name,sex,nation,language,idcard,birthday,departments_id,major_code,province,city,county,register_type,register_origin,examination_card_number,exam_score,exam_type,graduated_school,graduation_date,idcard_img,examination_img,score_img,hukou_img,graduated_img,father_tel,mother_tel,remark, year, audit_flag, img, create_time, postal_address)
+        values (#{id},#{name},#{sex},#{nation},#{language},#{idcard},to_date('${birthday}','yyyy-mm-dd'),#{departmentsId},#{majorCode},#{province},#{city},#{county},#{registerType},#{registerOrigin},#{examinationCardNumber},#{examScore},#{examType},#{graduatedSchool},to_date('${graduationDate}','yyyy-mm-dd'),#{idcardImg},#{examinationImg},#{scoreImg},#{hukouImg},#{graduatedImg},#{fatherTel},#{motherTel},#{remark},#{year},'0',#{img}, sysdate, #{postalAddress})
     </insert>
     <select id="getOnlineRegisterById" parameterType="java.lang.String" resultType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
         select id,
@@ -96,13 +96,14 @@
                img,
                r.create_time createTime,
                audit_time auditTime,
-               audit_mind auditMind
+               audit_mind auditMind,
+               postal_address postalAddress
           from t_xg_online_register r
           left join T_XG_MAJOR m on r.major_code = m.major_code
           where id = #{id}
     </select>
     <update id="updateOnlineRegister" parameterType="com.goisan.studentwork.onlineregister.bean.OnlineRegister">
-        update t_xg_online_register set name=#{name},sex=#{sex},nation=#{nation},language=#{language},idcard=#{idcard},birthday=#{birthday},departments_id=#{departmentsId},major_code=#{majorCode},province=#{province},city=#{city},county=#{county},register_type=#{registerType},register_origin=#{registerOrigin},examination_card_number=#{examinationCardNumber},exam_score=#{examScore},exam_type=#{examType},graduated_school=#{graduatedSchool},graduation_date=#{graduationDate},idcard_img=#{idcardImg},examination_img=#{examinationImg},score_img=#{scoreImg},hukou_img=#{hukouImg},graduated_img=#{graduatedImg},father_tel=#{fatherTel},mother_tel=#{motherTel},remark=#{remark} where id = #{id}
+        update t_xg_online_register set name=#{name},sex=#{sex},nation=#{nation},language=#{language},idcard=#{idcard},birthday=#{birthday},departments_id=#{departmentsId},major_code=#{majorCode},province=#{province},city=#{city},county=#{county},register_type=#{registerType},register_origin=#{registerOrigin},examination_card_number=#{examinationCardNumber},exam_score=#{examScore},exam_type=#{examType},graduated_school=#{graduatedSchool},graduation_date=#{graduationDate},idcard_img=#{idcardImg},examination_img=#{examinationImg},score_img=#{scoreImg},hukou_img=#{hukouImg},graduated_img=#{graduatedImg},father_tel=#{fatherTel},mother_tel=#{motherTel},remark=#{remark},postal_address=#{postalAddress} where id = #{id}
     </update>
     <delete id="delOnlineRegister" parameterType="java.lang.String">
         delete from T_XG_ONLINE_REGISTER where id = #{id}
@@ -152,7 +153,8 @@
             remark,
             register_type registerType,
             FUNC_GET_DICVALUE(register_origin, 'BMQD') registerOriginShow,
-            year
+            year,
+            CASE audit_flag WHEN '1' THEN '通过' WHEN '2' THEN '未通过' ELSE '未审核' END auditFlag
         from t_xg_online_register t
         where register_type = #{registerType}
         <if test="registerOrigin != null and registerOrigin != '' ">

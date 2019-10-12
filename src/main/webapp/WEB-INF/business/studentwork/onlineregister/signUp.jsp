@@ -207,6 +207,10 @@
                     <label for="s_examScore"><span style="color: red">*</span><span id="score">中考成绩</span></label>
                 </div>
                 <div class="input-field col s6">
+                    <input name="postalAddress" type="text" id="s_postalAddress" class="validate"/>
+                    <label for="s_postalAddress"><span style="color: red">*</span>邮寄地址</label>
+                </div>
+                <div class="input-field col s6">
                     <input name="remark" type="text" id="s_remark" class="validate"/>
                     <label for="s_remark">备注</label>
                 </div>
@@ -216,7 +220,7 @@
                         <input type="file" name="file_idcardImg" id="s_idcardImg"/>
                     </div>
                     <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text"/>
+                        <input class="file-path validate" type="text" placeholder="请上传身份证复印件正反面照片"/>
                     </div>
                 </div>
                 <div class="file-field input-field col s12">
@@ -225,7 +229,7 @@
                         <input type="file" name="file_examinationImg" id="s_examinationImg"/>
                     </div>
                     <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text"/>
+                        <input class="file-path validate" type="text" placeholder="请上传中考/高考准考证照片"/>
                     </div>
                 </div>
                 <div class="file-field input-field col s12">
@@ -234,7 +238,7 @@
                         <input type="file" name="file_scoreImg" id="s_scoreImg"/>
                     </div>
                     <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text"/>
+                        <input class="file-path validate" type="text" placeholder="请上传中考/高考成绩，成绩为网上系统查询成绩截屏图片"/>
                     </div>
                 </div>
                 <div class="file-field input-field col s12">
@@ -243,7 +247,7 @@
                         <input type="file" name="file_hukouImg" id="s_hukouImg" multiple/>
                     </div>
                     <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text"/>
+                        <input class="file-path validate" type="text" placeholder="请上传户口本首页、户主页、学生本人页照片"/>
                     </div>
                 </div>
                 <div class="file-field input-field col s12">
@@ -252,7 +256,7 @@
                         <input type="file" name="file_graduatedImg" id="s_graduatedImg" multiple/>
                     </div>
                     <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text"/>
+                        <input class="file-path validate" type="text" placeholder="请上传初中/高中毕业证书照片"/>
                     </div>
                 </div>
                 <div class="input-field col s6">
@@ -398,7 +402,7 @@
                             return;
                         }
                         <c:if test="${type==2}">
-                        var checkDate = Date.parse((new Date().getFullYear() + "-01-01"));
+                        var checkDate = Date.parse(((parseInt(new Date().getFullYear())-17) + "-01-01"));
                         if (checkDate>Date.parse(birthday)) {
                             alert("毕业年龄不能超过22周岁！");
                             return;
@@ -453,6 +457,10 @@
                         </c:if>
                         if ($("#s_examScore").val() == "" || $("#s_examScore").val() == undefined) {
                             alert("请填写"+$("#score").html()+"！");
+                            return;
+                        }
+                        if ($("#s_postalAddress").val() == "" || $("#s_postalAddress").val() == undefined) {
+                            alert("请填写邮寄地址！");
                             return;
                         }
                         if ($("#s_idcardImg").val() == "" || $("#s_idcardImg").val() == undefined) {

@@ -211,6 +211,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         enrollment.setMajorCode(majorCode);
         enrollment.setDepartmentsId(deptId);
         enrollment.setMajorDirection(majorDirection);
+        enrollment.setYear(year);
         enrollmentDao.updateEnrollmentRealNumberByConditions(enrollment);
         //校验学生表是否存在学生数据
         List<Student> list = studentDao.checkIdCard(id);

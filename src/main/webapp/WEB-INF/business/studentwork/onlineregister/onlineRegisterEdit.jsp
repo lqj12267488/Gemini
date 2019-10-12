@@ -134,6 +134,14 @@
                         <input type="text" value="${data.examScore}" disabled/>
                     </div>
                     <div class="col-md-2 tar">
+                        邮寄地址
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" value="${data.postalAddress}" disabled/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
                         备注
                     </div>
                     <div class="col-md-4">
