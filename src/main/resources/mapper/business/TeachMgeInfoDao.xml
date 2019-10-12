@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.personnel.teachManageinfo.dao.TeachMgeInfoDao">
+    <select id="getTeachMgeInfoList"
+            parameterType="com.goisan.personnel.teachManageinfo.bean.TeachMgeInfo"
+            resultType="com.goisan.personnel.teachManageinfo.bean.TeachMgeInfo">
+        select  e.PERSON_ID,
+               NAME,
+               IDCARD,
+               d.DEPT_ID,
+               FUNC_GET_DEPTNAME(d.dept_id) deptShow,
+               to_char(IDCARD_ENDTIME, 'yyyy-mm-dd')idcardEndtime,
+               BANK_ID
+        from t_rs_employee e
+          left join T_RS_EMPLOYEE_DEPT d
+            on e.person_id = d.person_id left join T_RS_EMPLOYEE_MANAGE_INFO i
+            on d.person_id = i.person_id
+        where 1=1
+        <if test='deptId!="" and deptId !=null'>AND d.DEPT_ID = #{deptId} </if>
+        <if test='name!="" and name !=null'>AND e.NAME like '%'||#{name}||'%'</if>
+        <if test='idcard!="" and idcard !=null'>AND e.IDCARD like '%'||#{idcard}||'%'</if>
+    </select>
+    <insert id="saveTeachMgeInfo" parameterType="com.goisan.personnel.teachManageinfo.bean.TeachMgeInfo">
+        insert into t_rs_employee_manage_info
+         (id,person_id,bank_id,phone,idcard_copy,idcard_endtime,account,
+         diploma,degree_cert,dis_contract,computer,english,putonghua,
+         pth_level,teach_cert,other_cert,driver_cert,ele_cert,retire_cert,
+         retire_prove,ext_ss_cert,person_file,other_info,creator,create_dept,create_time)
+         values (func_get_uuid ,#{personId},#{bankId},#{phone},#{idcardCopy},
+         to_date('${idcardEndtime}','yyyy-mm-dd'),#{account},#{diploma},#{degreeCert},#{disContract},
+         #{computer},#{english},#{putonghua},#{pthLevel},#{teachCert},#{otherCert},
+         #{driverCert},#{eleCert},#{retireCert},#{retireProve},#{extSsCert},#{personFile},
+         #{otherInfo},#{creator},#{createDept},sysdate)
+    </insert>
+    <select id="getTeachMgeInfoById" resultType="com.goisan.personnel.teachManageinfo.bean.TeachMgeInfo">
+     select  e.PERSON_ID, NAME,IDCARD, d.DEPT_ID,FUNC_GET_DEPTNAME(d.dept_id) deptShow,
+         BANK_ID,PHONE,IDCARD_COPY,  to_char(IDCARD_ENDTIME, 'yyyy-mm-dd') idcardEndtime,ACCOUNT,DIPLOMA,DEGREE_CERT,DIS_CONTRACT,
+         COMPUTER,ENGLISH,PUTONGHUA,PTH_LEVEL,TEACH_CERT,OTHER_CERT,DRIVER_CERT,ELE_CERT,
+         RETIRE_CERT,RETIRE_PROVE,EXT_SS_CERT,PERSON_FILE,OTHER_INFO
+        from t_rs_employee e
+          left join T_RS_EMPLOYEE_DEPT d
+            on e.person_id = d.person_id left join T_RS_EMPLOYEE_MANAGE_INFO i
+            on d.person_id = i.person_id
+         WHERE e.PERSON_ID = #{personId}
+             and d.dept_id = #{deptId}
+    </select>
+    <update id="updateTeachMgeInfo" parameterType="com.goisan.personnel.teachManageinfo.bean.TeachMgeInfo">
+        update t_rs_employee_manage_info set
+        bank_id=#{bankId},phone=#{phone},idcard_copy=#{idcardCopy},
+        idcard_endtime=to_date('${idcardEndtime}','yyyy-mm-dd'),account=#{account},diploma=#{diploma},degree_cert=#{degreeCert},
+        dis_contract=#{disContract},computer=#{computer},english=#{english},
+        putonghua=#{putonghua},pth_level=#{pthLevel},teach_cert=#{teachCert},
+        other_cert=#{otherCert},driver_cert=#{driverCert},ele_cert=#{eleCert},
+        retire_cert=#{retireCert},retire_prove=#{retireProve},ext_ss_cert=#{extSsCert},
+        person_file=#{personFile},other_info=#{otherInfo},change_time= sysdate,
+        changer=#{changer},change_dept=#{changeDept} where person_id = #{personId}
+    </update>
+    <delete id="delTeachMgeInfo" parameterType="java.lang.String">
+        delete from T_RS_EMPLOYEE_MANAGE_INFO where id = #{id}
+    </delete>
+
+    <select id="getTeachMgeInfoByPersonId" resultType="com.goisan.personnel.teachManageinfo.bean.TeachMgeInfo">
+     select * from T_RS_EMPLOYEE_MANAGE_INFO e where PERSON_ID = #{personId}
+
+    </select>
+</mapper>

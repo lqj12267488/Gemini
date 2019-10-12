@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.personnel.teachercontract.dao.TeacherContractDao">
+    <select id="getTeacherContractList"
+            parameterType="com.goisan.personnel.teachercontract.bean.TeacherContract"
+            resultType="com.goisan.personnel.teachercontract.bean.TeacherContract">
+        select e.PERSON_ID,
+        NAME,
+        IDCARD,
+        d.DEPT_ID,
+        FUNC_GET_DEPTNAME(d.dept_id) deptShow,
+        to_char(SY_START_TIME, 'yyyy-mm-dd') syStartTime,
+        to_char(SY_END_TIME, 'yyyy-mm-dd') syEndTime,
+        to_char(FIRST_START_TIME, 'yyyy-mm-dd') firstStartTime,
+        to_char(FIRST_END_TIME, 'yyyy-mm-dd') firstEndTime,
+        to_char(SEC_START_TIME, 'yyyy-mm-dd') secStartTime,
+        to_char(SEC_END_TIME, 'yyyy-mm-dd') secEndTime,
+        to_char(THIRD_START_TIME, 'yyyy-mm-dd') thirdStartTime,
+        to_char(THIRD_END_TIME, 'yyyy-mm-dd') thirdEndTime,
+        to_char(JZ_START_TIME, 'yyyy-mm-dd') jzStartTime,
+        to_char(JZ_END_TIME, 'yyyy-mm-dd') jzEndTime
+        from t_rs_employee e
+        left join T_RS_EMPLOYEE_DEPT d
+        on e.person_id = d.person_id
+        left join  T_RS_EMPLOYEE_CONTRACT c
+        on c.person_id = d.person_id
+        where 1 = 1
+        <if test='deptId!="" and deptId !=null'>AND d.DEPT_ID = #{deptId} </if>
+     <if test='name!="" and name !=null'>AND e.NAME like '%'||#{name}||'%'</if>
+     <if test='idcard!="" and idcard !=null'>AND e.IDCARD like '%'||#{idcard}||'%'</if>
+    </select>
+    <insert id="saveTeacherContract" parameterType="com.goisan.personnel.teachercontract.bean.TeacherContract">
+        insert into t_rs_employee_contract
+        (id,person_id,SY_START_TIME,SY_END_TIME,POSITIVE_TIME,SY_CONTRACT_PERIOD,
+        FIRST_START_TIME,FIRST_END_TIME,FIRST_CONTRACT_PERIOD,
+        SEC_START_TIME,SEC_END_TIME,SEC_CONTRACT_PERIOD,
+        THIRD_START_TIME,THIRD_END_TIME,THIRD_CONTRACT_PERIOD,
+        JZ_START_TIME,JZ_END_TIME,JZ_CONTRACT_PERIOD,
+        person_nature,retire_cert,nums,school_age,confident_agreement,trpid_salary,positive_salary,
+        positive_coff,retire_time,creator,create_time,create_dept,
+        retire_ny,ssnumber,counts
+        ) values
+        (func_get_uuid ,#{personId},
+        to_date('${syStartTime}','yyyy-mm-dd'),to_date('${syEndTime}','yyyy-mm-dd'),to_date('${positiveTime}','yyyy-mm-dd'),#{syContractPeriod},
+        to_date('${firstStartTime}','yyyy-mm-dd'),to_date('${firstEndTime}','yyyy-mm-dd'),#{firstContractPeriod},
+        to_date('${secStartTime}','yyyy-mm-dd'),to_date('${secEndTime}','yyyy-mm-dd'),#{secContractPeriod},
+        to_date('${thirdStartTime}','yyyy-mm-dd'),to_date('${thirdEndTime}','yyyy-mm-dd'),#{thirdContractPeriod},
+        to_date('${jzStartTime}','yyyy-mm-dd'),to_date('${jzEndTime}','yyyy-mm-dd'),#{jzContractPeriod},
+        #{personNature},#{retireCert},#{nums},#{schoolAge},#{confidentAgreement},#{trpidSalary},#{positiveSalary},
+        #{positiveCoff},to_date('${retireTime}','yyyy-mm-dd'),#{creator},sysdate ,#{createDept},
+        #{retireNy},#{ssnumber},#{counts})
+    </insert>
+    <update id="updateTeacherContract" parameterType="com.goisan.personnel.teachercontract.bean.TeacherContract">
+        update t_rs_employee_contract set
+        SY_START_TIME=to_date('${syStartTime}','yyyy-mm-dd'),SY_END_TIME=to_date('${syEndTime}','yyyy-mm-dd'),
+        POSITIVE_TIME=to_date('${positiveTime}','yyyy-mm-dd'),SY_CONTRACT_PERIOD = #{syContractPeriod},
+        FIRST_START_TIME= to_date('${firstStartTime}','yyyy-mm-dd'),FIRST_END_TIME=to_date('${firstEndTime}','yyyy-mm-dd') ,FIRST_CONTRACT_PERIOD=#{firstContractPeriod},
+        SEC_START_TIME=to_date('${secStartTime}','yyyy-mm-dd'),SEC_END_TIME=to_date('${secEndTime}','yyyy-mm-dd'),SEC_CONTRACT_PERIOD=#{secContractPeriod},
+        THIRD_START_TIME=to_date('${thirdStartTime}','yyyy-mm-dd'),THIRD_END_TIME=to_date('${thirdEndTime}','yyyy-mm-dd'),THIRD_CONTRACT_PERIOD=#{thirdContractPeriod},
+        JZ_START_TIME=to_date('${jzStartTime}','yyyy-mm-dd'),JZ_END_TIME=to_date('${jzEndTime}','yyyy-mm-dd'),JZ_CONTRACT_PERIOD=#{jzContractPeriod},
+        person_nature=#{personNature},
+        retire_cert=#{retireCert},nums=#{nums},school_age=#{schoolAge},confident_agreement=#{confidentAgreement},
+        trpid_salary=#{trpidSalary},positive_salary=#{positiveSalary},positive_coff=#{positiveCoff},retire_time=to_date('${retireTime}','yyyy-mm-dd'),
+        retire_ny=#{retireNy},ssnumber=#{ssnumber},counts=#{counts},changer=#{changer},change_time= sysdate,change_dept=#{changeDept}
+       where PERSON_ID = #{personId}
+    </update>
+
+    <select id="getTeacherContractByPersonId" resultType="com.goisan.personnel.teachercontract.bean.TeacherContract">
+        select e.PERSON_ID,
+        NAME,
+        IDCARD,
+        d.DEPT_ID,
+        FUNC_GET_DEPTNAME(d.dept_id) deptShow,
+        to_char(SY_START_TIME, 'yyyy-mm-dd') syStartTime,
+        to_char(SY_END_TIME, 'yyyy-mm-dd') syEndTime,
+        SY_CONTRACT_PERIOD,
+        to_char(POSITIVE_TIME, 'yyyy-mm-dd') positiveTime,
+        to_char(FIRST_START_TIME, 'yyyy-mm-dd') firstStartTime,
+        to_char(FIRST_END_TIME, 'yyyy-mm-dd') firstEndTime,
+        FIRST_CONTRACT_PERIOD,
+        to_char(SEC_START_TIME, 'yyyy-mm-dd') secStartTime,
+        to_char(SEC_END_TIME, 'yyyy-mm-dd') secEndTime,
+        SEC_CONTRACT_PERIOD,
+        to_char(THIRD_START_TIME, 'yyyy-mm-dd') thirdStartTime,
+        to_char(THIRD_END_TIME, 'yyyy-mm-dd') thirdEndTime,
+        THIRD_CONTRACT_PERIOD,
+        to_char(JZ_START_TIME, 'yyyy-mm-dd') jzStartTime,
+        to_char(JZ_END_TIME, 'yyyy-mm-dd') jzEndTime,
+        JZ_CONTRACT_PERIOD,
+        PERSON_NATURE,
+        RETIRE_CERT,
+        NUMS,
+        SCHOOL_AGE,
+        CONFIDENT_AGREEMENT,
+        TRPID_SALARY,
+        POSITIVE_SALARY,
+        POSITIVE_COFF,
+        to_char(RETIRE_TIME, 'yyyy-mm-dd') retireTime,
+        RETIRE_NY,
+        SSNUMBER,
+        COUNTS
+        from t_rs_employee e
+        left join T_RS_EMPLOYEE_DEPT d
+        on e.person_id = d.person_id
+        left join  T_RS_EMPLOYEE_CONTRACT c
+        on c.person_id = d.person_id
+        where d.DEPT_ID = #{deptId} and  e.PERSON_ID = #{personId}
+    </select>
+    <select id="getTeachConByPersonId" resultType="com.goisan.personnel.teachercontract.bean.TeacherContract">
+        select * from T_RS_EMPLOYEE_CONTRACT where PERSON_ID = #{personId}
+    </select>
+    <delete id="delTeacherContract" parameterType="java.lang.String">
+        delete from T_RS_EMPLOYEE_CONTRACT where person_id = #{personId}
+    </delete>
+    
+    <!--<select id="getWelFareByPersonId" parameterType="java.lang.String" resultType="com.goisan.personnel.teachercontract.bean.TeacherContract">-->
+        <!--select * from T_RS_EMPLOYEE_WELFARE where PERSON_ID = #{personId}-->
+    <!--</select>-->
+
+    <!--<insert id="saveWelFare" parameterType="com.goisan.personnel.teachercontract.bean.TeacherContract">-->
+        <!--insert into T_RS_EMPLOYEE_WELFARE-->
+        <!--(id,person_id,retire_ny,ssnumber,counts,creator,create_time,create_dept)-->
+        <!--values (func_get_uuid ,#{personId},#{retireNy},#{ssnumber},#{counts},#{creator},sysdate ,#{createDept})-->
+    <!--</insert>-->
+
+    <!--<update id="updateWelFareByPersonId" parameterType="com.goisan.personnel.teachercontract.bean.TeacherContract">-->
+          <!--update T_RS_EMPLOYEE_WELFARE set person_id=#{personId},-->
+        <!--retire_ny=#{retireNy},ssnumber=#{ssnumber},counts=#{counts},-->
+        <!--changer=#{changer},change_time= sysdate,change_dept=#{changeDept}-->
+        <!--where  person_id= #{personId}-->
+    <!--</update>-->
+
+
+</mapper>
