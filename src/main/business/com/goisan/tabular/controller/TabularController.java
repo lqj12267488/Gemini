@@ -1,12 +1,18 @@
 package com.goisan.tabular.controller;
 
+import com.goisan.educational.course.service.CourseService;
+import com.goisan.educational.major.service.MajorLeaderService;
+import com.goisan.educational.major.service.MajorService;
 import com.goisan.studentwork.employments.bean.EmploymentManage;
 import com.goisan.studentwork.employments.service.EmploymentManageService;
+import com.goisan.system.dao.EmpDao;
+import com.goisan.system.dao.ParameterDao;
 import com.goisan.system.tools.ApplicationContextRegister;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import com.goisan.tabular.bean.Tabular;
 import com.goisan.tabular.bean.TabularFile;
+import com.goisan.tabular.dao.TableAttributeDao;
 import com.goisan.tabular.service.TableAttributeService;
 import com.goisan.tabular.service.TabularService;
 import com.goisan.tabular.service.impl.TableAttributeServiceImpl;
@@ -35,6 +41,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -51,6 +58,19 @@ public class TabularController {
     private TabularService tabularService;
     @Resource
     private TableAttributeService tableAttributeService;
+
+    @Resource
+    private TableAttributeDao tableAttributeDao;
+    @Resource
+    private ParameterDao parameterDao;
+    @Resource
+    private MajorService majorService;
+    @Resource
+    private MajorLeaderService majorLeaderService;
+    @Resource
+    private EmpDao empDao;
+    @Resource
+    private CourseService courseService;
 
     @Resource
     private EmploymentManageService employmentManageService;
@@ -251,12 +271,24 @@ public class TabularController {
             }else if("expertExcel_A10_1_2".equals(tableAttribute)){
                 tableAttributeService.expertExcel_A10_1_2(response,files);
             }else{
+
                 Class<?> classType = TableAttributeServiceImpl.class;
                 Method m = null;
                 try {
+                    Object o = classType.newInstance();
+                    Field tableAttributeDaoField = classType.getDeclaredField("tableAttributeDao");
+                    tableAttributeDaoField.setAccessible(true);
+                    tableAttributeDaoField.set(o,tableAttributeDao);
+                    Field empDaoField = classType.getDeclaredField("empDao");
+                    empDaoField.setAccessible(true);
+                    empDaoField.set(o,empDao);
+
+
                     m = classType.getDeclaredMethod(tableAttribute, HttpServletResponse.class, TabularFile.class);
-                    m.invoke(ApplicationContextRegister.getApplicationContext().getBean("tableAttributeServiceImpl"), response, files);
+//                    m.invoke(ApplicationContextRegister.getApplicationContext().getBean("tableAttributeServiceImpl"), response, files);
+                    m.invoke(o, response, files);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     String filePath = COM_REPORT_PATH + files.getFileUrl();
                     File file = FileUtils.getFile(filePath);
                     OutputStream os = null;

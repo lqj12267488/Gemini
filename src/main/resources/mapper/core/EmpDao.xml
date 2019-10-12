@@ -239,7 +239,9 @@
              e.academic_degree academicDegree,
              FUNC_GET_DICVALUE(e.academic_degree,'XW') academicDegreeShow,
             FUNC_GET_DICVALUE(e.staff_status,'JZGSS') staffBelongsShow ,
-            u.ID_CARD_PHOTO_URL photoUrl
+            u.ID_CARD_PHOTO_URL photoUrl,
+            e.filenumber,
+            e.deadline
         FROM
             t_rs_employee e,
             t_sys_dept d,
@@ -468,6 +470,12 @@
         </if>
         <if test="academicDegree != null and academicDegree != '' ">
             ACADEMIC_DEGREE=#{academicDegree},
+        </if>
+        <if test="deadline != null and deadline != '' ">
+            DEADLINE=#{deadline},
+        </if>
+        <if test="filenumber != null and filenumber != '' ">
+            FILENUMBER=#{filenumber},
         </if>
         VALID_FLAG = '1',
         change_time=sysdate,

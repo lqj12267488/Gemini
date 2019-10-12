@@ -100,6 +100,27 @@ public class Emp extends BaseBean {
     private String entryDateShow;
     private String graduateTimeShow;
     private String educationalResearch;//教科研成果
+
+
+    private String filenumber;
+    private String deadline;
+
+    public String getFilenumber() {
+        return filenumber;
+    }
+
+    public void setFilenumber(String filenumber) {
+        this.filenumber = filenumber;
+    }
+
+    public String getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(String deadline) {
+        this.deadline = deadline;
+    }
+
     public String getWorkTimeShow() {
         return workTimeShow;
     }

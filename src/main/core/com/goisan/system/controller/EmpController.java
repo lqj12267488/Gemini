@@ -9,10 +9,13 @@ import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
 import com.goisan.educational.textbook.bean.TextBookLog;
 import com.goisan.logistics.assets.service.AssetsService;
+import com.goisan.personnel.teachercontract.bean.TeacherContract;
+import com.goisan.personnel.teachercontract.service.TeacherContractService;
 import com.goisan.system.bean.*;
 import com.goisan.system.service.*;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
+import com.goisan.system.tools.PoiUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -22,6 +25,7 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -61,6 +65,9 @@ public class EmpController {
     private CommonService commonService;
     @Resource
     private AssetsService assetsService;
+
+    @Resource
+    private TeacherContractService teacherContractService;
 
     @ResponseBody
     @RequestMapping("/emp")
@@ -277,6 +284,14 @@ public class EmpController {
     public ModelAndView toEditEmp(String personId, String deptId) {
         ModelAndView mv = new ModelAndView("/core/emp/editEmp");
         Emp emp = empService.getEmpByDeptIdAndPersonId(personId, deptId);
+
+//        获取合同签订情况
+        if (!StringUtils.isEmpty(emp.getPersonId())){
+            TeacherContract maxTeachCon = teacherContractService.getMaxTeachConByPersonId(emp.getPersonId());
+            if (null!=maxTeachCon) {
+                emp.setContractType(maxTeachCon.getContractType());
+            }
+        }
         mv.addObject("emp", emp);
         return mv;
     }
@@ -613,30 +628,28 @@ public class EmpController {
         cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         return cellStyle;
     }
+
     @RequestMapping("/exportEmp")
     public void exportEmp(Emp emp1, HttpServletResponse response) {
         List<Emp> emps;
         HashMap<String, List<Emp>> hashMap = new HashMap<>();
-        if ("undefined".equals(emp1.getDeptId())) {
+        if ("0".equals(emp1.getDeptId()) || "001".equals(emp1.getDeptId()) || "undefined".equals(emp1.getDeptId())) {
             emps = empService.getEmpList(null);
         } else {
             emps = empService.getEmpList(emp1);
         }
-
         //查询部门
        List<String> list =  empService.selectDeptName();
        //根据部门查询
         List<Emp> empList1 = null;
         for (String str : list) {
-            if("undefined".equals(emp1.getDeptId())){
+            if("undefined".equals(emp1.getDeptId()) || "0".equals(emp1.getDeptId()) || "001".equals(emp1.getDeptId())){
                  empList1 =  empService.selectList(str);
             }else{
                 empList1 =  empService.selectListByName(str,emp1.getDeptId());
             }
-
           hashMap.put(str,empList1);
         }
-
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //创建HSSFWorkbook对象
@@ -692,8 +705,6 @@ public class EmpController {
         HSSFCellStyle boderStyle = wb.createCellStyle();
         //垂直居中
         boderStyle.setAlignment(HorizontalAlignment.CENTER);
-
-
         tmp++;
         HSSFRow hssfRow = sheet.createRow(0);
         hssfRow.createCell(0).setCellValue("序号");
@@ -723,14 +734,15 @@ public class EmpController {
         hssfRow.createCell(24).setCellValue("专业");
         hssfRow.createCell(25).setCellValue("毕业时间");
         Cell ce1 = row0.createCell(26);
-        //ce1.setCellValue("职称");
         HSSFCell cell = hssfRow.createCell(26);
         cell.setCellStyle(boderStyle);
         cell.setCellValue("职称");
         hssfRow.createCell(28).setCellValue("备注");
+
         HSSFRow hssfRow1 = sheet.createRow(1);
         hssfRow1.createCell(26).setCellValue("名称");
         hssfRow1.createCell(27).setCellValue("级别");
+
 
         tmp++;
         int i = 1;
@@ -884,11 +896,6 @@ public class EmpController {
         //创建HSSFSheet对象
         HSSFSheet sheet = wb.createSheet("人员基本信息模板");
         HSSFCellStyle cellStyle = wb.createCellStyle();
-        //cellStyle.setFillForegroundColor((short) 13);// 设置背景色
-        /*cellStyle.setBorderLeft(BorderStyle.THIN);//左边框
-        cellStyle.setBorderTop(BorderStyle.THIN);//上边框
-        cellStyle.setBorderRight(BorderStyle.THIN);//右边框
-        cellStyle.setBorderBottom(BorderStyle.THIN); //下边框*/
         cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
         int tmp = 0;
 
@@ -927,13 +934,16 @@ public class EmpController {
         sheet.getRow(0).getCell(12).setCellValue("说明：此项为必填项");
         sheet.getRow(0).createCell(22).setCellStyle(headStyle);
         sheet.getRow(0).getCell(22).setCellValue("格式：2000-01-01");
+
+        sheet.addMergedRegion(new  CellRangeAddress(1, 1, 5, 7));
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, 23, 24));
         sheet.getRow(1).createCell(23).setCellStyle(cellStyle);
         sheet.getRow(1).getCell(23).setCellValue("职称");
-        sheet.getRow(1).createCell(24).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(24).setCellValue("职称");
 
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 23, 24));
+        PoiUtils.createCellWithStyleAndValue(sheet.getRow(1),5,"职级",cellStyle);
+
         sheet.createRow(2).createCell(0).setCellStyle(cellStyle);
+        HSSFRow row2 = sheet.getRow(2);
         sheet.getRow(2).getCell(0).setCellValue("姓名");
         sheet.getRow(2).createCell(1).setCellStyle(cellStyle);
         sheet.getRow(2).getCell(1).setCellValue("部门");
@@ -943,55 +953,53 @@ public class EmpController {
         sheet.getRow(2).getCell(3).setCellValue("入职日期");
         sheet.getRow(2).createCell(4).setCellStyle(cellStyle);
         sheet.getRow(2).getCell(4).setCellValue("婚姻状况");
-        sheet.getRow(2).createCell(5).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(5).setCellValue("职级");
-        sheet.getRow(2).createCell(6).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(6).setCellValue("性别");
-        sheet.getRow(2).createCell(7).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(7).setCellValue("民族");
-        sheet.getRow(2).createCell(8).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(8).setCellValue("出生日期");
-        sheet.getRow(2).createCell(9).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(9).setCellValue("证件类型");
-        sheet.getRow(2).createCell(10).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(10).setCellValue("证件号");
-        sheet.getRow(2).createCell(11).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(11).setCellValue("联系方式");
-        sheet.getRow(2).createCell(12).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(12).setCellValue("籍贯");
-        sheet.getRow(2).createCell(13).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(13).setCellValue("户口所在地");
-        sheet.getRow(2).createCell(14).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(14).setCellValue("户口所属地区");
-        sheet.getRow(2).createCell(15).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(15).setCellValue("是否政审");
-        sheet.getRow(2).createCell(16).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(16).setCellValue("现住址");
-        sheet.getRow(2).createCell(17).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(17).setCellValue("政治面貌");
-        sheet.getRow(2).createCell(18).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(18).setCellValue("文化程度");
-        sheet.getRow(2).createCell(19).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(19).setCellValue("教育方式");
-        sheet.getRow(2).createCell(20).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(20).setCellValue("毕业院校");
-        sheet.getRow(2).createCell(21).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(21).setCellValue("专业");
-        sheet.getRow(2).createCell(22).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(22).setCellValue("毕业时间");
-        sheet.getRow(2).createCell(23).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(23).setCellValue("名称");
-        sheet.getRow(2).createCell(24).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(24).setCellValue("级别");
-        sheet.getRow(2).createCell(25).setCellStyle(cellStyle);
-        sheet.getRow(2).getCell(25).setCellValue("备注");
+//        sheet.getRow(2).createCell(5).setCellStyle(cellStyle);
+//        sheet.getRow(2).getCell(5).setCellValue("职级");
+        PoiUtils.createCellWithStyleAndValue(row2,5,"级别",cellStyle);
+        PoiUtils.createCellWithStyleAndValue(row2,6,"职级文件号",cellStyle);
+        PoiUtils.createCellWithStyleAndValue(row2,7,"职级期限",cellStyle);
 
-        /*HSSFRow cell = sheet.createRow(23);
-        cell.setCellStyle(boderStyle);
-        cell.setCellValue("职称");*/
-       /* HSSFRow hssfRow1 = sheet.createRow(1);
-        hssfRow1.createCell(23).setCellValue("名称");
-        hssfRow1.createCell(24).setCellValue("级别");*/
+        sheet.getRow(2).createCell(8).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(8).setCellValue("性别");
+        sheet.getRow(2).createCell(9).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(9).setCellValue("民族");
+        sheet.getRow(2).createCell(10).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(10).setCellValue("出生日期");
+        sheet.getRow(2).createCell(11).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(11).setCellValue("证件类型");
+        sheet.getRow(2).createCell(12).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(12).setCellValue("证件号");
+        sheet.getRow(2).createCell(13).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(13).setCellValue("联系方式");
+        sheet.getRow(2).createCell(14).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(14).setCellValue("籍贯");
+        sheet.getRow(2).createCell(15).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(15).setCellValue("户口所在地");
+        sheet.getRow(2).createCell(16).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(16).setCellValue("户口所属地区");
+        sheet.getRow(2).createCell(17).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(17).setCellValue("是否政审");
+        sheet.getRow(2).createCell(18).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(18).setCellValue("现住址");
+        sheet.getRow(2).createCell(19).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(19).setCellValue("政治面貌");
+        sheet.getRow(2).createCell(20).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(20).setCellValue("文化程度");
+        sheet.getRow(2).createCell(21).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(21).setCellValue("教育方式");
+        sheet.getRow(2).createCell(22).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(22).setCellValue("毕业院校");
+        sheet.getRow(2).createCell(23).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(23).setCellValue("专业");
+        sheet.getRow(2).createCell(24).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(24).setCellValue("毕业时间");
+        sheet.getRow(2).createCell(25).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(25).setCellValue("名称");
+        sheet.getRow(2).createCell(26).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(26).setCellValue("级别");
+        sheet.getRow(2).createCell(27).setCellStyle(cellStyle);
+        sheet.getRow(2).getCell(27).setCellValue("备注");
+
         HSSFCellStyle textS = wb.createCellStyle();
         HSSFDataFormat form = wb.createDataFormat();
         textS.setDataFormat(form.getFormat("@"));
@@ -1042,21 +1050,21 @@ public class EmpController {
         for (int j = 0; j < list4.size(); j++) {
             xb[j] = list4.get(j);
         }
-        setHSSFValidation(sheet, xb, 3, 65535, 6, 6);
+        setHSSFValidation(sheet, xb, 3, 65535, 8, 8);
 
         List<String> list5 = commonService.getSysDictName("MZ","");
         String[] mz = new String[list5.size()];
         for (int j = 0; j < list5.size(); j++) {
             mz[j] = list5.get(j);
         }
-        setHSSFValidation(sheet, mz, 3, 65535, 7, 7);
+        setHSSFValidation(sheet, mz, 3, 65535, 9, 9);
 
         List<String> list6 = commonService.getSysDictName("SFZJLX","");
         String[] zjlx = new String[list6.size()];
         for (int j = 0; j < list6.size(); j++) {
             zjlx[j] = list6.get(j);
         }
-        setHSSFValidation(sheet, zjlx, 3, 65535, 9, 9);
+        setHSSFValidation(sheet, zjlx, 3, 65535, 11, 11);
 
         TableDict tableDict1 = new TableDict();
         tableDict1.setText("NAME");
@@ -1069,7 +1077,7 @@ public class EmpController {
         for (int i = 0; i < end6; i++) {
             strs6[i] = list7.get(i);
         }
-        setHSSFValidation(sheet, strs6, 3, 65535, 12, 12);
+        setHSSFValidation(sheet, strs6, 3, 65535, 14, 14);
 
 
         List<String> list8 = commonService.getSysDictName("HKSSDQ","");
@@ -1077,7 +1085,7 @@ public class EmpController {
         for (int j = 0; j < list8.size(); j++) {
             hk[j] = list8.get(j);
         }
-        setHSSFValidation(sheet, hk, 3, 65535, 14, 14);
+        setHSSFValidation(sheet, hk, 3, 65535, 16, 16);
 
 
         List<String> list9 = commonService.getSysDictName("SFZS","");
@@ -1085,7 +1093,7 @@ public class EmpController {
         for (int j = 0; j < list9.size(); j++) {
             sfzs[j] = list9.get(j);
         }
-        setHSSFValidation(sheet, sfzs, 3, 65535, 15, 15);
+        setHSSFValidation(sheet, sfzs, 3, 65535, 17, 17);
 
 
         List<String> list10 = commonService.getSysDictName("ZZMM","");
@@ -1093,7 +1101,7 @@ public class EmpController {
         for (int j = 0; j < list10.size(); j++) {
             zzmm[j] = list10.get(j);
         }
-        setHSSFValidation(sheet, zzmm, 3, 65535, 17, 17);
+        setHSSFValidation(sheet, zzmm, 3, 65535, 19, 19);
 
 
         List<String> list11 = commonService.getSysDictName("WHCD","");
@@ -1101,7 +1109,7 @@ public class EmpController {
         for (int j = 0; j < list11.size(); j++) {
             whcd[j] = list11.get(j);
         }
-        setHSSFValidation(sheet, whcd, 3, 65535, 18, 18);
+        setHSSFValidation(sheet, whcd, 3, 65535, 20, 20);
 
 
         List<String> list12 = commonService.getSysDictName("JYFS","");
@@ -1109,7 +1117,7 @@ public class EmpController {
         for (int j = 0; j < list12.size(); j++) {
             jyfs[j] = list12.get(j);
         }
-        setHSSFValidation(sheet, jyfs, 3, 65535, 19, 19);
+        setHSSFValidation(sheet, jyfs, 3, 65535, 21, 21);
 
 
         List<String> list13 = commonService.getSysDictName("ZCJB","");
@@ -1117,29 +1125,10 @@ public class EmpController {
         for (int j = 0; j < list13.size(); j++) {
             zcjb[j] = list13.get(j);
         }
-        setHSSFValidation(sheet, zcjb, 3, 65535, 24, 24);
+        setHSSFValidation(sheet, zcjb, 3, 65535, 26, 26);
 
+        PoiUtils.outFile(wb,"人员基本信息模板",response);
 
-
-        OutputStream os = null;
-        try {
-            response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("人员基本信息模板.xls", "utf-8"));
-            os = response.getOutputStream();
-            wb.write(os);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (os != null) {
-                    os.flush();
-                    os.close();
-                    wb.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
     private static void setDataValidation(HSSFSheet sheet, String strFormula, int firstRow, int endRow, int firstCol, int endCol) {
         CellRangeAddressList regions = new CellRangeAddressList(firstRow, endRow, firstCol, endCol);
