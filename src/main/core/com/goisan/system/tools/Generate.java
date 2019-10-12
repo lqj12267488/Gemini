@@ -23,15 +23,15 @@ public class Generate {
      *
      */
     /**实体名*/
-    private static String BASE_NAME = "Atest";
+    private static String BASE_NAME = "TeachContact";
     /**数据库表名*/
-    private static String TABLE_NAME = "Atest";
+    private static String TABLE_NAME = "T_TAB_TEACH_CONTACT";
     /**1. 模块名,不填默认business （core,business）*/
     private static String MODULE_NAME = "";
     /** packageName 包所在位置;实际包生成所在位置=MODULE_NAME+PACKAGE_NAME*/
-    private static String PACKAGE_NAME = "com.goisan.Atest";
+    private static String PACKAGE_NAME = "com.goisan.table";
     /** jsp 文件所在路径; jsp文件生成所在位置 = MODULE_NAME + JSP_PATH*/
-    private static String JSP_PATH = "/atest";
+    private static String JSP_PATH = "/table/teachcontact";
     /** 表主键*/
     private static String PRIMARY = "id";
 
@@ -82,7 +82,7 @@ public class Generate {
                 HashMap<String, String> hashMap = new HashMap<>();
                 String comments = colMap.get("comments");
                 hashMap.put("column_name",colFormat(colMap.get("column_name")));
-                hashMap.put("comments",colFormat(comments));
+                hashMap.put("comments",comments);
                 if (null!= comments){
                     if (comments.indexOf('{')!= -1 && comments.indexOf('}')!=-1 ) {
                         String dic = comments.substring(comments.indexOf('{')+1, comments.indexOf('}'));
@@ -247,7 +247,7 @@ public class Generate {
             while (rs.next()) {
                 HashMap<String, String> column = new HashMap<>();
                 column.put("column_name",rs.getString("column_name").toLowerCase());
-                column.put("comments",rs.getString("comments").toLowerCase());
+                column.put("comments",rs.getString("comments")==null ? "":rs.getString("comments").toLowerCase());
                 cols.add(column);
             }
         } catch (Exception e) {
