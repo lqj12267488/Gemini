@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.InCampusPraDao">
+    <select id="getInCampusPraList"
+            parameterType="com.goisan.table.bean.InCampusPra"
+            resultType="com.goisan.table.bean.InCampusPra">
+        select id,pra_name,par_major,par_total,par_sup_dept,
+        to_char(par_sup_time, 'yyyy-mm-dd') parSupTime,
+        par_area,par_dev_allvalue,par_dev_newvalue,self_dev_value,ss_dev_value,ssw_dev_value,dev_num,dev_big_num,par_pro_num,main_par_pro,sch_use_fre,ss_use_fre,work_num,mater_cost,dev_maint_cost,mge_num,part_mge_num,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_INCAMPUS_PRACTICE where 1=1
+<if test='praName != "" and praName != null'> AND pra_name like '%'||#{praName}||'%' </if> 
+<if test='parMajor != "" and parMajor != null'> AND par_major like '%'||#{parMajor}||'%' </if>
+
+    </select>
+    <insert id="saveInCampusPra" parameterType="com.goisan.table.bean.InCampusPra">
+        insert into t_tab_incampus_practice
+         (id,pra_name,par_major,par_total,par_sup_dept,par_sup_time,par_area,par_dev_allvalue,
+         par_dev_newvalue,self_dev_value,ss_dev_value,ssw_dev_value,dev_num,dev_big_num,par_pro_num,
+         main_par_pro,sch_use_fre,ss_use_fre,work_num,mater_cost,dev_maint_cost,mge_num,part_mge_num,creator,
+         create_time,create_dept)
+         values (func_get_uuid ,#{praName},#{parMajor},#{parTotal},#{parSupDept},
+          to_date('${parSupTime}','yyyy-mm-dd'),#{parArea},#{parDevAllvalue},#{parDevNewvalue},#{selfDevValue},#{ssDevValue},#{sswDevValue},#{devNum},#{devBigNum},#{parProNum},#{mainParPro},#{schUseFre},#{ssUseFre},#{workNum},#{materCost},#{devMaintCost},#{mgeNum},#{partMgeNum},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getInCampusPraById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.InCampusPra">
+        select id,pra_name,par_major,par_total,par_sup_dept,
+        to_char(par_sup_time, 'yyyy-mm-dd') parSupTime,
+        par_area,par_dev_allvalue,par_dev_newvalue,self_dev_value,ss_dev_value,ssw_dev_value,dev_num,dev_big_num,par_pro_num,main_par_pro,sch_use_fre,ss_use_fre,work_num,mater_cost,dev_maint_cost,mge_num,part_mge_num,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_INCAMPUS_PRACTICE where id = #{id}
+    </select>
+    <update id="updateInCampusPra" parameterType="com.goisan.table.bean.InCampusPra">
+        update t_tab_incampus_practice set pra_name=#{praName},par_major=#{parMajor},par_total=#{parTotal},par_sup_dept=#{parSupDept},par_sup_time=to_date('${parSupTime}','yyyy-mm-dd'),
+        par_area=#{parArea},par_dev_allvalue=#{parDevAllvalue},par_dev_newvalue=#{parDevNewvalue},
+        self_dev_value=#{selfDevValue},ss_dev_value=#{ssDevValue},ssw_dev_value=#{sswDevValue},
+        dev_num=#{devNum},dev_big_num=#{devBigNum},par_pro_num=#{parProNum},main_par_pro=#{mainParPro},
+        sch_use_fre=#{schUseFre},ss_use_fre=#{ssUseFre},work_num=#{workNum},mater_cost=#{materCost},dev_maint_cost=#{devMaintCost},
+        mge_num=#{mgeNum},part_mge_num=#{partMgeNum},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delInCampusPra" parameterType="java.lang.String">
+        delete from T_TAB_INCAMPUS_PRACTICE where id = #{id}
+    </delete>
+</mapper>

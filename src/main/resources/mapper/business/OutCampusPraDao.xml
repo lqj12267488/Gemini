@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.OutCampusPraDao">
+    <select id="getOutCampusPraList"
+            parameterType="com.goisan.table.bean.OutCampusPra"
+            resultType="com.goisan.table.bean.OutCampusPra">
+        select opra_unit,opra_emp_num,
+        to_char(build_time, 'yyyy-mm-dd') buildTime,
+        opra_major_num,main_opra_major,opra_pro_num,opra_pro_name,opra_std_num,
+        base_use_day,intern_num,sf_dorm,sf_sub,itn_cost,send_mge,acc_grad,id,opra_name from T_TAB_OUTCAMPUS_PRACTICE
+        where 1=1
+<if test='opraUnit != "" and opraUnit != null'> AND opra_unit like '%'||#{opraUnit}||'%' </if> 
+<if test='opraEmpNum != "" and opraEmpNum != null'> AND opra_emp_num like '%'||#{opraEmpNum}||'%' </if> 
+<if test='buildTime != "" and buildTime != null'> AND build_time like '%'||#{buildTime}||'%' </if> 
+<if test='opraMajorNum != "" and opraMajorNum != null'> AND opra_major_num like '%'||#{opraMajorNum}||'%' </if> 
+<if test='mainOpraMajor != "" and mainOpraMajor != null'> AND main_opra_major like '%'||#{mainOpraMajor}||'%' </if> 
+<if test='opraProNum != "" and opraProNum != null'> AND opra_pro_num like '%'||#{opraProNum}||'%' </if> 
+<if test='opraProName != "" and opraProName != null'> AND opra_pro_name like '%'||#{opraProName}||'%' </if> 
+<if test='opraStdNum != "" and opraStdNum != null'> AND opra_std_num like '%'||#{opraStdNum}||'%' </if> 
+<if test='baseUseDay != "" and baseUseDay != null'> AND base_use_day like '%'||#{baseUseDay}||'%' </if> 
+<if test='internNum != "" and internNum != null'> AND intern_num like '%'||#{internNum}||'%' </if> 
+<if test='sfDorm != "" and sfDorm != null'> AND sf_dorm like '%'||#{sfDorm}||'%' </if> 
+<if test='sfSub != "" and sfSub != null'> AND sf_sub like '%'||#{sfSub}||'%' </if> 
+<if test='itnCost != "" and itnCost != null'> AND itn_cost like '%'||#{itnCost}||'%' </if> 
+<if test='sendMge != "" and sendMge != null'> AND send_mge like '%'||#{sendMge}||'%' </if> 
+<if test='accGrad != "" and accGrad != null'> AND acc_grad like '%'||#{accGrad}||'%' </if> 
+<if test='opraName != "" and opraName != null'> AND opra_name like '%'||#{opraName}||'%' </if> 
+
+    </select>
+    <insert id="saveOutCampusPra" parameterType="com.goisan.table.bean.OutCampusPra">
+        insert into t_tab_outcampus_practice
+        (opra_unit,opra_emp_num,build_time,opra_major_num,main_opra_major,opra_pro_num,opra_pro_name,opra_std_num,
+        base_use_day,intern_num,sf_dorm,sf_sub,itn_cost,send_mge,acc_grad,id,opra_name)
+        values (#{opraUnit},#{opraEmpNum}, to_date('${buildTime}','yyyy-mm-dd'),#{opraMajorNum},#{mainOpraMajor},
+        #{opraProNum},#{opraProName},#{opraStdNum},#{baseUseDay},#{internNum},#{sfDorm},#{sfSub},#{itnCost},#{sendMge},#{accGrad},func_get_uuid ,#{opraName})
+    </insert>
+    <select id="getOutCampusPraById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.OutCampusPra">
+        select opra_unit,opra_emp_num,
+        to_char(build_time, 'yyyy-mm-dd') buildTime,
+        opra_major_num,main_opra_major,opra_pro_num,opra_pro_name,opra_std_num,
+        base_use_day,intern_num,sf_dorm,sf_sub,itn_cost,send_mge,acc_grad,id,opra_name
+        from T_TAB_OUTCAMPUS_PRACTICE where id = #{id}
+    </select>
+    <update id="updateOutCampusPra" parameterType="com.goisan.table.bean.OutCampusPra">
+        update t_tab_outcampus_practice set opra_unit=#{opraUnit},opra_emp_num=#{opraEmpNum},
+        build_time=to_date('${buildTime}','yyyy-mm-dd'),opra_major_num=#{opraMajorNum},main_opra_major=#{mainOpraMajor},opra_pro_num=#{opraProNum},opra_pro_name=#{opraProName},opra_std_num=#{opraStdNum},base_use_day=#{baseUseDay},intern_num=#{internNum},sf_dorm=#{sfDorm},sf_sub=#{sfSub},itn_cost=#{itnCost},send_mge=#{sendMge},acc_grad=#{accGrad},opra_name=#{opraName} where id = #{id}
+    </update>
+    <delete id="delOutCampusPra" parameterType="java.lang.String">
+        delete from T_TAB_OUTCAMPUS_PRACTICE where id = #{id}
+    </delete>
+</mapper>

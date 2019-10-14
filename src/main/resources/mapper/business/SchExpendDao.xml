@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.SchExpendDao">
+    <select id="getSchExpendList"
+            parameterType="com.goisan.table.bean.SchExpend"
+            resultType="com.goisan.table.bean.SchExpend">
+        select id,exp_all,land,exp_inf,exp_dev_all,exp_teach_dev,train_cost,train_pro,hire_pt_teach,sport,daily_oth,rs_all,rs_ind,rs_pro_name,rs_pro_money,tc_all,tc_ind,tc_pro_name,tc_pro_money,lib_cost,oth_cost,pay_loan from T_TAB_SCHOOL_EXPEND where 1=1 
+<if test='expAll != "" and expAll != null'> AND exp_all like '%'||#{expAll}||'%' </if> 
+<if test='land != "" and land != null'> AND land like '%'||#{land}||'%' </if> 
+<if test='expInf != "" and expInf != null'> AND exp_inf like '%'||#{expInf}||'%' </if> 
+<if test='expDevAll != "" and expDevAll != null'> AND exp_dev_all like '%'||#{expDevAll}||'%' </if> 
+<if test='expTeachDev != "" and expTeachDev != null'> AND exp_teach_dev like '%'||#{expTeachDev}||'%' </if> 
+<if test='trainCost != "" and trainCost != null'> AND train_cost like '%'||#{trainCost}||'%' </if> 
+<if test='trainPro != "" and trainPro != null'> AND train_pro like '%'||#{trainPro}||'%' </if> 
+<if test='hirePtTeach != "" and hirePtTeach != null'> AND hire_pt_teach like '%'||#{hirePtTeach}||'%' </if> 
+<if test='sport != "" and sport != null'> AND sport like '%'||#{sport}||'%' </if> 
+<if test='dailyOth != "" and dailyOth != null'> AND daily_oth like '%'||#{dailyOth}||'%' </if> 
+<if test='rsAll != "" and rsAll != null'> AND rs_all like '%'||#{rsAll}||'%' </if> 
+<if test='rsInd != "" and rsInd != null'> AND rs_ind like '%'||#{rsInd}||'%' </if> 
+<if test='rsProName != "" and rsProName != null'> AND rs_pro_name like '%'||#{rsProName}||'%' </if> 
+<if test='rsProMoney != "" and rsProMoney != null'> AND rs_pro_money like '%'||#{rsProMoney}||'%' </if> 
+<if test='tcAll != "" and tcAll != null'> AND tc_all like '%'||#{tcAll}||'%' </if> 
+<if test='tcInd != "" and tcInd != null'> AND tc_ind like '%'||#{tcInd}||'%' </if> 
+<if test='tcProName != "" and tcProName != null'> AND tc_pro_name like '%'||#{tcProName}||'%' </if> 
+<if test='tcProMoney != "" and tcProMoney != null'> AND tc_pro_money like '%'||#{tcProMoney}||'%' </if> 
+<if test='libCost != "" and libCost != null'> AND lib_cost like '%'||#{libCost}||'%' </if> 
+<if test='othCost != "" and othCost != null'> AND oth_cost like '%'||#{othCost}||'%' </if> 
+<if test='payLoan != "" and payLoan != null'> AND pay_loan like '%'||#{payLoan}||'%' </if> 
+
+    </select>
+    <insert id="saveSchExpend" parameterType="com.goisan.table.bean.SchExpend">
+        insert into t_tab_school_expend (id,exp_all,land,exp_inf,exp_dev_all,exp_teach_dev,train_cost,train_pro,hire_pt_teach,sport,daily_oth,rs_all,rs_ind,rs_pro_name,rs_pro_money,tc_all,tc_ind,tc_pro_name,tc_pro_money,lib_cost,oth_cost,pay_loan) values (func_get_uuid ,#{expAll},#{land},#{expInf},#{expDevAll},#{expTeachDev},#{trainCost},#{trainPro},#{hirePtTeach},#{sport},#{dailyOth},#{rsAll},#{rsInd},#{rsProName},#{rsProMoney},#{tcAll},#{tcInd},#{tcProName},#{tcProMoney},#{libCost},#{othCost},#{payLoan})
+    </insert>
+    <select id="getSchExpendById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.SchExpend">
+        select * from T_TAB_SCHOOL_EXPEND where id = #{id}
+    </select>
+    <update id="updateSchExpend" parameterType="com.goisan.table.bean.SchExpend">
+        update t_tab_school_expend set exp_all=#{expAll},land=#{land},exp_inf=#{expInf},exp_dev_all=#{expDevAll},exp_teach_dev=#{expTeachDev},train_cost=#{trainCost},train_pro=#{trainPro},hire_pt_teach=#{hirePtTeach},sport=#{sport},daily_oth=#{dailyOth},rs_all=#{rsAll},rs_ind=#{rsInd},rs_pro_name=#{rsProName},rs_pro_money=#{rsProMoney},tc_all=#{tcAll},tc_ind=#{tcInd},tc_pro_name=#{tcProName},tc_pro_money=#{tcProMoney},lib_cost=#{libCost},oth_cost=#{othCost},pay_loan=#{payLoan} where id = #{id}
+    </update>
+    <delete id="delSchExpend" parameterType="java.lang.String">
+        delete from T_TAB_SCHOOL_EXPEND where id = #{id}
+    </delete>
+</mapper>

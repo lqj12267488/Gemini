@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.SchAwardDao">
+    <select id="getSchAwardList"
+            parameterType="com.goisan.table.bean.SchAward"
+            resultType="com.goisan.table.bean.SchAward">
+        select id,sa_index,sa_pro_name,sa_pro_lev,func_get_dicvalue(sa_pro_lev,'JB') saProLevShow,sa_time,remark,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_SCHOOL_AWARD where 1=1 
+<if test='saIndex != "" and saIndex != null'> AND sa_index like '%'||#{saIndex}||'%' </if> 
+<if test='saProName != "" and saProName != null'> AND sa_pro_name like '%'||#{saProName}||'%' </if> 
+<if test='saProLev != "" and saProLev != null'> AND sa_pro_lev = #{saProLev} </if> 
+<if test='saTime != "" and saTime != null'> AND sa_time like '%'||#{saTime}||'%' </if> 
+<if test='remark != "" and remark != null'> AND remark like '%'||#{remark}||'%' </if> 
+
+    </select>
+    <insert id="saveSchAward" parameterType="com.goisan.table.bean.SchAward">
+        insert into t_tab_school_award (id,sa_index,sa_pro_name,sa_pro_lev,sa_time,remark,creator,create_time,create_dept) values (func_get_uuid ,#{saIndex},#{saProName},#{saProLev},#{saTime},#{remark},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getSchAwardById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.SchAward">
+        select * from T_TAB_SCHOOL_AWARD where id = #{id}
+    </select>
+    <update id="updateSchAward" parameterType="com.goisan.table.bean.SchAward">
+        update t_tab_school_award set sa_index=#{saIndex},sa_pro_name=#{saProName},sa_pro_lev=#{saProLev},sa_time=#{saTime},remark=#{remark},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delSchAward" parameterType="java.lang.String">
+        delete from T_TAB_SCHOOL_AWARD where id = #{id}
+    </delete>
+</mapper>

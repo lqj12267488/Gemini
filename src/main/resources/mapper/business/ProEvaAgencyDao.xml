@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.ProEvaAgencyDao">
+    <select id="getProEvaAgencyList"
+            parameterType="com.goisan.table.bean.ProEvaAgency"
+            resultType="com.goisan.table.bean.ProEvaAgency">
+        select id,eva_name,cert_name,eva_level,func_get_dicvalue(eva_level,'ZYDJ') evaLevelShow,build_dep_lev,func_get_dicvalue(build_dep_lev,'DWBMDJ') buildDepLevShow,depart,ss_eva_num,sch_eva_num from T_TAB_PRO_EVA_AGENCY where 1=1
+<if test='evaName != "" and evaName != null'> AND eva_name like '%'||#{evaName}||'%' </if> 
+<if test='certName != "" and certName != null'> AND cert_name like '%'||#{certName}||'%' </if> 
+<if test='evaLevel != "" and evaLevel != null'> AND eva_level = #{evaLevel} </if> 
+<if test='buildDepLev != "" and buildDepLev != null'> AND build_dep_lev = #{buildDepLev} </if> 
+<if test='depart != "" and depart != null'> AND depart like '%'||#{depart}||'%' </if> 
+    </select>
+    <insert id="saveProEvaAgency" parameterType="com.goisan.table.bean.ProEvaAgency">
+        insert into t_tab_pro_eva_agency (id,eva_name,cert_name,eva_level,build_dep_lev,depart,ss_eva_num,sch_eva_num) values (func_get_uuid ,#{evaName},#{certName},#{evaLevel},#{buildDepLev},#{depart},#{ssEvaNum},#{schEvaNum})
+    </insert>
+    <select id="getProEvaAgencyById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.ProEvaAgency">
+        select * from T_TAB_PRO_EVA_AGENCY where id = #{id}
+    </select>
+    <update id="updateProEvaAgency" parameterType="com.goisan.table.bean.ProEvaAgency">
+        update t_tab_pro_eva_agency set eva_name=#{evaName},cert_name=#{certName},eva_level=#{evaLevel},build_dep_lev=#{buildDepLev},depart=#{depart},ss_eva_num=#{ssEvaNum},sch_eva_num=#{schEvaNum} where id = #{id}
+    </update>
+    <delete id="delProEvaAgency" parameterType="java.lang.String">
+        delete from T_TAB_PRO_EVA_AGENCY where id = #{id}
+    </delete>
+</mapper>
