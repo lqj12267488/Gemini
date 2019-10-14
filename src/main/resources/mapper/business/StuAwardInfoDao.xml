@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.StuAwardInfoDao">
+    <select id="getStuAwardInfoList"
+            parameterType="com.goisan.table.bean.StuAwardInfo"
+            resultType="com.goisan.table.bean.StuAwardInfo">
+        select id,sai_pro_name,sai_pro_type,func_get_dicvalue(sai_pro_type,'XSHJXMLB') saiProTypeShow,sai_level,
+        func_get_dicvalue(sai_level,'JB') saiLevelShow,
+        to_char(award_time, 'yyyy-mm-dd') awardTime ,student_list,coach,creator,create_time,create_dept,changer,
+        change_time,change_dept,valid_flag from T_TAB_STUDENT_AWAERD_INFO where 1=1
+    <if test='saiProName != "" and saiProName != null'> AND sai_pro_name like '%'||#{saiProName}||'%' </if>
+    <if test='saiProType != "" and saiProType != null'> AND sai_pro_type = #{saiProType} </if>
+    <if test='saiLevel != "" and saiLevel != null'> AND sai_level = #{saiLevel} </if>
+    <if test='awardTime != "" and awardTime != null'> AND award_time like '%'||#{awardTime}||'%' </if>
+    <if test='studentList != "" and studentList != null'> AND student_list like '%'||#{studentList}||'%' </if>
+    <if test='coach != "" and coach != null'> AND coach like '%'||#{coach}||'%' </if>
+    </select>
+    <insert id="saveStuAwardInfo" parameterType="com.goisan.table.bean.StuAwardInfo">
+        insert into t_tab_student_awaerd_info
+        (id,sai_pro_name,sai_pro_type,sai_level,award_time,student_list,coach,creator,create_time,create_dept)
+        values
+         (func_get_uuid ,#{saiProName},#{saiProType},#{saiLevel},to_date('${awardTime}','yyyy-mm-dd'),#{studentList},#{coach},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getStuAwardInfoById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.StuAwardInfo">
+         select id,sai_pro_name,sai_pro_type,func_get_dicvalue(sai_pro_type,'XSHJXMLB') saiProTypeShow,sai_level,
+        func_get_dicvalue(sai_level,'JB') saiLevelShow,
+        to_char(award_time, 'yyyy-mm-dd') awardTime,student_list,coach,creator,create_time,create_dept,changer,
+        change_time,change_dept,valid_flag
+         from T_TAB_STUDENT_AWAERD_INFO where id = #{id}
+    </select>
+    <update id="updateStuAwardInfo" parameterType="com.goisan.table.bean.StuAwardInfo">
+        update t_tab_student_awaerd_info set sai_pro_name=#{saiProName},sai_pro_type=#{saiProType},sai_level=#{saiLevel},award_time=#{awardTime},student_list=#{studentList},coach=#{coach},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delStuAwardInfo" parameterType="java.lang.String">
+        delete from T_TAB_STUDENT_AWAERD_INFO where id = #{id}
+    </delete>
+</mapper>

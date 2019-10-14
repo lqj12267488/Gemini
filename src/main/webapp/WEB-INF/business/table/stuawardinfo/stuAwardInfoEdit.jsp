@@ -21,26 +21,26 @@
             <div class="controls">
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>序号
+                        <span class="iconBtx">*</span>项目名称
                     </div>
                     <div class="col-md-9">
-                        <input id="saIndexEdit" value="${data.saIndex}"/>
+                        <input id="saiProNameEdit" value="${data.saiProName}"/>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>项目名称（全称）
+                        <span class="iconBtx">*</span>项目类别
                     </div>
                     <div class="col-md-9">
-                        <input id="saProNameEdit" value="${data.saProName}"/>
+                        <select id="saiProTypeEdit"/>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>项目级别
+                        <span class="iconBtx">*</span>级别
                     </div>
                     <div class="col-md-9">
-                        <select id="saProLevEdit"/>
+                        <select id="saiLevelEdit"/>
                     </div>
                 </div>
                 <div class="form-row">
@@ -48,15 +48,23 @@
                         <span class="iconBtx">*</span>获奖日期
                     </div>
                     <div class="col-md-9">
-                        <input id="saTimeEdit" value="${data.saTime}" type="date"/>
+                        <input id="awardTimeEdit" value="${data.awardTime}" type="date"/>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>备注
+                        <span class="iconBtx">*</span>学生名单
                     </div>
                     <div class="col-md-9">
-                        <input id="remarkEdit" value="${data.remark}"/>
+                        <input id="studentListEdit" value="${data.studentList}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>指导老师名单
+                    </div>
+                    <div class="col-md-9">
+                        <input id="coachEdit" value="${data.coach}"/>
                     </div>
                 </div>
             </div>
@@ -72,53 +80,65 @@
 
 <script>
     $(document).ready(function () {
+            $.get("<%=request.getContextPath()%>/common/getSysDict?name=	XSHJXMLB", function (data) {
+                addOption(data, 'saiProTypeEdit','${data.saiProType}');
+            });
             $.get("<%=request.getContextPath()%>/common/getSysDict?name=JB", function (data) {
-                addOption(data, 'saProLevEdit','${data.saProLev}');
+                addOption(data, 'saiLevelEdit','${data.saiLevel}');
             });
     });
+
     function save() {
-        if ($("#saIndexEdit").val() == "" || $("#saIndexEdit").val() == undefined || $("#saIndexEdit").val() == null) {
-            swal({
-                title: "请填写序号！",
-                type: "warning"
-            });
-            return;
-        }
-        if ($("#saProNameEdit").val() == "" || $("#saProNameEdit").val() == undefined || $("#saProNameEdit").val() == null) {
+        if ($("#saiProNameEdit").val() == "" || $("#saiProNameEdit").val() == undefined || $("#saiProNameEdit").val() == null) {
             swal({
                 title: "请填写项目名称（全称）！",
                 type: "warning"
             });
             return;
         }
-        if ($("#saProLevEdit").val() == "" || $("#saProLevEdit").val() == undefined || $("#saProLevEdit").val() == null) {
+        if ($("#saiProTypeEdit").val() == "" || $("#saiProTypeEdit").val() == undefined || $("#saiProTypeEdit").val() == null) {
             swal({
-                title: "请选择项目级别！",
+                title: "请选择项目类别{	xshjxmlb}！",
                 type: "warning"
             });
             return;
         }
-        if ($("#saTimeEdit").val() == "" || $("#saTimeEdit").val() == undefined || $("#saTimeEdit").val() == null) {
+        if ($("#saiLevelEdit").val() == "" || $("#saiLevelEdit").val() == undefined || $("#saiLevelEdit").val() == null) {
+            swal({
+                title: "请选择级别{jb}！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#awardTimeEdit").val() == "" || $("#awardTimeEdit").val() == undefined || $("#awardTimeEdit").val() == null) {
             swal({
                 title: "请填写获奖日期！",
                 type: "warning"
             });
             return;
         }
-        if ($("#remarkEdit").val() == "" || $("#remarkEdit").val() == undefined || $("#remarkEdit").val() == null) {
+        if ($("#studentListEdit").val() == "" || $("#studentListEdit").val() == undefined || $("#studentListEdit").val() == null) {
             swal({
-                title: "请填写备注！",
+                title: "请填写学生名单！",
                 type: "warning"
             });
             return;
         }
-        $.post("<%=request.getContextPath()%>/SchAward/saveSchAward", {
+        if ($("#coachEdit").val() == "" || $("#coachEdit").val() == undefined || $("#coachEdit").val() == null) {
+            swal({
+                title: "请填写指导老师名单！",
+                type: "warning"
+            });
+            return;
+        }
+        $.post("<%=request.getContextPath()%>/StuAwardInfo/saveStuAwardInfo", {
             id: "${data.id}",
-            saIndex: $("#saIndexEdit").val(),
-            saProName: $("#saProNameEdit").val(),
-            saProLev: $("#saProLevEdit").val(),
-            saTime: $("#saTimeEdit").val(),
-            remark: $("#remarkEdit").val(),
+            saiProName: $("#saiProNameEdit").val(),
+            saiProType: $("#saiProTypeEdit").val(),
+            saiLevel: $("#saiLevelEdit").val(),
+            awardTime: $("#awardTimeEdit").val(),
+            studentList: $("#studentListEdit").val(),
+            coach: $("#coachEdit").val(),
         }, function (msg) {
             swal({
                 title: msg.msg,

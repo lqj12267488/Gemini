@@ -21,42 +21,42 @@
             <div class="controls">
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>序号
+                        <span class="iconBtx">*</span>项目名称
                     </div>
                     <div class="col-md-9">
-                        <input id="saIndexEdit" value="${data.saIndex}"/>
+                        <input id="smProNameEdit" value="${data.smProName}"/>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>项目名称（全称）
+                        <span class="iconBtx">*</span>项目种类
                     </div>
                     <div class="col-md-9">
-                        <input id="saProNameEdit" value="${data.saProName}"/>
+                        <select id="smProTypeEdit"/>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>项目级别
+                        <span class="iconBtx">*</span>奖助范围
                     </div>
                     <div class="col-md-9">
-                        <select id="saProLevEdit"/>
+                        <input id="aidRgeEdit" value="${data.aidRge}"/>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>获奖日期
+                        <span class="iconBtx">*</span>奖助人数
                     </div>
                     <div class="col-md-9">
-                        <input id="saTimeEdit" value="${data.saTime}" type="date"/>
+                        <input id="aidCountsEdit" value="${data.aidCounts}"/>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>备注
+                        <span class="iconBtx">*</span>奖助金额
                     </div>
                     <div class="col-md-9">
-                        <input id="remarkEdit" value="${data.remark}"/>
+                        <input id="aidMoneyEdit" value="${data.aidMoney}"/>
                     </div>
                 </div>
             </div>
@@ -72,53 +72,54 @@
 
 <script>
     $(document).ready(function () {
-            $.get("<%=request.getContextPath()%>/common/getSysDict?name=JB", function (data) {
-                addOption(data, 'saProLevEdit','${data.saProLev}');
+            $.get("<%=request.getContextPath()%>/common/getSysDict?name=	JZXXMZL", function (data) {
+                addOption(data, 'smProTypeEdit','${data.smProType}');
             });
     });
+
     function save() {
-        if ($("#saIndexEdit").val() == "" || $("#saIndexEdit").val() == undefined || $("#saIndexEdit").val() == null) {
+        if ($("#smProNameEdit").val() == "" || $("#smProNameEdit").val() == undefined || $("#smProNameEdit").val() == null) {
             swal({
-                title: "请填写序号！",
+                title: "请填写项目名称！",
                 type: "warning"
             });
             return;
         }
-        if ($("#saProNameEdit").val() == "" || $("#saProNameEdit").val() == undefined || $("#saProNameEdit").val() == null) {
+        if ($("#smProTypeEdit").val() == "" || $("#smProTypeEdit").val() == undefined || $("#smProTypeEdit").val() == null) {
             swal({
-                title: "请填写项目名称（全称）！",
+                title: "请选择项目种类{	jzxxmzl}！",
                 type: "warning"
             });
             return;
         }
-        if ($("#saProLevEdit").val() == "" || $("#saProLevEdit").val() == undefined || $("#saProLevEdit").val() == null) {
+        if ($("#aidRgeEdit").val() == "" || $("#aidRgeEdit").val() == undefined || $("#aidRgeEdit").val() == null) {
             swal({
-                title: "请选择项目级别！",
+                title: "请填写奖助范围！",
                 type: "warning"
             });
             return;
         }
-        if ($("#saTimeEdit").val() == "" || $("#saTimeEdit").val() == undefined || $("#saTimeEdit").val() == null) {
+        if ($("#aidCountsEdit").val() == "" || $("#aidCountsEdit").val() == undefined || $("#aidCountsEdit").val() == null) {
             swal({
-                title: "请填写获奖日期！",
+                title: "请填写奖助人数！",
                 type: "warning"
             });
             return;
         }
-        if ($("#remarkEdit").val() == "" || $("#remarkEdit").val() == undefined || $("#remarkEdit").val() == null) {
+        if ($("#aidMoneyEdit").val() == "" || $("#aidMoneyEdit").val() == undefined || $("#aidMoneyEdit").val() == null) {
             swal({
-                title: "请填写备注！",
+                title: "请填写奖助金额！",
                 type: "warning"
             });
             return;
         }
-        $.post("<%=request.getContextPath()%>/SchAward/saveSchAward", {
+        $.post("<%=request.getContextPath()%>/ScholarshipMge/saveScholarshipMge", {
             id: "${data.id}",
-            saIndex: $("#saIndexEdit").val(),
-            saProName: $("#saProNameEdit").val(),
-            saProLev: $("#saProLevEdit").val(),
-            saTime: $("#saTimeEdit").val(),
-            remark: $("#remarkEdit").val(),
+            smProName: $("#smProNameEdit").val(),
+            smProType: $("#smProTypeEdit").val(),
+            aidRge: $("#aidRgeEdit").val(),
+            aidCounts: $("#aidCountsEdit").val(),
+            aidMoney: $("#aidMoneyEdit").val(),
         }, function (msg) {
             swal({
                 title: msg.msg,

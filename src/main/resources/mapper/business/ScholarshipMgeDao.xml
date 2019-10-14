@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.ScholarshipMgeDao">
+    <select id="getScholarshipMgeList"
+            parameterType="com.goisan.table.bean.ScholarshipMge"
+            resultType="com.goisan.table.bean.ScholarshipMge">
+        select id,sm_pro_name,sm_pro_type,func_get_dicvalue(sm_pro_type,'JZXXMZL') smProTypeShow,aid_rge,aid_counts,aid_money,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_SCHOLARSHIP_MGE where 1=1
+<if test='smProName != "" and smProName != null'> AND sm_pro_name like '%'||#{smProName}||'%' </if> 
+<if test='smProType != "" and smProType != null'> AND sm_pro_type = #{smProType} </if> 
+<if test='aidRge != "" and aidRge != null'> AND aid_rge like '%'||#{aidRge}||'%' </if> 
+<if test='aidCounts != "" and aidCounts != null'> AND aid_counts like '%'||#{aidCounts}||'%' </if> 
+<if test='aidMoney != "" and aidMoney != null'> AND aid_money like '%'||#{aidMoney}||'%' </if> 
+
+    </select>
+    <insert id="saveScholarshipMge" parameterType="com.goisan.table.bean.ScholarshipMge">
+        insert into t_tab_scholarship_mge (id,sm_pro_name,sm_pro_type,aid_rge,aid_counts,aid_money,creator,create_time,create_dept) values (func_get_uuid ,#{smProName},#{smProType},#{aidRge},#{aidCounts},#{aidMoney},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getScholarshipMgeById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.ScholarshipMge">
+        select * from T_TAB_SCHOLARSHIP_MGE where id = #{id}
+    </select>
+    <update id="updateScholarshipMge" parameterType="com.goisan.table.bean.ScholarshipMge">
+        update t_tab_scholarship_mge set sm_pro_name=#{smProName},sm_pro_type=#{smProType},aid_rge=#{aidRge},aid_counts=#{aidCounts},aid_money=#{aidMoney},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delScholarshipMge" parameterType="java.lang.String">
+        delete from T_TAB_SCHOLARSHIP_MGE where id = #{id}
+    </delete>
+</mapper>
