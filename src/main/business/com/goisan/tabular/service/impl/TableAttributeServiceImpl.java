@@ -12,10 +12,7 @@ import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.*;
 import com.goisan.system.dao.EmpDao;
 import com.goisan.system.dao.ParameterDao;
-import com.goisan.table.bean.Programme;
-import com.goisan.table.bean.StudentDocuments;
-import com.goisan.table.bean.ClubReward;
-import com.goisan.table.bean.TeachContact;
+import com.goisan.table.bean.*;
 import com.goisan.table.dao.ClubRewardDao;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
@@ -1402,21 +1399,28 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<SkillAppraisal> list = tableAttributeDao.getExpertExcel_A4_3();
+            List<Associations> list = tableAttributeDao.getExpertExcel_A10_3();
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
                 Row row = sheet.getRow(rowIndex+i);
-                row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getIssuingOffice());
-                row.getCell(3).setCellValue(list.get(i).getPreAppProfession());
-                row.getCell(4).setCellValue("");
-                row.getCell(5).setCellValue("");
-                row.getCell(6).setCellValue("");
-                row.getCell(7).setCellValue("");
-                row.getCell(8).setCellValue("");
+                row.getCell(1).setCellValue(list.get(i).getOrdernumber());
+                row.getCell(2).setCellValue(list.get(i).getCommunitycode());
+                row.getCell(3).setCellValue(list.get(i).getCommunityname());
+                row.getCell(4).setCellValue(list.get(i).getCommunitycategory());
+                row.getCell(5).setCellValue(list.get(i).getRegistrationdateStr());
+                row.getCell(6).setCellValue(list.get(i).getApprovaldepartment());
+                row.getCell(7).setCellValue(list.get(i).getRegistrantorganization());
+                row.getCell(8).setCellValue(list.get(i).getExistingmember());
+                row.getCell(9).setCellValue(list.get(i).getName());
+                row.getCell(10).setCellValue(list.get(i).getGrade());
+                row.getCell(11).setCellValue(list.get(i).getMoney());
+                row.getCell(12).setCellValue(list.get(i).getCredit());
+                row.getCell(13).setCellValue(list.get(i).getAwards());
+                row.getCell(14).setCellValue(list.get(i).getGuidancedepartment());
+                row.getCell(15).setCellValue(list.get(i).getInstructors());
                 count++;
-            }*/
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();

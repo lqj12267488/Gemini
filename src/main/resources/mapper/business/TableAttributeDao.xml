@@ -773,6 +773,11 @@ L2.person_id,
         select t.ORDERNUMBER,t.PROJECTNAME,t.PROJECTPROGRAMME,t.GRADE,to_char(t.RATIFYDATE, 'yyyymmdd')ratifydateStr,t.STAFF,t.REMARKS from T_TAB_PROGRAMME t
     </select>
 
+    <select id="getExpertExcel_A10_3" resultType="com.goisan.table.bean.Associations">
+        select t.ORDERNUMBER,t.COMMUNITYCODE,t.COMMUNITYNAME,t.COMMUNITYCATEGORY,to_char(t.REGISTRATIONDATE, 'yyyymmdd')registrationdateStr,t.APPROVALDEPARTMENT,t.REGISTRANTORGANIZATION,t.EXISTINGMEMBER,t.NAME,t.GRADE,t.MONEY,t.CREDIT,t.AWARDS,t.GUIDANCEDEPARTMENT,t.INSTRUCTORS
+        from T_TAB_ASSOCIATIONS t
+    </select>
+
     <!--modify by wangxue end-->
 
 </mapper>
