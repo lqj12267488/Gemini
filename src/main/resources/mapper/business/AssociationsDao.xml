@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.AssociationsDao">
+    <select id="getAssociationsList"
+            parameterType="com.goisan.table.bean.Associations"
+            resultType="com.goisan.table.bean.Associations">
+        select id,ordernumber,communitycode,communityname,communitycategory,registrationdate,approvaldepartment,registrantorganization,existingmember,name,grade,money,credit,awards,guidancedepartment,instructors from T_TAB_ASSOCIATIONS where 1=1
+        <if test="groupNameSel!=null and groupNameSel!=''">
+            and COMMUNITYNAME like #{groupNameSel}
+        </if>
+
+    </select>
+    <insert id="saveAssociations" parameterType="com.goisan.table.bean.Associations">
+        insert into t_tab_associations (id,ordernumber,communitycode,communityname,communitycategory,registrationdate,approvaldepartment,registrantorganization,existingmember,name,grade,money,credit,awards,guidancedepartment,instructors) values (func_get_uuid ,#{ordernumber},#{communitycode},#{communityname},#{communitycategory},#{registrationdate},#{approvaldepartment},#{registrantorganization},#{existingmember},#{name},#{grade},#{money},#{credit},#{awards},#{guidancedepartment},#{instructors})
+    </insert>
+    <select id="getAssociationsById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.Associations">
+        select * from T_TAB_ASSOCIATIONS where id = #{id}
+    </select>
+    <update id="updateAssociations" parameterType="com.goisan.table.bean.Associations">
+        update t_tab_associations set ordernumber=#{ordernumber},communitycode=#{communitycode},communityname=#{communityname},communitycategory=#{communitycategory},registrationdate=#{registrationdate},approvaldepartment=#{approvaldepartment},registrantorganization=#{registrantorganization},existingmember=#{existingmember},name=#{name},grade=#{grade},money=#{money},credit=#{credit},awards=#{awards},guidancedepartment=#{guidancedepartment},instructors=#{instructors} where id = #{id}
+    </update>
+    <delete id="delAssociations" parameterType="java.lang.String">
+        delete from T_TAB_ASSOCIATIONS where id = #{id}
+    </delete>
+</mapper>

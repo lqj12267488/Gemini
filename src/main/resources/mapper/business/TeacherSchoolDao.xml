@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.TeacherSchoolDao">
+    <select id="getTeacherSchoolList"
+            parameterType="com.goisan.table.bean.TeacherSchool"
+            resultType="com.goisan.table.bean.TeacherSchool">
+        select t1.id,t1.personid,t1.whetherhost,t1.inventnumber,t1.topicnature,t1.subjectclassification,t1.subjectname,t1.horizontaltopic,t1.subjectgrade,t1.projectdate,t1.sourceoffunding,t1.money,t1.completororder,t1.classification,t1.authororder,t1.type,t2.name from T_TAB_TEACHERSCHOOL t1,T_RS_EMPLOYEE t2 where 1=1
+and t1.personid = t2.person_id and t1.type = #{type}
+        <if test="groupNameSel!=null and groupNameSel!=''">
+            and t1.SUBJECTNAME like #{groupNameSel}
+        </if>
+
+    </select>
+    <insert id="saveTeacherSchool" parameterType="com.goisan.table.bean.TeacherSchool">
+        insert into t_tab_teacherschool (id,personid,whetherhost,inventnumber,topicnature,subjectclassification,subjectname,horizontaltopic,subjectgrade,projectdate,sourceoffunding,money,completororder,classification,authororder,type) values (#{id} ,#{personid},#{whetherhost},#{inventnumber},#{topicnature},#{subjectclassification},#{subjectname},#{horizontaltopic},#{subjectgrade},#{projectdate},#{sourceoffunding},#{money},#{completororder},#{classification},#{authororder},#{type})
+    </insert>
+    <select id="getTeacherSchoolById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.TeacherSchool">
+        select * from T_TAB_TEACHERSCHOOL where id = #{id}
+    </select>
+    <update id="updateTeacherSchool" parameterType="com.goisan.table.bean.TeacherSchool">
+        update t_tab_teacherschool set
+        <if test="personidvalue != null and personidvalue!=''">
+            PERSONID = #{personidvalue} ,
+        </if>
+
+        whetherhost=#{whetherhost},inventnumber=#{inventnumber},topicnature=#{topicnature},subjectclassification=#{subjectclassification},subjectname=#{subjectname},horizontaltopic=#{horizontaltopic},subjectgrade=#{subjectgrade},projectdate=#{projectdate},sourceoffunding=#{sourceoffunding},money=#{money},completororder=#{completororder},classification=#{classification},authororder=#{authororder},type=#{type} where id = #{id}
+    </update>
+    <delete id="delTeacherSchool" parameterType="java.lang.String">
+        delete from T_TAB_TEACHERSCHOOL where id = #{id}
+    </delete>
+    <select id="selectTeacherById" parameterType="java.lang.String" resultType="com.goisan.table.bean.TeacherSchool">
+        select * from T_TAB_TEACHERSCHOOL where id = #{id}
+    </select>
+</mapper>

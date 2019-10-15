@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.ProgrammeDao">
+    <select id="getProgrammeList"
+            parameterType="com.goisan.table.bean.Programme"
+            resultType="com.goisan.table.bean.Programme">
+        select id,ordernumber,projectname,projectprogramme,grade,ratifydate,staff,remarks from T_TAB_PROGRAMME where 1=1
+        <if test="groupNameSel!=null and groupNameSel!=''">
+            and PROJECTNAME like #{groupNameSel}
+        </if>
+
+    </select>
+    <insert id="saveProgramme" parameterType="com.goisan.table.bean.Programme">
+        insert into t_tab_programme (id,ordernumber,projectname,projectprogramme,grade,ratifydate,staff,remarks) values (func_get_uuid ,#{ordernumber},#{projectname},#{projectprogramme},#{grade},#{ratifydate},#{staff},#{remarks})
+    </insert>
+    <select id="getProgrammeById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.Programme">
+        select * from T_TAB_PROGRAMME where id = #{id}
+    </select>
+    <update id="updateProgramme" parameterType="com.goisan.table.bean.Programme">
+        update t_tab_programme set ordernumber=#{ordernumber},projectname=#{projectname},projectprogramme=#{projectprogramme},grade=#{grade},ratifydate=#{ratifydate},staff=#{staff},remarks=#{remarks} where id = #{id}
+    </update>
+    <delete id="delProgramme" parameterType="java.lang.String">
+        delete from T_TAB_PROGRAMME where id = #{id}
+    </delete>
+</mapper>

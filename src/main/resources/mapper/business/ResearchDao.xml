@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.research.dao.ResearchDao">
+    <select id="getResearchList"
+            parameterType="com.goisan.research.bean.Research"
+            resultType="com.goisan.research.bean.Research">
+        select
+        t1.id,t1.personid,t1.grade,t1.givenname,t1.issuer,t1.getdate,t1.topicnature,t1.subjectclassification,t1.subjectname,t1.horizontaltopic,t1.subjectgrade,t1.projectdate,t1.sourceoffunding,t1.completororder,t1.money,t1.num,t1.highestgrade,t1.cooperation,t1.expertise,t2.name
+        from T_TAB_RESEARCH t1 ,T_RS_EMPLOYEE t2 where 1=1
+      and t1.personid = t2.person_id
+      <if test="groupNameSel!=null and groupNameSel!=''">
+          and t1.GIVENNAME like #{groupNameSel}
+      </if>
+
+
+    </select>
+    <insert id="saveResearch" parameterType="com.goisan.research.bean.Research">
+        insert into T_TAB_RESEARCH (id,personid,grade,givenname,issuer,getdate,topicnature,subjectclassification,subjectname,horizontaltopic,subjectgrade,projectdate,sourceoffunding,completororder,money,num,highestgrade,cooperation,expertise) values (#{id} ,#{personid},#{grade},#{givenname},#{issuer},#{getdate},#{topicnature},#{subjectclassification},#{subjectname},#{horizontaltopic},#{subjectgrade},#{projectdate},#{sourceoffunding},#{completororder},#{money},#{num},#{highestgrade},#{cooperation},#{expertise})
+    </insert>
+    <select id="getResearchById" parameterType="java.lang.String"
+            resultType="com.goisan.research.bean.Research">
+        select * from T_TAB_RESEARCH where id = #{id}
+    </select>
+    <update id="updateResearch" parameterType="com.goisan.research.bean.Research">
+        update T_TAB_RESEARCH set
+        <if test="personidvalue != null and personidvalue!=''">
+            PERSONID = #{personidvalue} ,
+        </if>
+        grade=#{grade},givenname=#{givenname},issuer=#{issuer},getdate=#{getdate},topicnature=#{topicnature},subjectclassification=#{subjectclassification},subjectname=#{subjectname},horizontaltopic=#{horizontaltopic},subjectgrade=#{subjectgrade},projectdate=#{projectdate},sourceoffunding=#{sourceoffunding},completororder=#{completororder},money=#{money},num=#{num},highestgrade=#{highestgrade},cooperation=#{cooperation},expertise=#{expertise}
+        where id = #{id}
+    </update>
+    <delete id="delResearch" parameterType="java.lang.String">
+        delete from T_TAB_RESEARCH where id = #{id}
+    </delete>
+
+    <select id="selectResearchById" parameterType="java.lang.String" resultType="com.goisan.research.bean.Research">
+        select * from  T_TAB_RESEARCH where id = #{id}
+    </select>
+</mapper>

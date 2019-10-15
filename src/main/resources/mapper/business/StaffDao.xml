@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.staff.dao.StaffDao">
+    <select id="getStaffList"
+            parameterType="com.goisan.staff.bean.Staff"
+            resultType="com.goisan.staff.bean.Staff">
+        select
+        t1.id,
+        t1.personid,
+        t1.grade,
+        t1.givenname,
+        t1.issuer,
+        t1.getdate,
+        t1.teachingmanagement,
+        t1.studentmanagement,
+        t1.politicalcounselor,
+        t1.psychologicalconsultant,
+        t1.employmentoffice,
+        t1.expertise,
+        t1.workinghours,
+        t2.name  from T_TAB_STAFF t1 ,T_RS_EMPLOYEE t2 where 1=1
+      and t1.personid = t2.person_id and t1.type = #{type}
+      <if test="groupNameSel!=null and groupNameSel!=''">
+          and t1.GIVENNAME like #{groupNameSel}
+      </if>
+
+    </select>
+    <insert id="saveStaff" parameterType="com.goisan.staff.bean.Staff">
+        insert into T_TAB_STAFF (
+        id,personid,grade,givenname,issuer,getdate
+        <if test="type == 1">
+        ,teachingmanagement
+        </if>
+        <if test="type == 2">
+            ,studentmanagement,politicalcounselor,psychologicalconsultant
+        </if>
+        <if test="type == 3">
+            ,employmentoffice
+        </if>
+
+        <if test="type == 4">
+            ,expertise,workinghours
+        </if>
+
+        ,type) values (
+        #{id},#{personid},#{grade},#{givenname},#{issuer},#{getdate}
+
+        <if test="type == 1">
+            ,#{teachingmanagement}
+        </if>
+        <if test="type == 2">
+            ,#{studentmanagement},#{politicalcounselor},#{psychologicalconsultant}
+        </if>
+        <if test="type == 3">
+            ,#{employmentoffice}
+        </if>
+
+        <if test="type == 4">
+            ,#{expertise},#{workinghours}
+        </if>
+
+        ,#{type}
+
+        )
+    </insert>
+    <select id="getStaffById" parameterType="java.lang.String"
+            resultType="com.goisan.staff.bean.Staff">
+        select * from T_TAB_STAFF where id = #{id}
+    </select>
+    <update id="updateStaff" parameterType="com.goisan.staff.bean.Staff">
+        update T_TAB_STAFF set
+        <if test="personidvalue != null and personidvalue!=''">
+            PERSONID = #{personidvalue} ,
+        </if>
+
+        grade=#{grade},givenname=#{givenname},issuer=#{issuer},getdate=#{getdate}
+
+        <if test="type == 1">
+            ,teachingmanagement=#{teachingmanagement}
+        </if>
+        <if test="type == 2">
+            ,studentmanagement=#{studentmanagement},politicalcounselor=#{politicalcounselor},psychologicalconsultant=#{psychologicalconsultant}
+        </if>
+        <if test="type == 3">
+            ,employmentoffice=#{employmentoffice}
+        </if>
+
+        <if test="type == 4">
+            ,expertise=#{expertise},workinghours=#{workinghours}
+        </if>
+
+        where id = #{id}
+    </update>
+    <delete id="delStaff" parameterType="java.lang.String">
+        delete from T_TAB_STAFF where id = #{id}
+    </delete>
+
+    <select id="getPersonDept" resultType="com.goisan.system.bean.AutoComplete" parameterType="java.lang.String">
+        SELECT
+        decode(DEPT_NAME, '', t.name, t.name || ' ---- ' || DEPT_NAME) as "label",
+        decode(DEPT_ID, '', t.person_id, DEPT_ID || ',' || t.person_id) as "value"
+        FROM T_RS_EMPLOYEE t
+        LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID
+        FROM T_RS_EMPLOYEE_DEPT R,
+        T_SYS_DEPT D
+        WHERE R.DEPT_ID = D.DEPT_ID) ON T.PERSON_ID = PERSON
+        WHERE VALID_FLAG = '1'
+        and t.person_id = #{personid}
+    </select>
+</mapper>

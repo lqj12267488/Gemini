@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.StudentDocumentsDao">
+    <select id="getStudentDocumentsList"
+            parameterType="com.goisan.table.bean.StudentDocuments"
+            resultType="com.goisan.table.bean.StudentDocuments">
+        select id,ordernumber,filename,releasedate,releasedept,alteration,alterationdate,responsibledept from T_TAB_STUDENTDOCUMENTS where 1=1
+        <if test="groupNameSel!=null and groupNameSel!=''">
+            and FILENAME like #{groupNameSel}
+        </if>
+
+    </select>
+    <insert id="saveStudentDocuments" parameterType="com.goisan.table.bean.StudentDocuments">
+        insert into t_tab_studentdocuments (id,ordernumber,filename,releasedate,releasedept,alteration,alterationdate,responsibledept) values (func_get_uuid ,#{ordernumber},#{filename},#{releasedate},#{releasedept},#{alteration},#{alterationdate},#{responsibledept})
+    </insert>
+    <select id="getStudentDocumentsById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.StudentDocuments">
+        select * from T_TAB_STUDENTDOCUMENTS where id = #{id}
+    </select>
+    <update id="updateStudentDocuments" parameterType="com.goisan.table.bean.StudentDocuments">
+        update t_tab_studentdocuments set ordernumber=#{ordernumber},filename=#{filename},releasedate=#{releasedate},releasedept=#{releasedept},alteration=#{alteration},alterationdate=#{alterationdate},responsibledept=#{responsibledept} where id = #{id}
+    </update>
+    <delete id="delStudentDocuments" parameterType="java.lang.String">
+        delete from T_TAB_STUDENTDOCUMENTS where id = #{id}
+    </delete>
+</mapper>
