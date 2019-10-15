@@ -8,25 +8,21 @@
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
                         <div class="form-row">
-                        <#list queryMapList as col>
-                        <#if (col?counter != 1) && (col?counter % 4 ==1)>
-                        </div>
-                        <div class="form-row">
-                        </#if>
                             <div class="col-md-1 tar">
-                                ${col.comments}：
+                                姓名：
                             </div>
                             <div class="col-md-2">
-                                <#if col.dic??>
-                                <select id="${col.queryCol}Sel"></select>
-                               <#else>
-                                <input id="${col.queryCol}Sel">
-                                </#if>
+                                <input id="personIdSel">
                             </div>
-                        </#list>
+                            <div class="col-md-1 tar">
+                                分管工作：
+                            </div>
                             <div class="col-md-2">
-                                <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
-                                <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
+                                <input id="responsibilitiesSel">
+                            </div>
+                            <div class="col-md-2">
+                               <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
+                               <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
                             </div>
                         </div>
                     </div>
@@ -52,13 +48,6 @@
 <script>
     $(document).ready(function () {
 
-        <#list queryMapList as col>
-        <#if col.dic??>
-            $.get("<%=request.getContextPath()%>/common/getSysDict?name=${col.dic}", function (data) {
-                addOption(data,'${col.queryCol}Sel');
-            });
-        </#if>
-        </#list>
 
         search();
     })
@@ -69,30 +58,26 @@
              "serverSide": true,
             "ajax": {
                 "type": "post",
-                "url": '<%=request.getContextPath()%>${url}/get${beanName?cap_first}List',
-                <#if queryMapList??>
+                "url": '<%=request.getContextPath()%>/teachcontact/getTeachContactList',
                 "data": {
-                    <#list queryMapList as col>
-                    ${col.queryCol}: $("#${col.queryCol}Sel").val(),
-                    </#list>
+                    personIdShow: $("#personIdSel").val(),
+                    responsibilities: $("#responsibilitiesSel").val()
                 }
-                </#if>
             },
             "destroy": true,
             "columns": [
-                 {"data": "${primary}", "title": "主键id", "visible": false},
-             <#list queryMapList as col>
-                 <#if col.dic??>
-                 {"data": "${col.queryCol}Show", "title": "${col.comments}"},
-                 <#else >
-                 {"data": "${col.queryCol}", "title": "${col.comments}"},
-                 </#if>
-             </#list>
+                 {"data": "id", "title": "主键id", "visible": false},
+                 {"data": "personIdShow", "title": "姓名"},
+                 {"data": "responsibilities", "title": "分管工作"},
+                 {"data": "attendLectures", "title": "听课（节）"},
+                 {"data": "studentDorm", "title": "走访学生寝室（次）"},
+                 {"data": "outsidePractice", "title": "走访校外实习点（次）"},
+                 {"data": "studentClubActivities", "title": "参与学生社团文体活动（次）"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
-                        return '<span class="icon-edit" title="修改" onclick=edit("' + row.${primary} + '")></span>&ensp;&ensp;' +
-                                '<span class="icon-trash" title="删除" onclick=del("' + row.${primary} + '")></span>';
+                        return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '")></span>&ensp;&ensp;' +
+                                '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
                     }
                 }
             ],
@@ -108,12 +93,12 @@
     }
 
     function add() {
-        $("#dialog").load("<%=request.getContextPath()%>${url}/to${beanName?cap_first}Add")
+        $("#dialog").load("<%=request.getContextPath()%>/teachcontact/toTeachContactAdd")
         $("#dialog").modal("show")
     }
 
     function edit(id) {
-        $("#dialog").load("<%=request.getContextPath()%>${url}/to${beanName?cap_first}Edit?id=" + id)
+        $("#dialog").load("<%=request.getContextPath()%>/teachcontact/toTeachContactEdit?id=" + id)
         $("#dialog").modal("show")
     }
 
@@ -127,7 +112,7 @@
             confirmButtonText: "删除",
             closeOnConfirm: false
         }, function () {
-            $.get("<%=request.getContextPath()%>${url}/del${beanName?cap_first}?id=" + id, function (msg) {
+            $.get("<%=request.getContextPath()%>/teachcontact/delTeachContact?id=" + id, function (msg) {
                 swal({
                     title: msg.msg,
                     type: "success"

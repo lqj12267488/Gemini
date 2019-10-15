@@ -85,6 +85,11 @@
                  BIRTHDAY,
                  TEL
     </select>
+    <select id="getExpertExcel_A2_2" resultType="com.goisan.table.bean.TeachContact">
+        select id,tc.person_id,responsibilities,attend_lectures,student_dorm,outside_practice,student_club_activities, e.name personIdShow, e.staff_id staffId
+        from T_TAB_TEACH_CONTACT tc, t_rs_employee e
+        where tc.person_id=e.person_id
+    </select>
     <select id="getExpertExcel_A4_3" resultType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
         select ISSUING_OFFICE,
                PROJECT_LEVEL,

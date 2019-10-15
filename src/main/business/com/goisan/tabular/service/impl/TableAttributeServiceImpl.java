@@ -15,6 +15,7 @@ import com.goisan.system.bean.Emp;
 import com.goisan.system.bean.Student;
 import com.goisan.system.dao.EmpDao;
 import com.goisan.system.dao.ParameterDao;
+import com.goisan.table.bean.TeachContact;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
 import com.goisan.tabular.dao.TableAttributeDao;
@@ -320,26 +321,81 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-            List<Emp> list = tableAttributeDao.getExpertExcel_A2();
+//            List<Emp> list = tableAttributeDao.getExpertExcel_A2();
             int rowIndex = 10;
             int count = 1;
-            for (int i = 0; i < list.size(); i++) {
-                Row row = sheet.getRow(rowIndex + i);
-                row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getStaffId());
-                row.getCell(3).setCellValue(list.get(i).getName());
-                row.getCell(4).setCellValue(list.get(i).getNation());
-                row.getCell(5).setCellValue(list.get(i).getPost());
-                row.getCell(6).setCellValue(list.get(i).getPositionalTitles());
-                row.getCell(7).setCellValue(list.get(i).getEducationalLevel());
-                row.getCell(8).setCellValue(list.get(i).getSex());
-                row.getCell(9).setCellValue(list.get(i).getBirthday());
-                row.getCell(10).setCellValue(list.get(i).getTel());
-                row.getCell(11).setCellValue("");
-                row.getCell(12).setCellValue("");
-                row.getCell(13).setCellValue(list.get(i).getEducationalResearch());
+            Row row;
+            /*for (int i = 0; i < list.size(); i++) {
+                System.out.println(i);
+                row = sheet.getRow(rowIndex + i);
+                if(row == null) row = sheet.createRow(rowIndex + i);
+                if(row.getCell(1) == null){
+                    row.createCell(1).setCellValue(count);
+                    row.createCell(2).setCellValue(list.get(i).getStaffId());
+                    row.createCell(3).setCellValue(list.get(i).getName());
+                    row.createCell(4).setCellValue(list.get(i).getNation());
+                    row.createCell(5).setCellValue(list.get(i).getPost());
+                    row.createCell(6).setCellValue(list.get(i).getPositionalTitles());
+                    row.createCell(7).setCellValue(list.get(i).getEducationalLevel());
+                    row.createCell(8).setCellValue(list.get(i).getSex());
+                    row.createCell(9).setCellValue(list.get(i).getBirthday());
+                    row.createCell(10).setCellValue(list.get(i).getTel());
+                    row.createCell(11).setCellValue("");
+                    row.createCell(12).setCellValue("");
+                    row.createCell(13).setCellValue(list.get(i).getEducationalResearch());
+                }else {
+                    row.getCell(1).setCellValue(count);
+                    row.getCell(2).setCellValue(list.get(i).getStaffId());
+                    row.getCell(3).setCellValue(list.get(i).getName());
+                    row.getCell(4).setCellValue(list.get(i).getNation());
+                    row.getCell(5).setCellValue(list.get(i).getPost());
+                    row.getCell(6).setCellValue(list.get(i).getPositionalTitles());
+                    row.getCell(7).setCellValue(list.get(i).getEducationalLevel());
+                    row.getCell(8).setCellValue(list.get(i).getSex());
+                    row.getCell(9).setCellValue(list.get(i).getBirthday());
+                    row.getCell(10).setCellValue(list.get(i).getTel());
+                    row.getCell(11).setCellValue("");
+                    row.getCell(12).setCellValue("");
+                    row.getCell(13).setCellValue(list.get(i).getEducationalResearch());
+                }
+                count++;
+            }*/
+
+            List<TeachContact> teachContactList = tableAttributeDao.getExpertExcel_A2_2();
+//            rowIndex = 14 + list.size();
+            rowIndex = 32;
+            count = 1;
+            Cell cell;
+            for (int i = 0; i < teachContactList.size(); i++) {
+                row = sheet.getRow(rowIndex + i);
+                if(row == null) row = sheet.createRow(rowIndex + i);
+                cell = row.getCell(1);
+                if (cell == null ) cell = row.createCell(1);
+                cell.setCellValue(count);
+                cell = row.getCell(2);
+                if (cell == null ) cell = row.createCell(2);
+                cell.setCellValue(teachContactList.get(i).getStaffId());
+                cell = row.getCell(3);
+                if (cell == null ) cell = row.createCell(3);
+                cell.setCellValue(teachContactList.get(i).getPersonIdShow());
+                cell = row.getCell(4);
+                if (cell == null ) cell = row.createCell(4);
+                cell.setCellValue(teachContactList.get(i).getResponsibilities());
+                cell = row.getCell(5);
+                if (cell == null ) cell = row.createCell(5);
+                cell.setCellValue(teachContactList.get(i).getAttendLectures());
+                cell = row.getCell(6);
+                if (cell == null ) cell = row.createCell(6);
+                cell.setCellValue(teachContactList.get(i).getStudentDorm());
+                cell = row.getCell(7);
+                if (cell == null ) cell = row.createCell(7);
+                cell.setCellValue(teachContactList.get(i).getOutsidePractice());
+                cell = row.getCell(8);
+                if (cell == null ) cell = row.createCell(8);
+                cell.setCellValue(teachContactList.get(i).getStudentClubActivities());
                 count++;
             }
+
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();

@@ -23,15 +23,15 @@ public class Generate {
      *
      */
     /**实体名*/
-    private static String BASE_NAME = "SchAward";
+    private static String BASE_NAME = "ClubReward";
     /**数据库表名*/
-    private static String TABLE_NAME = "T_TAB_SCHOOL_AWARD";
+    private static String TABLE_NAME = "t_tab_club_reward";
     /**1. 模块名,不填默认business （core,business）*/
     private static String MODULE_NAME = "";
     /** packageName 包所在位置;实际包生成所在位置=MODULE_NAME+PACKAGE_NAME*/
     private static String PACKAGE_NAME = "com.goisan.table";
     /** jsp 文件所在路径; jsp文件生成所在位置 = MODULE_NAME + JSP_PATH*/
-    private static String JSP_PATH = "/table/schaward";
+    private static String JSP_PATH = "/table/clubreward";
     /** 表主键*/
     private static String PRIMARY = "id";
 
@@ -52,7 +52,7 @@ public class Generate {
             data.put("jspPath",JSP_PATH);
         }
         data.put("primary", PRIMARY);
-        data.put("url", "/"+BASE_NAME);
+        data.put("url", "/"+BASE_NAME.toLowerCase());
         createFile(data);
     }
 

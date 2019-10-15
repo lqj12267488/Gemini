@@ -10,6 +10,7 @@ import com.goisan.system.bean.Emp;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.studentwork.internships.bean.InternshipManage;
 import com.goisan.system.bean.Student;
+import com.goisan.table.bean.TeachContact;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
 import org.springframework.stereotype.Repository;
@@ -32,6 +33,8 @@ public interface TableAttributeDao {
     void expertExcel_A2(HttpServletResponse response, TabularFile tabularFile);//A2院校领导表
 
     List<Emp> getExpertExcel_A2();
+
+    List<TeachContact> getExpertExcel_A2_2();
 
     void expertExcel_A3(HttpServletResponse response, TabularFile tabularFile);//A3基本办学条件表1
 

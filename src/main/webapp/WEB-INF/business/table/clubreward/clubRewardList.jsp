@@ -8,22 +8,18 @@
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
                         <div class="form-row">
-                        <#list queryMapList as col>
-                        <#if (col?counter != 1) && (col?counter % 4 ==1)>
-                        </div>
-                        <div class="form-row">
-                        </#if>
                             <div class="col-md-1 tar">
-                                ${col.comments}：
+                                社团名称：
                             </div>
                             <div class="col-md-2">
-                                <#if col.dic??>
-                                <select id="${col.queryCol}Sel"></select>
-                               <#else>
-                                <input id="${col.queryCol}Sel">
-                                </#if>
+                                <input id="nameSel">
                             </div>
-                        </#list>
+                            <div class="col-md-1 tar">
+                                获奖级别：
+                            </div>
+                            <div class="col-md-2">
+                                <select id="rewardLevelSel"></select>
+                            </div>
                             <div class="col-md-2">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                                 <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
@@ -51,15 +47,9 @@
 </div>
 <script>
     $(document).ready(function () {
-
-        <#list queryMapList as col>
-        <#if col.dic??>
-            $.get("<%=request.getContextPath()%>/common/getSysDict?name=${col.dic}", function (data) {
-                addOption(data,'${col.queryCol}Sel');
+            $.get("<%=request.getContextPath()%>/common/getSysDict?name=HJJB", function (data) {
+                addOption(data,'rewardLevelSel');
             });
-        </#if>
-        </#list>
-
         search();
     })
 
@@ -69,30 +59,25 @@
              "serverSide": true,
             "ajax": {
                 "type": "post",
-                "url": '<%=request.getContextPath()%>${url}/get${beanName?cap_first}List',
-                <#if queryMapList??>
+                "url": '<%=request.getContextPath()%>/clubreward/getClubRewardList',
                 "data": {
-                    <#list queryMapList as col>
-                    ${col.queryCol}: $("#${col.queryCol}Sel").val(),
-                    </#list>
+                    name: $("#nameSel").val(),
+                    rewardLevel: $("#rewardLevelSel").val()
                 }
-                </#if>
             },
             "destroy": true,
             "columns": [
-                 {"data": "${primary}", "title": "主键id", "visible": false},
-             <#list queryMapList as col>
-                 <#if col.dic??>
-                 {"data": "${col.queryCol}Show", "title": "${col.comments}"},
-                 <#else >
-                 {"data": "${col.queryCol}", "title": "${col.comments}"},
-                 </#if>
-             </#list>
+                 {"data": "id", "title": "主键id", "visible": false},
+                 {"data": "name", "title": "社团名称"},
+                 {"data": "rewardLevelShow", "title": "获奖级别"},
+                 {"data": "rewardDate", "title": "获奖日期"},
+                 {"data": "awardUnit", "title": "颁奖单位"},
+                 {"data": "guidanceTeacher", "title": "指导教师名单"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
-                        return '<span class="icon-edit" title="修改" onclick=edit("' + row.${primary} + '")></span>&ensp;&ensp;' +
-                                '<span class="icon-trash" title="删除" onclick=del("' + row.${primary} + '")></span>';
+                        return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '")></span>&ensp;&ensp;' +
+                                '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
                     }
                 }
             ],
@@ -108,12 +93,12 @@
     }
 
     function add() {
-        $("#dialog").load("<%=request.getContextPath()%>${url}/to${beanName?cap_first}Add")
+        $("#dialog").load("<%=request.getContextPath()%>/clubreward/toClubRewardAdd")
         $("#dialog").modal("show")
     }
 
     function edit(id) {
-        $("#dialog").load("<%=request.getContextPath()%>${url}/to${beanName?cap_first}Edit?id=" + id)
+        $("#dialog").load("<%=request.getContextPath()%>/clubreward/toClubRewardEdit?id=" + id)
         $("#dialog").modal("show")
     }
 
@@ -127,7 +112,7 @@
             confirmButtonText: "删除",
             closeOnConfirm: false
         }, function () {
-            $.get("<%=request.getContextPath()%>${url}/del${beanName?cap_first}?id=" + id, function (msg) {
+            $.get("<%=request.getContextPath()%>/clubreward/delClubReward?id=" + id, function (msg) {
                 swal({
                     title: msg.msg,
                     type: "success"

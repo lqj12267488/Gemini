@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.ClubRewardDao">
+    <select id="getClubRewardList"
+            parameterType="com.goisan.table.bean.ClubReward"
+            resultType="com.goisan.table.bean.ClubReward">
+        select creator,create_time,create_dept,changer,change_time,change_dept,id,name,reward_level,func_get_dicvalue(reward_level,'HJJB') rewardLevelShow,reward_date,award_unit,guidance_teacher from t_tab_club_reward where 1=1 
+<if test='name != "" and name != null'> AND name like '%'||#{name}||'%' </if> 
+<if test='rewardLevel != "" and rewardLevel != null'> AND reward_level = #{rewardLevel} </if>
+    order by create_time
+    </select>
+    <insert id="saveClubReward" parameterType="com.goisan.table.bean.ClubReward">
+        insert into t_tab_club_reward (creator,create_time,create_dept,id,name,reward_level,reward_date,award_unit,guidance_teacher) values (#{creator},sysdate ,#{createDept},func_get_uuid ,#{name},#{rewardLevel},#{rewardDate},#{awardUnit},#{guidanceTeacher})
+    </insert>
+    <select id="getClubRewardById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.ClubReward">
+        select * from t_tab_club_reward where id = #{id}
+    </select>
+    <update id="updateClubReward" parameterType="com.goisan.table.bean.ClubReward">
+        update t_tab_club_reward set changer=#{changer},change_time= sysdate,change_dept=#{changeDept},name=#{name},reward_level=#{rewardLevel},reward_date=#{rewardDate},award_unit=#{awardUnit},guidance_teacher=#{guidanceTeacher} where id = #{id}
+    </update>
+    <delete id="delClubReward" parameterType="java.lang.String">
+        delete from t_tab_club_reward where id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.TeachContactDao">
+    <select id="getTeachContactList"
+            parameterType="com.goisan.table.bean.TeachContact"
+            resultType="com.goisan.table.bean.TeachContact">
+        select id,tc.person_id,responsibilities,attend_lectures,student_dorm,outside_practice,student_club_activities, e.name personIdShow, e.staff_id staffId
+        from T_TAB_TEACH_CONTACT tc, t_rs_employee e
+        where tc.person_id=e.person_id
+        <if test='personId != "" and personId != null'>
+            AND e.name like '%'||#{personIdShow}||'%'
+        </if>
+        <if test='responsibilities != "" and responsibilities != null'>
+            AND responsibilities like '%'||#{responsibilities}||'%'
+        </if>
+    </select>
+    <insert id="saveTeachContact" parameterType="com.goisan.table.bean.TeachContact">
+        insert into t_tab_teach_contact (id,person_id,responsibilities,attend_lectures,student_dorm,outside_practice,student_club_activities) values (func_get_uuid ,#{personId},#{responsibilities},#{attendLectures},#{studentDorm},#{outsidePractice},#{studentClubActivities})
+    </insert>
+    <select id="getTeachContactById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.TeachContact">
+        select tc.*, e.name personIdShow from T_TAB_TEACH_CONTACT tc, t_rs_employee e
+        where tc.person_id=e.person_id and tc.id = #{id}
+    </select>
+    <update id="updateTeachContact" parameterType="com.goisan.table.bean.TeachContact">
+        update t_tab_teach_contact set person_id=#{personId},responsibilities=#{responsibilities},attend_lectures=#{attendLectures},student_dorm=#{studentDorm},outside_practice=#{outsidePractice},student_club_activities=#{studentClubActivities} where id = #{id}
+    </update>
+    <delete id="delTeachContact" parameterType="java.lang.String">
+        delete from T_TAB_TEACH_CONTACT where id = #{id}
+    </delete>
+</mapper>
