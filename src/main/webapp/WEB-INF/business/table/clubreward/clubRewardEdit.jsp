@@ -29,6 +29,14 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>项目名称
+                    </div>
+                    <div class="col-md-9">
+                        <input id="projectNameEdit" value="${data.projectName}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
                         <span class="iconBtx">*</span>获奖级别
                     </div>
                     <div class="col-md-9">
@@ -87,6 +95,13 @@
             });
             return;
         }
+        if ($("#projectNameEdit").val() == "" || $("#projectNameEdit").val() == undefined || $("#projectNameEdit").val() == null) {
+            swal({
+                title: "请填写项目名称！",
+                type: "warning"
+            });
+            return;
+        }
         if ($("#rewardLevelEdit").val() == "" || $("#rewardLevelEdit").val() == undefined || $("#rewardLevelEdit").val() == null) {
             swal({
                 title: "请选择获奖级别！",
@@ -118,6 +133,7 @@
         $.post("<%=request.getContextPath()%>/clubreward/saveClubReward", {
             id: "${data.id}",
             name: $("#nameEdit").val(),
+            projectName: $("#projectNameEdit").val(),
             rewardLevel: $("#rewardLevelEdit").val(),
             rewardDate: $("#rewardDateEdit").val(),
             awardUnit: $("#awardUnitEdit").val(),

@@ -69,6 +69,7 @@
             "columns": [
                  {"data": "id", "title": "主键id", "visible": false},
                  {"data": "name", "title": "社团名称"},
+                 {"data": "projectName", "title": "项目名称"},
                  {"data": "rewardLevelShow", "title": "获奖级别"},
                  {"data": "rewardDate", "title": "获奖日期"},
                  {"data": "awardUnit", "title": "颁奖单位"},

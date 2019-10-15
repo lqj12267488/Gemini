@@ -9,13 +9,12 @@ import com.goisan.educational.skillappraisal.bean.SkillAppraisal;
 import com.goisan.evaluation.bean.EvaluationTask;
 import com.goisan.studentwork.employments.bean.EmploymentManage;
 import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
-import com.goisan.system.bean.CommonBean;
-import com.goisan.system.bean.Dept;
-import com.goisan.system.bean.Emp;
-import com.goisan.system.bean.Student;
+import com.goisan.system.bean.*;
 import com.goisan.system.dao.EmpDao;
 import com.goisan.system.dao.ParameterDao;
+import com.goisan.table.bean.ClubReward;
 import com.goisan.table.bean.TeachContact;
+import com.goisan.table.dao.ClubRewardDao;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
 import com.goisan.tabular.dao.TableAttributeDao;
@@ -51,6 +50,8 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     private EmpDao empDao;
     @Resource
     private CourseService courseService;
+    @Resource
+    private ClubRewardDao clubRewardDao;
 
     /**
      * 导出带有数据得表格 命名expertExcel_A加上数字
@@ -3076,6 +3077,59 @@ public class TableAttributeServiceImpl implements TableAttributeService {
      * modify by wangxue end
      */
 
+
+    @Override
+    public void expertExcel_A9_6_3(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<BaseBean> list = clubRewardDao.getClubRewardList(new ClubReward());
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            int count = 1;
+            ClubReward clubReward;
+            for (int i = 0; i < list.size(); i++) {
+                clubReward = (ClubReward)list.get(i);
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(count);
+                row.getCell(2).setCellValue(clubReward.getName());
+                row.getCell(3).setCellValue(clubReward.getProjectName());
+                row.getCell(4).setCellValue(clubReward.getRewardLevelShow());
+                row.getCell(5).setCellValue(clubReward.getRewardDate().replace("-", ""));
+                row.getCell(6).setCellValue(clubReward.getAwardUnit());
+                row.getCell(7).setCellValue(clubReward.getGuidanceTeacher());
+                count++;
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * 例子

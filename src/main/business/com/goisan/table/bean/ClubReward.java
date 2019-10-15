@@ -24,6 +24,9 @@ public class ClubReward extends BaseBean {
     /**指导教师名单*/
     private String guidanceTeacher;
 
+    /**项目名称*/
+    private String projectName;
+
     public String getId() {
         return id;
     }
@@ -80,4 +83,11 @@ public class ClubReward extends BaseBean {
         this.guidanceTeacher = guidanceTeacher;
     }
 
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 }

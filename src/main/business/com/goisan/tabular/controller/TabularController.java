@@ -16,6 +16,7 @@ import com.goisan.tabular.dao.TableAttributeDao;
 import com.goisan.tabular.service.TableAttributeService;
 import com.goisan.tabular.service.TabularService;
 import com.goisan.tabular.service.impl.TableAttributeServiceImpl;
+import com.goisan.teach.service.TeachClassService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.ibatis.annotations.Param;
@@ -271,22 +272,10 @@ public class TabularController {
             }else if("expertExcel_A10_1_2".equals(tableAttribute)){
                 tableAttributeService.expertExcel_A10_1_2(response,files);
             }else{
-
-                Class<?> classType = TableAttributeServiceImpl.class;
-                Method m = null;
                 try {
-                    Object o = classType.newInstance();
-                    Field tableAttributeDaoField = classType.getDeclaredField("tableAttributeDao");
-                    tableAttributeDaoField.setAccessible(true);
-                    tableAttributeDaoField.set(o,tableAttributeDao);
-                    Field empDaoField = classType.getDeclaredField("empDao");
-                    empDaoField.setAccessible(true);
-                    empDaoField.set(o,empDao);
-
-
-                    m = classType.getDeclaredMethod(tableAttribute, HttpServletResponse.class, TabularFile.class);
-//                    m.invoke(ApplicationContextRegister.getApplicationContext().getBean("tableAttributeServiceImpl"), response, files);
-                    m.invoke(o, response, files);
+                    Class<?> t_class =  Class.forName("com.goisan.tabular.service.TableAttributeService");
+                    Object obj = ApplicationContextRegister.getApplicationContext().getBean("tableAttributeServiceImpl", t_class);
+                    obj.getClass().getDeclaredMethod(tableAttribute, HttpServletResponse.class, TabularFile.class).invoke(obj, response, files);
                 } catch (Exception e) {
                     e.printStackTrace();
                     String filePath = COM_REPORT_PATH + files.getFileUrl();
