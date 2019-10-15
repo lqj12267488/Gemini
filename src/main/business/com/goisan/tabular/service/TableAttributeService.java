@@ -8,6 +8,7 @@ import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.Dept;
 import com.goisan.system.bean.Emp;
 import com.goisan.system.bean.Student;
+import com.goisan.table.bean.Programme;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
 
@@ -111,6 +112,9 @@ public interface TableAttributeService {
     void expertExcel_A7_6_3(HttpServletResponse response, TabularFile tabularFile);
 
     List<Major> getPastgraduationList();
+    void expertExcel_A9_5(HttpServletResponse response, TabularFile tabularFile);
+
+    List<Programme> getExpertExcel_A9_5();
     /**
      * modify by yinzijian end
      */

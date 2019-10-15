@@ -242,4 +242,14 @@ public class CommonServiceImpl implements CommonService {
     }
 
     public String getDeptIdByPersonId(String id){ return commonDao.getDeptIdByPersonId(id);}
+
+    @Override
+    public List<RoleEmpDeptRelation> getRoleByPersonId(String personId) {
+        return commonDao.getRoleByPersonId(personId);
+    }
+
+    @Override
+    public List<RoleEmpDeptRelation> getRoleByPersonId1(String personId) {
+        return commonDao.getRoleByPersonId1(personId);
+    }
 }

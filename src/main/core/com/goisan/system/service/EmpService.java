@@ -87,4 +87,6 @@ public interface EmpService {
     List<Emp> selectListByName(String str, String deptId);
 
     void saveEmp1(Emp emp,EmpDeptRelation edr,LoginUser loginUser);
+
+    String selectName(String creator);
 }

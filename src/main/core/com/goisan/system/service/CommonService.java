@@ -106,4 +106,8 @@ public interface CommonService {
     List<Select2> getDistinctTableDict(TableDict tableDict);
 
     String getDeptIdByPersonId(String id);
+
+    List<RoleEmpDeptRelation> getRoleByPersonId(String personId);
+
+    List<RoleEmpDeptRelation> getRoleByPersonId1(String personId);
 }

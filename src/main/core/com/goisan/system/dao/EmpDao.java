@@ -198,4 +198,7 @@ public interface EmpDao {
             "   and d.dept_id = #{deptId}\n" +
             " ORDER BY u.USER_ACCOUNT")
     List<Emp> selectListByName(@Param("str") String str, @Param("deptId")String deptId);
+
+    @Select("select name from T_SYS_USER t where t.user_id = #{creator}")
+    String selectName(String creator);
 }

@@ -27,6 +27,16 @@ public class AssetsDetails extends BaseBean {
     private String direction;
     private String useTimeShow;
     private String scrapReson;
+    private Timestamp buyTime;
+
+
+    public Timestamp getBuyTime() {
+        return buyTime;
+    }
+
+    public void setBuyTime(Timestamp buyTime) {
+        this.buyTime = buyTime;
+    }
 
     public String getAssetsId() {
         return assetsId;

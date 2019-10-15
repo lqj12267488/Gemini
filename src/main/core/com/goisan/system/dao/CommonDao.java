@@ -106,4 +106,8 @@ public interface CommonDao {
     List<String> getUserDictName(String dicType);
 
     String getDeptIdByPersonId(String id);
+
+    List<RoleEmpDeptRelation> getRoleByPersonId(String personId);
+
+    List<RoleEmpDeptRelation> getRoleByPersonId1(String personId);
 }

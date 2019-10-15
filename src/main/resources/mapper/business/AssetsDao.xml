@@ -16,6 +16,7 @@
         remark,
         price,
         to_char(t.in_time, 'yyyy-mm-dd') in_time,
+        to_char(t.BUYTIME, 'yyyy-mm-dd') BUYTIME,
         creator,
         create_time,
         create_dept,
@@ -47,6 +48,7 @@
         t1.remark,
         t1.price,
         to_char(t2.in_time, 'yyyy-mm-dd') in_time,
+        to_char(t2.BUYTIME, 'yyyy-mm-dd') buyTime,
         t1.creator,
         t1.create_time,
         t1.create_dept,
@@ -129,9 +131,9 @@
     <!--新增数据-->
     <insert id="insertAssets" parameterType="com.goisan.logistics.assets.bean.Assets">
         INSERT INTO T_ZW_ASSETS
-        (id,assets_name,assets_type,assets_num_all,assets_num_in,unit,price,specifications,brand,remark,in_time,creator,create_time,create_dept)
+        (id,assets_name,assets_type,assets_num_all,assets_num_in,unit,price,specifications,brand,remark,in_time,creator,create_time,create_dept,BUYTIME)
         VALUES
-        ('${id}',#{assetsName},#{assetsType},#{assetsNumAll},#{assetsNumIn},#{unit},#{price},#{specifications},#{brand},#{remark},to_date(#{inTime},'yyyy-mm-dd'),#{creator},sysdate,#{createDept})
+        ('${id}',#{assetsName},#{assetsType},#{assetsNumAll},#{assetsNumIn},#{unit},#{price},#{specifications},#{brand},#{remark},to_date(#{inTime},'yyyy-mm-dd'),#{creator},sysdate,#{createDept},to_date(#{buyTime},'yyyy-mm-dd'))
     </insert>
     <update id="updateAssets" parameterType="com.goisan.logistics.assets.bean.Assets">
         UPDATE T_ZW_ASSETS
@@ -149,6 +151,7 @@
         brand = #{brand},
         remark = #{remark},
         in_time = to_date(#{inTime}, 'yyyy-mm-dd'),
+        BUYTIME = to_date(#{buyTime}, 'yyyy-mm-dd'),
         changer = #{changer},
         change_time = sysdate,
         change_dept = #{changeDept}
@@ -241,6 +244,7 @@
         t1.creator,
         t1.use_time,
         to_char(t1.use_time, 'yyyy-mm-dd') use_time_show,
+
         t1.create_time,
         t1.create_dept,
         t1.change_time,
@@ -404,5 +408,48 @@
         WHERE 1 = 1
         and t1.assets_id in (${ids})
          AND t1.parent_assets_id = t2.id
+    </select>
+
+    <select id="doPrint" parameterType="java.lang.String" resultType="com.goisan.logistics.assets.bean.AssetsDetails">
+         SELECT
+        t1.assets_id,
+        FUNC_GET_USERDICVALUE(t2.assets_type, 'XCLB') assets_type,
+        t1.assets_num,
+        t2.assets_name,
+        t1.unit,
+        t1.status,
+        t1.specifications,
+        t2.remark,
+        t1.price,
+        t1.creator,
+        t1.use_time,
+        to_char(t1.use_time, 'yyyy-mm-dd') use_time_show,
+        to_char(t2.BUYTIME, 'yyyy-mm-dd') buyTime,
+        t1.create_time,
+        t1.create_dept,
+        t1.change_time,
+        t1.change_dept,
+        t1.changer,
+        t2.brand,
+        t1.user_id,
+        t1.user_dept,
+
+        t1.valid_flag,
+        FUNC_GET_DEPTNAME(t1.USER_DEPT) user_dept,
+        FUNC_GET_USERNAME(t1.USER_ID) user_id,
+        t1.use_position
+        FROM t_zw_assets_details t1, t_zw_assets t2
+        WHERE 1 = 1
+
+        AND t1.status = '2' AND t1.parent_assets_id = t2.id and t1.assets_id = #{assetsId}
+        order by t2.CREATE_TIME desc
+    </select>
+
+    <select id="selectDeptById" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.dept_name from T_SYS_DEPT t where t.dept_id = #{userDept}
+    </select>
+
+    <select id="selectNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        select name from t_sys_user t where t.user_id = #{userId}
     </select>
 </mapper>

@@ -98,7 +98,7 @@
         from T_JW_SKILLAPPRAISAL
     </select>
     <select id="getExpertExcel_A8_2" resultType="com.goisan.system.bean.Emp">
-        select t.STAFF_ID,
+        /*select t.STAFF_ID,
                t.name                                         name,
                func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
                func_get_dicvalue(t.sex, 'XB')                 sex,
@@ -114,9 +114,22 @@
         from T_RS_EMPLOYEE t
                  left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
                  left join t_sys_dept s on a.dept_id = s.dept_id
+                 left join ,t_tab_staff t1 on t.person_id = t1.PERSONID*/
+                  select t.STAFF_ID,
+       t.name name,
+       func_get_dicvalue(t.STAFF_FLAG, 'SF') staffFlag,
+       func_get_dicvalue(t.sex, 'XB') sex,
+       to_char(t.BIRTHDAY, 'yyyyMMdd') birthdayShow,
+       func_get_dicvalue(t.nation, 'MZ') nation,
+       func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW') academicDegree,
+       func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+       t.POSITIONAL_TITLES positionalTitles,
+       func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB') positionalLevel,
+       func_get_dicvalue(t.WORK_YEAR, 'QYGZSC') workYear ,t1.GRADE,t1.GIVENNAME,t1.ISSUER,to_char(t1.getdate, 'yyyyMMdd') getDateShow,t1.TEACHINGMANAGEMENT from T_RS_EMPLOYEE t,t_tab_staff t1 where t.person_id = t1.personid and t1.type=1
+
     </select>
     <select id="getExpertExcel_A8_3" resultType="com.goisan.system.bean.Emp">
-        select t.STAFF_ID,
+        /*select t.STAFF_ID,
                t.name                                         name,
                func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
                func_get_dicvalue(t.sex, 'XB')                 sex,
@@ -131,10 +144,21 @@
                POST
         from T_RS_EMPLOYEE t
                  left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
-                 left join t_sys_dept s on a.dept_id = s.dept_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id*/
+select t.STAFF_ID,
+                 t.name name,
+       func_get_dicvalue(t.STAFF_FLAG, 'SF') staffFlag,
+       func_get_dicvalue(t.sex, 'XB') sex,
+       to_char(t.BIRTHDAY, 'yyyyMMdd') birthdayShow,
+       func_get_dicvalue(t.nation, 'MZ') nation,
+       func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW') academicDegree,
+       func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+       t.POSITIONAL_TITLES positionalTitles,
+       func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB') positionalLevel,
+       func_get_dicvalue(t.WORK_YEAR, 'QYGZSC') workYear ,t1.GRADE,t1.GIVENNAME,t1.ISSUER,to_char(t1.getdate, 'yyyyMMdd') getDateShow , t1.STUDENTMANAGEMENT , t1.POLITICALCOUNSELOR,t1.PSYCHOLOGICALCONSULTANT from T_RS_EMPLOYEE t,t_tab_staff t1 where t.person_id = t1.personid and t1.type=2
     </select>
     <select id="getExpertExcel_A8_4" resultType="com.goisan.system.bean.Emp">
-        select t.STAFF_ID,
+       /* select t.STAFF_ID,
                t.name                                         name,
                func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
                func_get_dicvalue(t.sex, 'XB')                 sex,
@@ -149,10 +173,21 @@
                POST
         from T_RS_EMPLOYEE t
                  left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
-                 left join t_sys_dept s on a.dept_id = s.dept_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id*/
+                 select t.STAFF_ID,
+                 t.name name,
+       func_get_dicvalue(t.STAFF_FLAG, 'SF') staffFlag,
+       func_get_dicvalue(t.sex, 'XB') sex,
+       to_char(t.BIRTHDAY, 'yyyyMMdd') birthdayShow,
+       func_get_dicvalue(t.nation, 'MZ') nation,
+       func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW') academicDegree,
+       func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+       t.POSITIONAL_TITLES positionalTitles,
+       func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB') positionalLevel,
+       func_get_dicvalue(t.WORK_YEAR, 'QYGZSC') workYear ,t1.GRADE,t1.GIVENNAME,t1.ISSUER,to_char(t1.getdate, 'yyyyMMdd') getDateShow , t1.EMPLOYMENTOFFICE  from T_RS_EMPLOYEE t,t_tab_staff t1 where t.person_id = t1.personid and t1.type=3
     </select>
     <select id="getExpertExcel_A8_5" resultType="com.goisan.system.bean.Emp">
-        select t.STAFF_ID,
+        /*select t.STAFF_ID,
                t.name                                         name,
                func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
                func_get_dicvalue(t.sex, 'XB')                 sex,
@@ -167,10 +202,22 @@
                POST
         from T_RS_EMPLOYEE t
                  left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
-                 left join t_sys_dept s on a.dept_id = s.dept_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id*/
+
+                  select t.STAFF_ID,
+                 t.name name,
+       func_get_dicvalue(t.STAFF_FLAG, 'SF') staffFlag,
+       func_get_dicvalue(t.sex, 'XB') sex,
+       to_char(t.BIRTHDAY, 'yyyyMMdd') birthdayShow,
+       func_get_dicvalue(t.nation, 'MZ') nation,
+       func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW') academicDegree,
+       func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+       t.POSITIONAL_TITLES positionalTitles,
+       func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB') positionalLevel,
+       func_get_dicvalue(t.WORK_YEAR, 'QYGZSC') workYear ,t1.GRADE,t1.GIVENNAME,t1.ISSUER,to_char(t1.getdate, 'yyyyMMdd') getDateShow , t1.WORKINGHOURS,t1.EXPERTISE  from T_RS_EMPLOYEE t,t_tab_staff t1 where t.person_id = t1.personid and t1.type=4
     </select>
     <select id="getExpertExcel_A8_6" resultType="com.goisan.system.bean.Emp">
-        select t.STAFF_ID,
+        /*select t.STAFF_ID,
                t.name                                         name,
                func_get_dicvalue(t.STAFF_FLAG, 'SF')          staffFlag,
                func_get_dicvalue(t.sex, 'XB')                 sex,
@@ -185,7 +232,18 @@
                POST
         from T_RS_EMPLOYEE t
                  left join T_RS_EMPLOYEE_DEPT a on t.person_id = a.person_id
-                 left join t_sys_dept s on a.dept_id = s.dept_id
+                 left join t_sys_dept s on a.dept_id = s.dept_id*/
+                  select t.STAFF_ID,
+                 t.name name,
+       func_get_dicvalue(t.STAFF_FLAG, 'SF') staffFlag,
+       func_get_dicvalue(t.sex, 'XB') sex,
+       to_char(t.BIRTHDAY, 'yyyyMMdd') birthdayShow,
+       func_get_dicvalue(t.nation, 'MZ') nation,
+       func_get_dicvalue(t.ACADEMIC_DEGREE, 'XW') academicDegree,
+       func_get_dicvalue(t.EDUCATIONAL_LEVEL, 'WHCD') educationalLevel,
+       t.POSITIONAL_TITLES positionalTitles,
+       func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB') positionalLevel,
+       func_get_dicvalue(t.WORK_YEAR, 'QYGZSC') workYear ,t1.GRADE,t1.GIVENNAME,t1.ISSUER,to_char(t1.getdate, 'yyyyMMdd') getDateShow , t1.TOPICNATURE,t1.EXPERTISE ,t1.SUBJECTCLASSIFICATION,t1.SUBJECTNAME,t1.HORIZONTALTOPIC,t1.SUBJECTGRADE,to_char(t1.PROJECTDATE, 'yyyyMMdd')PROJECTDATESHOW,t1.SOURCEOFFUNDING,t1.COMPLETORORDER,t1.MONEY,t1.NUM,t1.HIGHESTGRADE,t1.COOPERATION from T_RS_EMPLOYEE t,t_tab_research t1 where t.person_id = t1.personid
     </select>
     <select id="getExpertExcel_A8_7" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationTask">
@@ -392,7 +450,10 @@
     </select>
 
     <select id="expertExcel_A6_1_3" resultType="com.goisan.tabular.bean.export.Export">
-        select distinct
+        select L3.*,L4.*
+from
+ (select distinct
+L2.person_id,
             STAFF_ID,
             teacherName,
             TRAINING_CONTENT,
@@ -421,7 +482,8 @@
                      FUNC_GET_DICVALUE(REWORD_LEVEL, 'JSJLJB') rewordLevel
                  from t_rs_employee e left join  T_JW_TEACHERREWORD d
                                                  on  e.person_id = d.reword_person_id
-             ) L2 on L1.person_id = L2.person_id
+             ) L2 on L1.person_id = L2.person_id)
+              L3,t_tab_teacherschool L4 where L3.person_id = L4.PERSONID and L4.TYPE=1
         order by STAFF_ID
 
     </select>
@@ -461,8 +523,11 @@
     </select>
 
     <select id="expertExcel_A6_2_3" resultType="com.goisan.tabular.bean.export.Export">
-        select distinct
-            staffId,
+        select L3.*,L4.*
+from
+ (select distinct
+L2.person_id,
+            STAFF_ID,
             teacherName,
             TRAINING_CONTENT,
             TRAINING_DAY,
@@ -473,26 +538,26 @@
             rewordLevel
         from (
                  select
-                     TEACHER_NUM staffId,
-                     e.name,
-                     FUNC_GET_USERNAME(e.NAME) teacherName,
-                     TRAINING_CONTENT,
-                     t.TRAINING_DAY,
-                     t.TRAINING_PLACE
-                 from T_JW_TEACHER_CONDITION e left join T_JW_TRAINING t
-                                                         on e.name = t.teacher_id where e.TEACHER_CATEGORY = 4) L1 left join
+                     STAFF_ID,
+                     e.person_id,
+                     e.name teacherName,
+                     TRAINING_CONTENT ,
+                     TRAINING_DAY,
+                     TRAINING_PLACE
+                 from t_rs_employee e left join T_JW_TRAINING t
+                                                on e.person_id = t.teacher_id) L1 left join
              (
                  select
-                     e.name,
+                     e.person_id,
                      to_char( d.REWORD_TIME, 'yyyymmdd') rewordTime,
                      REWORD_NAME,
                      AWARD_UNIT,
                      FUNC_GET_DICVALUE(REWORD_LEVEL, 'JSJLJB') rewordLevel
-                 from T_JW_TEACHER_CONDITION e left join  T_JW_TEACHERREWORD d
-                                                          on  e.name = d.reword_person_id
-                 where e.TEACHER_CATEGORY = 4
-             ) L2 on L1.name = L2.name
-        order by staffId
+                 from t_rs_employee e left join  T_JW_TEACHERREWORD d
+                                                 on  e.person_id = d.reword_person_id
+             ) L2 on L1.person_id = L2.person_id)
+              L3,t_tab_teacherschool L4 where L3.person_id = L4.PERSONID and L4.TYPE=2
+        order by STAFF_ID
     </select>
 
     <select id="expertExcel_A6_3_1" resultType="com.goisan.tabular.bean.export.Export">
@@ -699,6 +764,15 @@
         from t_xg_major t left join T_XG_INTERNSHIP_STUDENT a
                                     on t.major_code = a.major_code
     </select>
+
+    <select id="getExpertExcel_A8_1" resultType="com.goisan.table.bean.StudentDocuments">
+        select t.ORDERNUMBER ,t.FILENAME,to_char(t.RELEASEDATE, 'yyyymmdd')releasedateStr,t.RELEASEDEPT,t.ALTERATION,to_char(t.ALTERATIONDATE, 'yyyymmdd')alterationdateStr,t.RESPONSIBLEDEPT  from T_TAB_STUDENTDOCUMENTS t
+    </select>
+
+    <select id="getExpertExcel_A9_5" resultType="com.goisan.table.bean.Programme">
+        select t.ORDERNUMBER,t.PROJECTNAME,t.PROJECTPROGRAMME,t.GRADE,to_char(t.RATIFYDATE, 'yyyymmdd')ratifydateStr,t.STAFF,t.REMARKS from T_TAB_PROGRAMME t
+    </select>
+
     <!--modify by wangxue end-->
 
 </mapper>

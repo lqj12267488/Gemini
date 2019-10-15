@@ -112,6 +112,15 @@
                     <input id="file" name="file" type="file" multiple/>
                 </form>
             </div>--%>
+            <div class="col-md-3 tar">
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>附件
+            </div>
+
+            <div class="col-md-9">
+                <form id="form" enctype="multipart/form-data" method="post">
+                    <input id="file" name="file" type="file" multiple/>
+                </form>
+            </div>
             <c:if test="${flag == '1'}">
                 <div style="text-align: center">
                     <div class="col-md-3 tar">
@@ -127,6 +136,8 @@
                     </center>
                 </div>
             </c:if>
+
+
         </div>
     </div>
 </div>
@@ -140,12 +151,33 @@
             alert("请填写维修说明！")
             return;
         }
+        if ($("#file").val() == '' || $("#file").val() == null) {
+            alert("请选择文件");
+            return;
+        }
         $.post("<%=request.getContextPath()%>/repair/saveContent", {
             repairID: "${repair.repairID}",
             content: $("#contentaa").val(),
             requestFlag: "3"
         }, function (msg) {
             alert(msg.msg)
+            if (msg.status == 1) {
+                var form = new FormData(document.getElementById("form"));
+                $.ajax({
+                    url: '<%=request.getContextPath()%>/app/files/insertFiles1?businessType=TEST&businessId=' + "${repair.repairID}" + '&tableName=T_ZW_REPAIR',
+                    type: "post",
+                    data: form,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        $.post("<%=request.getContextPath()%>/repair/submitRepair", {
+                            repairID: msg.result
+                        }, function (msg) {
+                            alert(msg.msg)
+                        })
+                    }
+                });
+            }
             window.location.href = "<%=request.getContextPath()%>/repair/repairApp2?flag=1"
         })
     }

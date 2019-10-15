@@ -100,7 +100,215 @@ public class Emp extends BaseBean {
     private String entryDateShow;
     private String graduateTimeShow;
     private String educationalResearch;//教科研成果
+    private String GRADE;
+    private String GIVENNAME;
+    private String ISSUER;
+    private String getDateShow;
+    private String TEACHINGMANAGEMENT;
+    private String STUDENTMANAGEMENT;
+    private String POLITICALCOUNSELOR;
+    private String PSYCHOLOGICALCONSULTANT;
+    private String EMPLOYMENTOFFICE;
+    private String WORKINGHOURS;
+    private String EXPERTISE;
 
+
+    private String TOPICNATURE;
+    private String SUBJECTCLASSIFICATION;
+    private String SUBJECTNAME;
+    private String HORIZONTALTOPIC;
+    private String SUBJECTGRADE;
+    private String PROJECTDATESHOW;
+    private String SOURCEOFFUNDING;
+    private String COMPLETORORDER;
+    private String MONEY;
+    private String NUM;
+    private String HIGHESTGRADE;
+    private String COOPERATION;
+
+    public String getTOPICNATURE() {
+        return TOPICNATURE;
+    }
+
+    public void setTOPICNATURE(String TOPICNATURE) {
+        this.TOPICNATURE = TOPICNATURE;
+    }
+
+    public String getSUBJECTCLASSIFICATION() {
+        return SUBJECTCLASSIFICATION;
+    }
+
+    public void setSUBJECTCLASSIFICATION(String SUBJECTCLASSIFICATION) {
+        this.SUBJECTCLASSIFICATION = SUBJECTCLASSIFICATION;
+    }
+
+    public String getSUBJECTNAME() {
+        return SUBJECTNAME;
+    }
+
+    public void setSUBJECTNAME(String SUBJECTNAME) {
+        this.SUBJECTNAME = SUBJECTNAME;
+    }
+
+    public String getHORIZONTALTOPIC() {
+        return HORIZONTALTOPIC;
+    }
+
+    public void setHORIZONTALTOPIC(String HORIZONTALTOPIC) {
+        this.HORIZONTALTOPIC = HORIZONTALTOPIC;
+    }
+
+    public String getSUBJECTGRADE() {
+        return SUBJECTGRADE;
+    }
+
+    public void setSUBJECTGRADE(String SUBJECTGRADE) {
+        this.SUBJECTGRADE = SUBJECTGRADE;
+    }
+
+    public String getPROJECTDATESHOW() {
+        return PROJECTDATESHOW;
+    }
+
+    public void setPROJECTDATESHOW(String PROJECTDATESHOW) {
+        this.PROJECTDATESHOW = PROJECTDATESHOW;
+    }
+
+    public String getSOURCEOFFUNDING() {
+        return SOURCEOFFUNDING;
+    }
+
+    public void setSOURCEOFFUNDING(String SOURCEOFFUNDING) {
+        this.SOURCEOFFUNDING = SOURCEOFFUNDING;
+    }
+
+    public String getCOMPLETORORDER() {
+        return COMPLETORORDER;
+    }
+
+    public void setCOMPLETORORDER(String COMPLETORORDER) {
+        this.COMPLETORORDER = COMPLETORORDER;
+    }
+
+    public String getMONEY() {
+        return MONEY;
+    }
+
+    public void setMONEY(String MONEY) {
+        this.MONEY = MONEY;
+    }
+
+    public String getNUM() {
+        return NUM;
+    }
+
+    public void setNUM(String NUM) {
+        this.NUM = NUM;
+    }
+
+    public String getHIGHESTGRADE() {
+        return HIGHESTGRADE;
+    }
+
+    public void setHIGHESTGRADE(String HIGHESTGRADE) {
+        this.HIGHESTGRADE = HIGHESTGRADE;
+    }
+
+    public String getCOOPERATION() {
+        return COOPERATION;
+    }
+
+    public void setCOOPERATION(String COOPERATION) {
+        this.COOPERATION = COOPERATION;
+    }
+
+    public String getWORKINGHOURS() {
+        return WORKINGHOURS;
+    }
+
+    public void setWORKINGHOURS(String WORKINGHOURS) {
+        this.WORKINGHOURS = WORKINGHOURS;
+    }
+
+    public String getEXPERTISE() {
+        return EXPERTISE;
+    }
+
+    public void setEXPERTISE(String EXPERTISE) {
+        this.EXPERTISE = EXPERTISE;
+    }
+
+    public String getEMPLOYMENTOFFICE() {
+        return EMPLOYMENTOFFICE;
+    }
+
+    public void setEMPLOYMENTOFFICE(String EMPLOYMENTOFFICE) {
+        this.EMPLOYMENTOFFICE = EMPLOYMENTOFFICE;
+    }
+
+    public String getSTUDENTMANAGEMENT() {
+        return STUDENTMANAGEMENT;
+    }
+
+    public void setSTUDENTMANAGEMENT(String STUDENTMANAGEMENT) {
+        this.STUDENTMANAGEMENT = STUDENTMANAGEMENT;
+    }
+
+    public String getPOLITICALCOUNSELOR() {
+        return POLITICALCOUNSELOR;
+    }
+
+    public void setPOLITICALCOUNSELOR(String POLITICALCOUNSELOR) {
+        this.POLITICALCOUNSELOR = POLITICALCOUNSELOR;
+    }
+
+    public String getPSYCHOLOGICALCONSULTANT() {
+        return PSYCHOLOGICALCONSULTANT;
+    }
+
+    public void setPSYCHOLOGICALCONSULTANT(String PSYCHOLOGICALCONSULTANT) {
+        this.PSYCHOLOGICALCONSULTANT = PSYCHOLOGICALCONSULTANT;
+    }
+
+    public String getTEACHINGMANAGEMENT() {
+        return TEACHINGMANAGEMENT;
+    }
+
+    public void setTEACHINGMANAGEMENT(String TEACHINGMANAGEMENT) {
+        this.TEACHINGMANAGEMENT = TEACHINGMANAGEMENT;
+    }
+
+    public String getGRADE() {
+        return GRADE;
+    }
+
+    public void setGRADE(String GRADE) {
+        this.GRADE = GRADE;
+    }
+
+    public String getGIVENNAME() {
+        return GIVENNAME;
+    }
+
+    public void setGIVENNAME(String GIVENNAME) {
+        this.GIVENNAME = GIVENNAME;
+    }
+
+    public String getISSUER() {
+        return ISSUER;
+    }
+
+    public void setISSUER(String ISSUER) {
+        this.ISSUER = ISSUER;
+    }
+
+    public String getGetDateShow() {
+        return getDateShow;
+    }
+
+    public void setGetDateShow(String getDateShow) {
+        this.getDateShow = getDateShow;
+    }
 
     private String filenumber;
     private String deadline;

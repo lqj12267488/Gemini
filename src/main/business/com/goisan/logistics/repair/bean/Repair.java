@@ -2,7 +2,7 @@ package com.goisan.logistics.repair.bean;
 
 import com.goisan.system.bean.BaseBean;
 
-public class Repair extends BaseBean {
+public class Repair  extends BaseBean {
     private String id;
     private String repairID;
     private String repairType;//报修种类
@@ -47,6 +47,15 @@ public class Repair extends BaseBean {
     private String changeEndTime;
     private String sysName; //派单人
     private String PersonIdShow; //维修人
+    private String creatorName;
+
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
 
     public String getPersonIdShow() {
         return PersonIdShow;

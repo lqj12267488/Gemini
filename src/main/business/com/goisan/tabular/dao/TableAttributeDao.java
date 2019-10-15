@@ -10,6 +10,8 @@ import com.goisan.system.bean.Emp;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.studentwork.internships.bean.InternshipManage;
 import com.goisan.system.bean.Student;
+import com.goisan.table.bean.Programme;
+import com.goisan.table.bean.StudentDocuments;
 import com.goisan.table.bean.TeachContact;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
@@ -174,6 +176,10 @@ public interface TableAttributeDao {
     List<Major> expertExcel_A7_3_2(Major major);//A7-3-2应届毕业生获证及社会技术培训情况表
 
     List<Major> expertExcel_A7_4(Major major);//A7-4顶岗实习表
+
+    List<StudentDocuments> getExpertExcel_A8_1();
+
+    List<Programme> getExpertExcel_A9_5();
 
     /**
      * modify by wangxue end

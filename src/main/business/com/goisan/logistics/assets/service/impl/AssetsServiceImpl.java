@@ -139,4 +139,19 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public  List<Assets>  getAssetsIdByIds(@Param("ids") String ids){ return assetsDao.getAssetsIdByIds(ids); }
+
+    @Override
+    public AssetsDetails doPrint(String assetsId) {
+        return assetsDao.doPrint(assetsId);
+    }
+
+    @Override
+    public String selectDeptById(String userDept) {
+        return assetsDao.selectDeptById(userDept);
+    }
+
+    @Override
+    public String selectNameById(String userId) {
+        return assetsDao.selectNameById(userId);
+    }
 }

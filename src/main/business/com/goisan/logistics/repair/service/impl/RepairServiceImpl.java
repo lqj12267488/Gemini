@@ -261,5 +261,29 @@ public class RepairServiceImpl implements RepairService {
         return repairDao.selectDistributionInfo(repairID);
     }
 
+    @Override
+    public List<Repair> RepairActionInfo(String personId) {
+        return repairDao.RepairActionInfo(personId);
+    }
+
+    @Override
+    public List<Repair> RepairActionInfoList(String personId) {
+        return repairDao.RepairActionInfoList(personId);
+    }
+
+    @Override
+    public void saveFeedbackInfo(String feedbackFlag, String fback, String id) {
+        Repair repair = new Repair();
+        repair.setRepairID(id);
+        repair.setFeedback(fback);
+        repair.setFeedbackFlag(feedbackFlag);
+        repairDao.saveFeedbackInfo(repair);
+    }
+
+    @Override
+    public String selectName(String creator) {
+        return repairDao.selectName(creator);
+    }
+
 
 }

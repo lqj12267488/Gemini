@@ -71,6 +71,7 @@
                 {"width": "10%", "data": "repairTypeShow", "title": "报修种类"},
                 // { "width":"9%", "data": "assetsID", "title": "资产编号"},
                 /*{ "width":"9%", "data": "position", "title": "所在位置"},*/
+                {"width": "10%", "data": "creatorName", "title": "申请人"},
                 {"width": "10%", "data": "dept", "title": "所在部门"},
                 {"width": "11%", "data": "itemNameShow", "title": "报修物品名称"},
                 {"data": "itemName", "visible": false},

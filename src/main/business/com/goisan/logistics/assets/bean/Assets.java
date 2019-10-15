@@ -18,6 +18,15 @@ public class Assets extends BaseBean {
     private String status;
     private String inTime;
     private String assetsId;
+    private String buyTime;
+
+    public String getBuyTime() {
+        return buyTime;
+    }
+
+    public void setBuyTime(String buyTime) {
+        this.buyTime = buyTime;
+    }
 
     public String getId() {
         return id;

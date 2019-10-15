@@ -1,21 +1,31 @@
 package com.goisan.synergy.workflow.colltroller;
 
 import com.github.pagehelper.PageHelper;
+import com.goisan.educational.score.service.ScoreChangeService;
 import com.goisan.logistics.repair.bean.Repair;
 import com.goisan.logistics.repair.service.RepairService;
+import com.goisan.system.bean.Files;
+import com.goisan.system.bean.RoleEmpDeptRelation;
 import com.goisan.system.bean.TableDict;
 import com.goisan.system.service.CommonService;
 import com.goisan.system.service.EmpService;
+import com.goisan.system.service.FilesService;
 import com.goisan.system.service.UserDicService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.JsonUtils;
+import com.goisan.system.tools.Message;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import java.io.UnsupportedEncodingException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -29,6 +39,9 @@ public class RepairAppController {
     private CommonService commonService;
     @Resource
     private UserDicService userDicService;
+    @Resource
+    private FilesService filesService;
+    public static String COM_REPORT_PATH = null;
 
     @RequestMapping("/repair/repairApp")
     public ModelAndView listNotice(){
@@ -42,8 +55,27 @@ public class RepairAppController {
     @ResponseBody
     @RequestMapping("/repair/getRepaireName")
     public String getRepairName(int page) {
+        //获取当前登录人
+        String personId = CommonUtil.getPersonId();
+        //获取当前登录人角色
+        //是否维修员
+        List<RoleEmpDeptRelation> roles = commonService.getRoleByPersonId(personId);
+        //是否后勤主管
+        List<RoleEmpDeptRelation> roles1 = commonService.getRoleByPersonId1(personId);
+        List<Repair> workFlow = null;
         Repair repair = new Repair();
-        List<Repair> workFlow = repairService.RepairAction(repair);
+        if (roles.size()==0 && roles1.size()==0){
+            //个人
+            workFlow = repairService.RepairActionInfo(personId);
+        }else if (roles1.size()!=0){
+            //后勤主管
+            workFlow = repairService.RepairAction(repair);
+        }else if (roles.size()!=0 && roles1.size()==0){
+            //维修员
+            workFlow =  repairService.RepairActionInfoList(personId);
+        }
+
+
         return getJsonTaskList(workFlow,page);
     }
     /**报修-向前台jsp传数据*/
@@ -81,8 +113,11 @@ public class RepairAppController {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
+            String creator = repair.getCreator();
+            String name = empService.selectName(creator);
+            /*String res = repair.getFeedbackFlag().equals("1") ? "满意" : "不满意";*/
 
-            String obj = "{\"title\":\"" +title+"\", \"id\":\"" +repair.getId()+"\",\"requestFlag\":\""+requestFlag+"\"" +
+            String obj = "{\"title\":\"" +title+"\", \"id\":\"" +repair.getRepairID()+"\",\"creator\":\"" +name+"\",\"feedback\":\"" +repair.getFeedbackFlag()+"\",\"requestFlag\":\""+requestFlag+"\"" +
                     ",\"repairmanPersonID\":\""+repairmanPersonID+"\"}" ;
 
             if(b){
@@ -285,4 +320,74 @@ public class RepairAppController {
         mv.addObject("flag", flag);
         return mv;
     }
+
+    @RequestMapping("/repair/repairFeedback")
+    public ModelAndView repairFeedback(String id){
+        ModelAndView modelAndView = new ModelAndView("/app/synergy/repair/repairFeedback");
+        modelAndView.addObject("id",id);
+        return modelAndView;
+    }
+
+    @RequestMapping("/repair/saveFeedbackInfo")
+    @ResponseBody
+    public Message saveFeedbackInfo(@RequestParam("feedbackFlag")String feedbackFlag,@RequestParam("fback")String fback,@RequestParam("id")String id){
+        try {
+            repairService.saveFeedbackInfo(feedbackFlag,fback,id);
+            return new Message(1,"反馈成功",null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Message(1,"反馈失败",null);
+        }
+
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/app/files/insertFiles1")
+    public void appUpload(@RequestParam(value = "file", required = false) MultipartFile[] files, HttpServletRequest request) {
+        COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
+                .getParentFile().getPath();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String urlParten = "/files/%s/%s";
+        for (MultipartFile file : files) {
+            String fileName = file.getOriginalFilename();
+            if (!"".equals(fileName)) {
+                String path = String.format(urlParten, request.getParameter("tableName"),
+                        sdf.format(new Date()));
+                String url = path + "/" + CommonUtil.getUUID()
+                        + fileName.substring(fileName.indexOf("."));
+                FileOutputStream fos = null;
+                try {
+                    File f = new File(COM_REPORT_PATH + path);
+                    f.mkdirs();
+                    fos = new FileOutputStream(new File(COM_REPORT_PATH + url));
+                    fos.write(file.getBytes());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        if (fos != null) {
+                            fos.close();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Files uploadFiles = new Files();
+                uploadFiles.setFileId(CommonUtil.getUUID());
+                uploadFiles.setFileName(fileName);
+                uploadFiles.setFileType(fileName.substring(fileName.lastIndexOf(".") + 1));
+                uploadFiles.setFileUrl(url);
+                uploadFiles.setBusinessId(request.getParameter("businessId"));
+                uploadFiles.setTableName(request.getParameter("tableName"));
+                uploadFiles.setBusinessType(request.getParameter("businessType"));
+                uploadFiles.setCreator(CommonUtil.getPersonId());
+                uploadFiles.setCreateDept(CommonUtil.getLoginUser().getDefaultDeptId());
+                filesService.insertFiles(uploadFiles);
+            }
+        }
+    }
+
 }

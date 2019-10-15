@@ -105,7 +105,8 @@ public class CommonController {
     @ResponseBody
     @RequestMapping("/common/getPersonDept")
     public List<AutoComplete> getPersonDept(String examId) {
-        return commonService.getPersonDept(examId);
+        List<AutoComplete> personDept = commonService.getPersonDept(examId);
+        return personDept;
     }
 
     @ResponseBody

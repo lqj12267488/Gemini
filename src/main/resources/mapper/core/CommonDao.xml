@@ -441,4 +441,21 @@
     <select id="getDorm" resultType="com.goisan.system.bean.AutoComplete">
         select t.id as value ,t.dorm_name as label  from T_JW_DORM t
     </select>
+
+    <select id="getRoleByPersonId" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.RoleEmpDeptRelation">
+        select *
+        from T_RS_EMPLOYEE_DEPT_ROLE t
+        where t.role_id = '8cc4ac76-7f01-494a-a83a-da308e2e4fac'
+          and #{id} in person_id
+    </select>
+
+    <select id="getRoleByPersonId1" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.RoleEmpDeptRelation">
+        select *
+        from T_RS_EMPLOYEE_DEPT_ROLE t
+        where t.role_id = 'e59b0376-1dbc-4611-9c56-0235096f773b'
+          and #{id} in person_id
+    </select>
+
 </mapper>

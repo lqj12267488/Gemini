@@ -72,4 +72,10 @@ public interface AssetsService {
     List<Select2> getDeptName();
 
     List<Assets>  getAssetsIdByIds(@Param("ids") String ids);
+
+    AssetsDetails doPrint(String assetsId);
+
+    String selectDeptById(String userDept);
+
+    String selectNameById(String userId);
 }

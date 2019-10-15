@@ -81,7 +81,6 @@
                 }
             });
             function createEmlist(jsonStr){
-
                 var emlistData = jsonStr;
                 $.each(emlistData, function(key, map){
                     var  titleData = decodeURI(decodeURI(map.title));
@@ -136,34 +135,44 @@
             page++;
             //3.动态拼接内容start
             function createEmlist(jsonStr){
+                console.log(jsonStr)
                 if(page == 1){
                     var emlistData = eval('('+jsonStr+')');
                 }else{
                     var emlistData = jsonStr;
                 }
                 $.each(emlistData, function(key, map){
+                    console.log(map)
                     var  title = decodeURI(decodeURI(map.title));
+                    var id = map.id;
                     var requestFlag=decodeURI(decodeURI(map.requestFlag));
                     var repairmanPersonID=decodeURI(decodeURI(map.repairmanPersonID));
+                    var name = map.creator;
+                    var feedback = map.feedback;
+                    var str = "申请人："+name+"  维修状态:"+repairmanPersonID+" 反馈状态:"+feedback;
                     title = decodeURI(decodeURI(title));
                     requestFlag=decodeURI(decodeURI(requestFlag));
                     repairmanPersonID=decodeURI(decodeURI(repairmanPersonID));
+                    console.log(repairmanPersonID)
                     var li = document.createElement('li');
-                    li.className = 'mui-table-view-cell';
-                    li.innerHTML = '<div class="mui-table" >'+
-                        '<div class="mui-table-cell mui-col-xs-10">'+
-                        '<h3 class="mui-ellipsis">' +
-                                '<a open-type="common" >'
-                                            +title+" &nbsp;&nbsp;&nbsp;&nbsp;"+'</a>'+
-                        '</h3>' + '<p style="text-align: center">' +
-                    '<a style="font-size: 16px;color: #797979;text-align:center;">' +repairmanPersonID+'</a>' +'</p>'+
-                        '</div></div>';
+                    li.className = "mui-table-view-cell";
+                    li.innerHTML = "<div class='mui-table' >"+
+                        "<div class='mui-table-cell mui-col-xs-10'>"+
+                        "<h3 class='mui-ellipsis' onclick='goto(\""+repairmanPersonID+"\",\""+id+"\")'>" +
+                                "<span open-type='common'  >"
+                                            +title+" &nbsp;&nbsp;&nbsp;&nbsp;"+"</span>"+
+                        "</h3>" + "<p style='text-align: center'>" +
+                    "<a style='font-size: 16px;color: #797979;text-align:center;'>" +str+"</a>" +"</p>"+
+                        "</div></div>";
                     table.appendChild(li);
                 });
             }
             //动态拼接内容end
         }, 1500);
     }
+
+
+
     if (mui.os.plus) {
         mui.plusReady(function() {
             setTimeout(function() {
@@ -249,6 +258,16 @@
     });
     function backMain() {
         window.location.href = "<%=request.getContextPath()%>/loginApp/index";
+    }
+    function goto(repairmanPersonID,id) {
+        if (repairmanPersonID=="未提交"){
+            alert("未提交的不可反馈")
+            return;
+        }
+
+
+        window.location.href = "<%=request.getContextPath()%>/repair/repairFeedback?id="+id;
+
     }
 </script>
 

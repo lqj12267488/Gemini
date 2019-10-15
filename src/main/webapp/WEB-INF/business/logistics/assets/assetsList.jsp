@@ -69,6 +69,7 @@
                         <th width="5%">规格</th>
                         <th width="5%">备注</th>
                         <th width="5%">入库时间</th>
+                        <th width="5%">购买时间</th>
                         <th width="5%">操作</th>
                     </tr>
                     </thead>
@@ -104,6 +105,7 @@
                 {"data": "specifications"},
                 {"data": "remark"},
                 {"data": "inTime"},
+                {"data": "buyTime"},
                 {
                     "width": "12%",
                     "title": "操作",

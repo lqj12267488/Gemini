@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://shiro.apache.org/tags" prefix="shiro" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<input id="printFunds" hidden>
 <div class="container"><%--最外层div--%>
     <div class="row"><%--top_extend_div--%>
         <div class="block">
@@ -57,6 +58,7 @@
                         <th>使用人</th>
                         <th>使用时间</th>
                         <th>位置</th>
+                        <th>操作</th>
                     </tr>
                     </thead>
                 </table>
@@ -93,6 +95,14 @@
                 {"width": "5%", "data": "userId"},
                 {"width": "5%", "data": "useTimeShow"},
                 {"width": "10%", "data": "usePosition"},
+                {
+                    "width": "12%",
+                    "title": "操作",
+                    "render": function (data, type, row) {
+                        return "" + "<a   id='upAssets' class='icon-print' title='打印' onclick='doPrint(\""+row.assetsId+"\")'></a  >&nbsp;&nbsp;&nbsp;"
+
+                    }
+                }
             ],
             "columnDefs": [{
                 "orderable": false,
@@ -168,6 +178,39 @@
             });
         }
 
+    }
+
+    /*table.on('click', 'tr a', function () {
+        var data = table.row($(this).parent()).data();
+        var id = data.id;
+
+        window.assetsId = data.assetsId;
+        $("#printFunds").val("<%=request.getContextPath()%>/assets/doPrint?assetsId="+window.assetsId)
+    })*/
+
+    function doPrint(assetsId) {
+        if($("#flag").val()=="1"){
+            $("#audit").modal("hide");
+        }
+        var iframe=document.getElementById("print-iframe");
+        if(!iframe){
+
+            iframe = document.createElement('IFRAME');
+            var doc = null;
+            iframe.setAttribute("id", "print-iframe");
+            iframe.setAttribute('style', 'position:absolute;width:0px;height:0px;left:-500px;top:-500px;');
+            document.body.appendChild(iframe);
+        }
+        $.get("<%=request.getContextPath()%>/assets/doPrint?assetsId="+assetsId, function (html) {
+            console.log(html);
+            doc = iframe.contentWindow.document;
+            //这里可以自定义样式
+            //doc.write("<LINK rel="stylesheet" type="text/css" href="css/print.css">");
+            doc.write('<div>' + html + '</div>');
+            doc.close();
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+        })
     }
 </script>
 

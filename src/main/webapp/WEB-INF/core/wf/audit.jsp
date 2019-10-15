@@ -474,6 +474,7 @@
             document.body.appendChild(iframe);
         }
         $.get($("#printFunds").val(), function (html) {
+            console.log($("#printFunds").val())
             console.log(html);
             doc = iframe.contentWindow.document;
             //这里可以自定义样式

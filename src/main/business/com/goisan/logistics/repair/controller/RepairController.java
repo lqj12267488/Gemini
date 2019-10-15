@@ -186,6 +186,10 @@ public class RepairController {
         repair.setCreateDept(CommonUtil.getDefaultDept());
         repair.setLevel(CommonUtil.getLoginUser().getLevel());
         List<Repair> ll = repairService.distributionInfo(repair);
+        for (Repair repair1 : ll) {
+            String name =  repairService.selectName(repair1.getCreator());
+            repair1.setCreatorName(name);
+        }
         String name = "";
         List<Repair> dd = new ArrayList<>();
         for (Repair repair1 : ll) {
@@ -466,6 +470,10 @@ public class RepairController {
         repair.setCreator(CommonUtil.getPersonId());
         repair.setCreateDept(CommonUtil.getDefaultDept());
         List<Repair> ll = repairService.repairDefine(repair);
+        for (Repair repair1 : ll) {
+           String name =  repairService.selectName(repair1.getCreator());
+            repair1.setCreatorName(name);
+        }
         String name = "";
         List<Repair> dd = new ArrayList<>();
         for (Repair repair1 : ll) {

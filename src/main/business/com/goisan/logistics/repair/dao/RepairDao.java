@@ -89,4 +89,12 @@ public interface RepairDao {
      * @param repair
      */
     void repairChenXiaoFenPei(Repair repair);
+
+    List<Repair> RepairActionInfo(String personId);
+
+    List<Repair> RepairActionInfoList(String personId);
+
+    void saveFeedbackInfo(Repair repair);
+
+    String selectName(String creator);
 }

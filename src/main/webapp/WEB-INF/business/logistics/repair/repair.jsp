@@ -84,7 +84,8 @@
                 /*{ "width": "7%", "data":"repairResult", "title": "维修结果说明"},*/
                 {"width": "9%", "data": "requestFlag", "title": "请求状态"},
                 {"width": "9%", "data": "submitTime", "title": "报修时间"},
-                {"width": "9%", "data": "feedbackFlag", "title": "完成时间"},
+                {"width": "9%", "data": "confirmTime", "title": "完成时间"},
+                {"width": "9%", "data": "feedbackFlag", "title": "反馈状态"},
                 {"width": "9%", "data":"checkFlag", "title": "回捡状态"},
                 /*{ "width": "5%", "data":"checker", "title": "回检员ID"},
                 { "width": "5%", "data":"checkerDept", "title": "回检员部门ID"},

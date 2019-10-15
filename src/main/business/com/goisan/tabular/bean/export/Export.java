@@ -72,6 +72,125 @@ public class Export {
     private String ordersStudentNum;
     private String nowMajor;
 
+    private String WHETHERHOST;
+    private String INVENTNUMBER;
+    private String TOPICNATURE;
+    private String SUBJECTCLASSIFICATION;
+    private String SUBJECTNAME;
+    private String HORIZONTALTOPIC;
+    private String SUBJECTGRADE;
+    private String PROJECTDATE;
+    private String SOURCEOFFUNDING;
+    private String MONEY;
+    private String COMPLETORORDER;
+    private String CLASSIFICATION;
+    private String AUTHORORDER;
+
+
+    public String getWHETHERHOST() {
+        return WHETHERHOST;
+    }
+
+    public void setWHETHERHOST(String WHETHERHOST) {
+        this.WHETHERHOST = WHETHERHOST;
+    }
+
+    public String getINVENTNUMBER() {
+        return INVENTNUMBER;
+    }
+
+    public void setINVENTNUMBER(String INVENTNUMBER) {
+        this.INVENTNUMBER = INVENTNUMBER;
+    }
+
+    public String getTOPICNATURE() {
+        return TOPICNATURE;
+    }
+
+    public void setTOPICNATURE(String TOPICNATURE) {
+        this.TOPICNATURE = TOPICNATURE;
+    }
+
+    public String getSUBJECTCLASSIFICATION() {
+        return SUBJECTCLASSIFICATION;
+    }
+
+    public void setSUBJECTCLASSIFICATION(String SUBJECTCLASSIFICATION) {
+        this.SUBJECTCLASSIFICATION = SUBJECTCLASSIFICATION;
+    }
+
+    public String getSUBJECTNAME() {
+        return SUBJECTNAME;
+    }
+
+    public void setSUBJECTNAME(String SUBJECTNAME) {
+        this.SUBJECTNAME = SUBJECTNAME;
+    }
+
+    public String getHORIZONTALTOPIC() {
+        return HORIZONTALTOPIC;
+    }
+
+    public void setHORIZONTALTOPIC(String HORIZONTALTOPIC) {
+        this.HORIZONTALTOPIC = HORIZONTALTOPIC;
+    }
+
+    public String getSUBJECTGRADE() {
+        return SUBJECTGRADE;
+    }
+
+    public void setSUBJECTGRADE(String SUBJECTGRADE) {
+        this.SUBJECTGRADE = SUBJECTGRADE;
+    }
+
+    public String getPROJECTDATE() {
+        return PROJECTDATE;
+    }
+
+    public void setPROJECTDATE(String PROJECTDATE) {
+        this.PROJECTDATE = PROJECTDATE;
+    }
+
+    public String getSOURCEOFFUNDING() {
+        return SOURCEOFFUNDING;
+    }
+
+    public void setSOURCEOFFUNDING(String SOURCEOFFUNDING) {
+        this.SOURCEOFFUNDING = SOURCEOFFUNDING;
+    }
+
+    public String getMONEY() {
+        return MONEY;
+    }
+
+    public void setMONEY(String MONEY) {
+        this.MONEY = MONEY;
+    }
+
+    public String getCOMPLETORORDER() {
+        return COMPLETORORDER;
+    }
+
+    public void setCOMPLETORORDER(String COMPLETORORDER) {
+        this.COMPLETORORDER = COMPLETORORDER;
+    }
+
+    public String getCLASSIFICATION() {
+        return CLASSIFICATION;
+    }
+
+    public void setCLASSIFICATION(String CLASSIFICATION) {
+        this.CLASSIFICATION = CLASSIFICATION;
+    }
+
+    public String getAUTHORORDER() {
+        return AUTHORORDER;
+    }
+
+    public void setAUTHORORDER(String AUTHORORDER) {
+        this.AUTHORORDER = AUTHORORDER;
+    }
+
     public String getOrdersStudentNum() {
         return ordersStudentNum;
     }

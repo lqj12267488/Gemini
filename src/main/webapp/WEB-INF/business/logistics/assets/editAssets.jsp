@@ -141,6 +141,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>
+                        资产购买时间
+                    </div>
+                    <div class="col-md-9">
+                        <div>
+                            <input id="buyTime" type="date" value="${assets.inTime}"/>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer"><%--新增页尾部--%>
@@ -239,6 +250,13 @@
             });
             return;
         }
+        if ($("#buyTime").val() == "" || $("#inTime").val() == undefined) {
+            swal({
+                title: "请填写资产购买时间!",
+                type: "info"
+            });
+            return;
+        }
         var id = $("#assetsId").val();
         var assetsName = $("#assetsName").val();
         var assetsType = $("#assetsType  option:selected").val();
@@ -250,6 +268,8 @@
         var remark = $("#remark").val();
         var inTime = $("#inTime").val();
         inTime = inTime.replace("T", " ");
+        var buyTime = $("#buyTime").val();
+        buyTime = buyTime.replace("T"," ");
         $.post("<%=request.getContextPath()%>/assets/saveAssets", {
             id: id,
             assetsName: assetsName,
@@ -261,7 +281,8 @@
             specifications: specifications,
             brand: brand,
             remark: remark,
-            inTime: inTime
+            inTime: inTime,
+            buyTime:buyTime
         }, function (msg) {
             hideSaveLoading();
             swal({

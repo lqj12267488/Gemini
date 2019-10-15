@@ -205,5 +205,10 @@ public class EmpServiceImpl implements EmpService {
         loginUserDao.saveUser(loginUser);
     }
 
+    @Override
+    public String selectName(String creator) {
+        return empDao.selectName(creator);
+    }
+
 
 }

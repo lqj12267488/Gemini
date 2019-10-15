@@ -77,7 +77,7 @@ public class AssetsController {
      */
     @ResponseBody
     @RequestMapping("/getAssetsList")
-    public Map<String, Object> getAssetsList(Assets assets,int draw, int start, int length) {
+    public Map<String, Object> getAssetsList(Assets assets, int draw, int start, int length) {
         PageHelper.startPage(start / length + 1, length);
         Map<String, Object> assetsList = new HashMap<String, Object>();
         assets.setCreator(CommonUtil.getPersonId());
@@ -135,18 +135,18 @@ public class AssetsController {
 //        if (assets1 != null){
 //            return new Message(0, "同一个采购物品不可以多次分配至资产!", null);
 //        }else {
-            assets.setCreateTime(CommonUtil.getDate());
-            if (assets.getId() == null || assets.getId().equals("")) {
-                assets.setId(CommonUtil.getUUID());//UUID
-                assets.setAssetsNumIn(assets.getAssetsNumAll());
-                CommonUtil.save(assets);
-                assetsService.insertAssets(assets);
-                return new Message(1, "新增成功!", null);
-            } else {
-                CommonUtil.update(assets);
-                assetsService.updateAssets(assets);
-                return new Message(1, "修改成功!", null);
-            }
+        assets.setCreateTime(CommonUtil.getDate());
+        if (assets.getId() == null || assets.getId().equals("")) {
+            assets.setId(CommonUtil.getUUID());//UUID
+            assets.setAssetsNumIn(assets.getAssetsNumAll());
+            CommonUtil.save(assets);
+            assetsService.insertAssets(assets);
+            return new Message(1, "新增成功!", null);
+        } else {
+            CommonUtil.update(assets);
+            assetsService.updateAssets(assets);
+            return new Message(1, "修改成功!", null);
+        }
 //        }
     }
 
@@ -154,16 +154,16 @@ public class AssetsController {
     @RequestMapping("/saveAssetsList")
     public Message saveAssetsList(Assets assets) {
         Assets assets1 = assetsService.getAssetsById(assets.getId());
-        if (assets1 != null){
+        if (assets1 != null) {
             return new Message(0, "同一个采购物品不可以多次分配至资产!", null);
-        }else {
+        } else {
 //            assets.setCreateTime(CommonUtil.getDate());
 //            if (assets.getId() == null || assets.getId().equals("")) {
 //                assets.setId(CommonUtil.getUUID());//UUID
-                assets.setAssetsNumIn(assets.getAssetsNumAll());
-                CommonUtil.save(assets);
-                assetsService.insertAssets(assets);
-                return new Message(1, "新增成功!", null);
+            assets.setAssetsNumIn(assets.getAssetsNumAll());
+            CommonUtil.save(assets);
+            assetsService.insertAssets(assets);
+            return new Message(1, "新增成功!", null);
 //            } else {
 //                CommonUtil.update(assets);
 //                assetsService.updateAssets(assets);
@@ -381,9 +381,9 @@ public class AssetsController {
 
     @ResponseBody
     @RequestMapping("/getAssigned")
-    public Map<String, Object> getAssigned(AssetsDetails assetsDetails,int draw,int start,int length) {
+    public Map<String, Object> getAssigned(AssetsDetails assetsDetails, int draw, int start, int length) {
         PageHelper.startPage(start / length + 1, length);
-        Map<String,Object> assetsDetailsList = new HashMap<String, Object>();
+        Map<String, Object> assetsDetailsList = new HashMap<String, Object>();
         assetsDetails.setCreateDept(CommonUtil.getDefaultDept());
         assetsDetails.setLevel(CommonUtil.getLoginUser().getLevel());
         List<AssetsDetails> list = assetsService.getAssigned(assetsDetails);
@@ -745,7 +745,7 @@ public class AssetsController {
         textS.setDataFormat(form.getFormat("@"));
         for (int i = 2; i < 10000; i++) {
             HSSFRow row = sheet.createRow(i);
-            for (int j = 2; j <9; j++) {
+            for (int j = 2; j < 9; j++) {
                 row.createCell(j).setCellStyle(textS);
             }
         }
@@ -764,10 +764,10 @@ public class AssetsController {
         setHSSFValidation(sheet, major, 2, 65535, 7, 7);
         HSSFSheet sheet2 = wb.createSheet("Sheet2");
         wb.setSheetHidden(1, 1);
-        for (int i = 0; i <  list5.size(); i++) {
-            sheet2.createRow(i).createCell(0).setCellValue( list5.get(i).getText());
+        for (int i = 0; i < list5.size(); i++) {
+            sheet2.createRow(i).createCell(0).setCellValue(list5.get(i).getText());
         }
-        setDataValidation(sheet, "Sheet2!$A$1:$A$" +  list5.size(), 2, 65535, 0, 0);
+        setDataValidation(sheet, "Sheet2!$A$1:$A$" + list5.size(), 2, 65535, 0, 0);
 
         OutputStream os = null;
         try {
@@ -834,9 +834,9 @@ public class AssetsController {
     }
 
 
-
     /**
      * 获取真实行数
+     *
      * @param workbook 工作簿对象
      * @return 真实行数
      */
@@ -854,19 +854,16 @@ public class AssetsController {
                 try {
                     cell.setCellType(CellType.STRING);
                     str.append(cell.getStringCellValue());
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     break error;
                 }
 
             }
-            if (!"".equals(str.toString().replaceAll(" ", "")))
-            {
+            if (!"".equals(str.toString().replaceAll(" ", ""))) {
                 realLastRowNum = realLastRowNum + 1;
             }
         }
-        System.err.println("----------------------> 真实行数 "+realLastRowNum);
+        System.err.println("----------------------> 真实行数 " + realLastRowNum);
         return realLastRowNum;
 
     }
@@ -976,6 +973,34 @@ public class AssetsController {
             }
             return new Message(1, msg, null);
         }
+    }
+
+
+    @RequestMapping("/doPrint")
+    @ResponseBody
+    public ModelAndView doPrint(String assetsId) {
+        ModelAndView modelAndView = new ModelAndView("/business/logistics/assets/printAssets");
+        AssetsDetails assetsDetails = assetsService.doPrint(assetsId);
+        String str = assetsService.selectDeptById(assetsDetails.getUserDept());
+        String result = "";
+        if ("".equals(str)||str==null){
+            assetsDetails.setUserDept("");
+        }else{
+            assetsDetails.setUserDept(str);
+            result += assetsDetails.getUserDept();
+        }
+
+       String name =  assetsService.selectNameById(assetsDetails.getUserId());
+        if ("".equals(name)||name==null){
+            assetsDetails.setUserId("");
+        }else{
+            assetsDetails.setUserId(name);
+            result +="/"+assetsDetails.getUserId();
+        }
+
+        modelAndView.addObject("deptName",result);
+        modelAndView.addObject("assetsDetails", assetsDetails);
+        return modelAndView;
     }
 
 }

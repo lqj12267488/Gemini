@@ -173,7 +173,7 @@
                     <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                         <a href="<%=request.getContextPath()%>/repair/repairApp">
                             <span class="mui-icon mui-icon-info"></span>
-                            <div class="mui-media-body">报修进度</div>
+                            <div class="mui-media-body">报修查询</div>
                         </a>
                     </li>
                 </c:if>

@@ -124,4 +124,12 @@ public interface RepairService {
     void repairChenXiaoFenPei(Repair repair);
 
     Repair selectDistributionInfo(String repairID);
+
+    List<Repair> RepairActionInfo(String personId);
+
+    List<Repair> RepairActionInfoList(String personId);
+
+    void saveFeedbackInfo(String feedbackFlag, String fback, String id);
+
+    String selectName(String creator);
 }
