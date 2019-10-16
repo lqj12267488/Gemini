@@ -8,8 +8,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<link rel="stylesheet" href="<%=request.getContextPath()%>/libs/js/plugins/ssi-uploader/css/ssi-uploader.css">
-<script src="<%=request.getContextPath()%>/libs/js/plugins/ssi-uploader/js/ssi-uploader.js"></script>
+<link rel="stylesheet" href="/libs/js/plugins/ssi-uploader/css/ssi-uploader.css">
+<script src="/libs/js/plugins/ssi-uploader/js/ssi-uploader.js"></script>
 <div class="modal-dialog">
     <input id="tableName" hidden value="${tableName}">
     <input id="businessId" hidden value="${businessId}">
@@ -57,7 +57,6 @@
             language: language
         });
 
-        //上传
         $('#ssi-upload').ssi_uploader({
             url: '<%=request.getContextPath()%>/files/insertFiles?businessType=${businessType}&businessId=${businessId}&tableName=${tableName}',
             maxFileSize: 10,
@@ -71,10 +70,6 @@
                 reloadFileNumber();
             }
         });
-        //添加提示
-        $('#ssi-DropZoneBack').text('请将文件拖拽到此处' + '${describe}');
-
-
     });
 
     function del(id) {

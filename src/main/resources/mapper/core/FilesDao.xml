@@ -59,6 +59,7 @@
             resultType="com.goisan.system.bean.Files">
         SELECT * FROM T_SYS_FILES WHERE BUSINESS_ID = #{businessId}
     </select>
+
     <select id="getFilesByBusinessIdCompetition" parameterType="String"
             resultType="com.goisan.system.bean.Files">
         select rownum rn,t.* from (SELECT * FROM T_SYS_FILES WHERE BUSINESS_ID = #{businessId} order by CREATE_TIME desc) t where rownum &lt;= 1
@@ -73,4 +74,22 @@
     <delete id="delFilesByBusinessId" parameterType="string">
         DELETE FROM T_SYS_FILES WHERE BUSINESS_ID = #{businessId}
     </delete>
+
+    <select id="getFileById" parameterType="string" resultType="com.goisan.system.bean.Files">
+        select
+            t.file_id fileId,
+            t.file_name fileName,
+            t.file_url fileUrl,
+            t.file_type fileType,
+            t.tablename tableName,
+            t.business_id businessId,
+            t.business_type businessType,
+            t.creator creator,
+            t.create_time createTime,
+            t.create_dept createDept
+            from
+            T_SYS_FILES t
+            where
+            t.FILE_ID = #{fileId}
+    </select>
 </mapper>

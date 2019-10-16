@@ -441,7 +441,9 @@ public class WorkflowController {
 
         List<Select2> emps = null;
         if ("1".equals(nextNode.getStartFlag())) {
-            if ("T_JW_SLOW_EXAMINATION".equals(tableName)|| "T_XG_STUDENT_PROVE_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
+            if ("T_JW_SLOW_EXAMINATION".equals(tableName) || "T_XG_STUDENT_PROVE_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
+                emps = workflowService.getStudentAuditer(tableName, businessId);
+            } else if ("T_JW_SLOW_EXAMINATION".equals(tableName) || "T_XG_GRANT_MANAGEMENT_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
                 emps = workflowService.getStudentAuditer(tableName, businessId);
             } else {
                 emps = workflowService.getAuditerByCreator(tableName, businessId);
@@ -449,6 +451,8 @@ public class WorkflowController {
         } else {
             if ("2".equals(nextNode.getNodeOrder())) {
                 if ("T_XG_STUDENT_PROVE_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
+                    emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());
+                } else if ("T_XG_GRANT_MANAGEMENT_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
                     emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());
                 } else {
                     if ("1".equals(roleRange)) {
@@ -462,7 +466,7 @@ public class WorkflowController {
                         emps = workflowService.getAuditerByRange(tableName, businessId);
                     }
                 }
-            }else{
+            } else {
                 if ("1".equals(roleRange)) {
                     emps = workflowService.getAuditer(nextNode.getHandleRole());
                 }
@@ -695,7 +699,7 @@ public class WorkflowController {
         }
         List<Definition> definitions = definitionService.getDefinitionListByNodeIdAndWorkflowId(
                 cuurent.getCuurentNodeId(), cuurent.getCuurentWorkflowId());
-        List<Handle> workflowLog ;
+        List<Handle> workflowLog;
         if ("T_BG_DOCUMENT_WF".equals(tableName)) {
             workflowLog = workflowService.getHandleListByDocumentProcess(start.getStartId());
         } else {

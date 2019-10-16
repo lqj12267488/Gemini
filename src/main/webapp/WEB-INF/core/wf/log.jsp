@@ -67,6 +67,10 @@
 <input id="tableName" hidden value="${tableName}">
 <script>
     $(document).ready(function () {
+
+        if("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}'){
+            $("#dayin").hide();
+        }
         $("#div1").hide();
         $("#business").load('${url}')
         $.post("<%=request.getContextPath()%>/files/getFilesByBusinessId", {

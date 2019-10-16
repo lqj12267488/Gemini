@@ -52,7 +52,7 @@ public class StudentLeaveController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("studentLeave/getStudentLeaveList")
+    @RequestMapping("/studentLeave/getStudentLeaveList")
     public Map<String, List<StudentLeave>> getStudentLeaveList(StudentLeave studentLeave) {
         Map<String, List<StudentLeave>> studentLeaveMap = new HashMap<String, List<StudentLeave>>();
         studentLeave.setCreator(CommonUtil.getPersonId());

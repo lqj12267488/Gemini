@@ -27,4 +27,5 @@ public interface FilesDao {
     void delFilesById(String id);
 
     void delFilesByBusinessId(String businessId);
+
 }

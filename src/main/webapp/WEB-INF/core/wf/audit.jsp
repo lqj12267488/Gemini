@@ -121,6 +121,9 @@
     var handleName = "";
     var personId = "";
     $(document).ready(function () {
+        if("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}'){
+            $("#dayin").hide();
+        }
         $("#div1").hide();
         $("#business").load('<%=request.getContextPath()%>' + '${url}');
         if ("T_BG_DOCUMENT_WF" == '${tableName}') {

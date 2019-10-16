@@ -25,4 +25,5 @@ public interface FilesService {
     void delFilesById(String id);
 
     void delFilesByBusinessId(String businessId);
+
 }
