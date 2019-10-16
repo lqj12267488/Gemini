@@ -1458,21 +1458,38 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<SkillAppraisal> list = tableAttributeDao.getExpertExcel_A4_3();
+            RedCross redCross = tableAttributeDao.getExpertExcel_A4_4();
             int rowIndex = 10;
             int count = 1;
-            for (int i = 0; i < list.size(); i++) {
-                Row row = sheet.getRow(rowIndex+i);
-                row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getIssuingOffice());
-                row.getCell(3).setCellValue(list.get(i).getPreAppProfession());
-                row.getCell(4).setCellValue("");
-                row.getCell(5).setCellValue("");
-                row.getCell(6).setCellValue("");
-                row.getCell(7).setCellValue("");
-                row.getCell(8).setCellValue("");
+
+                Row row = sheet.getRow(rowIndex+0);
+                row.getCell(1).setCellValue(redCross.getDepartment());
+                row.getCell(2).setCellValue(redCross.getCommunitycode());
+                row.getCell(3).setCellValue(redCross.getCommunityname());
+                row.getCell(4).setCellValue(redCross.getFounddateStr());
+                row.getCell(5).setCellValue(redCross.getSum());
+                row.getCell(6).setCellValue(redCross.getTeachingstaffnumber());
+                row.getCell(7).setCellValue(redCross.getStudentnumber());
+                row.getCell(8).setCellValue(redCross.getMoneynum());
+                row.getCell(9).setCellValue(redCross.getHandin());
+                row.getCell(10).setCellValue(redCross.getSelf());
+                row.getCell(11).setCellValue(redCross.getName());
+                row.getCell(12).setCellValue(redCross.getJob());
+                row.getCell(13).setCellValue(redCross.getFundssum());
+                row.getCell(14).setCellValue(redCross.getMembershipdues());
+                row.getCell(15).setCellValue(redCross.getAppropriatefunds());
+                row.getCell(16).setCellValue(redCross.getContributemoney());
+                row.getCell(17).setCellValue(redCross.getOther());
+                row.getCell(18).setCellValue(redCross.getContributesum());
+                row.getCell(19).setCellValue(redCross.getGoverningbody());
+                row.getCell(20).setCellValue(redCross.getSelfpreservation());
+                row.getCell(21).setCellValue(redCross.getActivitycontent());
+                row.getCell(22).setCellValue(redCross.getPersonsum());
+                row.getCell(23).setCellValue(redCross.getCertificatenumber());
+                row.getCell(24).setCellValue(redCross.getCollectionnumber());
+                row.getCell(25).setCellValue(redCross.getPairingnumber());
                 count++;
-            }*/
+
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();
@@ -1510,21 +1527,25 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<SkillAppraisal> list = tableAttributeDao.getExpertExcel_A4_3();
+            List<Volunteers> list = tableAttributeDao.getExpertExcel_A4_5();
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
                 Row row = sheet.getRow(rowIndex+i);
-                row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getIssuingOffice());
-                row.getCell(3).setCellValue(list.get(i).getPreAppProfession());
-                row.getCell(4).setCellValue("");
-                row.getCell(5).setCellValue("");
-                row.getCell(6).setCellValue("");
-                row.getCell(7).setCellValue("");
-                row.getCell(8).setCellValue("");
+                row.getCell(1).setCellValue(list.get(i).getDepartment());
+                row.getCell(2).setCellValue(list.get(i).getCommunitycode());
+                row.getCell(3).setCellValue(list.get(i).getCommunityname());
+                row.getCell(4).setCellValue(list.get(i).getFounddateStr());
+                row.getCell(5).setCellValue(list.get(i).getSum());
+                row.getCell(6).setCellValue(list.get(i).getTeachingstaffnumber());
+                row.getCell(7).setCellValue(list.get(i).getStudentnumber());
+                row.getCell(8).setCellValue(list.get(i).getName());
+                row.getCell(9).setCellValue(list.get(i).getJob());
+                row.getCell(10).setCellValue(list.get(i).getActivitycontent());
+                row.getCell(11).setCellValue(list.get(i).getPersonsum());
+                row.getCell(12).setCellValue(list.get(i).getCertificatenumber());
                 count++;
-            }*/
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();

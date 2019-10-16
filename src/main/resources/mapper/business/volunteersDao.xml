@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.VolunteersDao">
+    <select id="getVolunteersList"
+            parameterType="com.goisan.table.bean.Volunteers"
+            resultType="com.goisan.table.bean.Volunteers">
+        select id,department,communitycode,communityname,founddate,sum,teachingstaffnumber,studentnumber,name,job,activitycontent,personsum,certificatenumber from T_TAB_VOLUNTEERS where 1=1
+        <if test="groupNameSel!=null and groupNameSel!=''">
+            and COMMUNITYNAME like #{groupNameSel}
+        </if>
+
+    </select>
+    <insert id="saveVolunteers" parameterType="com.goisan.table.bean.Volunteers">
+        insert into t_tab_volunteers (id,department,communitycode,communityname,founddate,sum,teachingstaffnumber,studentnumber,name,job,activitycontent,personsum,certificatenumber) values (func_get_uuid ,#{department},#{communitycode},#{communityname},#{founddate},#{sum},#{teachingstaffnumber},#{studentnumber},#{name},#{job},#{activitycontent},#{personsum},#{certificatenumber})
+    </insert>
+    <select id="getVolunteersById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.Volunteers">
+        select * from T_TAB_VOLUNTEERS where id = #{id}
+    </select>
+    <update id="updateVolunteers" parameterType="com.goisan.table.bean.Volunteers">
+        update t_tab_volunteers set department=#{department},communitycode=#{communitycode},communityname=#{communityname},founddate=#{founddate},sum=#{sum},teachingstaffnumber=#{teachingstaffnumber},studentnumber=#{studentnumber},name=#{name},job=#{job},activitycontent=#{activitycontent},personsum=#{personsum},certificatenumber=#{certificatenumber} where id = #{id}
+    </update>
+    <delete id="delVolunteers" parameterType="java.lang.String">
+        delete from T_TAB_VOLUNTEERS where id = #{id}
+    </delete>
+</mapper>

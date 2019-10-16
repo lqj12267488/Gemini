@@ -778,6 +778,16 @@ L2.person_id,
         from T_TAB_ASSOCIATIONS t
     </select>
 
+    <select id="getExpertExcel_A4_4" resultType="com.goisan.table.bean.RedCross">
+        select t.DEPARTMENT,t.COMMUNITYCODE,t.COMMUNITYNAME,to_char(t.FOUNDDATE, 'yyyymmdd')founddateStr,t.SUM,t.TEACHINGSTAFFNUMBER,t.STUDENTNUMBER,t.MONEYNUM,t.HANDIN,t.SELF,
+        t.NAME,t.JOB,t.FUNDSSUM,t.MEMBERSHIPDUES,t.APPROPRIATEFUNDS,t.CONTRIBUTEMONEY,t.OTHER,t.CONTRIBUTESUM,t.GOVERNINGBODY,t.SELFPRESERVATION,t.ACTIVITYCONTENT,t.PERSONSUM,
+        t.CERTIFICATENUMBER,t.COLLECTIONNUMBER,t.PAIRINGNUMBER from T_TAB_REDCROSS t
+    </select>
+
+    <select id="getExpertExcel_A4_5" resultType="com.goisan.table.bean.Volunteers">
+        select t.DEPARTMENT,t.COMMUNITYCODE,t.COMMUNITYNAME,to_char(t.FOUNDDATE, 'yyyymmdd')founddateStr,t.SUM,t.TEACHINGSTAFFNUMBER,t.STUDENTNUMBER,t.NAME,t.JOB,t.ACTIVITYCONTENT,t.PERSONSUM,t.CERTIFICATENUMBER from T_TAB_VOLUNTEERS t
+    </select>
+
     <!--modify by wangxue end-->
 
 </mapper>

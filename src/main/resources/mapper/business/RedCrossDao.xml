@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.RedCrossDao">
+    <select id="getRedCrossList"
+            parameterType="com.goisan.table.bean.RedCross"
+            resultType="com.goisan.table.bean.RedCross">
+        select id,department,communitycode,communityname,founddate,sum,teachingstaffnumber,studentnumber,moneynum,handin,self,name,job,fundssum,membershipdues,appropriatefunds,contributemoney,other,contributesum,governingbody,selfpreservation,activitycontent,personsum,certificatenumber,collectionnumber,pairingnumber from T_TAB_REDCROSS where 1=1 
+<if test='department != "" and department != null'> AND department like '%'||#{department}||'%' </if> 
+<if test='communitycode != "" and communitycode != null'> AND communitycode like '%'||#{communitycode}||'%' </if> 
+<if test='communityname != "" and communityname != null'> AND communityname like '%'||#{communityname}||'%' </if> 
+<if test='founddate != "" and founddate != null'> AND founddate like '%'||#{founddate}||'%' </if> 
+<if test='sum != "" and sum != null'> AND sum like '%'||#{sum}||'%' </if> 
+<if test='teachingstaffnumber != "" and teachingstaffnumber != null'> AND teachingstaffnumber like '%'||#{teachingstaffnumber}||'%' </if> 
+<if test='studentnumber != "" and studentnumber != null'> AND studentnumber like '%'||#{studentnumber}||'%' </if> 
+<if test='moneynum != "" and moneynum != null'> AND moneynum like '%'||#{moneynum}||'%' </if> 
+<if test='handin != "" and handin != null'> AND handin like '%'||#{handin}||'%' </if> 
+<if test='self != "" and self != null'> AND self like '%'||#{self}||'%' </if> 
+<if test='name != "" and name != null'> AND name like '%'||#{name}||'%' </if> 
+<if test='job != "" and job != null'> AND job like '%'||#{job}||'%' </if> 
+<if test='fundssum != "" and fundssum != null'> AND fundssum like '%'||#{fundssum}||'%' </if> 
+<if test='membershipdues != "" and membershipdues != null'> AND membershipdues like '%'||#{membershipdues}||'%' </if> 
+<if test='appropriatefunds != "" and appropriatefunds != null'> AND appropriatefunds like '%'||#{appropriatefunds}||'%' </if> 
+<if test='contributemoney != "" and contributemoney != null'> AND contributemoney like '%'||#{contributemoney}||'%' </if> 
+<if test='other != "" and other != null'> AND other like '%'||#{other}||'%' </if> 
+<if test='contributesum != "" and contributesum != null'> AND contributesum like '%'||#{contributesum}||'%' </if> 
+<if test='governingbody != "" and governingbody != null'> AND governingbody like '%'||#{governingbody}||'%' </if> 
+<if test='selfpreservation != "" and selfpreservation != null'> AND selfpreservation like '%'||#{selfpreservation}||'%' </if> 
+<if test='activitycontent != "" and activitycontent != null'> AND activitycontent like '%'||#{activitycontent}||'%' </if> 
+<if test='personsum != "" and personsum != null'> AND personsum like '%'||#{personsum}||'%' </if> 
+<if test='certificatenumber != "" and certificatenumber != null'> AND certificatenumber like '%'||#{certificatenumber}||'%' </if> 
+<if test='collectionnumber != "" and collectionnumber != null'> AND collectionnumber like '%'||#{collectionnumber}||'%' </if> 
+<if test='pairingnumber != "" and pairingnumber != null'> AND pairingnumber like '%'||#{pairingnumber}||'%' </if> 
+
+    </select>
+    <insert id="saveRedCross" parameterType="com.goisan.table.bean.RedCross">
+        insert into t_tab_redcross (id,department,communitycode,communityname,founddate,sum,teachingstaffnumber,studentnumber,moneynum,handin,self,name,job,fundssum,membershipdues,appropriatefunds,contributemoney,other,contributesum,governingbody,selfpreservation,activitycontent,personsum,certificatenumber,collectionnumber,pairingnumber) values (#{id} ,#{department},#{communitycode},#{communityname},#{founddate},#{sum},#{teachingstaffnumber},#{studentnumber},#{moneynum},#{handin},#{self},#{name},#{job},#{fundssum},#{membershipdues},#{appropriatefunds},#{contributemoney},#{other},#{contributesum},#{governingbody},#{selfpreservation},#{activitycontent},#{personsum},#{certificatenumber},#{collectionnumber},#{pairingnumber})
+    </insert>
+    <select id="getRedCrossById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.RedCross">
+        select * from T_TAB_REDCROSS where id = #{id}
+    </select>
+    <update id="updateRedCross" parameterType="com.goisan.table.bean.RedCross">
+        update t_tab_redcross set department=#{department},communitycode=#{communitycode},communityname=#{communityname},founddate=#{founddate},sum=#{sum},teachingstaffnumber=#{teachingstaffnumber},studentnumber=#{studentnumber},moneynum=#{moneynum},handin=#{handin},self=#{self},name=#{name},job=#{job},fundssum=#{fundssum},membershipdues=#{membershipdues},appropriatefunds=#{appropriatefunds},contributemoney=#{contributemoney},other=#{other},contributesum=#{contributesum},governingbody=#{governingbody},selfpreservation=#{selfpreservation},activitycontent=#{activitycontent},personsum=#{personsum},certificatenumber=#{certificatenumber},collectionnumber=#{collectionnumber},pairingnumber=#{pairingnumber} where id = #{id}
+    </update>
+    <delete id="delRedCross" parameterType="java.lang.String">
+        delete from T_TAB_REDCROSS where id = #{id}
+    </delete>
+
+    <select id="selectId" resultType="java.lang.String">
+        select id from T_TAB_REDCROSS
+    </select>
+
+    <select id="selectRedCross" resultType="com.goisan.table.bean.RedCross">
+        select * from T_TAB_REDCROSS
+    </select>
+</mapper>

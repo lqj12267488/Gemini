@@ -10,10 +10,7 @@ import com.goisan.system.bean.Emp;
 import com.goisan.educational.major.bean.Major;
 import com.goisan.studentwork.internships.bean.InternshipManage;
 import com.goisan.system.bean.Student;
-import com.goisan.table.bean.Associations;
-import com.goisan.table.bean.Programme;
-import com.goisan.table.bean.StudentDocuments;
-import com.goisan.table.bean.TeachContact;
+import com.goisan.table.bean.*;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
 import org.springframework.stereotype.Repository;
@@ -183,6 +180,10 @@ public interface TableAttributeDao {
     List<Programme> getExpertExcel_A9_5();
 
     List<Associations> getExpertExcel_A10_3();
+
+    RedCross getExpertExcel_A4_4();
+
+    List<Volunteers> getExpertExcel_A4_5();
 
     /**
      * modify by wangxue end
