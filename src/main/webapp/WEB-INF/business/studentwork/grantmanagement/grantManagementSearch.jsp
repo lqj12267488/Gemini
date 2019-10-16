@@ -211,6 +211,11 @@
         grantManagementTable.on('click', 'tr a', function () {
             var data = grantManagementTable.row($(this).parent()).data();
             var id = data.id;
+            var requestFlag = data.requestFlag;
+            if (this.id=="previewSel") {
+                $("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + id + "&role=leader");
+                $("#dialog").modal("show");
+            }
         });
     })
 
@@ -270,5 +275,4 @@
             language: language
         });
     }
-
 </script>

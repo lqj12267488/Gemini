@@ -3,10 +3,7 @@ package com.goisan.archives.service;
 import com.goisan.archives.bean.Archives;
 import com.goisan.archives.bean.ArchivesFile;
 import com.goisan.archives.bean.ArchivesRole;
-import com.goisan.system.bean.AutoComplete;
-import com.goisan.system.bean.Emp;
-import com.goisan.system.bean.EmpDeptTree;
-import com.goisan.system.bean.Select2;
+import com.goisan.system.bean.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -110,4 +107,8 @@ public interface ArchivesService {
     String getCheckListCount(Archives archives);
 
     List<Archives> allArchivesId(Archives arc);
+
+    List<Files> getFilesByBusinessId(String businessId);
+
+    Files getFileById(String fileId);
 }

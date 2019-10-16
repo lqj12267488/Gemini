@@ -900,11 +900,11 @@ public class ArchivesController {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/business/archives/archivesPreview");
         mv.addObject("fileId", fileId);
-        ArchivesFile archivesFile = archivesService.getArchivesFileById(fileId);
+        Files archivesFile = archivesService.getFileById(fileId);
 
         if (archivesFile != null) {
             String fileView = archivesFile.getFileUrl();
-            String fileType = archivesFile.getFileSuffix();
+            String fileType = archivesFile.getFileType();
             if (".txt.docx.doc.xls.xlsx.pptx.ppt.pdf.TXT.DOCX.DOC.XLS.XLSX.PPTX.PPT.PDF.".indexOf("." + fileType + ".") != -1) {
                 // 文本
                 fileView = fileView.replace("." + fileType, ".pdf");
@@ -939,7 +939,7 @@ public class ArchivesController {
     @ResponseBody
     @RequestMapping("/archives/getFilesByArchivesId")
     public Map getFilesByArchivesId(String archivesId) {
-        return CommonUtil.tableMap(archivesService.getFilesByArchivesId(archivesId));
+        return CommonUtil.tableMap(archivesService.getFilesByBusinessId(archivesId));
     }
 
     public static String COM_REPORT_PATH = null;

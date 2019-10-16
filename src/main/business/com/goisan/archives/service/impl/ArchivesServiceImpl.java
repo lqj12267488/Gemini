@@ -5,10 +5,8 @@ import com.goisan.archives.bean.ArchivesFile;
 import com.goisan.archives.bean.ArchivesRole;
 import com.goisan.archives.dao.ArchivesDao;
 import com.goisan.archives.service.ArchivesService;
-import com.goisan.system.bean.AutoComplete;
-import com.goisan.system.bean.Emp;
-import com.goisan.system.bean.EmpDeptTree;
-import com.goisan.system.bean.Select2;
+import com.goisan.system.bean.*;
+import com.goisan.system.dao.FilesDao;
 import com.goisan.system.service.EmpService;
 import com.goisan.system.tools.CommonUtil;
 import org.springframework.stereotype.Service;
@@ -20,6 +18,8 @@ import java.util.List;
 public class ArchivesServiceImpl implements ArchivesService {
     @Resource
     private ArchivesDao archivesDao;
+    @Resource
+    FilesDao filesDao;
 
     public List<Archives> getArchivesList(Archives archives) {
         return archivesDao.getArchivesList(archives);
@@ -269,5 +269,14 @@ public class ArchivesServiceImpl implements ArchivesService {
 
     public List<Archives> allArchivesId(Archives arc) {
         return archivesDao.allArchivesId(arc);
+    }
+
+    public List<Files> getFilesByBusinessId(String businessId) {
+        return filesDao.getFilesByBusinessId(businessId);
+    }
+
+    @Override
+    public Files getFileById(String fileId) {
+        return filesDao.getFileById(fileId);
     }
 }
