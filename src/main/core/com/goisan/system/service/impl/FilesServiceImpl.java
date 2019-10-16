@@ -59,4 +59,8 @@ public class FilesServiceImpl implements FilesService {
         filesDao.delFilesByBusinessId(businessId);
     }
 
+    @Override
+    public Files getFileById(String fileId) {
+        return filesDao.getFileById(fileId);
+    }
 }

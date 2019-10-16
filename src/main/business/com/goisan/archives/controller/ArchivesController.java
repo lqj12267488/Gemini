@@ -1018,13 +1018,12 @@ public class ArchivesController {
     public void downloadArchivesFile(String archivesId, String fileId, HttpServletResponse response) {
         COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
                 .getParentFile().getPath();
-        Archives archives = archivesService.getArchivesById(archivesId);
-        ArchivesFile files = archivesService.getArchivesFileById(fileId);
-        String filePath = COM_REPORT_PATH + files.getFileUrl();
+        Files archivesFile = filesService.getFileById(fileId);
+        String filePath = COM_REPORT_PATH + archivesFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
         try {
-            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(archives.getArchivesCode() + archives.getArchivesName() + files.getFileName(), "utf-8"));
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(archivesFile.getFileName(), "utf-8"));
             os = response.getOutputStream();
             os.write(FileUtils.readFileToByteArray(file));
         } catch (UnsupportedEncodingException e) {

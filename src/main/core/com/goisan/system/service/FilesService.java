@@ -26,4 +26,5 @@ public interface FilesService {
 
     void delFilesByBusinessId(String businessId);
 
+    Files getFileById(String fileId);
 }
