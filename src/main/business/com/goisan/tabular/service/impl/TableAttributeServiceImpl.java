@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static com.goisan.tabular.controller.TabularController.COM_REPORT_PATH;
@@ -3070,10 +3071,25 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(4).setCellValue(list.get(i).getMajorName());
                 row.getCell(5).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(6).setCellValue(list.get(i).getMajorDirectionShow());
+
                 row.getCell(8).setCellValue(list.get(i).getOrdersStudentNum());
-                row.getCell(12).setCellValue(list.get(i).getInternshipNum());
-                row.getCell(15).setCellValue(list.get(i).getEmploymentNum());
-                row.getCell(28).setCellValue(list.get(i).getNowMajor());
+
+                row.getCell(9).setCellValue(list.get(i).getDEVELOPMENTCOURSENUM());
+                row.getCell(10).setCellValue(list.get(i).getDEVELOPMENTTEACHINGNUM());
+                row.getCell(11).setCellValue(list.get(i).getPARTTIMETEACHERNUM());
+                row.getCell(12).setCellValue(list.get(i).getTRAINEENUM());
+                row.getCell(13).setCellValue(list.get(i).getEQUIPMENTMONEY());
+                row.getCell(14).setCellValue(list.get(i).getQUASIDONATIONMONEY());
+                row.getCell(15).setCellValue(list.get(i).getEMPLOYMENTNUMBER());
+                row.getCell(16).setCellValue(list.get(i).getANNUALINCOME());
+                row.getCell(17).setCellValue(list.get(i).getEMPLOYEESNUM());
+                row.getCell(19).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS1STARTTIME()));
+                row.getCell(21).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS2STARTTIME()));
+                row.getCell(23).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS3STARTTIME()));
+                row.getCell(25).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS4STARTTIME()));
+                row.getCell(27).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS5STARTTIME()));
+
+                row.getCell(28).setCellValue(list.get(i).getAPPRENTICESHIP());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),

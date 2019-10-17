@@ -1,5 +1,7 @@
 package com.goisan.tabular.bean.export;
 
+import java.util.Date;
+
 /**
  * @author hanjie
  * @date 2019/9/20 9:00
@@ -86,6 +88,142 @@ public class Export {
     private String CLASSIFICATION;
     private String AUTHORORDER;
 
+    private String DEVELOPMENTCOURSENUM;
+    private String DEVELOPMENTTEACHINGNUM;
+    private String PARTTIMETEACHERNUM;
+    private String TRAINEENUM;
+    private String EQUIPMENTMONEY;
+    private String QUASIDONATIONMONEY;
+    private String EMPLOYMENTNUMBER;
+    private String ANNUALINCOME;
+    private String EMPLOYEESNUM;
+    private Date BUSINESS1STARTTIME;
+    private Date BUSINESS2STARTTIME;
+    private Date BUSINESS3STARTTIME;
+    private Date BUSINESS4STARTTIME;
+    private Date BUSINESS5STARTTIME;
+    private String APPRENTICESHIP;
+
+
+    public String getDEVELOPMENTCOURSENUM() {
+        return DEVELOPMENTCOURSENUM;
+    }
+
+    public void setDEVELOPMENTCOURSENUM(String DEVELOPMENTCOURSENUM) {
+        this.DEVELOPMENTCOURSENUM = DEVELOPMENTCOURSENUM;
+    }
+
+    public String getDEVELOPMENTTEACHINGNUM() {
+        return DEVELOPMENTTEACHINGNUM;
+    }
+
+    public void setDEVELOPMENTTEACHINGNUM(String DEVELOPMENTTEACHINGNUM) {
+        this.DEVELOPMENTTEACHINGNUM = DEVELOPMENTTEACHINGNUM;
+    }
+
+    public String getPARTTIMETEACHERNUM() {
+        return PARTTIMETEACHERNUM;
+    }
+
+    public void setPARTTIMETEACHERNUM(String PARTTIMETEACHERNUM) {
+        this.PARTTIMETEACHERNUM = PARTTIMETEACHERNUM;
+    }
+
+    public String getTRAINEENUM() {
+        return TRAINEENUM;
+    }
+
+    public void setTRAINEENUM(String TRAINEENUM) {
+        this.TRAINEENUM = TRAINEENUM;
+    }
+
+    public String getEQUIPMENTMONEY() {
+        return EQUIPMENTMONEY;
+    }
+
+    public void setEQUIPMENTMONEY(String EQUIPMENTMONEY) {
+        this.EQUIPMENTMONEY = EQUIPMENTMONEY;
+    }
+
+    public String getQUASIDONATIONMONEY() {
+        return QUASIDONATIONMONEY;
+    }
+
+    public void setQUASIDONATIONMONEY(String QUASIDONATIONMONEY) {
+        this.QUASIDONATIONMONEY = QUASIDONATIONMONEY;
+    }
+
+    public String getEMPLOYMENTNUMBER() {
+        return EMPLOYMENTNUMBER;
+    }
+
+    public void setEMPLOYMENTNUMBER(String EMPLOYMENTNUMBER) {
+        this.EMPLOYMENTNUMBER = EMPLOYMENTNUMBER;
+    }
+
+    public String getANNUALINCOME() {
+        return ANNUALINCOME;
+    }
+
+    public void setANNUALINCOME(String ANNUALINCOME) {
+        this.ANNUALINCOME = ANNUALINCOME;
+    }
+
+    public String getEMPLOYEESNUM() {
+        return EMPLOYEESNUM;
+    }
+
+    public void setEMPLOYEESNUM(String EMPLOYEESNUM) {
+        this.EMPLOYEESNUM = EMPLOYEESNUM;
+    }
+
+    public Date getBUSINESS1STARTTIME() {
+        return BUSINESS1STARTTIME;
+    }
+
+    public void setBUSINESS1STARTTIME(Date BUSINESS1STARTTIME) {
+        this.BUSINESS1STARTTIME = BUSINESS1STARTTIME;
+    }
+
+    public Date getBUSINESS2STARTTIME() {
+        return BUSINESS2STARTTIME;
+    }
+
+    public void setBUSINESS2STARTTIME(Date BUSINESS2STARTTIME) {
+        this.BUSINESS2STARTTIME = BUSINESS2STARTTIME;
+    }
+
+    public Date getBUSINESS3STARTTIME() {
+        return BUSINESS3STARTTIME;
+    }
+
+    public void setBUSINESS3STARTTIME(Date BUSINESS3STARTTIME) {
+        this.BUSINESS3STARTTIME = BUSINESS3STARTTIME;
+    }
+
+    public Date getBUSINESS4STARTTIME() {
+        return BUSINESS4STARTTIME;
+    }
+
+    public void setBUSINESS4STARTTIME(Date BUSINESS4STARTTIME) {
+        this.BUSINESS4STARTTIME = BUSINESS4STARTTIME;
+    }
+
+    public Date getBUSINESS5STARTTIME() {
+        return BUSINESS5STARTTIME;
+    }
+
+    public void setBUSINESS5STARTTIME(Date BUSINESS5STARTTIME) {
+        this.BUSINESS5STARTTIME = BUSINESS5STARTTIME;
+    }
+
+    public String getAPPRENTICESHIP() {
+        return APPRENTICESHIP;
+    }
+
+    public void setAPPRENTICESHIP(String APPRENTICESHIP) {
+        this.APPRENTICESHIP = APPRENTICESHIP;
+    }
 
     public String getWHETHERHOST() {
         return WHETHERHOST;
