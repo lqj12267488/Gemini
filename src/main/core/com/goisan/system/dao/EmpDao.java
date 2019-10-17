@@ -201,4 +201,7 @@ public interface EmpDao {
 
     @Select("select name from T_SYS_USER t where t.user_id = #{creator}")
     String selectName(String creator);
+
+
+    List<Emp> selectList2 (@Param("deptName") String deptName,@Param("deptId") String deptId);
 }

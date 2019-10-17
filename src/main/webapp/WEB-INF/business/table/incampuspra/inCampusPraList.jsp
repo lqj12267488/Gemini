@@ -72,26 +72,12 @@
                  {"data": "parSupTime", "title": "批准日期"},
                  {"data": "parArea", "title": "建筑面积"},
                  {"data": "parDevAllvalue", "title": "设备总值"},
-                 {"data": "parDevNewvalue", "title": "当年新增设备值"},
-                 {"data": "selfDevValue", "title": "自主研制设备值"},
-                 {"data": "ssDevValue", "title": "社会捐赠设备值"},
-                 {"data": "sswDevValue", "title": "社会准捐赠设备值"},
-                 {"data": "devNum", "title": "设备总数"},
-                 {"data": "devBigNum", "title": "大型设备数"},
-                 {"data": "parProNum", "title": "实训项目总数"},
-                 {"data": "mainParPro", "title": "主要项目名称"},
-                 {"data": "schUseFre", "title": "学年使用频率（人时）校内"},
-                 {"data": "ssUseFre", "title": "学年使用频率（人时）社会"},
-                 {"data": "workNum", "title": "工位数"},
-                 {"data": "materCost", "title": "原材料（耗材）费用（万元）"},
-                 {"data": "devMaintCost", "title": "设备维护费用"},
-                 {"data": "mgeNum", "title": "专职管理人员（名）"},
-                 {"data": "partMgeNum", "title": "兼职管理人员（名）"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '")></span>&ensp;&ensp;' +
-                                '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
+                             '<span class="icon-eye-open" title="查看" onclick=see("' + row.id + '")></span>&ensp;&ensp;'+
+                              '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
                     }
                 }
             ],
@@ -100,6 +86,8 @@
             language: language
         });
     }
+
+
 
     function searchClear() {
         $(".form-row div input,.form-row div select").val("");
@@ -113,6 +101,11 @@
 
     function edit(id) {
         $("#dialog").load("<%=request.getContextPath()%>/InCampusPra/toInCampusPraEdit?id=" + id)
+        $("#dialog").modal("show")
+    }
+
+    function see(id) {
+        $("#dialog").load("<%=request.getContextPath()%>/InCampusPra/toInCampusPraEdit?id=" + id+"&seeFlag=1")
         $("#dialog").modal("show")
     }
 

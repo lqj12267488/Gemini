@@ -13,32 +13,6 @@
                         <div class="col-md-2">
                             <input id="evaNameSel">
                         </div>
-                        <div class="col-md-1 tar">
-                            工种证书名称：
-                        </div>
-                        <div class="col-md-2">
-                            <input id="certNameSel">
-                        </div>
-                        <div class="col-md-1 tar">
-                            等级：
-                        </div>
-                        <div class="col-md-2">
-                            <select id="evaLevelSel"></select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-1 tar">
-                            建立单位级别：
-                        </div>
-                        <div class="col-md-2">
-                            <select id="buildDepLevSel"></select>
-                        </div>
-                        <div class="col-md-1 tar">
-                            部门：
-                        </div>
-                        <div class="col-md-2">
-                            <input id="departSel">
-                        </div>
                         <div class="col-md-2 tar">
                             <button type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                             <button type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
@@ -102,8 +76,8 @@
                 {"data": "evaLevelShow", "title": "等级"},
                 {"data": "buildDepLevShow", "title": "建立单位级别"},
                 {"data": "depart", "title": "部门"},
-                {"data": "ssEvaNum", "title": "社会鉴定数（人天）"},
-                {"data": "schEvaNum", "title": "在校生鉴定数(人天)"},
+                {"data": "ssEvaNum", "title": "社会鉴定数"},
+                {"data": "schEvaNum", "title": "在校生鉴定数"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {

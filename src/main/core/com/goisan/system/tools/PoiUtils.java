@@ -156,6 +156,9 @@ public class PoiUtils {
         return cellStyle;
     }
 
+
+
+
     /**
      * 单元格赋值，赋样式
      * @param row 单元格所在行
@@ -172,7 +175,15 @@ public class PoiUtils {
         cell.setCellStyle(style);
     }
 
-
+    /**
+     * 设置下拉菜单
+     * @param sheet
+     * @param textlist
+     * @param firstRow
+     * @param endRow
+     * @param firstCol
+     * @param endCol
+     */
     public static void setHSSFValidation(HSSFSheet sheet, String[] textlist, int firstRow, int endRow, int firstCol, int endCol) {
         // 加载下拉列表内容
         DVConstraint constraint = DVConstraint.createExplicitListConstraint(textlist);
@@ -225,4 +236,6 @@ public class PoiUtils {
             return target;
         }
     }
+
+
 }

@@ -8,7 +8,7 @@
         }
     </style>
 </head>
-<div class="modal-dialog">
+<div class="modal-dialog" style="width: 900px">
     <div class="modal-content block-fill-white">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
@@ -20,58 +20,61 @@
         <div class="modal-body clearfix">
             <div class="controls">
                 <div class="form-row">
-                    <div class="col-md-3 tar">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>职业技能鉴定站（所）
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <input id="evaNameEdit" value="${data.evaName}"/>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>工种证书名称
-                    </div>
-                    <div class="col-md-9">
-                        <input id="certNameEdit" value="${data.certName}"/>
-                    </div>
+                    鉴定内容：
                 </div>
                 <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>等级
+                    <div class="col-md-2 tar">
+                       工种证书名称
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
+                        <input id="certNameEdit" value="${data.certName}"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                       等级
+                    </div>
+                    <div class="col-md-4">
                         <select id="evaLevelEdit"/>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>建立单位级别
-                    </div>
-                    <div class="col-md-9">
-                        <select id="buildDepLevEdit"/>
-                    </div>
+                    建立单位
                 </div>
                 <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>部门
+                    <div class="col-md-2 tar">
+                        级别
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
+                        <select id="buildDepLevEdit"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                        部门
+                    </div>
+                    <div class="col-md-4">
                         <input id="departEdit" value="${data.depart}"/>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>社会鉴定数（人天）
-                    </div>
-                    <div class="col-md-9">
-                        <input id="ssEvaNumEdit" value="${data.ssEvaNum}"/>
-                    </div>
+                    鉴定数（人天）
                 </div>
                 <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>在校生鉴定数(人天)
+                    <div class="col-md-2 tar">
+                        社会
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
+                        <input id="ssEvaNumEdit" value="${data.ssEvaNum}" />
+                    </div>
+                    <div class="col-md-2 tar">
+                        在校生
+                    </div>
+                    <div class="col-md-4">
                         <input id="schEvaNumEdit" value="${data.schEvaNum}"/>
                     </div>
                 </div>

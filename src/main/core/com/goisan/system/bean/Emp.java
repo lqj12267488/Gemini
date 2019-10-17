@@ -313,6 +313,600 @@ public class Emp extends BaseBean {
     private String filenumber;
     private String deadline;
 
+
+
+    /**开始时间*/
+    private String syStartTime;
+
+    /**截止时间*/
+    private String syEndTime;
+
+    /**合同期限*/
+    private String syContractPeriod;
+
+    private String firstStartTime;
+
+    private String firstEndTime;
+
+    private String firstContractPeriod;
+
+    private String secStartTime;
+
+    private String secEndTime;
+
+    private String secContractPeriod;
+
+    private String thirdStartTime;
+
+    private String thirdEndTime;
+
+    private String thirdContractPeriod;
+
+    private String jzStartTime;
+
+    private String jzEndTime;
+
+    private String jzContractPeriod;
+
+    /**转正日期*/
+    private String positiveTime;
+
+    /**人员性质{ryxz}*/
+    private String personNature;
+
+    private String personNatureShow;
+
+    /**退休证明*/
+    private String retireCert;
+
+    /**份数*/
+    private String nums;
+
+    /**校龄*/
+    private String schoolAge;
+
+    /**保密协议*/
+    private String confidentAgreement;
+
+    /**试用期工资*/
+    private String trpidSalary;
+
+    /**转正工资*/
+    private String positiveSalary;
+
+    /**转正系数*/
+    private String positiveCoff;
+
+    /**离职日期*/
+    private String retireTime;
+
+    /**是否退休*/
+    private String retireNy;
+
+    /**社保号*/
+    private String ssnumber;
+
+    /**数量*/
+    private String counts;
+
+    /**预到期*/
+    private String fature;
+
+
+
+    /**银行卡号id*/
+    private String bankId;
+
+    /**一寸照有无{	yw}*/
+    private String phoneShow;
+
+    /**身份证复印件有无{	yw}*/
+
+    private String idcardCopyShow;
+
+    /**身份证期限*/
+    private String idcardEndtime;
+
+    /**户口有无{	yw}*/
+    private String account;
+
+    private String accountShow;
+
+    /**毕业证有无{	yw}*/
+
+    private String diplomaShow;
+
+    /**学位证有无{	yw}*/
+    private String degreeCert;
+
+    private String degreeCertShow;
+
+    /**解除劳动合同有无{yw}*/
+
+    private String disContractShow;
+
+    /**计算机{yw}*/
+    private String computer;
+
+    private String computerShow;
+
+    /**英语{yw}*/
+    private String english;
+
+    private String englishShow;
+
+    /**普通话{yw}*/
+    private String putonghuaShow;
+
+    /**国语水平{yw}*/
+    private String pthLevelShow;
+
+    /**教师资格证{yw}*/
+    private String teachCertShow;
+
+    /**其他资格证{yw}*/
+
+    private String otherCertShow;
+
+    /**驾驶证{yw}*/
+    private String driverCertShow;
+
+    /**电工证{yw}*/
+
+    private String eleCertShow;
+
+
+    private String retireCertShow;
+
+
+    private String retireProveShow;
+
+    private String extSsCertShow;
+
+    private String personFileShow;
+
+    private String otherInfoShow;
+
+    public String getBankId() {
+        return bankId;
+    }
+
+    public void setBankId(String bankId) {
+        this.bankId = bankId;
+    }
+
+    public String getPhoneShow() {
+        return phoneShow;
+    }
+
+    public void setPhoneShow(String phoneShow) {
+        this.phoneShow = phoneShow;
+    }
+
+    public String getIdcardCopyShow() {
+        return idcardCopyShow;
+    }
+
+    public void setIdcardCopyShow(String idcardCopyShow) {
+        this.idcardCopyShow = idcardCopyShow;
+    }
+
+    public String getIdcardEndtime() {
+        return idcardEndtime;
+    }
+
+    public void setIdcardEndtime(String idcardEndtime) {
+        this.idcardEndtime = idcardEndtime;
+    }
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public String getAccountShow() {
+        return accountShow;
+    }
+
+    public void setAccountShow(String accountShow) {
+        this.accountShow = accountShow;
+    }
+
+    public String getDiplomaShow() {
+        return diplomaShow;
+    }
+
+    public void setDiplomaShow(String diplomaShow) {
+        this.diplomaShow = diplomaShow;
+    }
+
+    public String getDegreeCert() {
+        return degreeCert;
+    }
+
+    public void setDegreeCert(String degreeCert) {
+        this.degreeCert = degreeCert;
+    }
+
+    public String getDegreeCertShow() {
+        return degreeCertShow;
+    }
+
+    public void setDegreeCertShow(String degreeCertShow) {
+        this.degreeCertShow = degreeCertShow;
+    }
+
+    public String getDisContractShow() {
+        return disContractShow;
+    }
+
+    public void setDisContractShow(String disContractShow) {
+        this.disContractShow = disContractShow;
+    }
+
+    public String getComputer() {
+        return computer;
+    }
+
+    public void setComputer(String computer) {
+        this.computer = computer;
+    }
+
+    public String getComputerShow() {
+        return computerShow;
+    }
+
+    public void setComputerShow(String computerShow) {
+        this.computerShow = computerShow;
+    }
+
+    public String getEnglish() {
+        return english;
+    }
+
+    public void setEnglish(String english) {
+        this.english = english;
+    }
+
+    public String getEnglishShow() {
+        return englishShow;
+    }
+
+    public void setEnglishShow(String englishShow) {
+        this.englishShow = englishShow;
+    }
+
+    public String getPutonghuaShow() {
+        return putonghuaShow;
+    }
+
+    public void setPutonghuaShow(String putonghuaShow) {
+        this.putonghuaShow = putonghuaShow;
+    }
+
+    public String getPthLevelShow() {
+        return pthLevelShow;
+    }
+
+    public void setPthLevelShow(String pthLevelShow) {
+        this.pthLevelShow = pthLevelShow;
+    }
+
+    public String getTeachCertShow() {
+        return teachCertShow;
+    }
+
+    public void setTeachCertShow(String teachCertShow) {
+        this.teachCertShow = teachCertShow;
+    }
+
+    public String getOtherCertShow() {
+        return otherCertShow;
+    }
+
+    public void setOtherCertShow(String otherCertShow) {
+        this.otherCertShow = otherCertShow;
+    }
+
+    public String getDriverCertShow() {
+        return driverCertShow;
+    }
+
+    public void setDriverCertShow(String driverCertShow) {
+        this.driverCertShow = driverCertShow;
+    }
+
+    public String getEleCertShow() {
+        return eleCertShow;
+    }
+
+    public void setEleCertShow(String eleCertShow) {
+        this.eleCertShow = eleCertShow;
+    }
+
+    public String getRetireCertShow() {
+        return retireCertShow;
+    }
+
+    public void setRetireCertShow(String retireCertShow) {
+        this.retireCertShow = retireCertShow;
+    }
+
+    public String getRetireProveShow() {
+        return retireProveShow;
+    }
+
+    public void setRetireProveShow(String retireProveShow) {
+        this.retireProveShow = retireProveShow;
+    }
+
+    public String getExtSsCertShow() {
+        return extSsCertShow;
+    }
+
+    public void setExtSsCertShow(String extSsCertShow) {
+        this.extSsCertShow = extSsCertShow;
+    }
+
+    public String getPersonFileShow() {
+        return personFileShow;
+    }
+
+    public void setPersonFileShow(String personFileShow) {
+        this.personFileShow = personFileShow;
+    }
+
+    public String getOtherInfoShow() {
+        return otherInfoShow;
+    }
+
+    public void setOtherInfoShow(String otherInfoShow) {
+        this.otherInfoShow = otherInfoShow;
+    }
+
+    public String getSyStartTime() {
+        return syStartTime;
+    }
+
+    public void setSyStartTime(String syStartTime) {
+        this.syStartTime = syStartTime;
+    }
+
+    public String getSyEndTime() {
+        return syEndTime;
+    }
+
+    public void setSyEndTime(String syEndTime) {
+        this.syEndTime = syEndTime;
+    }
+
+    public String getSyContractPeriod() {
+        return syContractPeriod;
+    }
+
+    public void setSyContractPeriod(String syContractPeriod) {
+        this.syContractPeriod = syContractPeriod;
+    }
+
+    public String getFirstStartTime() {
+        return firstStartTime;
+    }
+
+    public void setFirstStartTime(String firstStartTime) {
+        this.firstStartTime = firstStartTime;
+    }
+
+    public String getFirstEndTime() {
+        return firstEndTime;
+    }
+
+    public void setFirstEndTime(String firstEndTime) {
+        this.firstEndTime = firstEndTime;
+    }
+
+    public String getFirstContractPeriod() {
+        return firstContractPeriod;
+    }
+
+    public void setFirstContractPeriod(String firstContractPeriod) {
+        this.firstContractPeriod = firstContractPeriod;
+    }
+
+    public String getSecStartTime() {
+        return secStartTime;
+    }
+
+    public void setSecStartTime(String secStartTime) {
+        this.secStartTime = secStartTime;
+    }
+
+    public String getSecEndTime() {
+        return secEndTime;
+    }
+
+    public void setSecEndTime(String secEndTime) {
+        this.secEndTime = secEndTime;
+    }
+
+    public String getSecContractPeriod() {
+        return secContractPeriod;
+    }
+
+    public void setSecContractPeriod(String secContractPeriod) {
+        this.secContractPeriod = secContractPeriod;
+    }
+
+    public String getThirdStartTime() {
+        return thirdStartTime;
+    }
+
+    public void setThirdStartTime(String thirdStartTime) {
+        this.thirdStartTime = thirdStartTime;
+    }
+
+    public String getThirdEndTime() {
+        return thirdEndTime;
+    }
+
+    public void setThirdEndTime(String thirdEndTime) {
+        this.thirdEndTime = thirdEndTime;
+    }
+
+    public String getThirdContractPeriod() {
+        return thirdContractPeriod;
+    }
+
+    public void setThirdContractPeriod(String thirdContractPeriod) {
+        this.thirdContractPeriod = thirdContractPeriod;
+    }
+
+    public String getJzStartTime() {
+        return jzStartTime;
+    }
+
+    public void setJzStartTime(String jzStartTime) {
+        this.jzStartTime = jzStartTime;
+    }
+
+    public String getJzEndTime() {
+        return jzEndTime;
+    }
+
+    public void setJzEndTime(String jzEndTime) {
+        this.jzEndTime = jzEndTime;
+    }
+
+    public String getJzContractPeriod() {
+        return jzContractPeriod;
+    }
+
+    public void setJzContractPeriod(String jzContractPeriod) {
+        this.jzContractPeriod = jzContractPeriod;
+    }
+
+    public String getPositiveTime() {
+        return positiveTime;
+    }
+
+    public void setPositiveTime(String positiveTime) {
+        this.positiveTime = positiveTime;
+    }
+
+    public String getPersonNature() {
+        return personNature;
+    }
+
+    public void setPersonNature(String personNature) {
+        this.personNature = personNature;
+    }
+
+    public String getPersonNatureShow() {
+        return personNatureShow;
+    }
+
+    public void setPersonNatureShow(String personNatureShow) {
+        this.personNatureShow = personNatureShow;
+    }
+
+    public String getRetireCert() {
+        return retireCert;
+    }
+
+    public void setRetireCert(String retireCert) {
+        this.retireCert = retireCert;
+    }
+
+    public String getNums() {
+        return nums;
+    }
+
+    public void setNums(String nums) {
+        this.nums = nums;
+    }
+
+    public String getSchoolAge() {
+        return schoolAge;
+    }
+
+    public void setSchoolAge(String schoolAge) {
+        this.schoolAge = schoolAge;
+    }
+
+    public String getConfidentAgreement() {
+        return confidentAgreement;
+    }
+
+    public void setConfidentAgreement(String confidentAgreement) {
+        this.confidentAgreement = confidentAgreement;
+    }
+
+    public String getTrpidSalary() {
+        return trpidSalary;
+    }
+
+    public void setTrpidSalary(String trpidSalary) {
+        this.trpidSalary = trpidSalary;
+    }
+
+    public String getPositiveSalary() {
+        return positiveSalary;
+    }
+
+    public void setPositiveSalary(String positiveSalary) {
+        this.positiveSalary = positiveSalary;
+    }
+
+    public String getPositiveCoff() {
+        return positiveCoff;
+    }
+
+    public void setPositiveCoff(String positiveCoff) {
+        this.positiveCoff = positiveCoff;
+    }
+
+    public String getRetireTime() {
+        return retireTime;
+    }
+
+    public void setRetireTime(String retireTime) {
+        this.retireTime = retireTime;
+    }
+
+    public String getRetireNy() {
+        return retireNy;
+    }
+
+    public void setRetireNy(String retireNy) {
+        this.retireNy = retireNy;
+    }
+
+    public String getSsnumber() {
+        return ssnumber;
+    }
+
+    public void setSsnumber(String ssnumber) {
+        this.ssnumber = ssnumber;
+    }
+
+    public String getCounts() {
+        return counts;
+    }
+
+    public void setCounts(String counts) {
+        this.counts = counts;
+    }
+
+    public String getFature() {
+        return fature;
+    }
+
+    public void setFature(String fature) {
+        this.fature = fature;
+    }
+
     public String getFilenumber() {
         return filenumber;
     }

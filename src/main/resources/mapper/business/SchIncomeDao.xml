@@ -5,37 +5,39 @@
     <select id="getSchIncomeList"
             parameterType="com.goisan.table.bean.SchIncome"
             resultType="com.goisan.table.bean.SchIncome">
-        select id,income_all,sf_all,sf_ind,sf_stu_type,sf_std,sf_money,aw_all,aw_index,aw_pro_name,aw_std,aw_pro_money,fin_all,fin_index,fin_pro_name,fin_pro_money,ss_donate,other_income,loan,loan_bal from T_TAB_SCHOOL_INCOME where 1=1 
-<if test='incomeAll != "" and incomeAll != null'> AND income_all like '%'||#{incomeAll}||'%' </if> 
-<if test='sfAll != "" and sfAll != null'> AND sf_all like '%'||#{sfAll}||'%' </if> 
-<if test='sfInd != "" and sfInd != null'> AND sf_ind like '%'||#{sfInd}||'%' </if> 
-<if test='sfStuType != "" and sfStuType != null'> AND sf_stu_type like '%'||#{sfStuType}||'%' </if> 
+        select id,sf_stu_type,sf_std,sf_money,
+        aw_pro_name,aw_std,aw_pro_money,
+        fin_pro_name,fin_pro_money
+        from T_TAB_SCHOOL_INCOME where 1=1
+
+<if test='sfStuType != "" and sfStuType != null'> AND sf_stu_type like '%'||#{sfStuType}||'%' </if>
 <if test='sfStd != "" and sfStd != null'> AND sf_std like '%'||#{sfStd}||'%' </if> 
 <if test='sfMoney != "" and sfMoney != null'> AND sf_money like '%'||#{sfMoney}||'%' </if> 
-<if test='awAll != "" and awAll != null'> AND aw_all like '%'||#{awAll}||'%' </if> 
-<if test='awIndex != "" and awIndex != null'> AND aw_index like '%'||#{awIndex}||'%' </if> 
-<if test='awProName != "" and awProName != null'> AND aw_pro_name like '%'||#{awProName}||'%' </if> 
+<if test='awProName != "" and awProName != null'> AND aw_pro_name like '%'||#{awProName}||'%' </if>
 <if test='awStd != "" and awStd != null'> AND aw_std like '%'||#{awStd}||'%' </if> 
 <if test='awProMoney != "" and awProMoney != null'> AND aw_pro_money like '%'||#{awProMoney}||'%' </if> 
-<if test='finAll != "" and finAll != null'> AND fin_all like '%'||#{finAll}||'%' </if> 
-<if test='finIndex != "" and finIndex != null'> AND fin_index like '%'||#{finIndex}||'%' </if> 
-<if test='finProName != "" and finProName != null'> AND fin_pro_name like '%'||#{finProName}||'%' </if> 
+<if test='finProName != "" and finProName != null'> AND fin_pro_name like '%'||#{finProName}||'%' </if>
 <if test='finProMoney != "" and finProMoney != null'> AND fin_pro_money like '%'||#{finProMoney}||'%' </if> 
-<if test='ssDonate != "" and ssDonate != null'> AND ss_donate like '%'||#{ssDonate}||'%' </if> 
-<if test='otherIncome != "" and otherIncome != null'> AND other_income like '%'||#{otherIncome}||'%' </if> 
-<if test='loan != "" and loan != null'> AND loan like '%'||#{loan}||'%' </if> 
-<if test='loanBal != "" and loanBal != null'> AND loan_bal like '%'||#{loanBal}||'%' </if> 
-
     </select>
     <insert id="saveSchIncome" parameterType="com.goisan.table.bean.SchIncome">
-        insert into t_tab_school_income (id,income_all,sf_all,sf_ind,sf_stu_type,sf_std,sf_money,aw_all,aw_index,aw_pro_name,aw_std,aw_pro_money,fin_all,fin_index,fin_pro_name,fin_pro_money,ss_donate,other_income,loan,loan_bal) values (func_get_uuid ,#{incomeAll},#{sfAll},#{sfInd},#{sfStuType},#{sfStd},#{sfMoney},#{awAll},#{awIndex},#{awProName},#{awStd},#{awProMoney},#{finAll},#{finIndex},#{finProName},#{finProMoney},#{ssDonate},#{otherIncome},#{loan},#{loanBal})
+        insert into t_tab_school_income
+        (id,sf_stu_type,sf_std,sf_money,
+        aw_pro_name,aw_std,aw_pro_money,
+        fin_pro_name,fin_pro_money)
+         values (func_get_uuid ,#{sfStuType},#{sfStd},#{sfMoney},
+         #{awProName},#{awStd},#{awProMoney},
+         #{finProName},#{finProMoney})
     </insert>
     <select id="getSchIncomeById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.SchIncome">
         select * from T_TAB_SCHOOL_INCOME where id = #{id}
     </select>
     <update id="updateSchIncome" parameterType="com.goisan.table.bean.SchIncome">
-        update t_tab_school_income set income_all=#{incomeAll},sf_all=#{sfAll},sf_ind=#{sfInd},sf_stu_type=#{sfStuType},sf_std=#{sfStd},sf_money=#{sfMoney},aw_all=#{awAll},aw_index=#{awIndex},aw_pro_name=#{awProName},aw_std=#{awStd},aw_pro_money=#{awProMoney},fin_all=#{finAll},fin_index=#{finIndex},fin_pro_name=#{finProName},fin_pro_money=#{finProMoney},ss_donate=#{ssDonate},other_income=#{otherIncome},loan=#{loan},loan_bal=#{loanBal} where id = #{id}
+        update t_tab_school_income set
+        sf_stu_type=#{sfStuType},sf_std=#{sfStd},sf_money=#{sfMoney},
+        aw_pro_name=#{awProName},aw_std=#{awStd},aw_pro_money=#{awProMoney},
+        fin_pro_name=#{finProName},fin_pro_money=#{finProMoney}
+       where id = #{id}
     </update>
     <delete id="delSchIncome" parameterType="java.lang.String">
         delete from T_TAB_SCHOOL_INCOME where id = #{id}

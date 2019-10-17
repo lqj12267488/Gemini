@@ -61,9 +61,10 @@ public class InCampusPraController {
     }
 
     @RequestMapping("/InCampusPra/toInCampusPraEdit")
-    public String toEditInCampusPra(String id, Model model) {
+    public String toEditInCampusPra(String id,String seeFlag, Model model) {
         model.addAttribute("data", inCampusPraService.getInCampusPraById(id));
         model.addAttribute("head", "修改");
+        model.addAttribute("seeFlag", seeFlag);
         return "/business/table/incampuspra/inCampusPraEdit";
     }
 

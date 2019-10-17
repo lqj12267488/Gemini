@@ -5,46 +5,27 @@
     <div class="row">
         <div class="col-md-12">
             <div class="block">
-            <div class="block block-drop-shadow content block-fill-white">
-                   <div class="form-row">
+                <div class="block block-drop-shadow content block-fill-white">
+                    <div class="form-row">
                         <div class="col-md-1 tar">
-                            序号：
-                        </div>
-                        <div class="col-md-2">
-                            <input id="saIndexSel">
-                        </div>
-                        <div class="col-md-1 tar">
-                            项目名称（全称）：
+                            项目名称：
                         </div>
                         <div class="col-md-2">
                             <input id="saProNameSel">
                         </div>
                         <div class="col-md-1 tar">
-                            项目级别{jb}：
+                            项目级别：
                         </div>
                         <div class="col-md-2">
                             <select id="saProLevSel"></select>
                         </div>
-                  </div>
-                        <div class="col-md-1 tar">
-                            获奖日期：
+                        <div class="col-md-2 tar">
+                            <button type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
+                            <button type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空
+                            </button>
                         </div>
-                        <div class="col-md-2">
-                            <input id="saTimeSel">
-                        </div>
-  <div class="form-row">
-                        <div class="col-md-1 tar">
-                            备注：
-                        </div>
-                        <div class="col-md-2">
-                            <input id="remarkSel">
-                        </div>
-                <div class="col-md-2 tar">
-                    <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
-                    <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
+                    </div>
                 </div>
-            </div>
-            </div>
                 <div class="block block-drop-shadow content">
                     <div class="form-row">
                         <button type="button" class="btn btn-default btn-clean"
@@ -66,17 +47,17 @@
 <script>
     $(document).ready(function () {
 
-            $.get("<%=request.getContextPath()%>/common/getSysDict?name=JB", function (data) {
-                addOption(data,'saProLevSel');
-            });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=JB", function (data) {
+            addOption(data, 'saProLevSel');
+        });
 
         search();
     })
 
     function search() {
         $("#table").DataTable({
-             "processing": true,
-             "serverSide": true,
+            "processing": true,
+            "serverSide": true,
             "ajax": {
                 "type": "post",
                 "url": '<%=request.getContextPath()%>/SchAward/getSchAwardList',
@@ -90,17 +71,17 @@
             },
             "destroy": true,
             "columns": [
-                 {"data": "id", "title": "主键id", "visible": false},
-                 {"data": "saIndex", "title": "序号"},
-                 {"data": "saProName", "title": "项目名称（全称）"},
-                 {"data": "saProLevShow", "title": "项目级别{jb}"},
-                 {"data": "saTime", "title": "获奖日期"},
-                 {"data": "remark", "title": "备注"},
+                {"data": "id", "title": "主键id", "visible": false},
+                // {"data": "saIndex", "title": "序号"},
+                {"data": "saProName", "title": "项目名称"},
+                {"data": "saProLevShow", "title": "项目级别"},
+                {"data": "saTime", "title": "获奖日期"},
+                {"data": "remark", "title": "备注"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '")></span>&ensp;&ensp;' +
-                                '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
+                            '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
                     }
                 }
             ],

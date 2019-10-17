@@ -5,8 +5,8 @@
     <div class="row">
         <div class="col-md-12">
             <div class="block">
-            <div class="block block-drop-shadow content block-fill-white">
-                   <div class="form-row">
+                <div class="block block-drop-shadow content block-fill-white">
+                    <div class="form-row">
                         <div class="col-md-1 tar">
                             项目名称：
                         </div>
@@ -25,32 +25,12 @@
                         <div class="col-md-2">
                             <select id="saiLevelSel"></select>
                         </div>
-                  </div>
-                        <div class="col-md-1 tar">
-                            获奖日期：
+                        <div class="col-md-2 tar">
+                            <button type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
+                            <button type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
                         </div>
-                        <div class="col-md-2">
-                            <input id="awardTimeSel">
-                        </div>
-  <div class="form-row">
-                        <div class="col-md-1 tar">
-                            学生名单：
-                        </div>
-                        <div class="col-md-2">
-                            <input id="studentListSel">
-                        </div>
-                        <div class="col-md-1 tar">
-                            指导老师名单：
-                        </div>
-                        <div class="col-md-2">
-                            <input id="coachSel">
-                        </div>
-                <div class="col-md-2 tar">
-                    <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
-                    <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
+                    </div>
                 </div>
-            </div>
-            </div>
                 <div class="block block-drop-shadow content">
                     <div class="form-row">
                         <button type="button" class="btn btn-default btn-clean"
@@ -72,20 +52,20 @@
 <script>
     $(document).ready(function () {
 
-            $.get("<%=request.getContextPath()%>/common/getSysDict?name=	XSHJXMLB", function (data) {
-                addOption(data,'saiProTypeSel');
-            });
-            $.get("<%=request.getContextPath()%>/common/getSysDict?name=JB", function (data) {
-                addOption(data,'saiLevelSel');
-            });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=	XSHJXMLB", function (data) {
+            addOption(data, 'saiProTypeSel');
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=JB", function (data) {
+            addOption(data, 'saiLevelSel');
+        });
 
         search();
     })
 
     function search() {
         $("#table").DataTable({
-             "processing": true,
-             "serverSide": true,
+            "processing": true,
+            "serverSide": true,
             "ajax": {
                 "type": "post",
                 "url": '<%=request.getContextPath()%>/StuAwardInfo/getStuAwardInfoList',
@@ -100,18 +80,18 @@
             },
             "destroy": true,
             "columns": [
-                 {"data": "id", "title": "主键id", "visible": false},
-                 {"data": "saiProName", "title": "项目名称"},
-                 {"data": "saiProTypeShow", "title": "项目类别"},
-                 {"data": "saiLevelShow", "title": "级别"},
-                 {"data": "awardTime", "title": "获奖日期"},
-                 {"data": "studentList", "title": "学生名单"},
-                 {"data": "coach", "title": "指导老师名单"},
+                {"data": "id", "title": "主键id", "visible": false},
+                {"data": "saiProName", "title": "项目名称"},
+                {"data": "saiProTypeShow", "title": "项目类别"},
+                {"data": "saiLevelShow", "title": "级别"},
+                {"data": "awardTime", "title": "获奖日期"},
+                {"data": "studentList", "title": "学生名单"},
+                {"data": "coach", "title": "指导老师名单"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '")></span>&ensp;&ensp;' +
-                                '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
+                            '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
                     }
                 }
             ],

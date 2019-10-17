@@ -12,6 +12,9 @@ import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.*;
 import com.goisan.system.dao.EmpDao;
 import com.goisan.system.dao.ParameterDao;
+import com.goisan.system.tools.PoiUtils;
+import com.goisan.table.bean.*;
+import com.goisan.table.dao.*;
 import com.goisan.table.bean.*;
 import com.goisan.table.dao.ClubRewardDao;
 import com.goisan.tabular.bean.TabularFile;
@@ -19,12 +22,15 @@ import com.goisan.tabular.bean.export.Export;
 import com.goisan.tabular.dao.TableAttributeDao;
 import com.goisan.tabular.service.TableAttributeService;
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +57,23 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     private CourseService courseService;
     @Resource
     private ClubRewardDao clubRewardDao;
+    @Resource
+    private InCampusPraDao inCampusPraDao;
+    @Resource
+    private OutCampusPraDao outCampusPraDao;
+    @Resource
+    private ProEvaAgencyDao proEvaAgencyDao;
+    @Resource
+    private SchIncomeDao schIncomeDao;
+    @Resource
+    private SchExpendDao schExpendDao;
+    @Resource
+    private ScholarshipMgeDao scholarshipMgeDao;
+    @Resource
+    private SchAwardDao schAwardDao;
+
+    @Resource
+    private StuAwardInfoDao stuAwardInfoDao;
 
     /**
      * 导出带有数据得表格 命名expertExcel_A加上数字
@@ -102,19 +125,20 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-            List<SkillAppraisal> list = tableAttributeDao.getExpertExcel_A4_3();
+            List<BaseBean> list = proEvaAgencyDao.getProEvaAgencyList(null);
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
+               ProEvaAgency pea = (ProEvaAgency) list.get(i);
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getIssuingOffice());
-                row.getCell(3).setCellValue(list.get(i).getPreAppProfession());
-                row.getCell(4).setCellValue("");
-                row.getCell(5).setCellValue("");
-                row.getCell(6).setCellValue("");
-                row.getCell(7).setCellValue("");
-                row.getCell(8).setCellValue("");
+                row.getCell(2).setCellValue(pea.getEvaName());
+                row.getCell(3).setCellValue(pea.getCertName());
+                row.getCell(4).setCellValue(pea.getEvaLevelShow());
+                row.getCell(5).setCellValue(pea.getBuildDepLevShow());
+                row.getCell(6).setCellValue(pea.getDepart());
+                row.getCell(7).setCellValue(pea.getSsEvaNum());
+                row.getCell(8).setCellValue(pea.getSchEvaNum());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
@@ -160,21 +184,25 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<SkillAppraisal> list = tableAttributeDao.getExpertExcel_A4_3();
+            List<BaseBean> list = schIncomeDao.getSchIncomeList(null);
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
-                Row row = sheet.getRow(rowIndex+i);
-                row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getIssuingOffice());
-                row.getCell(3).setCellValue(list.get(i).getPreAppProfession());
-                row.getCell(4).setCellValue("");
-                row.getCell(5).setCellValue("");
-                row.getCell(6).setCellValue("");
-                row.getCell(7).setCellValue("");
-                row.getCell(8).setCellValue("");
+                SchIncome si = (SchIncome) list.get(i);
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(3).setCellValue(count);
+                row.getCell(4).setCellValue(si.getSfStuType());
+                row.getCell(5).setCellValue(si.getSfStd());
+                row.getCell(6).setCellValue(si.getSfMoney());
+                row.getCell(8).setCellValue(count);
+                row.getCell(9).setCellValue(si.getAwProName());
+                row.getCell(10).setCellValue(si.getAwStd());
+                row.getCell(11).setCellValue(si.getAwProMoney());
+                row.getCell(13).setCellValue(count);
+                row.getCell(14).setCellValue(si.getFinProName());
+                row.getCell(15).setCellValue(si.getFinProMoney());
                 count++;
-            }*/
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();
@@ -214,21 +242,36 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<SkillAppraisal> list = tableAttributeDao.getExpertExcel_A4_3();
+
+            List<BaseBean> list = schExpendDao.getSchExpendList(null);
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
-                Row row = sheet.getRow(rowIndex+i);
-                row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getIssuingOffice());
-                row.getCell(3).setCellValue(list.get(i).getPreAppProfession());
-                row.getCell(4).setCellValue("");
-                row.getCell(5).setCellValue("");
-                row.getCell(6).setCellValue("");
-                row.getCell(7).setCellValue("");
-                row.getCell(8).setCellValue("");
+                SchExpend se = (SchExpend) list.get(i);
+                Row row = sheet.getRow(rowIndex + i);
+                setValue(row,2,se.getLand());
+                setValue(row,3,se.getExpInf());
+                setValue(row,4,se.getExpDevAll());
+                setValue(row,5,se.getExpTeachDev());
+
+                setValue(row,7,se.getTrainCost());
+                setValue(row,8,se.getTrainPro());
+                setValue(row,9,se.getHirePtTeach());
+                setValue(row,10,se.getSport());
+                setValue(row,11,se.getDailyOth());
+
+                setValue(row,13,String.valueOf(count));
+                setValue(row,14,se.getRsProName());
+                setValue(row,15,se.getRsProMoney());
+
+                setValue(row,17,String.valueOf(count));
+                setValue(row,18,se.getTcProName());
+                setValue(row,19,se.getTcProMoney());
+                setValue(row,20,se.getLibCost());
+                setValue(row,21,se.getOthCost());
+                setValue(row,22,se.getPayLoan());
                 count++;
-            }*/
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();
@@ -247,6 +290,11 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setValue(Row row,int col,String value){
+        Cell cell = row.getCell(col) == null ? row.createCell(col) : row.getCell(col);
+        cell.setCellValue(value);
     }
 
     public void expertExcel_A1_6(HttpServletResponse response, TabularFile tabularFile) {//A1-6机构设置表
@@ -498,26 +546,37 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<Emp> list = tableAttributeDao.getExpertExcel_A2();
+            List<BaseBean> list = inCampusPraDao.getInCampusPraList(null);
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
+                InCampusPra inCampusPra = (InCampusPra) list.get(i);
                 Row row = sheet.getRow(rowIndex+i);
                 row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getStaffId());
-                row.getCell(3).setCellValue(list.get(i).getName());
-                row.getCell(4).setCellValue(list.get(i).getNation());
-                row.getCell(5).setCellValue(list.get(i).getPost());
-                row.getCell(6).setCellValue(list.get(i).getPositionalTitles());
-                row.getCell(7).setCellValue(list.get(i).getEducationalLevel());
-                row.getCell(8).setCellValue(list.get(i).getSex());
-                row.getCell(9).setCellValue(list.get(i).getBirthday());
-                row.getCell(10).setCellValue(list.get(i).getTel());
-                row.getCell(11).setCellValue("");
-                row.getCell(12).setCellValue("");
-                row.getCell(13).setCellValue(list.get(i).getEducationalResearch());
+                row.getCell(2).setCellValue(inCampusPra.getPraName());
+                row.getCell(3).setCellValue(inCampusPra.getParTotal());
+                row.getCell(4).setCellValue(inCampusPra.getParMajor());
+                row.getCell(5).setCellValue(inCampusPra.getParSupDept());
+                row.getCell(6).setCellValue(inCampusPra.getParSupTime());
+                row.getCell(7).setCellValue(inCampusPra.getParArea());
+                row.getCell(8).setCellValue(inCampusPra.getParDevAllvalue());
+                row.getCell(9).setCellValue(inCampusPra.getParDevNewvalue());
+                row.getCell(10).setCellValue(inCampusPra.getSelfDevValue());
+                row.getCell(11).setCellValue(inCampusPra.getSsDevValue());
+                row.getCell(12).setCellValue(inCampusPra.getSswDevValue());
+                row.getCell(13).setCellValue(inCampusPra.getDevNum());
+                row.getCell(14).setCellValue(inCampusPra.getDevBigNum());
+                row.getCell(15).setCellValue(inCampusPra.getParProNum());
+                row.getCell(16).setCellValue(inCampusPra.getMainParPro());
+                row.getCell(17).setCellValue(inCampusPra.getSchUseFre());
+                row.getCell(18).setCellValue(inCampusPra.getSsUseFre());
+                row.getCell(19).setCellValue(inCampusPra.getWorkNum());
+                row.getCell(20).setCellValue(inCampusPra.getMaterCost());
+                row.getCell(21).setCellValue(inCampusPra.getDevMaintCost());
+                row.getCell(22).setCellValue(inCampusPra.getMgeNum());
+                row.getCell(23).setCellValue(inCampusPra.getPartMgeNum());
                 count++;
-            }*/
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();
@@ -557,26 +616,31 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<Emp> list = tableAttributeDao.getExpertExcel_A2();
+            List<BaseBean> list =  outCampusPraDao.getOutCampusPraList(null);
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
+                OutCampusPra ocp = (OutCampusPra) list.get(i);
                 Row row = sheet.getRow(rowIndex+i);
                 row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getStaffId());
-                row.getCell(3).setCellValue(list.get(i).getName());
-                row.getCell(4).setCellValue(list.get(i).getNation());
-                row.getCell(5).setCellValue(list.get(i).getPost());
-                row.getCell(6).setCellValue(list.get(i).getPositionalTitles());
-                row.getCell(7).setCellValue(list.get(i).getEducationalLevel());
-                row.getCell(8).setCellValue(list.get(i).getSex());
-                row.getCell(9).setCellValue(list.get(i).getBirthday());
-                row.getCell(10).setCellValue(list.get(i).getTel());
-                row.getCell(11).setCellValue("");
-                row.getCell(12).setCellValue("");
-                row.getCell(13).setCellValue(list.get(i).getEducationalResearch());
+                row.getCell(2).setCellValue(ocp.getOpraName());
+                row.getCell(3).setCellValue(ocp.getOpraUnit());
+                row.getCell(4).setCellValue(ocp.getOpraEmpNum());
+                row.getCell(5).setCellValue(ocp.getBuildTime());
+                row.getCell(6).setCellValue(ocp.getOpraMajorNum());
+                row.getCell(7).setCellValue(ocp.getMainOpraMajor());
+                row.getCell(8).setCellValue(ocp.getOpraProNum());
+                row.getCell(9).setCellValue(ocp.getOpraProName());
+                row.getCell(10).setCellValue(ocp.getOpraStdNum());
+                row.getCell(11).setCellValue(ocp.getBaseUseDay());
+                row.getCell(12).setCellValue(ocp.getInternNum());
+                row.getCell(13).setCellValue(ocp.getSfDorm());
+                row.getCell(14).setCellValue(ocp.getSfSub());
+                row.getCell(15).setCellValue(ocp.getItnCost());
+                row.getCell(16).setCellValue(ocp.getSendMge());
+                row.getCell(17).setCellValue(ocp.getAccGrad());
                 count++;
-            }*/
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();
@@ -1098,17 +1162,19 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-            List<SchoolBurse> list = tableAttributeDao.getExpertExcel_A8_8();
+//            List<SchoolBurse> list = tableAttributeDao.getExpertExcel_A8_8();
+            List<BaseBean> list = scholarshipMgeDao.getScholarshipMgeList(null);
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
+                ScholarshipMge ssm = (ScholarshipMge) list.get(i);
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getName());
-                row.getCell(3).setCellValue(list.get(i).getType());
-                row.getCell(4).setCellValue("");
-                row.getCell(5).setCellValue(list.get(i).getNums());
-                row.getCell(6).setCellValue(list.get(i).getBurseSum());
+                row.getCell(2).setCellValue(ssm.getSmProName());
+                row.getCell(3).setCellValue(ssm.getSmProTypeShow());
+                row.getCell(4).setCellValue(ssm.getAidRge());
+                row.getCell(5).setCellValue(ssm.getAidCounts());
+                row.getCell(6).setCellValue(ssm.getAidMoney());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
@@ -2879,7 +2945,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
         Workbook wb = null;
-        List<Export> list = tableAttributeDao.expertExcel_A9_6_1();
+        List<BaseBean> list = stuAwardInfoDao.getStuAwardInfoList(null);
         try {
             FileInputStream in = new FileInputStream(file);
             String fileName = file.getName();
@@ -2894,12 +2960,15 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
+                StuAwardInfo sai = (StuAwardInfo) list.get(i);
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getCompetitionName());
-                row.getCell(4).setCellValue(list.get(i).getCompetitionLevel());
-                row.getCell(6).setCellValue(list.get(i).getAwardTime());
-                row.getCell(6).setCellValue(list.get(i).getStudentName());
+                row.getCell(2).setCellValue(sai.getSaiProName());
+                row.getCell(3).setCellValue(sai.getSaiProTypeShow());
+                row.getCell(4).setCellValue(sai.getSaiLevelShow());
+                row.getCell(5).setCellValue(toDateString(sai.getAwardTime()));
+                row.getCell(6).setCellValue(sai.getStudentList());
+                row.getCell(7).setCellValue(sai.getCoach());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
@@ -2928,7 +2997,6 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
         Workbook wb = null;
-        List<Export> list = tableAttributeDao.expertExcel_A9_6_1();
         try {
             FileInputStream in = new FileInputStream(file);
             String fileName = file.getName();
@@ -2942,12 +3010,16 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             Sheet sheet = wb.getSheetAt(0);
             int rowIndex = 10;
             int count = 1;
+            List<BaseBean> list = schAwardDao.getSchAwardList(null);
+
             for (int i = 0; i < list.size(); i++) {
+                SchAward schAward = (SchAward) list.get(i);
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getCompetitionName());
-                row.getCell(3).setCellValue(list.get(i).getCompetitionLevel());
-                row.getCell(4).setCellValue(list.get(i).getAwardTime());
+                row.getCell(2).setCellValue(schAward.getSaProName());
+                row.getCell(3).setCellValue(schAward.getSaProLev());
+                row.getCell(4).setCellValue(toDateString(schAward.getSaTime()));
+                row.getCell(5).setCellValue(schAward.getRemark());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
@@ -3268,6 +3340,11 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    public String toDateString(String date){
+           return !StringUtils.isEmpty(date)?date.replace("-",""):null;
     }
 
     /**

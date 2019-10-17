@@ -19,17 +19,17 @@
         </div>
         <div class="modal-body clearfix">
             <div class="controls">
+                <%--<div class="form-row">--%>
+                    <%--<div class="col-md-3 tar">--%>
+                        <%--<span class="iconBtx">*</span>序号--%>
+                    <%--</div>--%>
+                    <%--<div class="col-md-9">--%>
+                        <%--<input id="saIndexEdit" value="${data.saIndex}"/>--%>
+                    <%--</div>--%>
+                <%--</div>--%>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>序号
-                    </div>
-                    <div class="col-md-9">
-                        <input id="saIndexEdit" value="${data.saIndex}"/>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>项目名称（全称）
+                        <span class="iconBtx">*</span>项目名称
                     </div>
                     <div class="col-md-9">
                         <input id="saProNameEdit" value="${data.saProName}"/>
@@ -53,7 +53,7 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>备注
+                        备注
                     </div>
                     <div class="col-md-9">
                         <input id="remarkEdit" value="${data.remark}"/>
@@ -77,16 +77,9 @@
             });
     });
     function save() {
-        if ($("#saIndexEdit").val() == "" || $("#saIndexEdit").val() == undefined || $("#saIndexEdit").val() == null) {
-            swal({
-                title: "请填写序号！",
-                type: "warning"
-            });
-            return;
-        }
         if ($("#saProNameEdit").val() == "" || $("#saProNameEdit").val() == undefined || $("#saProNameEdit").val() == null) {
             swal({
-                title: "请填写项目名称（全称）！",
+                title: "请填写项目名称！",
                 type: "warning"
             });
             return;
@@ -105,16 +98,10 @@
             });
             return;
         }
-        if ($("#remarkEdit").val() == "" || $("#remarkEdit").val() == undefined || $("#remarkEdit").val() == null) {
-            swal({
-                title: "请填写备注！",
-                type: "warning"
-            });
-            return;
-        }
+
         $.post("<%=request.getContextPath()%>/SchAward/saveSchAward", {
             id: "${data.id}",
-            saIndex: $("#saIndexEdit").val(),
+            // saIndex: $("#saIndexEdit").val(),
             saProName: $("#saProNameEdit").val(),
             saProLev: $("#saProLevEdit").val(),
             saTime: $("#saTimeEdit").val(),

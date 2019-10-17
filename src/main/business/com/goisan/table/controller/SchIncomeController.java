@@ -61,9 +61,10 @@ public class SchIncomeController {
     }
 
     @RequestMapping("/SchIncome/toSchIncomeEdit")
-    public String toEditSchIncome(String id, Model model) {
+    public String toEditSchIncome(String id, String seeFlag, Model model) {
         model.addAttribute("data", schIncomeService.getSchIncomeById(id));
         model.addAttribute("head", "修改");
+        model.addAttribute("seeFlag", seeFlag);
         return "/business/table/schincome/schIncomeEdit";
     }
 

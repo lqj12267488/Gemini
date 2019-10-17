@@ -83,6 +83,7 @@ public interface EmpService {
     List<String> selectDeptName();
 
     List<Emp> selectList(String str);
+    List<Emp> selectList2(String deptName,String deptId);
 
     List<Emp> selectListByName(String str, String deptId);
 

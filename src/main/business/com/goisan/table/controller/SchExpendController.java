@@ -6,6 +6,7 @@ import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.pagehelper.PageHelper;
@@ -61,9 +62,14 @@ public class SchExpendController {
     }
 
     @RequestMapping("/SchExpend/toSchExpendEdit")
-    public String toEditSchExpend(String id, Model model) {
+    public String toEditSchExpend(String id, String seeFlag,Model model) {
         model.addAttribute("data", schExpendService.getSchExpendById(id));
-        model.addAttribute("head", "修改");
+        if (StringUtils.isEmpty(seeFlag)){
+            model.addAttribute("head", "修改");
+        }else {
+            model.addAttribute("head", "详情");
+        }
+        model.addAttribute("seeFlag",seeFlag);
         return "/business/table/schexpend/schExpendEdit";
     }
 

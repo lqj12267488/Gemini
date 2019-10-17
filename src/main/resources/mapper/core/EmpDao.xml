@@ -7,6 +7,171 @@
             resultType="com.goisan.system.bean.EmpDeptRelation">
         SELECT * FROM t_rs_employee_dept WHERE person_id = #{personId} AND dept_id = #{deptId}
     </select>
+
+    <select id="selectList2" resultType="com.goisan.system.bean.Emp">
+        select BANK_ID,
+       FUNC_GET_DICVALUE(PHONE, 'YW') phoneShow,
+       FUNC_GET_DICVALUE(IDCARD_COPY, 'YW') idcardCopyShow,
+       to_char(IDCARD_ENDTIME, 'yyyy-mm-dd') idcardEndtime,
+       FUNC_GET_DICVALUE(ACCOUNT, 'YW') accountShow,
+       FUNC_GET_DICVALUE(DIPLOMA, 'YW') diplomaShow,
+       FUNC_GET_DICVALUE(DEGREE_CERT, 'YW') degreeCertShow,
+       FUNC_GET_DICVALUE(DIS_CONTRACT, 'YW') disContractShow,
+       FUNC_GET_DICVALUE(COMPUTER, 'YW') computerShow,
+       FUNC_GET_DICVALUE(ENGLISH, 'YW') englishShow,
+       FUNC_GET_DICVALUE(PUTONGHUA, 'YW') putonghuaShow,
+       FUNC_GET_DICVALUE(PTH_LEVEL, 'YW') pthLevelShow,
+       FUNC_GET_DICVALUE(TEACH_CERT, 'YW') teachCertShow,
+       FUNC_GET_DICVALUE(OTHER_CERT, 'YW') otherCertShow,
+       FUNC_GET_DICVALUE(DRIVER_CERT, 'YW') driverCertShow,
+       FUNC_GET_DICVALUE(ELE_CERT, 'YW') eleCertShow,
+       FUNC_GET_DICVALUE(i.RETIRE_CERT, 'YW') retireCertShow,
+       FUNC_GET_DICVALUE(RETIRE_PROVE, 'YW') retireProveShow,
+       FUNC_GET_DICVALUE(EXT_SS_CERT, 'YW') extSsCertShow,
+       FUNC_GET_DICVALUE(PERSON_FILE, 'YW') personFileShow,
+       FUNC_GET_DICVALUE(OTHER_INFO, 'YW') otherInfoShow,
+       t.person_id,
+       sex,
+       user_account,
+       sexShow,
+       jobShow,
+       entryDate,
+       entryDateShow,
+       maritalStatusShow,
+       name, address,
+       nation,
+       nativePlaceProvince,
+       nativePlaceProvinceShow,
+       nationShow,
+       idTypeShow,
+       idCard,
+       nativePlace,
+       permanentResidence,
+       permanentResidenceLocal,
+       classPositions,
+       classPositionsShow,
+       permanentResidenceLocalShow,
+       examinePoliticalShow,
+       politicalStatusShow,
+       educationalLevelShow,
+       educationTechniqueShow,
+       graduateSchool,
+       major,
+       graduateTime,
+       graduateTimeShow,
+       positionalTitles,
+       positionalLevelShow,
+       positionalLevel,
+       remark,
+       birthday,
+       birthdayShow,
+       age,
+       dept_id,
+       dept_name,
+       tel,
+       staffStatus,
+       staffStatusShow,
+        filenumber,
+        deadline,
+       to_char(SY_START_TIME, 'yyyy-mm-dd') syStartTime,
+       to_char(SY_END_TIME, 'yyyy-mm-dd') syEndTime,
+       SY_CONTRACT_PERIOD,
+       to_char(POSITIVE_TIME, 'yyyy-mm-dd') positiveTime,
+       to_char(FIRST_START_TIME, 'yyyy-mm-dd') firstStartTime,
+       to_char(FIRST_END_TIME, 'yyyy-mm-dd') firstEndTime,
+       FIRST_CONTRACT_PERIOD,
+       to_char(SEC_START_TIME, 'yyyy-mm-dd') secStartTime,
+       to_char(SEC_END_TIME, 'yyyy-mm-dd') secEndTime,
+       SEC_CONTRACT_PERIOD,
+       to_char(THIRD_START_TIME, 'yyyy-mm-dd') thirdStartTime,
+       to_char(THIRD_END_TIME, 'yyyy-mm-dd') thirdEndTime,
+       THIRD_CONTRACT_PERIOD,
+       to_char(JZ_START_TIME, 'yyyy-mm-dd') jzStartTime,
+       to_char(JZ_END_TIME, 'yyyy-mm-dd') jzEndTime,
+       JZ_CONTRACT_PERIOD,
+       PERSON_NATURE,
+       FUNC_GET_DICVALUE(PERSON_NATURE, 'RYXZ') personNatureShow,
+       c.RETIRE_CERT,
+       NUMS,
+       SCHOOL_AGE,
+       CONFIDENT_AGREEMENT,
+       TRPID_SALARY,
+       POSITIVE_SALARY,
+       POSITIVE_COFF,
+       to_char(RETIRE_TIME, 'yyyy-mm-dd') retireTime,
+       RETIRE_NY,
+       SSNUMBER,
+       COUNTS
+  from T_RS_EMPLOYEE_MANAGE_INFO i
+ right join (SELECT e.person_id,
+                    e.sex,
+                    u.user_account,
+                    FUNC_GET_DICVALUE(e.sex, 'XB') sexShow,
+                    FUNC_GET_DICVALUE(e.job, 'GW') jobShow,
+                    e.entry_date entryDate,
+                    to_char(e.entry_date, 'yyyy-mm-dd') entryDateShow,
+                    FUNC_GET_DICVALUE(e.marital_status, 'HYZK') maritalStatusShow,
+                    e.name,
+                    e.address,
+                    e.nation,
+                    e.NATIVE_PLACE_PROVINCE nativePlaceProvince,
+                    FUNC_GET_TABLEVALUE(e.NATIVE_PLACE_PROVINCE,
+                                        't_sys_administrative_divisions',
+                                        'ID',
+                                        'NAME') nativePlaceProvinceShow,
+                    FUNC_GET_DICVALUE(e.nation, 'MZ') nationShow,
+                    FUNC_GET_DICVALUE(e.ID_TYPE, 'SFZJLX') idTypeShow,
+                    e.IDCARD idCard,
+                    e.NATIVE_PLACE nativePlace,
+                    e.PERMANENT_RESIDENCE permanentResidence,
+                    e.PERMANENT_RESIDENCE_LOCAL permanentResidenceLocal,
+                    e.CLASS_POSITIONS classPositions,
+                    FUNC_GET_DICVALUE(e.CLASS_POSITIONS, 'ZJ') classPositionsShow,
+                    FUNC_GET_DICVALUE(e.PERMANENT_RESIDENCE_LOCAL, 'HKSSDQ') permanentResidenceLocalShow,
+                    FUNC_GET_DICVALUE(e.EXAMINE_POLITICAL, 'SF') examinePoliticalShow,
+                    FUNC_GET_DICVALUE(e.political_status, 'ZZMM') politicalStatusShow,
+                    FUNC_GET_DICVALUE(e.EDUCATIONAL_LEVEL, 'WHCD') educationalLevelShow,
+                    FUNC_GET_DICVALUE(e.EDUCATION_TECHNIQUE, 'JYFS') educationTechniqueShow,
+                    e.GRADUATE_SCHOOL graduateSchool,
+                    e.major major,
+                    e.GRADUATE_TIME graduateTime,
+                    to_char(e.GRADUATE_TIME, 'yyyy-mm-dd') graduateTimeShow,
+                    e.POSITIONAL_TITLES positionalTitles,
+                    FUNC_GET_DICVALUE(e.POSITIONAL_LEVEL, 'ZCJB') positionalLevelShow,
+                    e.POSITIONAL_LEVEL positionalLevel,
+                    e.remark remark,
+                    e.birthday birthday,
+                    to_char(e.birthday, 'yyyy-mm-dd') birthdayShow,
+                    to_char(sysdate, 'YYYY') - to_char(e.birthday, 'YYYY') age,
+                    e.valid_flag,
+                    d.dept_id,
+                    d.dept_name,
+                    e.tel,
+                    e.STAFF_STATUS staffStatus,
+                    FUNC_GET_DICVALUE(e.STAFF_STATUS, 'JZGZT') staffStatusShow,
+                    e.filenumber,
+                    e.deadline
+               FROM t_rs_employee      e,
+                    t_sys_dept         d,
+                    t_rs_employee_dept ed,
+                    t_sys_user         u
+              WHERE e.person_id = ed.person_id
+                AND ed.dept_id = d.dept_id
+                AND u.user_id = e.person_id
+                AND e.valid_flag = '1'
+                <if test='deptName !=null and deptName!="" '>
+                and d.dept_name = #{deptName}
+                </if>
+                <if test='deptId !=null and deptId!="" '>
+                    and d.dept_id = #{deptId}
+                </if>
+                ) t
+    on t.PERSON_ID = i.PERSON_ID
+  left join T_RS_EMPLOYEE_CONTRACT c
+    on t.PERSON_ID = c.person_id
+ order by USER_ACCOUNT
+
+    </select>
     <select id="getEmpList" resultType="com.goisan.system.bean.Emp">
          SELECT
             e.person_id,
@@ -274,7 +439,8 @@
                 staff_status,staff_belongs,employe_form,job,native_place,entry_date,
                 permanent_residence,permanent_residence_local,examine_political,
                 educational_level,education_technique,graduate_school,graduate_time,
-                major,positional_titles,positional_level,remark,class_positions,post,academic_degree
+                major,positional_titles,positional_level,remark,class_positions,post,academic_degree,
+                FILENUMBER,DEADLINE
             )
         VALUES (
                 #{personId},#{name},#{sex},#{idCard},
@@ -291,7 +457,7 @@
                 #{nativePlace},to_date('${entryDate}','yyyy-mm-dd'),
                 #{permanentResidence},#{permanentResidenceLocal},#{examinePolitical},
                 #{educationalLevel},#{educationTechnique},#{graduateSchool},to_date('${graduateTime}','yyyy-mm-dd'),
-                #{major},#{positionalTitles},#{positionalLevel},#{remark},#{classPositions},#{post},#{academicDegree}
+                #{major},#{positionalTitles},#{positionalLevel},#{remark},#{classPositions},#{post},#{academicDegree},#{filenumber},#{deadline}
             )
     </insert>
     <insert id="saveEmpDeptRelation"
