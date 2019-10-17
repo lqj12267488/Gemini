@@ -131,10 +131,13 @@ public class EmpServiceImpl implements EmpService {
     }
 
     public void changeEmpRole(String ids, String personId, String deptId) {
-        empDao.deleteRoleByPersonIdAndDeptId(personId, deptId);
+
         if (ids.length() > 0) {
             String[] roles = ids.split(",");
             String [] personIds = personId.split(",");
+            for (String pi:personIds) {
+                empDao.deleteRoleByPersonIdAndDeptId(personId, deptId);
+            }
             for (String id : roles) {
                 for (String person : personIds) {
                     RoleEmpDeptRelation roleEmpDeptRelation = new RoleEmpDeptRelation();

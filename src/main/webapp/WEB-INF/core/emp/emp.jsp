@@ -283,13 +283,14 @@
         }
     }
     function allot() {
+        debugger;
         var chk_value = "'";
         if ($('input[name="checkbox"]:checked').length > 0) {
             $('input[name="checkbox"]:checked').each(function () {
                 chk_value += $(this).val() + "','";
             });
 
-            $("#dialog").load("<%=request.getContextPath()%>/toAssignRoles?personIds=" + chk_value);
+            $("#dialog").load("<%=request.getContextPath()%>/toAssignRoles?personIds=" + chk_value+"&deptId="+deptId);
             $("#dialog").modal("show");
         } else {
             swal({title: "请选择要录入的班级！",type: "info"});

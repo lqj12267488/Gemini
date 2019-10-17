@@ -574,28 +574,54 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         select MAJOR_CODE from T_XG_MAJOR where MAJOR_NAME = #{majorName}
     </select>
 
+    <!--<select id="getMajorClassTreeByLevel" resultType="com.goisan.system.bean.Tree" parameterType="string">-->
+    <!--SELECT id,name,pId-->
+    <!--FROM (-->
+    <!--SELECT t.dept_id id, t.dept_name name,t.parent_dept_id pId-->
+    <!--FROM T_SYS_DEPT t-->
+    <!--WHERE t.dept_type = 8-->
+    <!--UNION ALL-->
+    <!--SELECT DISTINCT d.major_code id, d.major_name || ' &#45;&#45; ' || FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,d.departments_id pId-->
+    <!--FROM T_XG_MAJOR d-->
+    <!--WHERE d.valid_flag = 1-->
+    <!--and d.training_level in (${level})-->
+    <!--UNION ALL-->
+    <!--SELECT e.class_id id,e.class_name name,e.major_code pId-->
+    <!--FROM T_XG_CLASS e-->
+    <!--WHERE e.valid_flag = 1-->
+    <!--AND E.MAJOR_CODE in-->
+    <!--(SELECT m.major_code-->
+    <!--from T_XG_MAJOR m-->
+    <!--where m.training_level in (${level}))-->
+    <!--)-->
+    <!--order by name-->
+    <!--</select>-->
+
     <select id="getMajorClassTreeByLevel" resultType="com.goisan.system.bean.Tree" parameterType="string">
-        SELECT id,name,pId
-        FROM (
-                 SELECT t.dept_id id, t.dept_name name,t.parent_dept_id pId
-                 FROM T_SYS_DEPT t
+        SELECT id, name, pId,type
+          FROM (SELECT t.dept_id id, t.dept_name name, t.parent_dept_id pId ,1 as type
+                  FROM T_SYS_DEPT t
                  WHERE t.dept_type = 8
-                 UNION ALL
-                 SELECT DISTINCT d.major_code id, d.major_name || ' -- ' || FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,d.departments_id pId
-                 FROM T_XG_MAJOR d
+                UNION ALL
+                SELECT DISTINCT d.major_code id,
+                                d.major_name || ' -- ' ||
+                                FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,
+                                d.departments_id pId,
+                                2 as type
+                  FROM T_XG_MAJOR d
                  WHERE d.valid_flag = 1
-                   and d.training_level in (${level})
-                 UNION ALL
-                 SELECT e.class_id id,e.class_name name,e.major_code pId
-                 FROM T_XG_CLASS e
+                   and d.training_level in (1, 2, 3)
+                UNION ALL
+                SELECT e.class_id id, e.class_name name, e.major_code pId,3 as type
+                  FROM T_XG_CLASS e
                  WHERE e.valid_flag = 1
                    AND E.MAJOR_CODE in
                        (SELECT m.major_code
-                        from T_XG_MAJOR m
-                        where m.training_level in (${level}))
-             )
-        order by name
+                          from T_XG_MAJOR m
+                         where m.training_level in (${level})))
+         order by name
     </select>
+
     <insert id="addRelation" parameterType="com.goisan.system.bean.ClassStudentRelation">
         INSERT INTO T_XG_STUDENT_CLASS
         (id, student_id, class_id, student_order,
@@ -1068,11 +1094,11 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         m.MAJOR_CODE,
         m.MAJOR_NAME MAJOR_SHOW,
         FUNC_GET_DICVALUE(m.TRAINING_LEVEL, 'ZXZYPYCC') TRAINING_LEVEL
-        FROM t_xg_student       t,
+        FROM t_xg_student t,
         T_XG_STUDENT_CLASS r,
-        t_xg_class         c,
-        t_sys_user         u,
-        T_XG_MAJOR         m
+        t_xg_class c,
+        t_sys_user u,
+        T_XG_MAJOR m
         WHERE 1 = 1
         AND r.student_id = t.student_id
         AND r.class_id = c.class_id
@@ -1252,7 +1278,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         where t.idcard=#{idcard}
          and t.student_id = c.student_id
     </select>
-    <update id="updateUser" >
+    <update id="updateUser">
         UPDATE T_SYS_USER SET
         default_dept=#{classId}
         WHERE user_id = #{studentId}

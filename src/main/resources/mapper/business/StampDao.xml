@@ -101,6 +101,7 @@
         t.name as "label",
         t.person_id as "value"
         FROM T_RS_EMPLOYEE t
+        where t.valid_flag = "1"
     </select>
     <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.Stamp" parameterType="com.goisan.synergy.workflow.bean.Stamp">
         SELECT

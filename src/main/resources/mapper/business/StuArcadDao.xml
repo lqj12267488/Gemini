@@ -10,7 +10,7 @@
         FUNC_GET_TABLEVALUE(ar.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')  arcadCountyShow,
         ar.arcad_detail
         from T_XG_STU_ARCHIVESADDR t,T_XG_ARCHIVESADDR ar
-        where ar.arcad_id = t.arcad_id and t.valid_flag = '1'
+        where ar.arcad_id = t.arcad_id and t.valid_flag = '1' and ar.valid_flag  = '1'
         <if test='null!=arcadProvince and ""!=arcadProvince'>
             and arcad_province = #{arcadProvince}
         </if>
@@ -21,6 +21,8 @@
             and arcad_county = #{arcadCounty}
         </if>
     </select>
+
+
 
     <select id="getStuByArcadId" parameterType="java.lang.String" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
           select t.*,FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName
@@ -49,30 +51,69 @@
 
     <!--根据班级获取学生档案信息-->
 
-    <select id="getStuArcadByClass" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
-                select t.id,
+    <!--<select id="getStuArcadByClass" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">-->
+                <!--select t.id,-->
+        <!--FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,-->
+        <!--FUNC_GET_TABLEVALUE(ar.arcad_province,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')arcadProvinceShow,-->
+        <!--FUNC_GET_TABLEVALUE(ar.arcad_city, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') arcadCityShow,-->
+        <!--FUNC_GET_TABLEVALUE(ar.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')  arcadCountyShow,-->
+        <!--FUNC_GET_TABLEVALUE(c.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') className,-->
+        <!--ar.arcad_detail-->
+          <!--from T_XG_STU_ARCHIVESADDR t, T_XG_STUDENT_CLASS c,T_XG_ARCHIVESADDR ar-->
+         <!--where c.student_id = t.student_id-->
+         <!--and c.class_id = #{classId}-->
+         <!--and t.valid_flag = '1' and ar.valid_flag = '1'-->
+         <!--and  ar.arcad_id = t.arcad_id-->
+        <!--<if test='null!=arcadProvince and ""!=arcadProvince'>-->
+            <!--and arcad_province = #{arcadProvince}-->
+        <!--</if>-->
+        <!--<if test='null!=arcadCity and ""!=arcadCity'>-->
+            <!--and arcad_city = #{arcadCity}-->
+        <!--</if>-->
+        <!--<if test='null!=arcadCounty and ""!=arcadCounty'>-->
+            <!--and arcad_county = #{arcadCounty}-->
+        <!--</if>-->
+        <!--<if test='null!=studentName and ""!=studentName'>-->
+          <!--and FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') like '%${studentName}%'-->
+        <!--</if>-->
+    <!--</select>-->
+
+
+    <select id="getStuArcadByClass" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad"
+            resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+        select s.id,studentName,arcadProvinceShow,arcadCityShow,arcadCountyShow,className,arcad_detail
+        from T_XG_CLASS x inner join
+        (SELECT t.id,
         FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') studentName,
         FUNC_GET_TABLEVALUE(ar.arcad_province,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')arcadProvinceShow,
         FUNC_GET_TABLEVALUE(ar.arcad_city, 'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME') arcadCityShow,
         FUNC_GET_TABLEVALUE(ar.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')  arcadCountyShow,
         FUNC_GET_TABLEVALUE(c.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') className,
-        ar.arcad_detail
-          from T_XG_STU_ARCHIVESADDR t, T_XG_STUDENT_CLASS c,T_XG_ARCHIVESADDR ar
-         where c.student_id = t.student_id
-         and c.class_id = #{classId}
-         and t.valid_flag = '1' and ar.valid_flag = '1'
-         and  ar.arcad_id = t.arcad_id
+        ar.arcad_detail,
+        c.class_id
+        FROM T_XG_STU_ARCHIVESADDR t, T_XG_STUDENT_CLASS c, T_XG_ARCHIVESADDR ar
+        WHERE c.student_id = t.student_id
+        AND t.valid_flag = '1'
+        AND ar.valid_flag = '1'
+        AND ar.arcad_id = t.arcad_id
+        ) s on x.class_id = s.class_id where 1=1
+        <if test='deptId!=null and deptId!=""'>
+            and x.departments_id = #{deptId}
+        </if>
+        <if test='majorCode!=null and majorCode!=""'>
+            and x.major_code = #{majorCode}
+        </if>
+        <if test='classId!=null and classId!=""'>
+            and  x.class_id = #{classId}
+        </if>
         <if test='null!=arcadProvince and ""!=arcadProvince'>
-            and arcad_province = #{arcadProvince}
+            and arcadProvince = #{arcadProvince}
         </if>
         <if test='null!=arcadCity and ""!=arcadCity'>
-            and arcad_city = #{arcadCity}
+            and arcadCity = #{arcadCity}
         </if>
         <if test='null!=arcadCounty and ""!=arcadCounty'>
-            and arcad_county = #{arcadCounty}
-        </if>
-        <if test='null!=studentName and ""!=studentName'>
-          and FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME') like '%${studentName}%'
+            and arcadCounty = #{arcadCounty}
         </if>
     </select>
     

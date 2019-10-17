@@ -22,8 +22,25 @@ public class StuArcad extends BaseBean {
     private String studentNames;
     private String studentName;
     private String classId;
+    private String majorCode;
+    private String deptId;
     private String className;
 
+    public String getMajorCode() {
+        return majorCode;
+    }
+
+    public void setMajorCode(String majorCode) {
+        this.majorCode = majorCode;
+    }
+
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
 
     public String getClassName() {
         return className;

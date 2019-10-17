@@ -42,7 +42,16 @@
     function zTreeOnClick(event, treeId, treeNode) {
         $("#classIdHid").val(treeNode.id);
         $("#studentList").show();
-        $("#studentList").load("<%=request.getContextPath()%>/stuArcad/queryStuArcadList", {id: treeNode.id})
+        if (treeNode.type == '1')
+        {
+            $("#studentList").load("<%=request.getContextPath()%>/stuArcad/queryStuArcadList", {deptId:treeNode.id})
+        }
+        if (treeNode.type == '2') {
+            $("#studentList").load("<%=request.getContextPath()%>/stuArcad/queryStuArcadList", {majorCode:treeNode.id})
+        }
+        if (treeNode.type == '3') {
+            $("#studentList").load("<%=request.getContextPath()%>/stuArcad/queryStuArcadList", {classId:treeNode.id})
+        }
     }
 
     $(document).ready(function () {

@@ -89,7 +89,7 @@
       update  T_XG_MAINTENANCE_RELATION t set MT_ID=#{mtId},GOOD_NAME=#{goodName}
       ,GOOD_UNIT=#{goodUnit} ,GOOD_NUM=#{goodNum} ,GOOD_CASE=#{goodCase}
       ,GOOD_REMARK=#{goodRemark},changer=#{changer},change_time=sysdate,change_dept=#{changeDept},UNIT_PRICE=#{unitPrice}
-      where t.MT_ID = #{mtId} and valid_flag = '1'
+      where t.ID = #{id} and valid_flag = '1'
     </update>
 
     <delete id="delMRDetailById" parameterType="com.goisan.studentwork.maintenance.bean.MtRelation">

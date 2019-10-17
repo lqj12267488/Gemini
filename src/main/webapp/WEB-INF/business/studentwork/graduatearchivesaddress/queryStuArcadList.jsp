@@ -66,7 +66,6 @@
     $(function () {
         addAdministrativeDivisions("arcadProvinceSel", "", "arcadCitySel", "", "arcadCountySel", "", path);
         search();
-
     })
 
 
@@ -82,6 +81,8 @@
                     arcadCity: $("#arcadCitySel").val(),
                     arcadCounty: $("#arcadCountySel").val(),
                     classId:'${classId}',
+                    majorCode:'${majorCode}',
+                    deptId:'${deptId}',
                     studentName:$("#studentSel").val()
                 }
             },

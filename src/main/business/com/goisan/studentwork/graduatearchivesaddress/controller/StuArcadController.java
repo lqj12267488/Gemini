@@ -82,7 +82,11 @@ public class StuArcadController {
             stuArcadEdit.setArcadCounty(arcad.getArcadCounty());
             stuArcadEdit.setArcadProvince(arcad.getArcadProvince());
             stuArcadEdit.setArcadDetail(arcad.getArcadDetail());
-            stuArcadEdit.setStudentNames(studentNames.toString());
+            if ("null".equals(studentNames.toString())){
+                stuArcadEdit.setStudentNames("");
+            }else{
+                stuArcadEdit.setStudentNames(studentNames.toString());
+            }
             modelAndView.addObject("head", "修改");
             modelAndView.addObject("stuArcadEdit", stuArcadEdit);
 //          editFlag 1不让改
@@ -144,10 +148,12 @@ public class StuArcadController {
 
 
     @RequestMapping("/stuArcad/queryStuArcadList")
-    public ModelAndView studentGrid(String id) {
+    public ModelAndView studentGrid(String classId,String majorCode,String deptId) {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/business/studentwork/graduatearchivesaddress/queryStuArcadList");
-        mv.addObject("classId", id);
+        mv.addObject("classId", classId);
+        mv.addObject("majorCode", majorCode);
+        mv.addObject("deptId", deptId);
         return mv;
     }
 

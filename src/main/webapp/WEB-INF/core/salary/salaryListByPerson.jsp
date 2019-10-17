@@ -106,8 +106,7 @@
             $("#monthSel").val("");
             return;
         }
-        var href = "<%=request.getContextPath()%>/salary/exportSalary?year="+yearSel+"&month="+monthSel;
-
+        salaryTable.ajax.url("<%=request.getContextPath()%>/salary/getSalaryList?year=" + yearSel+"&month="+monthSel).load();
     }
 
     function exportSalary(){

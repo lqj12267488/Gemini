@@ -91,6 +91,7 @@
         ed.dept_id  pid
         FROM t_rs_employee e, t_rs_employee_dept ed
         WHERE e.person_id = ed.person_id AND ed.dept_id IN (SELECT dept_id FROM t_sys_dept WHERE valid_flag='1')
+        AND e.valid_flag = '1'
     </select>
     <!--新增保存-->
     <insert id="insertMessage" parameterType="com.goisan.synergy.message.bean.Message">

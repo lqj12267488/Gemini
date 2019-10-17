@@ -64,7 +64,6 @@
             id += nodes[i].id + ",";
         }
         id = id.substring(0, id.length - 1)
-        console.log(id)
         showSaveLoading();
         swal({
             title: "批量授权后原有授权将进行更改，是否继续授权？",

@@ -12,6 +12,20 @@ public class Tree {
     private boolean isOpen;
     private boolean checked;
 
+    /**
+     * 类型
+     *1. 院，2. 专业 3. 班级
+     */
+    private String type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public boolean isChecked() {
         return checked;
     }
