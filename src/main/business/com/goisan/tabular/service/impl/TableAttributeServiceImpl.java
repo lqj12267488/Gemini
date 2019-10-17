@@ -368,6 +368,9 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     public void setValue(Row row,int col,String value){
         Cell cell = row.getCell(col) == null ? row.createCell(col) : row.getCell(col);
         cell.setCellValue(value);
+        CellStyle cellStyle = cell.getCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
     }
 
     public void expertExcel_A1_6(HttpServletResponse response, TabularFile tabularFile) {//A1-6机构设置表
@@ -748,7 +751,12 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(3).setCellValue(inCampusPra.getParTotal());
                 row.getCell(4).setCellValue(inCampusPra.getParMajor());
                 row.getCell(5).setCellValue(inCampusPra.getParSupDept());
-                row.getCell(6).setCellValue(inCampusPra.getParSupTime());
+                String time = inCampusPra.getParSupTime();
+                if (!StringUtils.isEmpty(time)){
+                    time = time.substring(0,4);
+                }
+                row.getCell(6).setCellValue(time);
+
                 row.getCell(7).setCellValue(inCampusPra.getParArea());
                 row.getCell(8).setCellValue(inCampusPra.getParDevAllvalue());
                 row.getCell(9).setCellValue(inCampusPra.getParDevNewvalue());
@@ -817,7 +825,11 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(2).setCellValue(ocp.getOpraName());
                 row.getCell(3).setCellValue(ocp.getOpraUnit());
                 row.getCell(4).setCellValue(ocp.getOpraEmpNum());
-                row.getCell(5).setCellValue(ocp.getBuildTime());
+                String time = toDateString(ocp.getBuildTime());
+                if (null!=time){
+                    time=time.substring(0,6);
+                }
+                row.getCell(5).setCellValue(time);
                 row.getCell(6).setCellValue(ocp.getOpraMajorNum());
                 row.getCell(7).setCellValue(ocp.getMainOpraMajor());
                 row.getCell(8).setCellValue(ocp.getOpraProNum());

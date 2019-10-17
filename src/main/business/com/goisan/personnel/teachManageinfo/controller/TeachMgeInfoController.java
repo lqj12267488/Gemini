@@ -63,11 +63,6 @@ public class TeachMgeInfoController {
         return map;
     }
 
-    @RequestMapping("/TeachMgeInfo/toTeachMgeInfoAdd")
-    public String toAddTeachMgeInfo(Model model) {
-        model.addAttribute("head", "新增");
-        return "/business/personnel/teachManageinfo/teachMgeInfoEdit";
-    }
 
     @ResponseBody
     @RequestMapping("/TeachMgeInfo/saveTeachMgeInfo")
@@ -83,7 +78,11 @@ public class TeachMgeInfoController {
     @RequestMapping("/TeachMgeInfo/toTeachMgeInfoEdit")
     public String toEditTeachMgeInfo(String personId,String deptId,String seeFlag, Model model) {
         model.addAttribute("data", teachMgeInfoService.getTeachMgeInfoById(personId,deptId));
-        model.addAttribute("head", "修改");
+        if (StringUtils.isEmpty(seeFlag)){
+            model.addAttribute("head", "修改");
+        }else {
+            model.addAttribute("head", "详情");
+        }
         model.addAttribute("seeFlag", seeFlag);
         return "/business/personnel/teachManageinfo/teachMgeInfoEdit";
     }

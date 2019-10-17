@@ -81,10 +81,14 @@ public class TeacherContractController {
     }
 
     @RequestMapping("/TeacherContract/toTeacherContractEdit")
-    public ModelAndView toEditTeacherContract(String personId, String deptId, String seeFlag,Model model) {
+    public ModelAndView toEditTeacherContract(String personId, String deptId, String seeFlag) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("data",teacherContractService.getTeacherContractByPersonId(personId, deptId));
-        modelAndView.addObject("head", "修改");
+        if (StringUtils.isEmpty(seeFlag)){
+            modelAndView.addObject("head", "修改");
+        }else {
+            modelAndView.addObject("head", "详情");
+        }
         if (null==seeFlag){
             seeFlag ="0";
         }

@@ -37,9 +37,6 @@
                 <div class="block block-drop-shadow content">
                     <div class="form-row">
                         <button type="button" class="btn btn-default btn-clean"
-                                onclick="add()">新增
-                        </button>
-                        <button type="button" class="btn btn-default btn-clean"
                                 onclick="importMagInfo()">导入
                         </button>
                         <br>
@@ -57,7 +54,6 @@
 </div>
 <input hidden id="deptIdHid">
 <script>
-
     var setting = {
         view: {
             fontCss: {color: "white"},
@@ -130,8 +126,6 @@
         $(".form-row div input,.form-row div select").val("");
         search();
     }
-
-
 
     function edit(personId,deptId) {
         $("#dialog").load("<%=request.getContextPath()%>/TeachMgeInfo/toTeachMgeInfoEdit?personId=" + personId+"&deptId="+deptId)

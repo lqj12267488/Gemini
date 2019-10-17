@@ -64,7 +64,6 @@
 </div>
 <input hidden id="deptIdHid">
 <script>
-
     var setting = {
         view: {
             fontCss: {color: "white"},
