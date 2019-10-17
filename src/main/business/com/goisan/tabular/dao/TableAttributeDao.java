@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface TableAttributeDao {
@@ -183,7 +184,7 @@ public interface TableAttributeDao {
     /**
      * modify by wangxue start
      */
-    List<Major> expertExcel_A7_3_1(Major major);//A7-3-1职业资格证书表
+    List<Map> expertExcel_A7_3_1(Major major);//A7-3-1职业资格证书表
 
     List<Major> expertExcel_A7_3_2(Major major);//A7-3-2应届毕业生获证及社会技术培训情况表
 

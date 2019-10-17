@@ -993,19 +993,16 @@
 
 
     <!--modify by wangxue start-->
-    <select id="expertExcel_A7_3_1" parameterType="com.goisan.educational.major.bean.Major"
-            resultType="com.goisan.educational.major.bean.Major">
-        select t.major_name                                                                      majorName,
-               t.major_code                                                                      majorCode,
-               t.major_direction                                                                 majorDirection,
-               t.departments_id                                                                  departmentsId,
-               t.MAJOR_DIRECTION_CODE                                                            majorDirectionCode,
-               FUNC_GET_TABLEVALUE(departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')         departmentsIdShow,
-               FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE, 'T_RS_EMPLOYEE', 'person_id', 'name') directionCodeShow
-        from t_xg_major t
-        WHERE 1 = 1
-          and t.valid_flag = '1'
-        order by t.create_time desc
+    <select id="expertExcel_A7_3_1" resultType="java.util.Map">
+        select FUNC_GET_TABLEVALUE(m.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow, m.major_name, m.major_code,m.major_direction_code, m.major_direction, count(qt.student_id) studentNum, qt.qualification_name, d.dic_name, qt.qualification_authority, qt.identification_site
+        from t_tab_qualification_train qt
+        inner join t_xg_student s on qt.student_id=s.student_id
+        inner join t_xg_student_class sc on s.student_id=sc.student_id
+        inner join t_xg_class c on sc.class_id=c.class_id
+        inner join t_xg_major m on c.major_code=m.major_code
+        left join (select dic_name, dic_code from t_sys_dic where parent_id=(select id from t_sys_dic where dic_code='ZGZSDJ')) d on qt.qualification_level=d.dic_code
+        group by FUNC_GET_TABLEVALUE(m.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME'), m.major_name, m.major_code,m.major_direction_code, m.major_direction, qt.qualification_name, d.dic_name, qt.qualification_authority, qt.identification_site
+
     </select>
 
     <select id="expertExcel_A7_3_2" parameterType="com.goisan.educational.major.bean.Major"
