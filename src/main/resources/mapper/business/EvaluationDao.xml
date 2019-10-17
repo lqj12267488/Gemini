@@ -3,6 +3,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.goisan.evaluation.dao.EvaluationDao">
+    <select id="getInterviewersGroupList" parameterType="com.goisan.evaluation.bean.Group"
+            resultType="com.goisan.evaluation.bean.Group">
+        SELECT
+        group_id groupId,
+        GROUP_NAME groupName,
+        FUNC_GET_DICVALUE(group_type,'PWZLX') groupType,
+        members_num membersNum,
+        CHANGE_TIME
+        FROM t_kh_evaluation_group
+        WHERE 1=1 AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level}) AND group_type = '6' AND group_type is not
+        null
+        <if test="groupName != null and groupName != '' ">
+            AND GROUP_NAME LIKE #{groupName}
+        </if>
+        AND evaluation_type = #{evaluationType}
+        ORDER by create_time DESC
+    </select>
     <select id="getGroupList" parameterType="com.goisan.evaluation.bean.Group"
             resultType="com.goisan.evaluation.bean.Group">
         SELECT
@@ -12,7 +29,8 @@
         members_num membersNum,
         CHANGE_TIME
         FROM t_kh_evaluation_group
-        WHERE 1=1 AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        WHERE 1=1 AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level}) AND group_type != '6' AND group_type is
+        not null
         <if test="groupName != null and groupName != '' ">
             AND GROUP_NAME LIKE #{groupName}
         </if>
@@ -21,31 +39,44 @@
     </select>
     <select id="getGroup" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.Group">
-        SELECT * FROM t_kh_evaluation_group WHERE group_id = #{id}
+        SELECT *
+        FROM t_kh_evaluation_group
+        WHERE group_id = #{id}
     </select>
 
     <insert id="saveGroup" parameterType="com.goisan.evaluation.bean.Group">
-        INSERT INTO t_kh_evaluation_group (group_id, group_name,evaluation_type,group_type,members_num, creator, create_time, create_dept)
-        VALUES (#{groupId},#{groupName},#{evaluationType},#{groupType},#{membersNum},#{creator},#{createTime},#{createDept})
+        INSERT INTO t_kh_evaluation_group (group_id, group_name, evaluation_type, group_type, members_num, creator,
+                                           create_time, create_dept)
+        VALUES (#{groupId}, #{groupName}, #{evaluationType}, #{groupType}, #{membersNum}, #{creator}, #{createTime},
+                #{createDept})
     </insert>
     <delete id="deleteGroup" parameterType="java.lang.String">
-        DELETE FROM t_kh_evaluation_group WHERE group_id = #{id}
+        DELETE
+        FROM t_kh_evaluation_group
+        WHERE group_id = #{id}
     </delete>
     <update id="updateGroup" parameterType="com.goisan.evaluation.bean.Group">
-        UPDATE t_kh_evaluation_group SET group_name = #{groupName},members_num =
-            #{membersNum},changer = #{changer},change_dept = #{changeDept},change_time = #{changeTime}
+        UPDATE t_kh_evaluation_group
+        SET group_name  = #{groupName},
+            members_num =
+                #{membersNum},
+            changer     = #{changer},
+            change_dept = #{changeDept},
+            change_time = #{changeTime}
     </update>
     <select id="getMembersByGroupId" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationMembers">
-        SELECT * FROM t_kh_evaluation_members WHERE group_id = #{id} AND member_type =
-                                                                         #{memberType}
+        SELECT *
+        FROM t_kh_evaluation_members
+        WHERE group_id = #{id}
+          AND member_type =
+              #{memberType}
     </select>
     <insert id="saveMember" parameterType="com.goisan.evaluation.bean.EvaluationMembers">
         INSERT INTO T_KH_EVALUATION_MEMBERS (MEMBER_ID, GROUP_ID, PERSON_ID, DEPT_ID, CREATOR, CREATE_TIME,
-                                             CREATE_DEPT,NAME,MEMBER_TYPE,CLASS_ID)
-        VALUES
-        (#{memberId},#{groupId},#{personId},#{deptId},#{creator},#{createTime},#{createDept},
-         #{name},#{memberType},#{classId})
+                                             CREATE_DEPT, NAME, MEMBER_TYPE, CLASS_ID)
+        VALUES (#{memberId}, #{groupId}, #{personId}, #{deptId}, #{creator}, #{createTime}, #{createDept},
+                #{name}, #{memberType}, #{classId})
     </insert>
     <delete id="deleteMemberByGroupId" parameterType="java.lang.String">
         DELETE FROM t_kh_evaluation_members WHERE group_id = #{id}
@@ -54,22 +85,37 @@
         </if>
     </delete>
     <update id="updateGroupMembersNum" parameterType="java.lang.String">
-        UPDATE t_kh_evaluation_group SET members_num = (SELECT COUNT(*) FROM
-            t_kh_evaluation_members WHERE group_id = #{groupId}) WHERE group_id = #{groupId}
+        UPDATE t_kh_evaluation_group
+        SET members_num = (SELECT COUNT(*)
+                           FROM t_kh_evaluation_members
+                           WHERE group_id = #{groupId})
+        WHERE group_id = #{groupId}
     </update>
     <insert id="savePlan" parameterType="com.goisan.evaluation.bean.EvaluationPlan">
-        INSERT INTO t_kh_evaluation_plan (plan_id, plan_name, score, remark,evaluation_type, creator, create_time, create_dept)
-        VALUES (#{planId},#{planName},#{score},#{remark},#{evaluationType},#{creator},#{createTime},#{createDept})
+        INSERT INTO t_kh_evaluation_plan (plan_id, plan_name, score, remark, evaluation_type, creator, create_time,
+                                          create_dept)
+        VALUES (#{planId}, #{planName}, #{score}, #{remark}, #{evaluationType}, #{creator}, #{createTime},
+                #{createDept})
     </insert>
     <delete id="deletePlan" parameterType="java.lang.String">
-        DELETE FROM t_kh_evaluation_plan WHERE plan_id = #{id}
+        DELETE
+        FROM t_kh_evaluation_plan
+        WHERE plan_id = #{id}
     </delete>
     <delete id="deleteIndexByPlanid" parameterType="java.lang.String">
-        DELETE FROM T_KH_EVALUATION_INDEX WHERE plan_id = #{id}
+        DELETE
+        FROM T_KH_EVALUATION_INDEX
+        WHERE plan_id = #{id}
     </delete>
     <update id="upadtePlan" parameterType="com.goisan.evaluation.bean.EvaluationPlan">
-        UPDATE t_kh_evaluation_plan SET plan_name = #{planName},score = #{score},remark =
-            #{remark},changer=#{changer},change_dept=#{changeDept},change_time=#{changeTime}
+        UPDATE t_kh_evaluation_plan
+        SET plan_name  = #{planName},
+            score      = #{score},
+            remark     =
+                #{remark},
+            changer=#{changer},
+            change_dept=#{changeDept},
+            change_time=#{changeTime}
         WHERE plan_id = #{planId}
     </update>
     <select id="getPlanList" resultType="com.goisan.evaluation.bean.EvaluationPlan"
@@ -86,37 +132,40 @@
     </select>
     <select id="getPlan" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationPlan">
-        SELECT * FROM t_kh_evaluation_plan WHERE plan_id = #{id}
+        SELECT *
+        FROM t_kh_evaluation_plan
+        WHERE plan_id = #{id}
     </select>
     <select id="getIndexByPlanId" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
         SELECT *
         FROM (
-                 SELECT
-                     plan_id   id,
-                     '0'       pId,
-                     plan_name name,
-                     create_time
+                 SELECT plan_id   id,
+                        '0'       pId,
+                        plan_name name,
+                        create_time
                  FROM t_kh_evaluation_plan
                  WHERE plan_id = #{id}
                  UNION
-                 SELECT
-                     index_id                                                        id,
-                     parent_index_id                                                 pId,
-                     index_name || '【' || '分数：' || SCORE || '，权重：' || WEIGHTS || '】' name,
-                     create_time
+                 SELECT index_id                                                        id,
+                        parent_index_id                                                 pId,
+                        index_name || '【' || '分数：' || SCORE || '，权重：' || WEIGHTS || '】' name,
+                        create_time
                  FROM t_kh_evaluation_index
-                 WHERE
-                     plan_id = #{id})
+                 WHERE plan_id = #{id})
         ORDER BY create_time
     </select>
     <select id="getPlanScoreByPlanId" parameterType="java.lang.String"
             resultType="java.lang.Integer">
-        SELECT score FROM t_kh_evaluation_plan WHERE plan_id = #{planId}
+        SELECT score
+        FROM t_kh_evaluation_plan
+        WHERE plan_id = #{planId}
     </select>
     <select id="getIndexScoreByIndexId" parameterType="java.lang.String"
             resultType="java.lang.Integer">
-        SELECT score FROM t_kh_evaluation_index WHERE index_id = #{indexId}
+        SELECT score
+        FROM t_kh_evaluation_index
+        WHERE index_id = #{indexId}
     </select>
     <select id="getIndexScoreTotalByParentIndexId" parameterType="java.lang.String"
             resultType="java.lang.Integer">
@@ -127,21 +176,31 @@
     </select>
     <insert id="saveIndex" parameterType="com.goisan.system.bean.Index">
         INSERT INTO t_kh_evaluation_index (index_id, index_name, plan_id, parent_index_id, score,
-                                           weights, creator, create_time, create_dept,index_level,colspan)
-        VALUES(#{indexId},#{indexName},#{planId},#{parentIndexId},#{score},#{weights},#{creator},
-               #{createTime},#{createDept},#{indexLevel},#{colspan})
+                                           weights, creator, create_time, create_dept, index_level, colspan)
+        VALUES (#{indexId}, #{indexName}, #{planId}, #{parentIndexId}, #{score}, #{weights}, #{creator},
+                #{createTime}, #{createDept}, #{indexLevel}, #{colspan})
     </insert>
     <delete id="deleteIndex" parameterType="java.lang.String">
-        DELETE FROM t_kh_evaluation_index WHERE index_id = #{id}
+        DELETE
+        FROM t_kh_evaluation_index
+        WHERE index_id = #{id}
     </delete>
     <select id="getIndexById" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Index">
-        SELECT * FROM t_kh_evaluation_index WHERE index_id = #{id}
+        SELECT *
+        FROM t_kh_evaluation_index
+        WHERE index_id = #{id}
     </select>
     <update id="updateIndex" parameterType="com.goisan.system.bean.Index">
-        UPDATE t_kh_evaluation_index SET plan_id=#{planId},parent_index_id=#{parentIndexId},score=#{score},
-                                         weights=#{weights},changer=#{changer},change_time=#{changeTime},change_dept=#{changeDept},
-                                         index_name = #{indexName}
+        UPDATE t_kh_evaluation_index
+        SET plan_id=#{planId},
+            parent_index_id=#{parentIndexId},
+            score=#{score},
+            weights=#{weights},
+            changer=#{changer},
+            change_time=#{changeTime},
+            change_dept=#{changeDept},
+            index_name = #{indexName}
         WHERE index_id = #{indexId}
     </update>
     <select id="getTasks" resultType="com.goisan.evaluation.bean.EvaluationTask"
@@ -161,22 +220,37 @@
     </select>
     <select id="getIndexsByParentIndexId" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Index">
-        SELECT * FROM T_KH_EVALUATION_INDEX WHERE parent_index_id = #{parentIndexId} ORDER BY CREATOR
+        SELECT *
+        FROM T_KH_EVALUATION_INDEX
+        WHERE parent_index_id = #{parentIndexId}
+        ORDER BY CREATOR
     </select>
     <select id="getTask" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationTask">
-        SELECT task_id, task_name, plan_id, term, group_id,evaluation_type,emp_group_id,emp_group_id  AS empGroupId ,
-               LIMIT_MIN limitMin ,LIMIT_HIG  limitHig , START_TIME startTime, END_TIME endTime ,start_Flag startFlag ,
-               TASK_TYPE taskType, REMARK
-        FROM t_kh_evaluation_task t WHERE task_id = #{taskId}
+        SELECT task_id,
+               task_name,
+               plan_id,
+               term,
+               group_id,
+               evaluation_type,
+               emp_group_id,
+               emp_group_id AS empGroupId,
+               LIMIT_MIN       limitMin,
+               LIMIT_HIG       limitHig,
+               START_TIME      startTime,
+               END_TIME        endTime,
+               start_Flag      startFlag,
+               TASK_TYPE       taskType,
+               REMARK
+        FROM t_kh_evaluation_task t
+        WHERE task_id = #{taskId}
     </select>
     <insert id="saveTask" parameterType="com.goisan.evaluation.bean.EvaluationTask">
         INSERT INTO t_kh_evaluation_task
-        (task_id, task_name, plan_id, term, group_id,evaluation_type,emp_group_id,
-         start_time, end_time, remark, creator, create_time, create_dept,task_type)
-        VALUES
-        (#{taskId},#{taskName},#{planId},#{term},#{groupId},#{evaluationType},#{empGroupId},
-         #{startTime},#{endTime},#{remark},#{creator},#{createTime},#{createDept},#{taskType})
+        (task_id, task_name, plan_id, term, group_id, evaluation_type, emp_group_id,
+         start_time, end_time, remark, creator, create_time, create_dept, task_type)
+        VALUES (#{taskId}, #{taskName}, #{planId}, #{term}, #{groupId}, #{evaluationType}, #{empGroupId},
+                #{startTime}, #{endTime}, #{remark}, #{creator}, #{createTime}, #{createDept}, #{taskType})
     </insert>
     <update id="updateTask" parameterType="com.goisan.evaluation.bean.EvaluationTask">
         UPDATE t_kh_evaluation_task SET task_name = #{taskName}, plan_id = #{planId},emp_group_id = #{empGroupId},
@@ -189,7 +263,9 @@
         WHERE task_id = #{taskId}
     </update>
     <update id="delTask" parameterType="java.lang.String">
-        UPDATE t_kh_evaluation_task SET valid_flag = '0' WHERE task_id = #{taskId}
+        UPDATE t_kh_evaluation_task
+        SET valid_flag = '0'
+        WHERE task_id = #{taskId}
     </update>
     <select id="getSelectPlan" resultType="com.goisan.system.bean.Select2"
             parameterType="com.goisan.evaluation.bean.EvaluationPlan">
@@ -210,16 +286,19 @@
     </select>
     <select id="getEmpsByTaskId" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationEmp">
-        SELECT * FROM t_kh_evaluation_emps WHERE task_id = #{taskId}
+        SELECT *
+        FROM t_kh_evaluation_emps
+        WHERE task_id = #{taskId}
     </select>
     <delete id="deleteEmpsByTaskId" parameterType="java.lang.String">
-        DELETE FROM t_kh_evaluation_emps WHERE task_id = #{taskId}
+        DELETE
+        FROM t_kh_evaluation_emps
+        WHERE task_id = #{taskId}
     </delete>
     <insert id="saveEmps" parameterType="com.goisan.evaluation.bean.EvaluationEmp">
         INSERT INTO t_kh_evaluation_emps (emps_id, person_id, dept_id, task_id, creator,
-                                          create_time, create_dept,name)
-        VALUES
-        (#{empsId},#{personId},#{deptId},#{taskId},#{creator},#{createTime},#{createDept},#{name})
+                                          create_time, create_dept, name)
+        VALUES (#{empsId}, #{personId}, #{deptId}, #{taskId}, #{creator}, #{createTime}, #{createDept}, #{name})
     </insert>
     <select id="getMonitoerTask" resultType="com.goisan.evaluation.bean.EvaluationTask"
             parameterType="com.goisan.evaluation.bean.EvaluationTask">
@@ -235,7 +314,7 @@
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
         WHERE t.plan_id = p.plan_id
         AND t.group_id = g.group_id
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate)
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate)
         AND t.valid_flag='1'
         AND t.evaluation_type = #{evaluationType}
         AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
@@ -262,7 +341,7 @@
         T_KH_EVALUATION_EMPSLIST s
         WHERE
         t.plan_id = p.plan_id AND t.group_id = g.group_id
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
         AND s.PERSON_ID = #{creator} AND s.DEPT_ID = #{createDept}
         AND t.EVALUATION_TYPE = #{evaluationType}
         <if test="taskName != null and taskName != '' ">
@@ -275,79 +354,134 @@
     </select>
     <select id="getMonitoerEmpsByTaskId" parameterType="com.goisan.evaluation.bean.EvaluationTask"
             resultType="com.goisan.evaluation.bean.EvaluationEmp">
-        SELECT
-            e.*,
-            decode('${evaluationType}','0',FUNC_GET_TABLEVALUE(e.DEPT_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME'),
-                   '1',FUNC_GET_TABLEVALUE(e.DEPT_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) as deptShow,
-            round((SELECT count(*)
-                   FROM t_kh_evaluation_emps_members m
-                   WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id AND m.evaluation_flag = '1') /
-                  (SELECT decode(count(*),0,1,count(*))
-                   FROM t_kh_evaluation_emps_members m
-                   WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id) * 100) || '%'                schedule,
-            to_char( FUNC_GET_EVALUATION_SCORE(e.task_id,e.PERSON_ID , e.DEPT_ID ) ,'fm99990.0099') total,
-            (SELECT count(*)
-             FROM t_kh_evaluation_emps_members m
-             WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id AND m.evaluation_flag = '1') evaluation,
-            (SELECT count(*)
-             FROM t_kh_evaluation_emps_members m
-             WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id AND m.evaluation_flag &lt;&gt; '1') unEvaluation
-        FROM  (select l.* ,t.task_id from t_kh_evaluation_task t , T_KH_EVALUATION_EMPSLIST l
-               WHERE  t.emp_group_id = l.group_id ) e
+        SELECT e.*,
+               decode('${evaluationType}', '0', FUNC_GET_TABLEVALUE(e.DEPT_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME'),
+                      '1', FUNC_GET_TABLEVALUE(e.DEPT_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')) as deptShow,
+               round((SELECT count(*)
+                      FROM t_kh_evaluation_emps_members m
+                      WHERE m.task_id = e.task_id
+                        AND m.emps_id = e.emps_id
+                        AND m.evaluation_flag = '1') /
+                     (SELECT decode(count(*), 0, 1, count(*))
+                      FROM t_kh_evaluation_emps_members m
+                      WHERE m.task_id = e.task_id
+                        AND m.emps_id = e.emps_id) * 100) || '%'                                      schedule,
+               to_char(FUNC_GET_EVALUATION_SCORE(e.task_id, e.PERSON_ID, e.DEPT_ID), 'fm99990.0099')  total,
+               (SELECT count(*)
+                FROM t_kh_evaluation_emps_members m
+                WHERE m.task_id = e.task_id
+                  AND m.emps_id = e.emps_id
+                  AND m.evaluation_flag = '1')                                                        evaluation,
+               (SELECT count(*)
+                FROM t_kh_evaluation_emps_members m
+                WHERE m.task_id = e.task_id
+                  AND m.emps_id = e.emps_id
+                  AND m.evaluation_flag &lt;&gt; '1')                                                 unEvaluation
+        FROM (select l.*, t.task_id
+              from t_kh_evaluation_task t,
+                   T_KH_EVALUATION_EMPSLIST l
+              WHERE t.emp_group_id = l.group_id) e
         WHERE e.task_id = #{taskId}
     </select>
     <select id="getMonitoerEmpsOrder" parameterType="com.goisan.evaluation.bean.EvaluationTask"
             resultType="com.goisan.evaluation.bean.EvaluationEmp">
-        SELECT rank() over(ORDER BY to_number(total) DESC  ) AS totalOrder,
-               to_char(total ,'fm99990.0099') total,empId,personId,name,deptShow,taskId,schedule,deptId
+        SELECT rank() over (ORDER BY to_number(total) DESC ) AS totalOrder,
+               to_char(total, 'fm99990.0099')                   total,
+               empId,
+               personId,
+               name,
+               deptShow,
+               taskId,
+               schedule,
+               deptId
         FROM (
-                 select decode(total,null,0,total ) total,empId,personId,name,deptShow,taskId,schedule,deptId
-                 FROM (SELECT e.emps_id empId,e.person_Id personId,e.dept_id deptId,e.name,e.task_id taskId,
-                              decode('${evaluationType}','0',FUNC_GET_TABLEVALUE(e.DEPT_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME'),
-                                     '1',FUNC_GET_TABLEVALUE(e.DEPT_ID,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) as deptShow,
-                              round((SELECT count(*) FROM t_kh_evaluation_emps_members m
-                                     WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id
+                 select decode(total, null, 0, total) total,
+                        empId,
+                        personId,
+                        name,
+                        deptShow,
+                        taskId,
+                        schedule,
+                        deptId
+                 FROM (SELECT e.emps_id                                                                         empId,
+                              e.person_Id                                                                       personId,
+                              e.dept_id                                                                         deptId,
+                              e.name,
+                              e.task_id                                                                         taskId,
+                              decode('${evaluationType}', '0',
+                                     FUNC_GET_TABLEVALUE(e.DEPT_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME'),
+                                     '1', FUNC_GET_TABLEVALUE(e.DEPT_ID, 'T_XG_CLASS', 'CLASS_ID',
+                                                              'CLASS_NAME')) as                                 deptShow,
+                              round((SELECT count(*)
+                                     FROM t_kh_evaluation_emps_members m
+                                     WHERE m.task_id = e.task_id
+                                       AND m.emps_id = e.emps_id
                                        AND m.evaluation_flag = '1') /
                                     (SELECT decode(count(*), 0, 1, count(*))
                                      FROM t_kh_evaluation_emps_members m
-                                     WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id) * 100) || '%' schedule,
-                              to_char(FUNC_GET_EVALUATION_SCORE(e.task_id , e.PERSON_ID , e.DEPT_ID),'fm99990.0099')  total
-                       FROM (select l.* ,t.task_id from t_kh_evaluation_task t , T_KH_EVALUATION_EMPSLIST l
-                             WHERE  t.emp_group_id = l.group_id ) e
+                                     WHERE m.task_id = e.task_id
+                                       AND m.emps_id = e.emps_id) * 100) ||
+                              '%'                                                                               schedule,
+                              to_char(FUNC_GET_EVALUATION_SCORE(e.task_id, e.PERSON_ID, e.DEPT_ID),
+                                      'fm99990.0099')                                                           total
+                       FROM (select l.*, t.task_id
+                             from t_kh_evaluation_task t,
+                                  T_KH_EVALUATION_EMPSLIST l
+                             WHERE t.emp_group_id = l.group_id) e
                        WHERE e.task_id = #{taskId}
                       )
              )
     </select>
     <select id="getMembersByTaskId" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationMembers">
-        SELECT m.* FROM t_kh_evaluation_task t,t_kh_evaluation_group g,t_kh_evaluation_members m
-        WHERE g.group_id = t.group_id AND m.group_id = g.group_id AND t.task_id = #{taskId}
+        SELECT m.*
+        FROM t_kh_evaluation_task t,
+             t_kh_evaluation_group g,
+             t_kh_evaluation_members m
+        WHERE g.group_id = t.group_id
+          AND m.group_id = g.group_id
+          AND t.task_id = #{taskId}
     </select>
     <insert id="savaEmpsMembers"
             parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
         INSERT INTO t_kh_evaluation_emps_members (id, emps_id, member_id, task_id, creator,
-                                                  create_time,create_dept,emp_person_id,emp_dept_id,emp_name,member_person_id,member_dept_id,member_name)
-        VALUES (#{id},#{empsId},#{memberId},#{taskId},#{creator},#{createTime},#{createDept},
-                #{empPersonId},#{empDeptId},#{empName},#{memberPersonId},#{memberDeptId},#{memberName})
+                                                  create_time, create_dept, emp_person_id, emp_dept_id, emp_name,
+                                                  member_person_id, member_dept_id, member_name)
+        VALUES (#{id}, #{empsId}, #{memberId}, #{taskId}, #{creator}, #{createTime}, #{createDept},
+                #{empPersonId}, #{empDeptId}, #{empName}, #{memberPersonId}, #{memberDeptId}, #{memberName})
     </insert>
     <delete id="deleteEmpsMenmbersByTaskId" parameterType="java.lang.String">
-        DELETE FROM t_kh_evaluation_emps_members WHERE task_id = #{taskId}
+        DELETE
+        FROM t_kh_evaluation_emps_members
+        WHERE task_id = #{taskId}
     </delete>
     <update id="updateIndexLeafFlag">
-        UPDATE t_kh_evaluation_index SET leaf_flag = #{type},colspan = #{col}
+        UPDATE t_kh_evaluation_index
+        SET leaf_flag = #{type},
+            colspan   = #{col}
         WHERE index_id = #{parentIndexId}
     </update>
     <select id="getLeafTotal" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT COUNT (*) FROM T_KH_EVALUATION_INDEX WHERE PARENT_INDEX_ID = #{parentIndexId}
+        SELECT COUNT(*)
+        FROM T_KH_EVALUATION_INDEX
+        WHERE PARENT_INDEX_ID = #{parentIndexId}
     </select>
     <select id="getIndexByTaskId" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Index">
-        SELECT i.* FROM t_kh_evaluation_index i,t_kh_evaluation_task t WHERE t.task_id = #{taskId}
-                                                                         AND i.plan_id = t.plan_id ORDER BY i.CREATE_TIME
+        SELECT i.*
+        FROM t_kh_evaluation_index i,
+             t_kh_evaluation_task t
+        WHERE t.task_id = #{taskId}
+          AND i.plan_id = t.plan_id
+        ORDER BY i.CREATE_TIME
     </select>
     <select id="getMonitorResults" resultType="com.goisan.evaluation.bean.EvaluationResult">
-        SELECT * FROM t_kh_evaluation_result WHERE emp_person_id = #{empId} AND member_person_id =
-                                                                                #{membersId} AND task_id = #{taskId}
+        SELECT *
+        FROM t_kh_evaluation_result
+        WHERE emp_person_id = #{empId}
+          AND member_person_id =
+              #{membersId}
+          AND task_id = #{taskId}
     </select>
     <select id="getlistTask" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
@@ -394,96 +528,124 @@
     <update id="updateEmpsMenmbers" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
         update T_KH_EVALUATION_EMPS_MEMBERS
         set EVALUATION_FLAG = 2
-        where TASK_ID =  #{taskId} AND EVALUATION_FLAG = 0
-          AND member_person_id = #{changer} AND member_dept_id = #{changeDept}
+        where TASK_ID = #{taskId}
+          AND EVALUATION_FLAG = 0
+          AND member_person_id = #{changer}
+          AND member_dept_id = #{changeDept}
     </update>
     <select id="getlistIndex" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Index">
-        SELECT index_id indexId,index_name indexName,parent_index_id parentIndexId,
-               score,weights,leaf_flag LeafFlag
-        FROM t_kh_evaluation_index WHERE plan_id = #{id} ORDER BY create_time
+        SELECT index_id        indexId,
+               index_name      indexName,
+               parent_index_id parentIndexId,
+               score,
+               weights,
+               leaf_flag       LeafFlag
+        FROM t_kh_evaluation_index
+        WHERE plan_id = #{id}
+        ORDER BY create_time
     </select>
     <select id="listResultByPersonid"
             parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
             resultType="com.goisan.evaluation.bean.EvaluationResult">
-        SELECT
-            func_get_uuid resultId,
-            t3.EMP_PERSON_ID empPersonId,
-            t3.EMP_DEPT_ID empDeptId,
-            t3.EMP_NAME empName,
-            t3.MEMBER_PERSON_ID memberPersonId,
-            t3.MEMBER_DEPT_ID memberDeptId,
-            t3.MEMBER_NAME memberName,
-            t2.task_id  taskId,
-            t4.index_id indexId,
-            t4.index_name indexName,
-            t4.score,t4.weights,
-            t4.plan_id planId,
-            t4.parent_index_id parentIndexId,
-            t4.colspan,t4.LEAF_FLAG  leafFlag
-        FROM
-            T_KH_EVALUATION_TASK t2,
-            T_KH_EVALUATION_EMPS_MEMBERS t3,
-            T_KH_EVALUATION_INDEX t4
-        WHERE t2.task_id = t3.task_id AND t3.EVALUATION_FLAG = '0' AND t2.valid_flag='1' AND  t2.plan_id = t4.plan_id/* AND t4.LEAF_FLAG = '1'*/
-          AND t3.MEMBER_DEPT_ID = #{memberDeptId} AND t3.MEMBER_PERSON_ID = #{memberPersonId}
-          AND t3.emp_person_id = #{empPersonId} AND t3.emp_dept_id = #{empDeptId}
+        SELECT func_get_uuid       resultId,
+               t3.EMP_PERSON_ID    empPersonId,
+               t3.EMP_DEPT_ID      empDeptId,
+               t3.EMP_NAME         empName,
+               t3.MEMBER_PERSON_ID memberPersonId,
+               t3.MEMBER_DEPT_ID   memberDeptId,
+               t3.MEMBER_NAME      memberName,
+               t2.task_id          taskId,
+               t4.index_id         indexId,
+               t4.index_name       indexName,
+               t4.score,
+               t4.weights,
+               t4.plan_id          planId,
+               t4.parent_index_id  parentIndexId,
+               t4.colspan,
+               t4.LEAF_FLAG        leafFlag
+        FROM T_KH_EVALUATION_TASK t2,
+             T_KH_EVALUATION_EMPS_MEMBERS t3,
+             T_KH_EVALUATION_INDEX t4
+        WHERE t2.task_id = t3.task_id
+          AND t3.EVALUATION_FLAG = '0'
+          AND t2.valid_flag = '1'
+          AND t2.plan_id = t4.plan_id/* AND t4.LEAF_FLAG = '1'*/
+          AND t3.MEMBER_DEPT_ID = #{memberDeptId}
+          AND t3.MEMBER_PERSON_ID = #{memberPersonId}
+          AND t3.emp_person_id = #{empPersonId}
+          AND t3.emp_dept_id = #{empDeptId}
           AND t3.task_id = #{taskId}
     </select>
     <insert id="insertResult" parameterType="com.goisan.evaluation.bean.EvaluationResult">
         INSERT INTO T_KH_EVALUATION_RESULT
-        (RESULT_ID, EMP_PERSON_ID, EMP_DEPT_ID,EMP_NAME,INDEX_ID,TASK_ID,
-         MEMBER_PERSON_ID,MEMBER_DEPT_ID,MEMBER_NAME,SCORE,REMARK,
-         VALID_FLAG,creator, create_time, create_dept)
-        VALUES
-        (#{resultId},#{empPersonId},#{empDeptId},#{empName},#{indexId},#{taskId},
-         #{memberPersonId},#{memberDeptId},#{memberName},#{score},#{remark},
-         '1',#{creator},sysdate,#{createDept})
+        (RESULT_ID, EMP_PERSON_ID, EMP_DEPT_ID, EMP_NAME, INDEX_ID, TASK_ID,
+         MEMBER_PERSON_ID, MEMBER_DEPT_ID, MEMBER_NAME, SCORE, REMARK,
+         VALID_FLAG, creator, create_time, create_dept)
+        VALUES (#{resultId}, #{empPersonId}, #{empDeptId}, #{empName}, #{indexId}, #{taskId},
+                #{memberPersonId}, #{memberDeptId}, #{memberName}, #{score}, #{remark},
+                '1', #{creator}, sysdate, #{createDept})
     </insert>
     <update id="updateEvaluationEmpMenmber"
             parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
         UPDATE T_KH_EVALUATION_EMPS_MEMBERS t
-        SET t.CHANGE_TIME = sysdate,t.EVALUATION_FLAG = 1 , t.score =
-            (
-                SELECT SUM(scorevalue) FROM (
-                                                SELECT  t1.score * t2.weights * t3.score/(t2.score*100) AS scorevalue
-                                                FROM T_KH_EVALUATION_RESULT t1 ,T_KH_EVALUATION_INDEX t2,T_KH_EVALUATION_PLAN t3
-                                                WHERE t1.index_id = t2.index_id AND t3.plan_id = t2.plan_id
-                                                  AND t1.task_id = #{taskId}
-                                                  AND t1.emp_person_id = #{empPersonId} AND t1.emp_dept_id = #{empDeptId}
-                                                  AND t1.member_person_id = #{memberPersonId} AND t1.member_dept_id = #{memberDeptId}
-                                            )
-            )
+        SET t.CHANGE_TIME     = sysdate,
+            t.EVALUATION_FLAG = 1,
+            t.score           =
+                (
+                    SELECT SUM(scorevalue)
+                    FROM (
+                             SELECT t1.score * t2.weights * t3.score / (t2.score * 100) AS scorevalue
+                             FROM T_KH_EVALUATION_RESULT t1,
+                                  T_KH_EVALUATION_INDEX t2,
+                                  T_KH_EVALUATION_PLAN t3
+                             WHERE t1.index_id = t2.index_id
+                               AND t3.plan_id = t2.plan_id
+                               AND t1.task_id = #{taskId}
+                               AND t1.emp_person_id = #{empPersonId}
+                               AND t1.emp_dept_id = #{empDeptId}
+                               AND t1.member_person_id = #{memberPersonId}
+                               AND t1.member_dept_id = #{memberDeptId}
+                         )
+                )
         WHERE t.task_id = #{taskId}
-          AND t.emp_person_id = #{empPersonId}  AND t.emp_dept_id = #{empDeptId}
-          AND t.member_person_id = #{memberPersonId}  AND t.member_dept_id = #{memberDeptId}
+          AND t.emp_person_id = #{empPersonId}
+          AND t.emp_dept_id = #{empDeptId}
+          AND t.member_person_id = #{memberPersonId}
+          AND t.member_dept_id = #{memberDeptId}
     </update>
     <select id="getMembersByTaskIdAndEmpId"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
-        SELECT
-            m.id,
-            to_char(m.score ,'fm99990.0099') score ,
-            m.member_name,
-            m.member_person_id,
-            FUNC_GET_DICVALUE(m.EVALUATION_FLAG, 'JSPJZT') evaluation_flag,
-            FUNC_GET_DICVALUE(m.invalid_flag, 'JSPJZFZT')  invalid_flag
-        FROM
-            t_kh_evaluation_emps_members m
-        WHERE m.task_id = #{taskId} AND m.emp_person_id = #{id}
+        SELECT m.id,
+               to_char(m.score, 'fm99990.0099')               score,
+               m.member_name,
+               m.member_person_id,
+               FUNC_GET_DICVALUE(m.EVALUATION_FLAG, 'JSPJZT') evaluation_flag,
+               FUNC_GET_DICVALUE(m.invalid_flag, 'JSPJZFZT')  invalid_flag
+        FROM t_kh_evaluation_emps_members m
+        WHERE m.task_id = #{taskId}
+          AND m.emp_person_id = #{id}
     </select>
     <update id="invalid" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
-        UPDATE t_kh_evaluation_emps_members SET INVALID_FLAG = #{invalidFlag},
-                                                invalid_operator = #{invalidOperator}, invalid_operator_dept = #{invalidOperatorDept},
-                                                invalid_time = sysdate,invalid_reason = #{invalidReason}
+        UPDATE t_kh_evaluation_emps_members
+        SET INVALID_FLAG          = #{invalidFlag},
+            invalid_operator      = #{invalidOperator},
+            invalid_operator_dept = #{invalidOperatorDept},
+            invalid_time          = sysdate,
+            invalid_reason        = #{invalidReason}
         WHERE id = #{id}
     </update>
     <select id="getEmpsMenmbersById" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
-        SELECT * FROM t_kh_evaluation_emps_members WHERE id = #{id}
+        SELECT *
+        FROM t_kh_evaluation_emps_members
+        WHERE id = #{id}
     </select>
     <select id="getIndexWeightsByIndexId" parameterType="java.lang.String"
             resultType="java.lang.Integer">
-        SELECT weights FROM t_kh_evaluation_index WHERE index_id = #{indexId}
+        SELECT weights
+        FROM t_kh_evaluation_index
+        WHERE index_id = #{indexId}
     </select>
     <select id="getIndexWeightsTotalByParentIndexId" parameterType="java.lang.String"
             resultType="java.lang.Integer">
@@ -494,21 +656,24 @@
     </select>
     <select id="getMaxLevel" parameterType="java.lang.String"
             resultType="java.lang.Integer">
-        SELECT max(index_level) FROM t_kh_evaluation_index i, t_kh_evaluation_task t where
-            t.plan_id = i.plan_id AND t.task_id = #{taskId}
+        SELECT max(index_level)
+        FROM t_kh_evaluation_index i,
+             t_kh_evaluation_task t
+        where t.plan_id = i.plan_id
+          AND t.task_id = #{taskId}
     </select>
     <select id="searchlistIndex" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
             resultType="com.goisan.evaluation.bean.EvaluationResult">
-        SELECT
-            t3.index_id        indexId,
-            t3.index_name      indexName,
-            t3.parent_index_id parentIndexId,
-            t1.score,
-            t1.remark,
-            t3.leaf_flag       LeafFlag,
-            t3.score fullScore
-        FROM T_KH_EVALUATION_TASK   t2,
-             T_KH_EVALUATION_INDEX  t3 LEFT JOIN
+        SELECT t3.index_id        indexId,
+               t3.index_name      indexName,
+               t3.parent_index_id parentIndexId,
+               t1.score,
+               t1.remark,
+               t3.leaf_flag       LeafFlag,
+               t3.score           fullScore
+        FROM T_KH_EVALUATION_TASK t2,
+             T_KH_EVALUATION_INDEX t3
+                 LEFT JOIN
              T_KH_EVALUATION_RESULT t1
              ON t1.index_id = t3.index_id
                  AND t1.member_person_id = #{memberPersonId}
@@ -516,27 +681,41 @@
                  AND t1.emp_person_id = #{empPersonId}
                  AND t1.emp_dept_id = #{empDeptId}
                  AND t1.task_id = #{taskId}
-        WHERE
-            t2.plan_id = t3.plan_id
+        WHERE t2.plan_id = t3.plan_id
           AND t2.task_id = #{taskId}
         ORDER BY t3.create_time
     </select>
     <select id="calPlanScore" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT sum(score) FROM t_kh_evaluation_index WHERE plan_id = #{id} AND leaf_flag = '1'
+        SELECT sum(score)
+        FROM t_kh_evaluation_index
+        WHERE plan_id = #{id}
+          AND leaf_flag = '1'
     </select>
     <update id="updatePlanTestFlag">
-        UPDATE t_kh_evaluation_plan SET test_flag = #{testFlag} WHERE plan_id = #{id}
+        UPDATE t_kh_evaluation_plan
+        SET test_flag = #{testFlag}
+        WHERE plan_id = #{id}
     </update>
     <select id="getTasksByPlanId" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationTask">
-        SELECT * FROM t_kh_evaluation_task WHERE plan_id = #{id}
+        SELECT *
+        FROM t_kh_evaluation_task
+        WHERE plan_id = #{id}
     </select>
     <select id="calPlanWights" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT sum(weights) FROM t_kh_evaluation_index WHERE plan_id = #{id} AND leaf_flag = '1'
+        SELECT sum(weights)
+        FROM t_kh_evaluation_index
+        WHERE plan_id = #{id}
+          AND leaf_flag = '1'
     </select>
     <update id="upadteGroup" parameterType="com.goisan.evaluation.bean.Group">
-        UPDATE t_kh_evaluation_group SET group_name = #{groupName},changer =
-            #{changer},group_type = #{groupType},change_dept = #{changeDept},create_time = #{createTime}
+        UPDATE t_kh_evaluation_group
+        SET group_name  = #{groupName},
+            changer     =
+                #{changer},
+            group_type  = #{groupType},
+            change_dept = #{changeDept},
+            create_time = #{createTime}
         WHERE group_id = #{groupId}
     </update>
     <delete id="delectResult" parameterType="com.goisan.evaluation.bean.EvaluationResult">
@@ -549,48 +728,68 @@
     </delete>
     <select id="getEmpsCheckByTask" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT
-            dept_id  id,dept_name name,parent_dept_id pid,'0' checked
+        SELECT dept_id        id,
+               dept_name      name,
+               parent_dept_id pid,
+               '0'            checked
         FROM t_sys_dept
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_EMPSLIST t
         WHERE t.group_id =
-              (SELECT k.emp_group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId} )
+              (SELECT k.emp_group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <select id="getClassStudentCheckByTask" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT  dept_id id,       dept_name name,    parent_dept_id pid , '0' checked
-        FROM t_sys_dept WHERE dept_type &lt; 9 AND valid_flag = 1
+        SELECT dept_id id, dept_name name, parent_dept_id pid, '0' checked
+        FROM t_sys_dept
+        WHERE dept_type &lt; 9
+          AND valid_flag = 1
         UNION
-        SELECT d.major_code id,   d.major_name name,  d.departments_id pId , '0' checked
-        FROM T_XG_MAJOR d WHERE d.valid_flag = 1
+        SELECT d.major_code id, d.major_name name, d.departments_id pId, '0' checked
+        FROM T_XG_MAJOR d
+        WHERE d.valid_flag = 1
         UNION
-        SELECT  class_id id,      class_name name,    major_code pid , '0' checked
-        FROM t_xg_class  WHERE valid_flag = 1
+        SELECT class_id id, class_name name, major_code pid, '0' checked
+        FROM t_xg_class
+        WHERE valid_flag = 1
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_EMPSLIST t
         WHERE t.group_id =
-              (SELECT k.emp_group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId} )
+              (SELECT k.emp_group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <insert id="insertEmpsMembers" parameterType="com.goisan.evaluation.bean.EvaluationTask">
         INSERT INTO t_kh_evaluation_emps_members
-        SELECT
-            FUNC_GET_UUID as id,
-            e.emps_id  as emps_id,
-            e.person_id  as emp_person_id ,e.dept_id as emp_dept_id,e.name as emp_name,
-            m.member_id,
-            m.person_id as member_person_id, m.dept_id as member_dept_id, m.name as  member_name,
-            t.task_id, '0' AS EVALUATION_FLAG, '' as SCORE,
-            #{creator} AS creator,  SYSDATE AS create_time,#{createDept}  AS create_dept,
-            '' as CHANGER,null as   CHANGE_TIME, '' as CHANGE_DEPT,
-            '1' as VALID_FLAG,
-            '' as INVALID_OPERATOR, null as INVALID_TIME,'' as INVALID_OPERATOR_DEPT,
-            '' as INVALID_REASON,  '0' as INVALID_FLAG
-        FROM t_kh_evaluation_task    t,
-             t_kh_evaluation_members m,T_KH_EVALUATION_EMPSLIST    e
-        WHERE t.group_id = m.group_id AND e.group_id = t.emp_group_id
+        SELECT FUNC_GET_UUID as id,
+               e.emps_id     as emps_id,
+               e.person_id   as emp_person_id,
+               e.dept_id     as emp_dept_id,
+               e.name        as emp_name,
+               m.member_id,
+               m.person_id   as member_person_id,
+               m.dept_id     as member_dept_id,
+               m.name        as member_name,
+               t.task_id,
+               '0'           AS EVALUATION_FLAG,
+               ''            as SCORE,
+               #{creator}    AS creator,
+               SYSDATE       AS create_time,
+               #{createDept} AS create_dept,
+               ''            as CHANGER,
+               null          as CHANGE_TIME,
+               ''            as CHANGE_DEPT,
+               '1'           as VALID_FLAG,
+               ''            as INVALID_OPERATOR,
+               null          as INVALID_TIME,
+               ''            as INVALID_OPERATOR_DEPT,
+               ''            as INVALID_REASON,
+               '0'           as INVALID_FLAG
+        FROM t_kh_evaluation_task t,
+             t_kh_evaluation_members m,
+             T_KH_EVALUATION_EMPSLIST e
+        WHERE t.group_id = m.group_id
+          AND e.group_id = t.emp_group_id
           AND t.task_id = #{taskId}
     </insert>
     <delete id="delectEmpsMembers" parameterType="java.lang.String">
@@ -625,7 +824,8 @@
             AND t3.emp_dept_id = #{empDeptId}
         </if>
         )
-        AND (t2.start_flag = '1' OR t2.start_flag = '2') AND t2.valid_flag='1' AND t2.EVALUATION_TYPE = #{evaluationType}
+        AND (t2.start_flag = '1' OR t2.start_flag = '2') AND t2.valid_flag='1' AND t2.EVALUATION_TYPE =
+        #{evaluationType}
         <if test="taskName != null and taskName != '' ">
             AND t2.task_name LIKE #{taskName}
         </if>
@@ -661,34 +861,34 @@
     </select>
     <select id="getEvaluationComplexTaskByid" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationComplexTask">
-        SELECT
-            COMPLEX_TASK_ID complexTaskId,
-            COMPLEX_TASK_NAME complexTaskName,
-            TERM,  SCORE, REMARK,
-            FUNC_GET_TABLEVALUE(CREATOR,'T_RS_EMPLOYEE','person_id','name') AS CREATOR,
-            FUNC_GET_DICVALUE(TERM,'XQ') AS termShow ,
-            CREATE_TIME createTime, CREATE_DEPT createDept,
-            to_char(CREATE_TIME,'yyyy-mm-dd') startTime,
-            TEST_FLAG testFlag,
-            FUNC_GET_DICVALUE(TEST_FLAG,'JSPJYZZT') AS testFlagShow
+        SELECT COMPLEX_TASK_ID                                                       complexTaskId,
+               COMPLEX_TASK_NAME                                                     complexTaskName,
+               TERM,
+               SCORE,
+               REMARK,
+               FUNC_GET_TABLEVALUE(CREATOR, 'T_RS_EMPLOYEE', 'person_id', 'name') AS CREATOR,
+               FUNC_GET_DICVALUE(TERM, 'XQ')                                      AS termShow,
+               CREATE_TIME                                                           createTime,
+               CREATE_DEPT                                                           createDept,
+               to_char(CREATE_TIME, 'yyyy-mm-dd')                                    startTime,
+               TEST_FLAG                                                             testFlag,
+               FUNC_GET_DICVALUE(TEST_FLAG, 'JSPJYZZT')                           AS testFlagShow
         FROM T_KH_EVALUATION_COMPLEX_TASK
         WHERE COMPLEX_TASK_ID = #{id}
     </select>
     <insert id="saveComplexTask" parameterType="com.goisan.evaluation.bean.EvaluationComplexTask">
         INSERT INTO T_KH_EVALUATION_COMPLEX_TASK
-        (COMPLEX_TASK_ID, COMPLEX_TASK_NAME, TERM,SCORE,REMARK,TEST_FLAG,EVALUATION_TYPE,
-         VALID_FLAG,creator, create_time, create_dept)
-        VALUES
-        (#{complexTaskId},#{complexTaskName},#{term},#{score},#{remark},'0',#{evaluationType},
-         '1',#{creator},sysdate,#{createDept})
+        (COMPLEX_TASK_ID, COMPLEX_TASK_NAME, TERM, SCORE, REMARK, TEST_FLAG, EVALUATION_TYPE,
+         VALID_FLAG, creator, create_time, create_dept)
+        VALUES (#{complexTaskId}, #{complexTaskName}, #{term}, #{score}, #{remark}, '0', #{evaluationType},
+                '1', #{creator}, sysdate, #{createDept})
     </insert>
     <update id="updateComplexTask" parameterType="com.goisan.evaluation.bean.EvaluationComplexTask">
         UPDATE T_KH_EVALUATION_COMPLEX_TASK
-        SET
-            COMPLEX_TASK_NAME = #{complexTaskName},
-            TERM = #{term},
-            SCORE = #{score},
-            REMARK = #{remark},
+        SET COMPLEX_TASK_NAME = #{complexTaskName},
+            TERM              = #{term},
+            SCORE             = #{score},
+            REMARK            = #{remark},
             changer= #{changer},
             change_time= sysdate,
             change_dept= #{changeDept}
@@ -702,15 +902,15 @@
     <insert id="seveComplexDetail"
             parameterType="com.goisan.evaluation.bean.EvaluationComplexDetail">
         INSERT INTO T_KH_EVALUATION_COMPLEX_DETAIL
-        (ID, COMPLEX_TASK_ID, task_show_name,TASK_ID,TASK_NAME,WEIGHTS,SCORE,
-         VALID_FLAG,creator, create_time, create_dept)
-        VALUES
-        (FUNC_GET_UUID,#{complexTaskId},#{taskShowName},#{taskId},#{taskName},#{weights},#{score},
-         '1',#{creator},sysdate,#{createDept})
+        (ID, COMPLEX_TASK_ID, task_show_name, TASK_ID, TASK_NAME, WEIGHTS, SCORE,
+         VALID_FLAG, creator, create_time, create_dept)
+        VALUES (FUNC_GET_UUID, #{complexTaskId}, #{taskShowName}, #{taskId}, #{taskName}, #{weights}, #{score},
+                '1', #{creator}, sysdate, #{createDept})
     </insert>
     <delete id="delComplexDetail" parameterType="java.lang.String">
         DELETE T_KH_EVALUATION_COMPLEX_DETAIL
-        WHERE id = #{id} OR COMPLEX_TASK_ID = #{id}
+        WHERE id = #{id}
+           OR COMPLEX_TASK_ID = #{id}
     </delete>
     <delete id="delComplexTask" parameterType="java.lang.String">
         DELETE T_KH_EVALUATION_COMPLEX_TASK
@@ -718,103 +918,137 @@
     </delete>
     <delete id="delComplexResult" parameterType="java.lang.String">
         DELETE T_KH_EVALUATION_COMPLEX_RESULT
-        WHERE  COMPLEX_TASK_ID = #{id}
+        WHERE COMPLEX_TASK_ID = #{id}
     </delete>
     <select id="getEvaluationComplexDetail" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationComplexDetail">
-        SELECT
-            ID, COMPLEX_TASK_ID complexTaskId,TASK_SHOW_NAME taskShowName,
-            TASK_ID taskId,  TASK_NAME taskName, WEIGHTS, SCORE
+        SELECT ID,
+               COMPLEX_TASK_ID complexTaskId,
+               TASK_SHOW_NAME  taskShowName,
+               TASK_ID         taskId,
+               TASK_NAME       taskName,
+               WEIGHTS,
+               SCORE
         FROM T_KH_EVALUATION_COMPLEX_DETAIL t
         WHERE COMPLEX_TASK_ID = #{id}
     </select>
     <select id="getEvaluationComplexDetailByid" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationComplexDetail">
-        SELECT
-            ID, COMPLEX_TASK_ID complexTaskId,TASK_SHOW_NAME taskShowName,
-            TASK_ID taskId,  TASK_NAME taskName, WEIGHTS, SCORE
+        SELECT ID,
+               COMPLEX_TASK_ID complexTaskId,
+               TASK_SHOW_NAME  taskShowName,
+               TASK_ID         taskId,
+               TASK_NAME       taskName,
+               WEIGHTS,
+               SCORE
         FROM T_KH_EVALUATION_COMPLEX_DETAIL t
         WHERE ID = #{id}
     </select>
     <select id="getDetailWeights" parameterType="java.lang.String" resultType="java.lang.Integer">
-        SELECT NVL(sum(weights),'0') weights  FROM T_KH_EVALUATION_COMPLEX_DETAIL
+        SELECT NVL(sum(weights), '0') weights
+        FROM T_KH_EVALUATION_COMPLEX_DETAIL
         WHERE complex_task_id = #{id}
     </select>
     <insert id="insertComplexResultBySingleTask"
             parameterType="com.goisan.evaluation.bean.EvaluationComplexDetail">
         INSERT INTO T_KH_EVALUATION_COMPLEX_RESULT
-        SELECT
-            FUNC_GET_UUID AS id, #{complexTaskId} AS COMPLEX_TASK_ID ,#{id} AS COMPLEX_DETAIL_ID,
-            #{taskId} AS task_id ,
-            e1.emp_person_id,
-            e1.emp_dept_id,
-            decode('${evaluationType}','0',FUNC_GET_TABLEVALUE(e1.emp_person_id,'T_RS_EMPLOYEE','person_id','name'),
-                   '1',FUNC_GET_TABLEVALUE(e1.emp_person_id,'T_XG_STUDENT','STUDENT_ID','NAME')) AS EMP_NAME,
-            e1.score*d.weights*t.score/(100*d.score) AS score,
-            #{creator} AS creator,SYSDATE AS create_time,#{createDept} AS create_dept,
-            '' AS CHANGER,null AS CHANGE_TIME, '' AS CHANGE_DEPT,
-            '1' AS VALID_FLAG
-        FROM
-            T_KH_EVALUATION_COMPLEX_DETAIL d , T_KH_EVALUATION_COMPLEX_TASK t,
-            (SELECT e.emp_person_id,e.emp_dept_id,avg(e.score) AS score
-             FROM T_KH_EVALUATION_EMPS_MEMBERS e
-             WHERE e.invalid_flag = 0 AND e.SCORE IS NOT null
-               and e.task_id = #{taskId}
-             GROUP BY  e.emp_person_id, e.emp_dept_id
-            ) e1
-        WHERE d.complex_task_id = t.complex_task_id AND d.id = #{id}
+        SELECT FUNC_GET_UUID                                                                            AS id,
+               #{complexTaskId}                                                                         AS COMPLEX_TASK_ID,
+               #{id}                                                                                    AS COMPLEX_DETAIL_ID,
+               #{taskId}                                                                                AS task_id,
+               e1.emp_person_id,
+               e1.emp_dept_id,
+               decode('${evaluationType}', '0',
+                      FUNC_GET_TABLEVALUE(e1.emp_person_id, 'T_RS_EMPLOYEE', 'person_id', 'name'),
+                      '1', FUNC_GET_TABLEVALUE(e1.emp_person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')) AS EMP_NAME,
+               e1.score * d.weights * t.score / (100 * d.score)                                         AS score,
+               #{creator}                                                                               AS creator,
+               SYSDATE                                                                                  AS create_time,
+               #{createDept}                                                                            AS create_dept,
+               ''                                                                                       AS CHANGER,
+               null                                                                                     AS CHANGE_TIME,
+               ''                                                                                       AS CHANGE_DEPT,
+               '1'                                                                                      AS VALID_FLAG
+        FROM T_KH_EVALUATION_COMPLEX_DETAIL d,
+             T_KH_EVALUATION_COMPLEX_TASK t,
+             (SELECT e.emp_person_id, e.emp_dept_id, avg(e.score) AS score
+              FROM T_KH_EVALUATION_EMPS_MEMBERS e
+              WHERE e.invalid_flag = 0
+                AND e.SCORE IS NOT null
+                and e.task_id = #{taskId}
+              GROUP BY e.emp_person_id, e.emp_dept_id
+             ) e1
+        WHERE d.complex_task_id = t.complex_task_id
+          AND d.id = #{id}
     </insert>
     <insert id="insertComplexResultByTaskList"
             parameterType="com.goisan.evaluation.bean.EvaluationComplexDetail">
         INSERT INTO T_KH_EVALUATION_COMPLEX_RESULT
-        SELECT
-            FUNC_GET_UUID AS id, #{complexTaskId} AS COMPLEX_TASK_ID ,#{id} AS COMPLEX_DETAIL_ID, #{taskId} AS task_id ,
-            s1.emp_person_id, s1.emp_dept_id,
-            decode('${evaluationType}','0',FUNC_GET_TABLEVALUE(s1.emp_person_id,'T_RS_EMPLOYEE','person_id','name'),
-                   '1',FUNC_GET_TABLEVALUE(s1.emp_person_id,'T_XG_STUDENT','STUDENT_ID','NAME')) AS EMP_NAME,
-            s1.score*cd.weights*ct.score/100 AS score,
-            #{creator} AS creator,SYSDATE AS create_time,#{createDept} AS create_dept,
-            '' AS CHANGER,null AS CHANGE_TIME, '' AS CHANGE_DEPT,'1' AS VALID_FLAG
-        FROM
-            (SELECT t1.emp_person_id,t1.emp_dept_id,avg(t1.score/p.score) AS score FROM
-                                                                                       (SELECT emp_person_id, emp_dept_id, avg(score) AS score , task_id
-                                                                                        FROM T_KH_EVALUATION_EMPS_MEMBERS
-                                                                                        WHERE #{taskId} like '%'||task_id||'%'
-                                                                                          AND SCORE IS NOT null
-                                                                                        GROUP BY emp_person_id, emp_dept_id , task_id
-                                                                                       )  t1 ,
-                                                                                       T_KH_EVALUATION_TASK t,
-                                                                                       T_KH_EVALUATION_PLAN p
-             WHERE t.plan_id = p.plan_id AND t.task_id = t1.task_id
-             GROUP BY t1.emp_person_id, t1.emp_dept_id
-            ) s1,
-            T_KH_EVALUATION_COMPLEX_DETAIL cd ,
-            T_KH_EVALUATION_COMPLEX_TASK ct
-        WHERE cd.id =#{id} AND ct.complex_task_id = cd.complex_task_id
+        SELECT FUNC_GET_UUID                                                                            AS id,
+               #{complexTaskId}                                                                         AS COMPLEX_TASK_ID,
+               #{id}                                                                                    AS COMPLEX_DETAIL_ID,
+               #{taskId}                                                                                AS task_id,
+               s1.emp_person_id,
+               s1.emp_dept_id,
+               decode('${evaluationType}', '0',
+                      FUNC_GET_TABLEVALUE(s1.emp_person_id, 'T_RS_EMPLOYEE', 'person_id', 'name'),
+                      '1', FUNC_GET_TABLEVALUE(s1.emp_person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')) AS EMP_NAME,
+               s1.score * cd.weights * ct.score / 100                                                   AS score,
+               #{creator}                                                                               AS creator,
+               SYSDATE                                                                                  AS create_time,
+               #{createDept}                                                                            AS create_dept,
+               ''                                                                                       AS CHANGER,
+               null                                                                                     AS CHANGE_TIME,
+               ''                                                                                       AS CHANGE_DEPT,
+               '1'                                                                                      AS VALID_FLAG
+        FROM (SELECT t1.emp_person_id, t1.emp_dept_id, avg(t1.score / p.score) AS score
+              FROM (SELECT emp_person_id, emp_dept_id, avg(score) AS score, task_id
+                    FROM T_KH_EVALUATION_EMPS_MEMBERS
+                    WHERE #{taskId} like '%' || task_id || '%'
+                      AND SCORE IS NOT null
+                    GROUP BY emp_person_id, emp_dept_id, task_id
+                   ) t1,
+                   T_KH_EVALUATION_TASK t,
+                   T_KH_EVALUATION_PLAN p
+              WHERE t.plan_id = p.plan_id
+                AND t.task_id = t1.task_id
+              GROUP BY t1.emp_person_id, t1.emp_dept_id
+             ) s1,
+             T_KH_EVALUATION_COMPLEX_DETAIL cd,
+             T_KH_EVALUATION_COMPLEX_TASK ct
+        WHERE cd.id = #{id}
+          AND ct.complex_task_id = cd.complex_task_id
     </insert>
     <select id="getEvaluationComplexSumResult"
             parameterType="com.goisan.evaluation.bean.EvaluationComplexDetail"
             resultType="com.goisan.evaluation.bean.EvaluationComplexResult">
-        SELECT  #{complexTaskId} AS complexTaskId,
-                emp_person_id empPersonId,emp_dept_id empDeptId,
-                decode('${evaluationType}','0',FUNC_GET_TABLEVALUE(emp_person_id,'T_RS_EMPLOYEE','person_id','name'),
-                       '1',FUNC_GET_TABLEVALUE(emp_person_id,'T_XG_STUDENT','STUDENT_ID','NAME')) AS empName,
-                decode('${evaluationType}','0',FUNC_GET_TABLEVALUE(emp_dept_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME'),
-                       '1',FUNC_GET_TABLEVALUE(emp_dept_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) AS deptShow,
-                to_char( sum(score) ,'fm99990.0099') AS score
+        SELECT #{complexTaskId}                                                                      AS complexTaskId,
+               emp_person_id                                                                            empPersonId,
+               emp_dept_id                                                                              empDeptId,
+               decode('${evaluationType}', '0',
+                      FUNC_GET_TABLEVALUE(emp_person_id, 'T_RS_EMPLOYEE', 'person_id', 'name'),
+                      '1', FUNC_GET_TABLEVALUE(emp_person_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')) AS empName,
+               decode('${evaluationType}', '0', FUNC_GET_TABLEVALUE(emp_dept_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME'),
+                      '1', FUNC_GET_TABLEVALUE(emp_dept_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')) AS deptShow,
+               to_char(sum(score), 'fm99990.0099')                                                   AS score
         FROM T_KH_EVALUATION_COMPLEX_RESULT
-        WHERE complex_task_id =  #{complexTaskId}
-        GROUP BY emp_person_id ,emp_dept_id
+        WHERE complex_task_id = #{complexTaskId}
+        GROUP BY emp_person_id, emp_dept_id
     </select>
     <select id="getEvaluationComplexResult"
             parameterType="com.goisan.evaluation.bean.EvaluationComplexResult"
             resultType="com.goisan.evaluation.bean.EvaluationComplexResult">
-        SELECT r.COMPLEX_TASK_ID complexTaskId,r.COMPLEX_DETAIL_ID complexDetailId ,
-               r.emp_person_id empPersonId,r.emp_dept_id empDeptId, r.EMP_NAME AS empName ,
-               decode('${evaluationType}','0',FUNC_GET_TABLEVALUE(r.emp_dept_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME'),
-                      '1',FUNC_GET_TABLEVALUE(r.emp_dept_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) AS deptShow,
-               to_char(r.score ,'fm99990.0099') AS score , d.weights*t.score/100 AS fullMarks
-        FROM T_KH_EVALUATION_COMPLEX_RESULT r ,
+        SELECT r.COMPLEX_TASK_ID                                                                          complexTaskId,
+               r.COMPLEX_DETAIL_ID                                                                        complexDetailId,
+               r.emp_person_id                                                                            empPersonId,
+               r.emp_dept_id                                                                              empDeptId,
+               r.EMP_NAME                                                                              AS empName,
+               decode('${evaluationType}', '0',
+                      FUNC_GET_TABLEVALUE(r.emp_dept_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME'),
+                      '1', FUNC_GET_TABLEVALUE(r.emp_dept_id, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME')) AS deptShow,
+               to_char(r.score, 'fm99990.0099')                                                        AS score,
+               d.weights * t.score / 100                                                               AS fullMarks
+        FROM T_KH_EVALUATION_COMPLEX_RESULT r,
              T_KH_EVALUATION_COMPLEX_TASK t,
              T_KH_EVALUATION_COMPLEX_DETAIL d
         WHERE r.complex_task_id = d.complex_task_id
@@ -824,7 +1058,9 @@
           AND r.emp_person_id = #{empPersonId}
     </select>
     <delete id="deleteTaskByPlanId" parameterType="string">
-        DELETE FROM T_KH_EVALUATION_TASK WHERE PLAN_ID = #{id}
+        DELETE
+        FROM T_KH_EVALUATION_TASK
+        WHERE PLAN_ID = #{id}
     </delete>
 
     <select id="getMonitoerTaskByTeacherId" resultType="com.goisan.evaluation.bean.EvaluationTask"
@@ -853,43 +1089,47 @@
         <if test="creator != null and creator != '' ">
             AND t.task_id in (
             select t.task_id from t_kh_evaluation_task t , T_KH_EVALUATION_EMPSLIST l
-            WHERE  t.emp_group_id = l.group_id AND l.person_id = #{creator}
+            WHERE t.emp_group_id = l.group_id AND l.person_id = #{creator}
             )
         </if>
         ORDER BY t.create_time desc
     </select>
     <select id="getTasksByGroupId" parameterType="String"
             resultType="com.goisan.evaluation.bean.EvaluationTask">
-        SELECT * FROM T_KH_EVALUATION_TASK WHERE GROUP_ID = #{id}
+        SELECT *
+        FROM T_KH_EVALUATION_TASK
+        WHERE GROUP_ID = #{id}
     </select>
     <select id="getEvaluationResultList" parameterType="com.goisan.evaluation.bean.EvaluationTask"
             resultType="com.goisan.evaluation.bean.EvaluationEmp">
-        SELECT t.task_name name,
+        SELECT t.task_name                                                                           name,
                FUNC_GET_TABLEVALUE(t.plan_id,
                                    'T_KH_EVALUATION_PLAN',
                                    'plan_id',
-                                   'plan_name') planName,
-               func_get_deptname(e.dept_id,#{evaluationType}) deptId,
-               e.name personId,
-               e.person_id person,
+                                   'plan_name')                                                      planName,
+               func_get_deptname(e.dept_id, #{evaluationType})                                       deptId,
+               e.name                                                                                personId,
+               e.person_id                                                                           person,
                (SELECT count(*)
                 FROM t_kh_evaluation_emps_members m
                 WHERE m.task_id = t.task_id
                   AND m.emps_id = e.emps_id
-               ) totalNumber,
+               )                                                                                     totalNumber,
                (SELECT count(*)
                 FROM t_kh_evaluation_emps_members m
                 WHERE m.task_id = t.task_id
                   AND m.emps_id = e.emps_id
-                  AND m.evaluation_flag = '1') as "number",
-               to_char( FUNC_GET_EVALUATION_SCORE(t.task_id,e.PERSON_ID , e.DEPT_ID ) ,'fm99990.0099') total
-        FROM T_KH_EVALUATION_EMPSLIST e, T_KH_EVALUATION_TASK t
-        where e.group_id = t.emp_group_id and t.task_id = #{taskId}
-        order by to_char( FUNC_GET_EVALUATION_SCORE(t.task_id,e.PERSON_ID , e.DEPT_ID ) ,'fm99990.0099') desc
+                  AND m.evaluation_flag = '1') as                                                    "number",
+               to_char(FUNC_GET_EVALUATION_SCORE(t.task_id, e.PERSON_ID, e.DEPT_ID), 'fm99990.0099') total
+        FROM T_KH_EVALUATION_EMPSLIST e,
+             T_KH_EVALUATION_TASK t
+        where e.group_id = t.emp_group_id
+          and t.task_id = #{taskId}
+        order by to_char(FUNC_GET_EVALUATION_SCORE(t.task_id, e.PERSON_ID, e.DEPT_ID), 'fm99990.0099') desc
     </select>
     <select id="getEmpGroupList" parameterType="com.goisan.evaluation.bean.Group"
             resultType="com.goisan.evaluation.bean.Group">
-        SELECT  group_id AS groupId,
+        SELECT group_id AS groupId,
         group_name AS groupName,
         evaluation_type AS evaluationType,
         EMP_NUM AS membersNum FROM T_KH_EVALUATION_EMP_GROUP
@@ -904,164 +1144,249 @@
 
     <select id="getEmpGroup" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.Group">
-        SELECT group_id AS groupId,
-               group_name AS groupName,
+        SELECT group_id        AS groupId,
+               group_name      AS groupName,
                evaluation_type AS evaluationType,
-               EMP_NUM AS membersNum
-        FROM T_KH_EVALUATION_EMP_GROUP WHERE group_id = #{id}
+               EMP_NUM         AS membersNum
+        FROM T_KH_EVALUATION_EMP_GROUP
+        WHERE group_id = #{id}
     </select>
 
     <insert id="saveEmpGroup" parameterType="com.goisan.evaluation.bean.Group">
-        INSERT INTO T_KH_EVALUATION_EMP_GROUP (group_id, group_name,evaluation_type, EMP_NUM, creator, create_time, create_dept)
-        VALUES (#{groupId},#{groupName},#{evaluationType},'${membersNum}',#{creator},#{createTime},#{createDept})
+        INSERT INTO T_KH_EVALUATION_EMP_GROUP (group_id, group_name, evaluation_type, EMP_NUM, creator, create_time,
+                                               create_dept)
+        VALUES (#{groupId}, #{groupName}, #{evaluationType}, '${membersNum}', #{creator}, #{createTime}, #{createDept})
     </insert>
 
     <select id="getTasksByEmpGroupId" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.Group">
-        SELECT * FROM T_KH_EVALUATION_TASK WHERE EMP_GROUP_ID = #{id}
+        SELECT *
+        FROM T_KH_EVALUATION_TASK
+        WHERE EMP_GROUP_ID = #{id}
     </select>
 
     <delete id="deleteEmpGroup" parameterType="java.lang.String">
-        DELETE FROM T_KH_EVALUATION_EMP_GROUP WHERE group_id = #{id}
+        DELETE
+        FROM T_KH_EVALUATION_EMP_GROUP
+        WHERE group_id = #{id}
     </delete>
     <delete id="deleteMemberByEmpGroupId" parameterType="java.lang.String">
-        DELETE FROM T_KH_EVALUATION_EMPSLIST WHERE GROUP_ID = #{id}
+        DELETE
+        FROM T_KH_EVALUATION_EMPSLIST
+        WHERE GROUP_ID = #{id}
     </delete>
     <update id="updateEmpGroup" parameterType="com.goisan.evaluation.bean.Group">
-        UPDATE T_KH_EVALUATION_EMP_GROUP SET group_name = #{groupName},changer = #{changer},change_dept = #{changeDept},change_time = #{changeTime}
+        UPDATE T_KH_EVALUATION_EMP_GROUP
+        SET group_name  = #{groupName},
+            changer     = #{changer},
+            change_dept = #{changeDept},
+            change_time = #{changeTime}
         WHERE group_id = #{groupId}
     </update>
     <select id="getEmpsTree" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationGroupEmps">
-        SELECT * FROM T_KH_EVALUATION_EMPSLIST
+        SELECT *
+        FROM T_KH_EVALUATION_EMPSLIST
         WHERE group_id = #{groupId}
     </select>
     <select id="getEmpsTreeByTaskId" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationGroupEmps">
         SELECT e.*
-        FROM t_kh_evaluation_task t , T_KH_EVALUATION_EMPSLIST e
-        WHERE  t.emp_group_id = e.group_id  and t.task_id = #{taskId}
+        FROM t_kh_evaluation_task t,
+             T_KH_EVALUATION_EMPSLIST e
+        WHERE t.emp_group_id = e.group_id
+          and t.task_id = #{taskId}
     </select>
     <insert id="insertGroupEmps" parameterType="com.goisan.evaluation.bean.EvaluationGroupEmps">
         INSERT INTO T_KH_EVALUATION_EMPSLIST
         (GROUP_ID, EMPS_ID, PERSON_ID, DEPT_ID, NAME,
          CREATOR, CREATE_TIME, CREATE_DEPT)
-        VALUES
-        (#{groupId},#{empId},#{personId},#{deptId},#{name},
-         #{creator},#{createTime},#{createDept})
+        VALUES (#{groupId}, #{empId}, #{personId}, #{deptId}, #{name},
+                #{creator}, #{createTime}, #{createDept})
     </insert>
     <update id="updateGroupEmpsNum" parameterType="java.lang.String">
-        UPDATE T_KH_EVALUATION_EMP_GROUP SET EMP_NUM = (SELECT COUNT(*) FROM
-            T_KH_EVALUATION_EMPSLIST WHERE group_id = #{groupId}) WHERE group_id = #{groupId}
+        UPDATE T_KH_EVALUATION_EMP_GROUP
+        SET EMP_NUM = (SELECT COUNT(*)
+                       FROM T_KH_EVALUATION_EMPSLIST
+                       WHERE group_id = #{groupId})
+        WHERE group_id = #{groupId}
     </update>
     <delete id="deleteGroupEmps" parameterType="java.lang.String">
-        DELETE FROM T_KH_EVALUATION_EMPSLIST  WHERE group_id = #{id}
+        DELETE
+        FROM T_KH_EVALUATION_EMPSLIST
+        WHERE group_id = #{id}
     </delete>
 
 
     <insert id="copyMemberGroup" parameterType="java.lang.String">
         INSERT INTO T_KH_EVALUATION_GROUP
-        (group_id,group_name,evaluation_type,members_num,creator,create_time,create_dept)
-        SELECT #{groupId},group_name||'(复制)',evaluation_type,members_num,#{creator},SYSDATE,#{createDept}
+        (group_id, group_name, evaluation_type, members_num, creator, create_time, create_dept)
+        SELECT #{groupId}, group_name || '(复制)', evaluation_type, members_num, #{creator}, SYSDATE, #{createDept}
         FROM T_KH_EVALUATION_GROUP
         WHERE group_id = #{id}
     </insert>
     <insert id="copyMembers" parameterType="java.lang.String">
         INSERT INTO T_KH_EVALUATION_MEMBERS
-        (MEMBER_ID, GROUP_ID, PERSON_ID, DEPT_ID, CREATOR, CREATE_TIME,CREATE_DEPT,NAME,MEMBER_TYPE,CLASS_ID)
-        SELECT FUNC_GET_UUID,#{groupId},PERSON_ID, DEPT_ID, #{creator},SYSDATE,#{createDept},NAME,MEMBER_TYPE,CLASS_ID
+        (MEMBER_ID, GROUP_ID, PERSON_ID, DEPT_ID, CREATOR, CREATE_TIME, CREATE_DEPT, NAME, MEMBER_TYPE, CLASS_ID)
+        SELECT FUNC_GET_UUID,
+               #{groupId},
+               PERSON_ID,
+               DEPT_ID,
+               #{creator},
+               SYSDATE,
+               #{createDept},
+               NAME,
+               MEMBER_TYPE,
+               CLASS_ID
         FROM T_KH_EVALUATION_MEMBERS
         WHERE group_id = #{id}
     </insert>
     <insert id="copyPlan" parameterType="java.lang.String">
         INSERT INTO t_kh_evaluation_plan
-        (plan_id, plan_name, score, remark,evaluation_type, creator, create_time, create_dept)
-        SELECT #{planId},plan_name||'(复制)',score,remark,evaluation_type,#{creator},SYSDATE,#{createDept}
+        (plan_id, plan_name, score, remark, evaluation_type, creator, create_time, create_dept)
+        SELECT #{planId},
+               plan_name || '(复制)',
+               score,
+               remark,
+               evaluation_type,
+               #{creator},
+               SYSDATE,
+               #{createDept}
         FROM t_kh_evaluation_plan
         WHERE plan_id = #{id}
     </insert>
     <insert id="copyIndexById" parameterType="java.lang.String">
         INSERT INTO T_KH_EVALUATION_INDEX
         (index_id, index_name, plan_id, parent_index_id, score,
-         weights, creator, create_time, create_dept,index_level,colspan)
-        SELECT #{indexId},index_name,#{planId},#{parentIndexId},score,
-               weights, #{creator},SYSDATE,#{createDept},index_level,colspan
+         weights, creator, create_time, create_dept, index_level, colspan)
+        SELECT #{indexId},
+               index_name,
+               #{planId},
+               #{parentIndexId},
+               score,
+               weights,
+               #{creator},
+               SYSDATE,
+               #{createDept},
+               index_level,
+               colspan
         FROM T_KH_EVALUATION_INDEX
         WHERE index_id = #{IndexIdOld}
     </insert>
     <insert id="copyIndexList" parameterType="java.lang.String">
         INSERT INTO T_KH_EVALUATION_INDEX
         (index_id, index_name, plan_id, parent_index_id, score,
-         weights, creator, create_time, create_dept,index_level,colspan)
-        SELECT FUNC_GET_UUID,index_name,#{planId},#{parentIndexId},score,
-               weights, #{creator},SYSDATE,#{createDept},index_level,colspan
+         weights, creator, create_time, create_dept, index_level, colspan)
+        SELECT FUNC_GET_UUID,
+               index_name,
+               #{planId},
+               #{parentIndexId},
+               score,
+               weights,
+               #{creator},
+               SYSDATE,
+               #{createDept},
+               index_level,
+               colspan
         FROM T_KH_EVALUATION_INDEX
-        WHERE parent_index_id = #{parentIndexIdOld} ORDER BY CREATOR
+        WHERE parent_index_id = #{parentIndexIdOld}
+        ORDER BY CREATOR
     </insert>
 
     <insert id="copyEmpGroup" parameterType="java.lang.String">
         INSERT INTO T_KH_EVALUATION_EMP_GROUP
-        (group_id,group_name,evaluation_type,emp_num,creator,create_time,create_dept)
-        SELECT #{groupId},group_name||'(复制)',evaluation_type,emp_num,#{creator},SYSDATE,#{createDept}
+        (group_id, group_name, evaluation_type, emp_num, creator, create_time, create_dept)
+        SELECT #{groupId}, group_name || '(复制)', evaluation_type, emp_num, #{creator}, SYSDATE, #{createDept}
         FROM T_KH_EVALUATION_EMP_GROUP
         WHERE group_id = #{id}
     </insert>
     <insert id="copyEmps" parameterType="java.lang.String">
         INSERT INTO T_KH_EVALUATION_EMPSLIST
-        (GROUP_ID, EMPS_ID, PERSON_ID, DEPT_ID, NAME,CREATOR, CREATE_TIME, CREATE_DEPT)
-        SELECT #{groupId},FUNC_GET_UUID,PERSON_ID, DEPT_ID,NAME, #{creator},SYSDATE,#{createDept}
+        (GROUP_ID, EMPS_ID, PERSON_ID, DEPT_ID, NAME, CREATOR, CREATE_TIME, CREATE_DEPT)
+        SELECT #{groupId},
+               FUNC_GET_UUID,
+               PERSON_ID,
+               DEPT_ID,
+               NAME,
+               #{creator},
+               SYSDATE,
+               #{createDept}
         FROM T_KH_EVALUATION_EMPSLIST
         WHERE group_id = #{id}
     </insert>
     <insert id="copyTask" parameterType="java.lang.String">
         INSERT INTO T_KH_EVALUATION_TASK
-        (task_id, task_name, plan_id, term, group_id, evaluation_type,emp_group_id,
-         task_type,push_flag, start_time, end_time, remark, creator, create_time,CREATE_DEPT)
-        SELECT #{taskId},task_name||'(复制)',plan_id, term, group_id, evaluation_type,emp_group_id,
-               task_type, '0', start_time, end_time, remark, #{creator},SYSDATE,#{createDept}
+        (task_id, task_name, plan_id, term, group_id, evaluation_type, emp_group_id,
+         task_type, push_flag, start_time, end_time, remark, creator, create_time, CREATE_DEPT)
+        SELECT #{taskId},
+               task_name || '(复制)',
+               plan_id,
+               term,
+               group_id,
+               evaluation_type,
+               emp_group_id,
+               task_type,
+               '0',
+               start_time,
+               end_time,
+               remark,
+               #{creator},
+               SYSDATE,
+               #{createDept}
         FROM T_KH_EVALUATION_TASK
         WHERE task_id = #{id}
     </insert>
     <select id="getMembersByTaskIDEmp" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT
-            dept_id  id,dept_name name,parent_dept_id pid,'0' checked
+        SELECT dept_id        id,
+               dept_name      name,
+               parent_dept_id pid,
+               '0'            checked
         FROM t_sys_dept
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_MEMBERS t
-        WHERE  t.MEMBER_TYPE = '0' AND valid_flag = 1 AND t.group_id =
-                                                          (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id =  #{taskId} )
+        WHERE t.MEMBER_TYPE = '0'
+          AND valid_flag = 1
+          AND t.group_id =
+              (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <select id="getMembersByTaskIDStu" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT
-            dept_id  id,dept_name name,parent_dept_id pid,'0' checked
+        SELECT dept_id        id,
+               dept_name      name,
+               parent_dept_id pid,
+               '0'            checked
         FROM t_sys_dept
         UNION
-        SELECT
-            d.major_code id,
-            d.major_name name,
-            d.departments_id pId,'0' checked
+        SELECT d.major_code     id,
+               d.major_name     name,
+               d.departments_id pId,
+               '0'              checked
         FROM T_XG_MAJOR d
         WHERE d.valid_flag = 1
         UNION
-        SELECT
-            class_id id,
-            class_name name,
-            major_code pid,'0' checked
+        SELECT class_id   id,
+               class_name name,
+               major_code pid,
+               '0'        checked
         FROM t_xg_class
         WHERE valid_flag = 1
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_MEMBERS t
-        WHERE  t.MEMBER_TYPE = '1' AND valid_flag = 1 AND t.group_id =
-                                                          (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id =  #{taskId} )
+        WHERE t.MEMBER_TYPE = '1'
+          AND valid_flag = 1
+          AND t.group_id =
+              (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <update id="saveProportion" parameterType="com.goisan.evaluation.bean.EvaluationTask">
         UPDATE T_KH_EVALUATION_TASK
-        SET LIMIT_MIN = #{limitMin},LIMIT_HIG = #{limitHig},
-            changer = #{changer}, change_time = #{changeTime}, change_dept = #{changeDept}
+        SET LIMIT_MIN   = #{limitMin},
+            LIMIT_HIG   = #{limitHig},
+            changer     = #{changer},
+            change_time = #{changeTime},
+            change_dept = #{changeDept}
         WHERE task_id = #{taskId}
     </update>
     <update id="setStartFlagByTaskId" parameterType="java.lang.String">
@@ -1094,7 +1419,7 @@
         FUNC_GET_DICVALUE(t.start_flag,'JSPJQDZT') startFlagShow ,start_flag startFlag,
         p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
-        WHERE t.plan_id = p.plan_id AND  t.task_type = '3' AND t.group_id = g.group_id AND t.valid_flag = '1'
+        WHERE t.plan_id = p.plan_id AND t.task_type = '3' AND t.group_id = g.group_id AND t.valid_flag = '1'
         AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
         <if test="taskName != null and taskName != ''">
             AND t.task_name LIKE #{taskName}
@@ -1104,14 +1429,18 @@
     </select>
     <select id="getMembersByTaskIDLeader" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT
-            dept_id  id,dept_name name,parent_dept_id pid,'0' checked
+        SELECT dept_id        id,
+               dept_name      name,
+               parent_dept_id pid,
+               '0'            checked
         FROM t_sys_dept
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_MEMBERS t
-        WHERE  t.MEMBER_TYPE = '3' AND valid_flag = 1 AND t.group_id =
-                                                          (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id =  #{taskId} )
+        WHERE t.MEMBER_TYPE = '3'
+          AND valid_flag = 1
+          AND t.group_id =
+              (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <select id="getLeaderListTask" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
@@ -1130,7 +1459,8 @@
         FROM
         T_KH_EVALUATION_TASK t2,
         T_KH_EVALUATION_EMPS_MEMBERS t3
-        WHERE t2.task_id = t3.task_id AND (t2.start_flag = '1' OR t2.start_flag = '2' ) AND t2.valid_flag='1'  AND t2.task_type = '3'  AND
+        WHERE t2.task_id = t3.task_id AND (t2.start_flag = '1' OR t2.start_flag = '2' ) AND t2.valid_flag='1' AND
+        t2.task_type = '3' AND
         t3.EVALUATION_FLAG = #{evaluationFlag}
         <if test="evaluationType != null and evaluationType != '' ">
             AND t2.EVALUATION_TYPE = #{evaluationType}
@@ -1170,7 +1500,7 @@
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
         WHERE t.plan_id = p.plan_id
         AND t.group_id = g.group_id
-        AND (t.start_flag = '1'  OR  t.START_TIME &lt; sysdate)
+        AND (t.start_flag = '1' OR t.START_TIME &lt; sysdate)
         AND t.valid_flag='1'
         AND t.task_type = '3'
         AND t.evaluation_type = #{evaluationType}
@@ -1198,7 +1528,7 @@
         T_KH_EVALUATION_EMPSLIST s
         WHERE
         t.plan_id = p.plan_id AND t.group_id = g.group_id AND t.task_type = '3'
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
         AND s.PERSON_ID = #{creator} AND s.DEPT_ID = #{createDept}
         AND t.EVALUATION_TYPE = #{evaluationType}
         <if test="taskName != null and taskName != '' ">
@@ -1216,10 +1546,10 @@
               from (SELECT e.name AS newContent
 
                     FROM (select l.*, t.task_id
-                          from t_kh_evaluation_task     t,
+                          from t_kh_evaluation_task t,
                                T_KH_EVALUATION_EMPSLIST l
                           WHERE t.emp_group_id = l.group_id) e
-                    WHERE e.task_id = #{id} ) y)
+                    WHERE e.task_id = #{id}) y)
 
     </select>
     <select id="getLeaderTeacherSorceEcharts" resultType="com.goisan.system.bean.EchartsMenu"
@@ -1230,16 +1560,16 @@
                from (SELECT decode(to_char(FUNC_GET_EVALUATION_SCORE(e.task_id,
                                                                      e.PERSON_ID,
                                                                      e.DEPT_ID),
-                                           'fm99990.0099'),'','0',to_char(FUNC_GET_EVALUATION_SCORE(e.task_id,
-                                                                                                    e.PERSON_ID,
-                                                                                                    e.DEPT_ID),
-                                                                          'fm99990.0099')) AS newContent1
+                                           'fm99990.0099'), '', '0', to_char(FUNC_GET_EVALUATION_SCORE(e.task_id,
+                                                                                                       e.PERSON_ID,
+                                                                                                       e.DEPT_ID),
+                                                                             'fm99990.0099')) AS newContent1
 
                      FROM (select l.*, t.task_id
-                           from t_kh_evaluation_task     t,
+                           from t_kh_evaluation_task t,
                                 T_KH_EVALUATION_EMPSLIST l
                            WHERE t.emp_group_id = l.group_id) e
-                     WHERE e.task_id = #{id}))z)
+                     WHERE e.task_id = #{id})) z)
 
     </select>
     <!--教师评教-->
@@ -1250,7 +1580,7 @@
         FUNC_GET_DICVALUE(t.start_flag,'JSPJQDZT') startFlagShow ,start_flag startFlag,
         p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
-        WHERE t.plan_id = p.plan_id AND  t.task_type = '0' AND t.group_id = g.group_id AND t.valid_flag = '1'
+        WHERE t.plan_id = p.plan_id AND t.task_type = '0' AND t.group_id = g.group_id AND t.valid_flag = '1'
         AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
         <if test="taskName != null and taskName != ''">
             AND t.task_name LIKE #{taskName}
@@ -1260,14 +1590,18 @@
     </select>
     <select id="getMembersByTaskIDTeacher" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT
-            dept_id  id,dept_name name,parent_dept_id pid,'0' checked
+        SELECT dept_id        id,
+               dept_name      name,
+               parent_dept_id pid,
+               '0'            checked
         FROM t_sys_dept
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_MEMBERS t
-        WHERE  t.MEMBER_TYPE = '0' AND valid_flag = 1 AND t.group_id =
-                                                          (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id =  #{taskId} )
+        WHERE t.MEMBER_TYPE = '0'
+          AND valid_flag = 1
+          AND t.group_id =
+              (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <select id="getTeacherListTask" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
@@ -1286,7 +1620,7 @@
         FROM
         T_KH_EVALUATION_TASK t2,
         T_KH_EVALUATION_EMPS_MEMBERS t3
-        WHERE t2.task_id = t3.task_id AND t2.start_flag = '1' AND t2.valid_flag='1'  AND t2.task_type = '0'  AND
+        WHERE t2.task_id = t3.task_id AND t2.start_flag = '1' AND t2.valid_flag='1' AND t2.task_type = '0' AND
         t3.EVALUATION_FLAG = #{evaluationFlag}
         <if test="evaluationType != null and evaluationType != '' ">
             AND t2.EVALUATION_TYPE = #{evaluationType}
@@ -1325,7 +1659,7 @@
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
         WHERE t.plan_id = p.plan_id
         AND t.group_id = g.group_id
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate)
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate)
         AND t.valid_flag='1'
         AND t.task_type = '0'
         AND t.evaluation_type = #{evaluationType}
@@ -1353,7 +1687,7 @@
         T_KH_EVALUATION_EMPSLIST s
         WHERE
         t.plan_id = p.plan_id AND t.group_id = g.group_id AND t.task_type = '0'
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
         AND s.PERSON_ID = #{creator} AND s.DEPT_ID = #{createDept}
         AND t.EVALUATION_TYPE = #{evaluationType}
         <if test="taskName != null and taskName != '' ">
@@ -1372,7 +1706,7 @@
         FUNC_GET_DICVALUE(t.start_flag,'JSPJQDZT') startFlagShow ,start_flag startFlag,
         p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
-        WHERE t.plan_id = p.plan_id AND  t.task_type = '1' AND t.group_id = g.group_id AND t.valid_flag = '1'
+        WHERE t.plan_id = p.plan_id AND t.task_type = '1' AND t.group_id = g.group_id AND t.valid_flag = '1'
         AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
         <if test="taskName != null and taskName != ''">
             AND t.task_name LIKE #{taskName}
@@ -1382,14 +1716,18 @@
     </select>
     <select id="getMembersByTaskIDStudent" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT
-            dept_id  id,dept_name name,parent_dept_id pid,'0' checked
+        SELECT dept_id        id,
+               dept_name      name,
+               parent_dept_id pid,
+               '0'            checked
         FROM t_sys_dept
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_MEMBERS t
-        WHERE  t.MEMBER_TYPE = '1' AND valid_flag = 1 AND t.group_id =
-                                                          (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id =  #{taskId} )
+        WHERE t.MEMBER_TYPE = '1'
+          AND valid_flag = 1
+          AND t.group_id =
+              (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <select id="getStudentListTask" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
@@ -1408,7 +1746,7 @@
         FROM
         T_KH_EVALUATION_TASK t2,
         T_KH_EVALUATION_EMPS_MEMBERS t3
-        WHERE t2.task_id = t3.task_id AND t2.start_flag = '1' AND t2.valid_flag='1'  AND t2.task_type = '1'  AND
+        WHERE t2.task_id = t3.task_id AND t2.start_flag = '1' AND t2.valid_flag='1' AND t2.task_type = '1' AND
         t3.EVALUATION_FLAG = #{evaluationFlag}
         <if test="evaluationType != null and evaluationType != '' ">
             AND t2.EVALUATION_TYPE = #{evaluationType}
@@ -1447,7 +1785,7 @@
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
         WHERE t.plan_id = p.plan_id
         AND t.group_id = g.group_id
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate)
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate)
         AND t.valid_flag='1'
         AND t.task_type = '1'
         AND t.evaluation_type = #{evaluationType}
@@ -1475,7 +1813,7 @@
         T_KH_EVALUATION_EMPSLIST s
         WHERE
         t.plan_id = p.plan_id AND t.group_id = g.group_id AND t.task_type = '1'
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
         AND s.PERSON_ID = #{creator} AND s.DEPT_ID = #{createDept}
         AND t.EVALUATION_TYPE = #{evaluationType}
         <if test="taskName != null and taskName != '' ">
@@ -1494,7 +1832,7 @@
         FUNC_GET_DICVALUE(t.start_flag,'JSPJQDZT') startFlagShow ,start_flag startFlag,
         p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
-        WHERE t.plan_id = p.plan_id AND  t.task_type = '4' AND t.group_id = g.group_id AND t.valid_flag = '1'
+        WHERE t.plan_id = p.plan_id AND t.task_type = '4' AND t.group_id = g.group_id AND t.valid_flag = '1'
         AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
         <if test="taskName != null and taskName != ''">
             AND t.task_name LIKE #{taskName}
@@ -1504,14 +1842,18 @@
     </select>
     <select id="getMembersByTaskIDPeer" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT
-            dept_id  id,dept_name name,parent_dept_id pid,'0' checked
+        SELECT dept_id        id,
+               dept_name      name,
+               parent_dept_id pid,
+               '0'            checked
         FROM t_sys_dept
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_MEMBERS t
-        WHERE  t.MEMBER_TYPE = '4' AND valid_flag = 1 AND t.group_id =
-                                                          (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id =  #{taskId} )
+        WHERE t.MEMBER_TYPE = '4'
+          AND valid_flag = 1
+          AND t.group_id =
+              (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <select id="getPeerListTask" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
@@ -1530,7 +1872,7 @@
         FROM
         T_KH_EVALUATION_TASK t2,
         T_KH_EVALUATION_EMPS_MEMBERS t3
-        WHERE t2.task_id = t3.task_id AND t2.start_flag = '1' AND t2.valid_flag='1'  AND t2.task_type = '4'  AND
+        WHERE t2.task_id = t3.task_id AND t2.start_flag = '1' AND t2.valid_flag='1' AND t2.task_type = '4' AND
         t3.EVALUATION_FLAG = #{evaluationFlag}
         <if test="evaluationType != null and evaluationType != '' ">
             AND t2.EVALUATION_TYPE = #{evaluationType}
@@ -1569,7 +1911,7 @@
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
         WHERE t.plan_id = p.plan_id
         AND t.group_id = g.group_id
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate)
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate)
         AND t.valid_flag='1'
         AND t.task_type = '4'
         AND t.evaluation_type = #{evaluationType}
@@ -1597,7 +1939,7 @@
         T_KH_EVALUATION_EMPSLIST s
         WHERE
         t.plan_id = p.plan_id AND t.group_id = g.group_id AND t.task_type = '4'
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
         AND s.PERSON_ID = #{creator} AND s.DEPT_ID = #{createDept}
         AND t.EVALUATION_TYPE = #{evaluationType}
         <if test="taskName != null and taskName != '' ">
@@ -1616,7 +1958,7 @@
         FUNC_GET_DICVALUE(t.start_flag,'JSPJQDZT') startFlagShow ,start_flag startFlag,
         p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
-        WHERE t.plan_id = p.plan_id AND  t.task_type = '2' AND t.group_id = g.group_id AND t.valid_flag = '1'
+        WHERE t.plan_id = p.plan_id AND t.task_type = '2' AND t.group_id = g.group_id AND t.valid_flag = '1'
         AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
         <if test="taskName != null and taskName != ''">
             AND t.task_name LIKE #{taskName}
@@ -1626,14 +1968,18 @@
     </select>
     <select id="getMembersByTaskIDParent" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Tree">
-        SELECT
-            dept_id  id,dept_name name,parent_dept_id pid,'0' checked
+        SELECT dept_id        id,
+               dept_name      name,
+               parent_dept_id pid,
+               '0'            checked
         FROM t_sys_dept
         UNION
-        SELECT t.person_id id,   t.name,   t.dept_id pid,  '1' checked
+        SELECT t.person_id id, t.name, t.dept_id pid, '1' checked
         FROM T_KH_EVALUATION_MEMBERS t
-        WHERE  t.MEMBER_TYPE = '2' AND valid_flag = 1 AND t.group_id =
-                                                          (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id =  #{taskId} )
+        WHERE t.MEMBER_TYPE = '2'
+          AND valid_flag = 1
+          AND t.group_id =
+              (SELECT k.group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
     </select>
     <select id="getParentListTask" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
@@ -1652,7 +1998,7 @@
         FROM
         T_KH_EVALUATION_TASK t2,
         T_KH_EVALUATION_EMPS_MEMBERS t3
-        WHERE t2.task_id = t3.task_id AND t2.start_flag = '1' AND t2.valid_flag='1'  AND t2.task_type = '2'  AND
+        WHERE t2.task_id = t3.task_id AND t2.start_flag = '1' AND t2.valid_flag='1' AND t2.task_type = '2' AND
         t3.EVALUATION_FLAG = #{evaluationFlag}
         <if test="evaluationType != null and evaluationType != '' ">
             AND t2.EVALUATION_TYPE = #{evaluationType}
@@ -1691,7 +2037,7 @@
         FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
         WHERE t.plan_id = p.plan_id
         AND t.group_id = g.group_id
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate)
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate)
         AND t.valid_flag='1'
         AND t.task_type = '2'
         AND t.evaluation_type = #{evaluationType}
@@ -1719,7 +2065,7 @@
         T_KH_EVALUATION_EMPSLIST s
         WHERE
         t.plan_id = p.plan_id AND t.group_id = g.group_id AND t.task_type = '2'
-        AND (t.start_flag = '2' OR  t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
+        AND (t.start_flag = '2' OR t.START_TIME &lt; sysdate )AND t.valid_flag='1' AND s.group_id = t.emp_group_id
         AND s.PERSON_ID = #{creator} AND s.DEPT_ID = #{createDept}
         AND t.EVALUATION_TYPE = #{evaluationType}
         <if test="taskName != null and taskName != '' ">
@@ -1733,7 +2079,8 @@
     <select id="getEvaluationSummaryTask" resultType="com.goisan.evaluation.bean.EvaluationTask"
             parameterType="com.goisan.evaluation.bean.EvaluationTask">
         SELECT
-        t.task_id,t.task_name,t.emp_group_id,g.group_id,FUNC_GET_DICVALUE(t.term,'XQ') term,t.start_time,t.end_time,t.remark,
+        t.task_id,t.task_name,t.emp_group_id,g.group_id,FUNC_GET_DICVALUE(t.term,'XQ')
+        term,t.start_time,t.end_time,t.remark,
         p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type,
         round((SELECT count(*)
         FROM t_kh_evaluation_emps_members m2
@@ -1767,7 +2114,7 @@
         WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id AND m.evaluation_flag = '1') /
         (SELECT decode(count(*),0,1,count(*))
         FROM t_kh_evaluation_emps_members m
-        WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id) * 100) || '%'                schedule,
+        WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id) * 100) || '%' schedule,
         to_char( FUNC_GET_EVALUATION_SCORE(e.task_id,e.PERSON_ID , e.DEPT_ID ) ,'fm99990.0099') total,
         (SELECT count(*)
         FROM t_kh_evaluation_emps_members m
@@ -1775,7 +2122,7 @@
         (SELECT count(*)
         FROM t_kh_evaluation_emps_members m
         WHERE m.task_id = e.task_id AND m.emps_id = e.emps_id AND m.evaluation_flag &lt;&gt; '1') unEvaluation
-        FROM  (select l.* ,t.task_id,s.staff_id
+        FROM (select l.* ,t.task_id,s.staff_id
         from t_kh_evaluation_task t, T_KH_EVALUATION_EMPSLIST l,T_RS_EMPLOYEE s
         WHERE t.emp_group_id = l.group_id and l.person_id=s.person_id) e
         WHERE e.task_id = #{taskId}
@@ -1788,16 +2135,21 @@
         order by to_char( FUNC_GET_EVALUATION_SCORE(e.task_id,e.PERSON_ID , e.DEPT_ID ) ,'fm99990.0099') desc
     </select>
     <insert id="saveEvaluationPushMember" parameterType="com.goisan.evaluation.bean.EvaluationPush">
-        INSERT INTO T_KH_EVALUATION_PUSH (id,TASK_ID, GROUP_ID, PERSON_ID, DEPT_ID, CREATOR, CREATE_TIME,CREATE_DEPT,NAME)
-        VALUES
-        (FUNC_GET_UUID,#{taskId},#{groupId},#{personId},#{deptId},#{creator},#{createTime},#{createDept},#{name})
+        INSERT INTO T_KH_EVALUATION_PUSH (id, TASK_ID, GROUP_ID, PERSON_ID, DEPT_ID, CREATOR, CREATE_TIME, CREATE_DEPT,
+                                          NAME)
+        VALUES (FUNC_GET_UUID, #{taskId}, #{groupId}, #{personId}, #{deptId}, #{creator}, #{createTime}, #{createDept},
+                #{name})
     </insert>
     <delete id="deleteEvaluationPushMember" parameterType="java.lang.String">
-        DELETE FROM t_kh_evaluation_push WHERE id = #{id}
+        DELETE
+        FROM t_kh_evaluation_push
+        WHERE id = #{id}
     </delete>
     <select id="getEvaluationPushMembersByGroupId" parameterType="java.lang.String"
             resultType="com.goisan.evaluation.bean.EvaluationPush">
-        SELECT * FROM t_kh_evaluation_push WHERE task_id = #{id}
+        SELECT *
+        FROM t_kh_evaluation_push
+        WHERE task_id = #{id}
     </select>
     <select id="getEvaluationSummaryPushTask" resultType="com.goisan.evaluation.bean.EvaluationTask"
             parameterType="com.goisan.evaluation.bean.EvaluationTask">
@@ -1815,7 +2167,7 @@
         AND t.group_id = g.group_id
         AND t.task_id = h.task_id
         AND t.push_flag = '1'
-        AND (t.start_flag = '2' OR  t.END_TIME &lt; sysdate)
+        AND (t.start_flag = '2' OR t.END_TIME &lt; sysdate)
         AND t.valid_flag='1'
         AND t.evaluation_type = #{evaluationType}
         <if test="taskName != null and taskName != '' ">
@@ -1825,53 +2177,61 @@
             AND p.plan_name LIKE #{planName}
         </if>
         <if test="personId != null and personId != '' ">
-            AND h.person_id =  #{personId}
+            AND h.person_id = #{personId}
         </if>
     </select>
-    <update id="updateEvaluationTaskPushFlag" parameterType="java.lang.String" >
-        UPDATE t_kh_evaluation_task SET push_flag = '1' WHERE TASK_ID = #{id}
+    <update id="updateEvaluationTaskPushFlag" parameterType="java.lang.String">
+        UPDATE t_kh_evaluation_task
+        SET push_flag = '1'
+        WHERE TASK_ID = #{id}
     </update>
-    <select id="getEvaluationTaskByTaskIds" parameterType="java.lang.String" resultType="com.goisan.evaluation.bean.EvaluationTask">
-        SELECT
-            Distinct
-            FUNC_GET_DICVALUE(t.term,'XQ') term,
-            t.task_type,
-            t.task_name name,
-            to_char(t.start_time,'yyyy-mm-dd')||','||to_char(t.end_time,'yyyy-mm-dd') end,
-            (SELECT Count(*)
-             FROM T_KH_EVALUATION_EMPSLIST t
-             WHERE t.group_id in (SELECT k.emp_group_id
-                                  FROM T_KH_EVALUATION_TASK k
-                                  WHERE k.task_id  in (${taskIds}) )) totalNumberEmp,
-            (SELECT Count(*)
-             FROM T_KH_EVALUATION_EMPSLIST t
-             WHERE t.group_id in (SELECT k.emp_group_id
-                                  FROM T_KH_EVALUATION_TASK k,t_kh_evaluation_emps_members m
-                                  WHERE k.task_id  in (${taskIds})
-                                    AND  m.task_id = t.task_id
-                                    AND m.emps_id = e.emps_id
-                                    AND m.evaluation_flag = '1')
-               and t.emps_id in (SELECT m.emps_id
-                                 FROM T_KH_EVALUATION_TASK k,t_kh_evaluation_emps_members m
-                                 WHERE k.task_id  in (${taskIds})
-                                   AND  m.task_id = t.task_id AND m.evaluation_flag = '1' )
-            ) numberEmp,
-            (SELECT count(*)
-             FROM t_kh_evaluation_emps_members m
-             WHERE m.task_id = t.task_id
-               AND m.emps_id = e.emps_id) totalNumber,
-            (SELECT count(*)
-             FROM t_kh_evaluation_emps_members m
-             WHERE m.task_id = t.task_id
-               AND m.emps_id = e.emps_id
-               AND m.evaluation_flag = '1') as "number",
-            t.term
-        FROM T_KH_EVALUATION_EMPSLIST e, T_KH_EVALUATION_TASK t
+    <select id="getEvaluationTaskByTaskIds" parameterType="java.lang.String"
+            resultType="com.goisan.evaluation.bean.EvaluationTask">
+        SELECT Distinct FUNC_GET_DICVALUE(t.term, 'XQ')                                                 term,
+                        t.task_type,
+                        t.task_name                                                                     name,
+                        to_char(t.start_time, 'yyyy-mm-dd') || ',' || to_char(t.end_time, 'yyyy-mm-dd') end,
+                        (SELECT Count(*)
+                         FROM T_KH_EVALUATION_EMPSLIST t
+                         WHERE t.group_id in (SELECT k.emp_group_id
+                                              FROM T_KH_EVALUATION_TASK k
+                                              WHERE k.task_id in (${taskIds})))                         totalNumberEmp,
+                        (SELECT Count(*)
+                         FROM T_KH_EVALUATION_EMPSLIST t
+                         WHERE t.group_id in (SELECT k.emp_group_id
+                                              FROM T_KH_EVALUATION_TASK k,
+                                                   t_kh_evaluation_emps_members m
+                                              WHERE k.task_id in (${taskIds})
+                                                AND m.task_id = t.task_id
+                                                AND m.emps_id = e.emps_id
+                                                AND m.evaluation_flag = '1')
+                           and t.emps_id in (SELECT m.emps_id
+                                             FROM T_KH_EVALUATION_TASK k,
+                                                  t_kh_evaluation_emps_members m
+                                             WHERE k.task_id in (${taskIds})
+                                               AND m.task_id = t.task_id
+                                               AND m.evaluation_flag = '1')
+                        )                                                                               numberEmp,
+                        (SELECT count(*)
+                         FROM t_kh_evaluation_emps_members m
+                         WHERE m.task_id = t.task_id
+                           AND m.emps_id = e.emps_id)                                                   totalNumber,
+                        (SELECT count(*)
+                         FROM t_kh_evaluation_emps_members m
+                         WHERE m.task_id = t.task_id
+                           AND m.emps_id = e.emps_id
+                           AND m.evaluation_flag = '1') as                                              "number",
+                        t.term
+        FROM T_KH_EVALUATION_EMPSLIST e,
+             T_KH_EVALUATION_TASK t
         where e.group_id = t.emp_group_id
-          and t.task_id in (${taskIds}) order by t.term
+          and t.task_id in (${taskIds})
+        order by t.term
     </select>
-    <select id="getTeacherEvaluationEcharts" parameterType="com.goisan.system.bean.EchartsMenu"  resultType="com.goisan.system.bean.EchartsMenu">
-        select decode((b||','||a||','||ROUND(b/a*100,2)),'','0',(b||','||a||','||ROUND(b/a*100,2))) teacherEvaluation from (
+    <select id="getTeacherEvaluationEcharts" parameterType="com.goisan.system.bean.EchartsMenu"
+            resultType="com.goisan.system.bean.EchartsMenu">
+        select decode((b||','||a||','||ROUND(b/a*100,2)),'','0',(b||','||a||','||ROUND(b/a*100,2))) teacherEvaluation
+        from (
         SELECT
         Distinct
         (SELECT count(*)
@@ -1890,10 +2250,12 @@
         <if test="term != null and term != '' ">
             AND t.term = #{term}
         </if>
-        and t.evaluation_type = 0  order by t.create_time ) where  rownum = 1
+        and t.evaluation_type = 0 order by t.create_time ) where rownum = 1
     </select>
-    <select id="getStudentEvaluationEcharts" parameterType="com.goisan.system.bean.EchartsMenu" resultType="com.goisan.system.bean.EchartsMenu">
-        select decode((b||','||a||','||ROUND(b/a*100,2)),'','0',(b||','||a||','||ROUND(b/a*100,2))) studentEvaluation from (
+    <select id="getStudentEvaluationEcharts" parameterType="com.goisan.system.bean.EchartsMenu"
+            resultType="com.goisan.system.bean.EchartsMenu">
+        select decode((b||','||a||','||ROUND(b/a*100,2)),'','0',(b||','||a||','||ROUND(b/a*100,2))) studentEvaluation
+        from (
         SELECT
         Distinct
         (SELECT count(*)
@@ -1912,10 +2274,12 @@
         <if test="term != null and term != '' ">
             AND t.term = #{term}
         </if>
-        and t.evaluation_type = 1 order by t.create_time ) where  rownum = 1
+        and t.evaluation_type = 1 order by t.create_time ) where rownum = 1
     </select>
-    <select id="getLeaderEvaluationEcharts" parameterType="com.goisan.system.bean.EchartsMenu"  resultType="com.goisan.system.bean.EchartsMenu">
-        select decode((b||','||a||','||ROUND(b/a*100,2)),'','0',(b||','||a||','||ROUND(b/a*100,2))) leaderEvaluation from (
+    <select id="getLeaderEvaluationEcharts" parameterType="com.goisan.system.bean.EchartsMenu"
+            resultType="com.goisan.system.bean.EchartsMenu">
+        select decode((b||','||a||','||ROUND(b/a*100,2)),'','0',(b||','||a||','||ROUND(b/a*100,2))) leaderEvaluation
+        from (
         SELECT
         Distinct
         (SELECT count(*)
@@ -1934,10 +2298,12 @@
         <if test="term != null and term != '' ">
             AND t.term = #{term}
         </if>
-        and t.evaluation_type = 3 order by t.create_time ) where  rownum = 1
+        and t.evaluation_type = 3 order by t.create_time ) where rownum = 1
     </select>
-    <select id="getPeerEvaluationEcharts" parameterType="com.goisan.system.bean.EchartsMenu"  resultType="com.goisan.system.bean.EchartsMenu">
-        select decode((b||','||a||','||ROUND(b/a*100,2)),'','0',(b||','||a||','||ROUND(b/a*100,2))) peerEvaluation from (
+    <select id="getPeerEvaluationEcharts" parameterType="com.goisan.system.bean.EchartsMenu"
+            resultType="com.goisan.system.bean.EchartsMenu">
+        select decode((b||','||a||','||ROUND(b/a*100,2)),'','0',(b||','||a||','||ROUND(b/a*100,2))) peerEvaluation from
+        (
         SELECT
         Distinct
         (SELECT count(*)
@@ -1956,25 +2322,108 @@
         <if test="term != null and term != '' ">
             AND t.term = #{term}
         </if>
-        and t.evaluation_type = 4 order by t.create_time ) where  rownum = 1
+        and t.evaluation_type = 4 order by t.create_time ) where rownum = 1
     </select>
     <!--当前登陆人是否评教-->
     <select id="getUserTask" resultType="com.goisan.evaluation.bean.EvaluationTask"
             parameterType="java.lang.String">
-        SELECT
-            *
-        FROM t_kh_evaluation_emps_members where
-            MEMBER_PERSON_ID = #{loginId}
-                                            and EVALUATION_FLAG != '1'
+        SELECT *
+        FROM t_kh_evaluation_emps_members
+        where MEMBER_PERSON_ID = #{loginId}
+          and EVALUATION_FLAG != '1'
         ORDER BY t.create_time desc
     </select>
     <select id="getTaskResultList" resultType="com.goisan.evaluation.bean.EvaluationTask">
-        SELECT t.task_id,t.task_name,FUNC_GET_DICVALUE(t.term,'XQ')
-                                                                                  term,t.start_time,t.end_time,t.remark,
-               FUNC_GET_DICVALUE(t.start_flag,'JSPJQDZT') startFlagShow ,start_flag startFlag,
-               p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type
-        FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
-        WHERE t.plan_id = p.plan_id  AND t.group_id = g.group_id AND t.valid_flag = '1'
+        SELECT t.task_id,
+               t.task_name,
+               FUNC_GET_DICVALUE(t.term, 'XQ')
+                                                           term,
+               t.start_time,
+               t.end_time,
+               t.remark,
+               FUNC_GET_DICVALUE(t.start_flag, 'JSPJQDZT') startFlagShow,
+               start_flag                                  startFlag,
+               p.plan_name,
+               g.group_name,
+               FUNC_GET_DICVALUE(t.task_type, 'JSPJRWLX')  task_type
+        FROM t_kh_evaluation_task t,
+             t_kh_evaluation_plan p,
+             t_kh_evaluation_group g
+        WHERE t.plan_id = p.plan_id
+          AND t.group_id = g.group_id
+          AND t.valid_flag = '1'
         ORDER BY t.create_time desc
+    </select>
+    <select id="getInterviwerTree" resultType="com.goisan.system.bean.Tree">
+        SELECT '001'  id,
+               '面试人员' name,
+               '0'    pid
+        FROM dual
+        UNION
+        SELECT e.id  id,
+               e.name,
+               '001' pid
+        FROM T_RS_INTERVIEWERS e
+        where e.VALID_FLAG = '1'
+    </select>
+    <select id="getInterviewersTasks" resultType="com.goisan.evaluation.bean.EvaluationTask"
+            parameterType="com.goisan.evaluation.bean.EvaluationTask">
+        SELECT t.task_id,t.task_name,FUNC_GET_DICVALUE(t.term,'XQ')
+        term,t.start_time,t.end_time,t.remark,
+        FUNC_GET_DICVALUE(t.start_flag,'JSPJQDZT') startFlagShow ,start_flag startFlag,
+        p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type
+        FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
+        WHERE t.plan_id = p.plan_id AND t.task_type = '6' AND t.group_id = g.group_id AND t.valid_flag = '1'
+        AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
+        <if test="taskName != null and taskName != ''">
+            AND t.task_name LIKE #{taskName}
+        </if>
+        AND t.evaluation_type = #{evaluationType}
+        ORDER BY t.create_time desc
+    </select>
+
+
+    <select id="getInterviewersListTask" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers"
+            resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
+        SELECT
+        t3.emp_person_id empPersonId,
+        t3.emp_dept_id empDeptId,
+        t3.emp_name empName,
+        decode('${evaluationType}','0',FUNC_GET_TABLEVALUE(t3.emp_dept_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME'),
+        '1',FUNC_GET_TABLEVALUE(t3.emp_dept_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) as
+        empDeptShow,
+        t2.task_name taskName,
+        t2.end_time endTime,
+        t2.start_time startTime ,
+        t2.task_id taskId,t2.PLAN_ID planId,
+        t2.create_time createTime
+        FROM
+        T_KH_EVALUATION_TASK t2,
+        T_KH_EVALUATION_EMPS_MEMBERS t3
+        WHERE t2.task_id = t3.task_id AND (t2.start_flag = '1' OR t2.start_flag = '2' ) AND t2.valid_flag='1' AND
+        t2.task_type = '6' AND
+        t3.EVALUATION_FLAG = #{evaluationFlag}
+        <if test="evaluationType != null and evaluationType != '' ">
+            AND t2.EVALUATION_TYPE = #{evaluationType}
+        </if>
+        <if test="taskName != null and taskName != '' ">
+            AND t2.task_name LIKE #{taskName}
+        </if>
+        <if test="memberDeptId != null and memberDeptId != '' ">
+            AND t3.MEMBER_DEPT_ID = #{memberDeptId}
+        </if>
+        <if test="memberPersonId != null and memberPersonId != '' ">
+            AND t3.MEMBER_PERSON_ID = #{memberPersonId}
+        </if>
+        <if test="empPersonId != null and empPersonId != '' ">
+            AND t3.emp_person_id = #{empPersonId}
+        </if>
+        <if test="empDeptId != null and empDeptId != '' ">
+            AND t3.emp_dept_id = #{empDeptId}
+        </if>
+        <if test="taskId != null and taskId != '' ">
+            AND t3.task_id = #{taskId}
+        </if>
+        ORDER BY t2.create_time desc ,t2.task_name
     </select>
 </mapper>

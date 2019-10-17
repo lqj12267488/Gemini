@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.FixedAssetsDao">
+    <select id="getFixedAssetsList"
+            parameterType="com.goisan.table.bean.FixedAssets"
+            resultType="com.goisan.table.bean.FixedAssets">
+        select id,total_school_value,total_assets,assets_add,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_FIXED_ASSETS where 1=1 
+<if test='totalSchoolValue != "" and totalSchoolValue != null'> AND total_school_value like '%'||#{totalSchoolValue}||'%' </if> 
+<if test='totalAssets != "" and totalAssets != null'> AND total_assets like '%'||#{totalAssets}||'%' </if> 
+<if test='assetsAdd != "" and assetsAdd != null'> AND assets_add like '%'||#{assetsAdd}||'%' </if> 
+
+    </select>
+    <insert id="saveFixedAssets" parameterType="com.goisan.table.bean.FixedAssets">
+        insert into t_tab_fixed_assets (id,total_school_value,total_assets,assets_add,creator,create_time,create_dept) values (func_get_uuid ,#{totalSchoolValue},#{totalAssets},#{assetsAdd},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getFixedAssetsById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.FixedAssets">
+        select * from T_TAB_FIXED_ASSETS where id = #{id}
+    </select>
+    <update id="updateFixedAssets" parameterType="com.goisan.table.bean.FixedAssets">
+        update t_tab_fixed_assets set total_school_value=#{totalSchoolValue},total_assets=#{totalAssets},assets_add=#{assetsAdd},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delFixedAssets" parameterType="java.lang.String">
+        delete from T_TAB_FIXED_ASSETS where id = #{id}
+    </delete>
+</mapper>

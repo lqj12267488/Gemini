@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.BookCollectionDao">
+    <select id="getBookCollectionList"
+            parameterType="com.goisan.table.bean.BookCollection"
+            resultType="com.goisan.table.bean.BookCollection">
+        select id,total_number,school_year_add,chinese_paper_journal,foreign_paper_journals,electronic_journal,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_BOOK_COLLECTION where 1=1 
+<if test='totalNumber != "" and totalNumber != null'> AND total_number like '%'||#{totalNumber}||'%' </if> 
+<if test='schoolYearAdd != "" and schoolYearAdd != null'> AND school_year_add like '%'||#{schoolYearAdd}||'%' </if> 
+<if test='chinesePaperJournal != "" and chinesePaperJournal != null'> AND chinese_paper_journal like '%'||#{chinesePaperJournal}||'%' </if> 
+<if test='foreignPaperJournals != "" and foreignPaperJournals != null'> AND foreign_paper_journals like '%'||#{foreignPaperJournals}||'%' </if> 
+<if test='electronicJournal != "" and electronicJournal != null'> AND electronic_journal like '%'||#{electronicJournal}||'%' </if> 
+
+    </select>
+    <insert id="saveBookCollection" parameterType="com.goisan.table.bean.BookCollection">
+        insert into t_tab_book_collection (id,total_number,school_year_add,chinese_paper_journal,foreign_paper_journals,electronic_journal,creator,create_time,create_dept) values (func_get_uuid ,#{totalNumber},#{schoolYearAdd},#{chinesePaperJournal},#{foreignPaperJournals},#{electronicJournal},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getBookCollectionById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.BookCollection">
+        select * from T_TAB_BOOK_COLLECTION where id = #{id}
+    </select>
+    <update id="updateBookCollection" parameterType="com.goisan.table.bean.BookCollection">
+        update t_tab_book_collection set total_number=#{totalNumber},school_year_add=#{schoolYearAdd},chinese_paper_journal=#{chinesePaperJournal},foreign_paper_journals=#{foreignPaperJournals},electronic_journal=#{electronicJournal},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delBookCollection" parameterType="java.lang.String">
+        delete from T_TAB_BOOK_COLLECTION where id = #{id}
+    </delete>
+</mapper>

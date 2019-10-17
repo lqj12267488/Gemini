@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.InstitutionalAreaDao">
+    <select id="getInstitutionalAreaList"
+            parameterType="com.goisan.table.bean.InstitutionalArea"
+            resultType="com.goisan.table.bean.InstitutionalArea">
+        select id,area_covered,green_land_area,building_area,school_property_area,school_building,wrong_school_property,scientific_auxiliary,classroom,library,laboratories_places,research_room,gymnasium,hall,administrative_office,college_area_room,student_dormitory,student_canteen,teaching_dormitory,staff_can,life_welfare,faculty_housing,other_rooms,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_INSTITUTIONAL_AREA where 1=1 
+<if test='areaCovered != "" and areaCovered != null'> AND area_covered like '%'||#{areaCovered}||'%' </if> 
+<if test='greenLandArea != "" and greenLandArea != null'> AND green_land_area like '%'||#{greenLandArea}||'%' </if> 
+<if test='buildingArea != "" and buildingArea != null'> AND building_area like '%'||#{buildingArea}||'%' </if> 
+<if test='schoolPropertyArea != "" and schoolPropertyArea != null'> AND school_property_area like '%'||#{schoolPropertyArea}||'%' </if> 
+<if test='schoolBuilding != "" and schoolBuilding != null'> AND school_building like '%'||#{schoolBuilding}||'%' </if> 
+<if test='wrongSchoolProperty != "" and wrongSchoolProperty != null'> AND wrong_school_property like '%'||#{wrongSchoolProperty}||'%' </if> 
+<if test='scientificAuxiliary != "" and scientificAuxiliary != null'> AND scientific_auxiliary like '%'||#{scientificAuxiliary}||'%' </if> 
+<if test='classroom != "" and classroom != null'> AND classroom like '%'||#{classroom}||'%' </if> 
+<if test='library != "" and library != null'> AND library like '%'||#{library}||'%' </if> 
+<if test='laboratoriesPlaces != "" and laboratoriesPlaces != null'> AND laboratories_places like '%'||#{laboratoriesPlaces}||'%' </if> 
+<if test='researchRoom != "" and researchRoom != null'> AND research_room like '%'||#{researchRoom}||'%' </if> 
+<if test='gymnasium != "" and gymnasium != null'> AND gymnasium like '%'||#{gymnasium}||'%' </if> 
+<if test='hall != "" and hall != null'> AND hall like '%'||#{hall}||'%' </if> 
+<if test='administrativeOffice != "" and administrativeOffice != null'> AND administrative_office like '%'||#{administrativeOffice}||'%' </if> 
+<if test='collegeAreaRoom != "" and collegeAreaRoom != null'> AND college_area_room like '%'||#{collegeAreaRoom}||'%' </if> 
+<if test='studentDormitory != "" and studentDormitory != null'> AND student_dormitory like '%'||#{studentDormitory}||'%' </if> 
+<if test='studentCanteen != "" and studentCanteen != null'> AND student_canteen like '%'||#{studentCanteen}||'%' </if> 
+<if test='teachingDormitory != "" and teachingDormitory != null'> AND teaching_dormitory like '%'||#{teachingDormitory}||'%' </if> 
+<if test='staffCan != "" and staffCan != null'> AND staff_can like '%'||#{staffCan}||'%' </if> 
+<if test='lifeWelfare != "" and lifeWelfare != null'> AND life_welfare like '%'||#{lifeWelfare}||'%' </if> 
+<if test='facultyHousing != "" and facultyHousing != null'> AND faculty_housing like '%'||#{facultyHousing}||'%' </if> 
+<if test='otherRooms != "" and otherRooms != null'> AND other_rooms like '%'||#{otherRooms}||'%' </if> 
+
+    </select>
+    <insert id="saveInstitutionalArea" parameterType="com.goisan.table.bean.InstitutionalArea">
+        insert into t_tab_institutional_area (id,area_covered,green_land_area,building_area,school_property_area,school_building,wrong_school_property,scientific_auxiliary,classroom,library,laboratories_places,research_room,gymnasium,hall,administrative_office,college_area_room,student_dormitory,student_canteen,teaching_dormitory,staff_can,life_welfare,faculty_housing,other_rooms,creator,create_time,create_dept) values (func_get_uuid ,#{areaCovered},#{greenLandArea},#{buildingArea},#{schoolPropertyArea},#{schoolBuilding},#{wrongSchoolProperty},#{scientificAuxiliary},#{classroom},#{library},#{laboratoriesPlaces},#{researchRoom},#{gymnasium},#{hall},#{administrativeOffice},#{collegeAreaRoom},#{studentDormitory},#{studentCanteen},#{teachingDormitory},#{staffCan},#{lifeWelfare},#{facultyHousing},#{otherRooms},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getInstitutionalAreaById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.InstitutionalArea">
+        select * from T_TAB_INSTITUTIONAL_AREA where id = #{id}
+    </select>
+    <update id="updateInstitutionalArea" parameterType="com.goisan.table.bean.InstitutionalArea">
+        update t_tab_institutional_area set area_covered=#{areaCovered},green_land_area=#{greenLandArea},building_area=#{buildingArea},school_property_area=#{schoolPropertyArea},school_building=#{schoolBuilding},wrong_school_property=#{wrongSchoolProperty},scientific_auxiliary=#{scientificAuxiliary},classroom=#{classroom},library=#{library},laboratories_places=#{laboratoriesPlaces},research_room=#{researchRoom},gymnasium=#{gymnasium},hall=#{hall},administrative_office=#{administrativeOffice},college_area_room=#{collegeAreaRoom},student_dormitory=#{studentDormitory},student_canteen=#{studentCanteen},teaching_dormitory=#{teachingDormitory},staff_can=#{staffCan},life_welfare=#{lifeWelfare},faculty_housing=#{facultyHousing},other_rooms=#{otherRooms},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delInstitutionalArea" parameterType="java.lang.String">
+        delete from T_TAB_INSTITUTIONAL_AREA where id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.TalentRecruitmentDao">
+    <select id="getTalentRecruitmentList" resultType="com.goisan.system.bean.TalentRecruitment"
+            parameterType="com.goisan.system.bean.TalentRecruitment">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.station_date,'yyyy-mm-dd') stationDate,
+        t.post post,
+        t.recruitment_posts recruitmentPosts,
+        t.recruitment recruitment,
+        FUNC_GET_DICVALUE(t.recruitment_reason, 'ZPYY')                                    recruitmentReason,
+        t.boy_number boyNumber,
+        t.girl_number girlNumber,
+        t.sex sex,
+        t.marital_status maritalStatus,
+        t.age_start ageStart,
+        t.age_end ageEnd,
+        t.political_outlook politicalOutlook,
+        t.language_requirements languageRequirements,
+        t.education education,
+        t.professional_restrictions professionalRestrictions,
+        t.near near,
+        t.working_life workingLife,
+        t.relevant_certificate relevantCertificate,
+        t.job_responsibilities jobResponsibilities,
+        t.other_requirements otherRequirements,
+        t.request_flag requestFlag,
+        t.feedback feedback,
+        t.feedback_flag feedbackFlag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_TALENT_RECRUITMENT_WF t
+        where 1 = 1 AND t.request_flag = '0'
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="stationDate != null and stationDate != '' ">
+            AND to_char(t.station_date,'yyyy-mm-dd') LIKE #{stationDate}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND t.request_dept= #{requestDept}
+        </if>
+        <if test="recruitmentReason != null and recruitmentReason != '' ">
+            AND t.recruitment_reason = #{recruitmentReason}
+        </if>
+        <if test="recruitmentPosts != null and recruitmentPosts != '' ">
+            AND t.recruitment_posts like '%'||#{recruitmentPosts}||'%'
+        </if>
+        <if test="recruitment != null and recruitment != '' ">
+            AND t.recruitment= #{recruitment}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getTalentRecruitmentById" resultType="com.goisan.system.bean.TalentRecruitment"
+            parameterType="com.goisan.system.bean.TalentRecruitment">
+        SELECT t.id,
+               FUNC_GET_DEPTNAME(t.request_dept)                                                  requestDept,
+               to_char(t.request_date, 'yyyy-mm-dd') || 'T' || to_char(t.request_date, 'hh24:mi') requestDate,
+               FUNC_GET_USERNAME(t.requester)                                                     requester,
+               to_char(t.station_date, 'yyyy-mm-dd')                                              stationDate,
+               t.post                                                                             post,
+               t.recruitment_posts                                                                recruitmentPosts,
+               t.recruitment                                                                      recruitment,
+               t.recruitment_reason                                                               recruitmentReason,
+               FUNC_GET_DICVALUE(t.recruitment_reason, 'ZPYY')                                    recruitmentReasonShow,
+               t.boy_number                                                                       boyNumber,
+               t.girl_number                                                                      girlNumber,
+               t.sex                                                                              sex,
+               t.marital_status                                                                   maritalStatus,
+               t.age_start                                                                        ageStart,
+               t.age_end                                                                          ageEnd,
+               t.political_outlook                                                                politicalOutlook,
+               t.language_requirements                                                            languageRequirements,
+               t.education                                                                        education,
+               t.professional_restrictions                                                        professionalRestrictions,
+               t.near                                                                             near,
+               t.working_life                                                                     workingLife,
+               FUNC_GET_DICVALUE(t.marital_status, 'RCZPHYZK')                                        maritalStatusShow,
+               FUNC_GET_DICVALUE(t.political_outlook, 'ZZMM')                                     politicalOutlookShow,
+               FUNC_GET_DICVALUE(t.education, 'RCZPXL')                                               educationShow,
+               FUNC_GET_DICVALUE(t.professional_restrictions, 'ZYXZ')                             professionalRestrictionsShow,
+               FUNC_GET_DICVALUE(t.working_life, 'GZNX')                                          workingLifeShow,
+               t.relevant_certificate                                                             relevantCertificate,
+               t.job_responsibilities                                                             jobResponsibilities,
+               t.other_requirements                                                               otherRequirements,
+               t.request_flag                                                                     requestFlag,
+               t.feedback                                                                         feedback,
+               t.feedback_flag                                                                    feedbackFlag,
+               t.creator,
+               t.create_time,
+               t.create_dept,
+               t.changer,
+               t.change_time,
+               t.change_dept,
+               t.valid_flag
+        FROM T_RS_TALENT_RECRUITMENT_WF t
+        WHERE id = #{id}
+        ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertTalentRecruitment" parameterType="com.goisan.system.bean.TalentRecruitment">
+        INSERT INTO T_RS_TALENT_RECRUITMENT_WF
+        (id, request_dept, requester, request_date,
+         station_date,
+         post,
+         recruitment_posts,
+         recruitment,
+         recruitment_reason,
+         boy_number,
+         girl_number,
+         sex,
+         marital_status,
+         age_start,
+         age_end,
+         political_outlook,
+         language_requirements,
+         education,
+         professional_restrictions,
+         near,
+         working_life,
+         relevant_certificate,
+         job_responsibilities,
+         other_requirements,
+         creator,
+         create_time, create_dept, request_flag)
+        values (FUNC_GET_UUID, '${createDept}', '${creator}', to_date('${requestDate}', 'yyyy-mm-dd hh24:mi'),
+                to_date('${stationDate}', 'yyyy-mm-dd'),
+                '${post}',
+                '${recruitmentPosts}',
+                '${recruitment}',
+                '${recruitmentReason}',
+                '${boyNumber}',
+                '${girlNumber}',
+                '${sex}',
+                '${maritalStatus}',
+                '${ageStart}',
+                '${ageEnd}',
+                '${politicalOutlook}',
+                '${languageRequirements}',
+                '${education}',
+                '${professionalRestrictions}',
+                '${near}',
+                '${workingLife}',
+                '${relevantCertificate}',
+                '${jobResponsibilities}',
+                '${otherRequirements}',
+                '${creator}', sysdate, '${createDept}', '0')
+    </insert>
+    <delete id="deleteTalentRecruitmentById" parameterType="java.lang.String">
+        DELETE
+        FROM T_RS_TALENT_RECRUITMENT_WF
+        WHERE id = #{id}
+    </delete>
+    <update id="updateTalentRecruitmentById" parameterType="com.goisan.system.bean.TalentRecruitment">
+        update
+            T_RS_TALENT_RECRUITMENT_WF
+        SET id                        = #{id},
+            request_dept              = #{requestDept},
+            requester                 = #{requester},
+            request_date              = to_date(#{requestDate}, 'yyyy-mm-dd hh24:mi'),
+            station_date= to_date(#{stationDate}, 'yyyy-mm-dd'),
+            post                      = #{post},
+            recruitment_posts         = #{recruitmentPosts},
+            recruitment               = #{recruitment},
+            recruitment_reason        = #{recruitmentReason},
+            boy_number                = #{boyNumber},
+            girl_number               = #{girlNumber},
+            sex                       = #{sex},
+            marital_status            = #{maritalStatus},
+            age_start                 = #{ageStart},
+            age_end                   = #{ageEnd},
+            political_outlook         = #{politicalOutlook},
+            language_requirements     = #{languageRequirements},
+            education                 = #{education},
+            professional_restrictions = #{professionalRestrictions},
+            near                      = #{near},
+            working_life              = #{workingLife},
+            relevant_certificate      = #{relevantCertificate},
+            job_responsibilities      = #{jobResponsibilities},
+            other_requirements        = #{otherRequirements},
+            changer= #{changer},
+            change_time= sysdate,
+            change_dept= #{changeDept}
+        WHERE id = #{id}
+    </update>
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select t.dept_id   as "value",
+               t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select t.name      as "label",
+               t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessList" resultType="com.goisan.system.bean.TalentRecruitment"
+            parameterType="com.goisan.system.bean.TalentRecruitment">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.station_date,'yyyy-mm-dd') stationDate,
+        t.post post,
+        t.recruitment_posts recruitmentPosts,
+        t.recruitment recruitment,
+        FUNC_GET_DICVALUE(t.recruitment_reason, 'ZPYY')                                    recruitmentReason,
+        t.boy_number boyNumber,
+        t.girl_number girlNumber,
+        t.sex sex,
+        t.marital_status maritalStatus,
+        t.age_start ageStart,
+        t.age_end ageEnd,
+        t.political_outlook politicalOutlook,
+        t.language_requirements languageRequirements,
+        t.education education,
+        t.professional_restrictions professionalRestrictions,
+        t.near near,
+        t.working_life workingLife,
+        t.relevant_certificate relevantCertificate,
+        t.job_responsibilities jobResponsibilities,
+        t.other_requirements otherRequirements,
+        t.request_flag requestFlag,
+        t.feedback feedback,
+        t.feedback_flag feedbackFlag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_TALENT_RECRUITMENT_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND (r.state='1' or r.state='3')AND t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.system.bean.TalentRecruitment"
+            parameterType="com.goisan.system.bean.TalentRecruitment">
+        SELECT
+        DISTINCT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+        to_char(t.station_date,'yyyy-mm-dd') stationDate,
+        t.post post,
+        t.recruitment_posts recruitmentPosts,
+        t.recruitment recruitment,
+        FUNC_GET_DICVALUE(t.recruitment_reason, 'ZPYY')                                    recruitmentReason,
+        t.boy_number boyNumber,
+        t.girl_number girlNumber,
+        t.sex sex,
+        t.marital_status maritalStatus,
+        t.age_start ageStart,
+        t.age_end ageEnd,
+        t.political_outlook politicalOutlook,
+        t.language_requirements languageRequirements,
+        t.education education,
+        t.professional_restrictions professionalRestrictions,
+        t.near near,
+        t.working_life workingLife,
+        t.relevant_certificate relevantCertificate,
+        t.job_responsibilities jobResponsibilities,
+        t.other_requirements otherRequirements,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.feedback_flag,'GZLFKZT') feedbackFlag,
+        t.feedback feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_RS_TALENT_RECRUITMENT_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="requestDept != null and requestDept != '' ">
+            AND func_get_deptname(t.request_dept) LIKE #{requestDept}
+        </if>
+        <if test="requester != null and requester != '' ">
+            AND FUNC_GET_USERNAME(t.requester) LIKE #{requester}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        AND r.state='2' AND t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name
+        from t_rs_employee
+        WHERE person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name
+        from t_sys_dept
+        WHERE dept_id = #{deptId}
+    </select>
+    <select id="getPostByPersonId" parameterType="java.lang.String" resultType="java.lang.String">
+        select post
+        from T_RS_EMPLOYEE
+        where person_id = #{personId}
+    </select>
+    <select id="getTalentRecruitmentHandleDateById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT distinct to_char(HANDLE_TIME,'yyyy-mm-dd') handleTime
+        FROM T_SYS_WORKFLOW_HANDLE
+        WHERE start_id IN
+              (SELECT start_id FROM T_SYS_WORKFLOW_START WHERE business_id = #{id})
+          and
+                FUNC_GET_TABLEVALUE(HANDLE_ROLE,
+                                    'T_SYS_ROLE',
+                                    'ROLE_ID',
+                                    'ROLE_NAME') like '%'||#{roleName}||'%'
+    </select>
+    <select id="getTalentRecruitmentHandleRemarkById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT distinct REMARK remark
+        FROM T_SYS_WORKFLOW_HANDLE
+        WHERE start_id IN
+              (SELECT start_id FROM T_SYS_WORKFLOW_START WHERE business_id = #{id})
+          and
+                FUNC_GET_TABLEVALUE(HANDLE_ROLE,
+                                    'T_SYS_ROLE',
+                                    'ROLE_ID',
+                                    'ROLE_NAME') like '%'||#{roleName}||'%'
+    </select>
+</mapper>

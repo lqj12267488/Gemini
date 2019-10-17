@@ -86,7 +86,7 @@ public class SkillController {
     @ResponseBody
     @RequestMapping("/skill/saveSkill")
     public Message saveskill(Skill skill){
-        if(skill.getId() == null || skill.equals("") || skill.getId() == ""){
+        if(null == skill.getId() || "".equals(skill.getId())){
             skill.setCreator(CommonUtil.getPersonId());
             skill.setCreateDept(CommonUtil.getDefaultDept());
             skillService.insertSkill(skill);

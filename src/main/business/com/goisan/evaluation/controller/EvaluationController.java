@@ -3611,4 +3611,237 @@ public class EvaluationController {
             return new Message(1, "", null);
         }
     }
+
+    /**
+     * 面试人员审核  评委组设置
+     * @return
+     */
+    @RequestMapping("/evaluation/interviewersGroup")
+    public String interviewersGroup() {
+        return "/business/evaluation/interview/group/interviewersGroup";
+    }
+
+    @RequestMapping("/evaluation/addInterviewersGroup")
+    public String toAddInterviewersGroup() {
+        return "/business/evaluation/interview/group/addInterviewersGroup";
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/getInterviewersGroupList")
+    public Map getInterviewersGroupList(String groupName, String evaluationType) {
+        Group group = new Group();
+        group.setGroupName(groupName);
+        group.setEvaluationType(evaluationType);
+        group.setCreateDept(CommonUtil.getDefaultDept());
+        group.setLevel(CommonUtil.getLoginUser().getLevel());
+        return CommonUtil.tableMap(evaluationService.getInterviewersGroupList(group));
+    }
+
+    @RequestMapping("/evaluation/toEditInterviewersGroup")
+    public String toEditInterviewersGroup(String id, Model model) {
+        model.addAttribute("group", evaluationService.getGroup(id));
+        return "/business/evaluation/interview/group/editInterviewersGroup";
+    }
+
+
+    @RequestMapping("/evaluation/toEmpGroupInterviewersList")
+    public ModelAndView getGroupInterviewersList(String complexTaskId, String complexTaskName, String evaluationType) {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/business/evaluation/interview/group/empGroup/groupInterviewersList");
+        List<EvaluationComplexDetail> details = evaluationService.getEvaluationComplexDetail(complexTaskId);
+        mv.addObject("details", details);
+        mv.addObject("complexTaskId", complexTaskId);
+        mv.addObject("complexTaskName", complexTaskName);
+        mv.addObject("evaluationType", evaluationType);
+        return mv;
+    }
+
+    @RequestMapping("/evaluation/toEmpGroupInterviewersAdd")
+    public ModelAndView toEmpGroupInterviewersAdd() {
+        ModelAndView mv = new ModelAndView();
+        mv.addObject("head", "新增");
+        mv.setViewName("/business/evaluation/interview/group/empGroup/editEmpGroupInterviewers");
+        return mv;
+    }
+    @RequestMapping("/evaluation/toEmpGroupInterviewersEdit")
+    public ModelAndView toEditInterviewers(String id) {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/business/evaluation/interview/group/empGroup/editEmpGroupInterviewers");
+        mv.addObject("group", evaluationService.getEmpGroup(id));
+        mv.addObject("head", "修改");
+        return mv;
+    }
+    @RequestMapping("/evaluation/toSelectInterviewersEmp")
+    public ModelAndView getSelectInterviewersEmpTree(String id, String evaluationType) {
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/business/evaluation/interview/group/empGroup/selectInterviewersEmp");
+        mv.addObject("id", id);
+        mv.addObject("evaluationType", evaluationType);
+        return mv;
+    }
+    @ResponseBody
+    @RequestMapping("/evaluation/saveGroupInterviewersEmps")
+    public Message saveGroupInterviewersEmps(String ids, String groupId, String evaluationType) {
+        evaluationService.deleteGroupEmps(groupId);//Interviewers
+        evaluationService.saveGroupInterviewersEmps(ids, groupId, evaluationType);//Interviewers
+        return new Message(1, "保存成功！", null);
+    }
+    @ResponseBody
+    @RequestMapping("/evaluation/getEmpsInterviewersTree")
+    public Map<String, List> getEmpsInterviewersTree(String groupId, String evaluationType) {
+        List<Tree> trees = null;
+            trees = evaluationService.getInterviwerTree();
+        List<EvaluationGroupEmps> evaluationGroupEmps = evaluationService.getEmpsTree(groupId);
+        Map<String, List> map = new HashMap<String, List>();
+        map.put("tree", trees);
+        map.put("selected", evaluationGroupEmps);
+        return map;
+    }
+
+    @RequestMapping("/evaluation/interviewersPlan")
+    public String interviewersPlan() {
+        return "/business/evaluation/interview/group/plan/interviewersPlan";
+    }
+
+    @RequestMapping("/evaluation/addInterviewersPlan")
+    public String addInterviewersPlan() {
+        return "/business/evaluation/interview/group/plan/addInterviewersPlan";
+    }
+    @RequestMapping("/evaluation/toEditInterviewersPlan")
+    public String toEditInterviewersPlan(Model model, String id) {
+        model.addAttribute("plan", evaluationService.getPlan(id));
+        return "/business/evaluation/interview/group/plan/editInterviewersPlan";
+    }
+
+    @RequestMapping("/evaluation/toInterviewersIndex")
+    public String toInterviewersIndex(String id, Model model, String planName) {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(evaluationService.getIndexByPlanId(id));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        model.addAttribute("id", id);
+        model.addAttribute("data", json);
+        model.addAttribute("planName", planName);
+        return "/business/evaluation/interview/group/plan/index/indexInterviewers";
+    }
+
+    @RequestMapping("/evaluation/taskInterviewers")
+    public String taskInterviewers() {
+        return "/business/evaluation/interview/group/task/taskInterviewers";
+    }
+
+    @RequestMapping("/evaluation/toAddTaskInterviewers")
+    public String toAddTaskInterviewers(String evaluationType, String taskType, Model model) {
+        EvaluationPlan plan = new EvaluationPlan();
+        String deptId = CommonUtil.getDefaultDept();
+        plan.setCreateDept(deptId);
+        plan.setEvaluationType(evaluationType);
+        plan.setCreateDept(CommonUtil.getDefaultDept());
+        plan.setLevel(CommonUtil.getLoginUser().getLevel());
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("plan", evaluationService.getSelectPlan(plan));
+        map.put("group", evaluationService.getSelectGroup(plan));
+        map.put("type", commonService.getSysDict("JSPJRWLX", ""));
+        map.put("xq", commonService.getSysDict("XQ", ""));
+        ObjectMapper mapper = new ObjectMapper();
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("data", json);
+        model.addAttribute("taskType", taskType);
+        model.addAttribute("evaluationType", evaluationType);
+        model.addAttribute("createDept",CommonUtil.getDefaultDept());
+        return "/business/evaluation/interview/group/task/addTaskInterviewers";
+    }
+
+    @RequestMapping("/evaluation/toEditTaskInterviewers")
+    public String toEditTaskInterviewers(String id, String evaluationType, Model model) {
+        EvaluationPlan plan = new EvaluationPlan();
+        plan.setCreateDept(CommonUtil.getDefaultDept());
+        plan.setLevel(CommonUtil.getLoginUser().getLevel());
+        plan.setEvaluationType(evaluationType);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("plan", evaluationService.getSelectPlan(plan));
+        map.put("group", evaluationService.getSelectGroup(plan));
+        map.put("type", commonService.getSysDict("JSPJRWLX", ""));
+        map.put("xq", commonService.getSysDict("XQ", ""));
+        ObjectMapper mapper = new ObjectMapper();
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        model.addAttribute("task", evaluationService.getTask(id));
+        model.addAttribute("taskId", id);
+        model.addAttribute("data", json);
+        return "/business/evaluation/interview/group/task/editTaskInterviewers";
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/getInterviewersTasks")
+    public Map<String, List> getInterviewersTasks(String name, String evaluationType) {
+        if (name != null && name != "") {
+            name = "%" + name + "%";
+        }
+        EvaluationTask task = new EvaluationTask();
+        task.setTaskName(name);
+        task.setEvaluationType(evaluationType);
+        task.setCreateDept(CommonUtil.getDefaultDept());
+        task.setLevel(CommonUtil.getLoginUser().getLevel());
+        return CommonUtil.tableMap(evaluationService.getInterviewersTasks(task));
+    }
+
+    @RequestMapping("/evaluation/result/listInterviewersMenmbers")
+    public ModelAndView listInterviewersMenmbers() {
+        ModelAndView mv = new ModelAndView("/business/evaluation/interview/group/result/listInterviewersEmps");
+        return mv;
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/result/getlisteInterviewersMenmbers")
+    public Map<String, List<EvaluationEmpsMenmbers>> getlisteInterviewersMenmbers(EvaluationEmpsMenmbers eEmps) {
+        LoginUser loginUser = CommonUtil.getLoginUser();
+        EvaluationEmpsMenmbers eEmpsMenmbers = new EvaluationEmpsMenmbers();
+        if (!loginUser.getPersonId().equals("sa")) {
+            eEmpsMenmbers.setMemberPersonId(loginUser.getPersonId());
+            eEmpsMenmbers.setMemberDeptId(loginUser.getDefaultDeptId());
+        }
+        if (null != eEmps) {
+            if (null != eEmps.getTaskName() && !eEmps.getTaskName().equals("")) {
+                eEmpsMenmbers.setTaskName("%" + eEmps.getTaskName() + "%");
+            }
+            if (null != eEmps.getEmpPersonId() && !eEmps.getEmpPersonId().equals("") && !eEmps.getEmpPersonId()
+                    .equals("undefined")) {
+                String[] str = eEmps.getEmpPersonId().split(",");
+                eEmpsMenmbers.setEmpDeptId(str[0]);
+                eEmpsMenmbers.setEmpPersonId(str[1]);
+            }
+        }
+        eEmpsMenmbers.setEvaluationFlag(eEmps.getEvaluationFlag());
+        eEmpsMenmbers.setEvaluationType(eEmps.getEvaluationType());
+
+        List<EvaluationEmpsMenmbers> eEMenmbersList = evaluationService.getInterviewersListTask(eEmpsMenmbers);
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        for (EvaluationEmpsMenmbers EvalEmpMen : eEMenmbersList) {
+            if ((date.getTime() - EvalEmpMen.getEndTime().getTime()) > 1000 * 60 * 60 * 24) {
+                EvalEmpMen.setValidFlag("0");
+            } else {
+                EvalEmpMen.setValidFlag("1");
+            }
+        }
+        Map<String, List<EvaluationEmpsMenmbers>> studentList = new HashMap<String, List<EvaluationEmpsMenmbers>>();
+        studentList.put("data", eEMenmbersList);
+        return studentList;
+    }
+
+
 }

@@ -18,15 +18,15 @@
         <div id="layout" style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
         <div class="modal-body clearfix">
             <div class="controls" id="style-4" style="overflow-y:auto;height:70% ">
-                <h4 class="modal-title">领导评委</h4>
+                <h4 id="lingdao" class="modal-title">领导评委</h4>
                 <ul id="leaderTree" class="ztree"></ul>
                 <h4 class="modal-title">教师评委</h4>
                 <ul id="teacherTree" class="ztree"></ul>
-                <h4 class="modal-title">同行评委</h4>
+                <h4 id="tonghang" class="modal-title">同行评委</h4>
                 <ul id="peerTree" class="ztree"></ul>
-                <h4 class="modal-title">社会评委</h4>
+                <h4 id="shehui" class="modal-title">社会评委</h4>
                 <ul id="parentTree" class="ztree"></ul>
-                <h4 class="modal-title">学生评委</h4>
+                <h4 id="xuesheng" class="modal-title">学生评委</h4>
                 <ul id="stuTree" class="ztree"></ul>
             </div>
         </div>
@@ -61,6 +61,16 @@
     }
 
     $(document).ready(function () {
+        if("2"=='${evaluationType}'){
+            $("#lingdao").hide();
+            $("#leaderTree").hide();
+            $("#tonghang").hide();
+            $("#peerTree").hide();
+            $("#shehui").hide();
+            $("#parentTree").hide();
+            $("#xuesheng").hide();
+            $("#stuTree").hide();
+        }
         var startFlag = $("#startFlag").val();
         $("#titleValue").html('查看评委组');
 

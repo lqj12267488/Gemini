@@ -75,7 +75,12 @@ public class TableAttributeServiceImpl implements TableAttributeService {
 
     @Resource
     private StuAwardInfoDao stuAwardInfoDao;
-
+    @Resource
+    private CourtyardNameDao courtyardNameDao;
+    @Resource
+    private ContactInformationDao contactInformationDao;
+    @Resource
+    private InstitutionalAreaDao institutionalAreaDao;
     /**
      * 导出带有数据得表格 命名expertExcel_A加上数字
      * 例
@@ -87,6 +92,73 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         OutputStream os = null;
 
         try {
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            Workbook wb = null;
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            List<CourtyardName> list = courtyardNameDao.getCourtyardNameList(null);
+            int rowIndex = 10;
+            int count = 1;
+            for (int i = 0; i < list.size(); i++) {
+                CourtyardName pea = (CourtyardName) list.get(i);
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(pea.getSchoolIdcode());
+                row.getCell(2).setCellValue(pea.getSchoolName());
+                row.getCell(3).setCellValue(pea.getProvince());
+                row.getCell(4).setCellValue(pea.getCity());
+                row.getCell(5).setCellValue(pea.getEnableTime());
+                row.getCell(6).setCellValue(pea.getEstablishTime());
+                row.getCell(7).setCellValue(pea.getEstablishBasics());
+                row.getCell(8).setCellValue(pea.getNatureShow());
+                row.getCell(9).setCellValue(pea.getHoldLevelShow());
+                row.getCell(10).setCellValue(pea.getSchoolTypeShow());
+                row.getCell(11).setCellValue(pea.getSchoolMotto());
+                row.getCell(12).setCellValue(pea.getExemplaryNatureShow());
+                row.getCell(13).setCellValue(pea.getExemplaryLevelShow());
+                row.getCell(14).setCellValue(pea.getEstablishmentDept());
+                row.getCell(15).setCellValue(pea.getEstablishmentTime());
+                row.getCell(16).setCellValue(pea.getAssessmentOneTime());
+                row.getCell(17).setCellValue(pea.getEvaluationConclusionOne());
+                row.getCell(18).setCellValue(pea.getAssessmentTwoTime());
+                row.getCell(19).setCellValue(pea.getEvaluationConclusionTwo());
+                row.getCell(20).setCellValue(pea.getUnassessedShow());
+                count++;
+            }
+
+            int rowIndex2 = 17;
+            ContactInformation contactInformation = new ContactInformation();
+            List<BaseBean> list1 =  contactInformationDao.getContactInformationList(contactInformation);
+            for (int i = 0; i < list1.size(); i++) {
+                ContactInformation pea = (ContactInformation) list1.get(i);
+                Row row = sheet.getRow(rowIndex2 + i);
+                row.getCell(1).setCellValue(pea.getMailingAddress());
+                row.getCell(2).setCellValue(pea.getPostalCode());
+                row.getCell(3).setCellValue(pea.getSchoolWebsite());
+                row.getCell(4).setCellValue("法人教工号");
+                row.getCell(5).setCellValue("法人姓名");
+                row.getCell(6).setCellValue("法人职务");
+                row.getCell(7).setCellValue(pea.getAreaNumber());
+                row.getCell(8).setCellValue(pea.getAreaFax());
+                row.getCell(9).setCellValue(pea.getMailBox());
+                row.getCell(10).setCellValue("联系人教工号");
+                row.getCell(11).setCellValue("联系人姓名");
+                row.getCell(12).setCellValue("联系人职务");
+                row.getCell(13).setCellValue(pea.getContactsAreaNumber());
+                row.getCell(14).setCellValue(pea.getContactsAreaFax());
+                row.getCell(15).setCellValue("联系人电话号");
+                row.getCell(16).setCellValue(pea.getContactsMailBox());
+                count++;
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));
             os = response.getOutputStream();
@@ -488,26 +560,116 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-           /* List<Emp> list = tableAttributeDao.getExpertExcel_A2();
+            List<InstitutionalArea> list =  tableAttributeDao.getInstitutionalAreaList();
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
                 Row row = sheet.getRow(rowIndex+i);
-                row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(list.get(i).getStaffId());
-                row.getCell(3).setCellValue(list.get(i).getName());
-                row.getCell(4).setCellValue(list.get(i).getNation());
-                row.getCell(5).setCellValue(list.get(i).getPost());
-                row.getCell(6).setCellValue(list.get(i).getPositionalTitles());
-                row.getCell(7).setCellValue(list.get(i).getEducationalLevel());
-                row.getCell(8).setCellValue(list.get(i).getSex());
-                row.getCell(9).setCellValue(list.get(i).getBirthday());
-                row.getCell(10).setCellValue(list.get(i).getTel());
-                row.getCell(11).setCellValue("");
-                row.getCell(12).setCellValue("");
-                row.getCell(13).setCellValue(list.get(i).getEducationalResearch());
+                row.getCell(1).setCellValue(list.get(i).getAreaCovered());
+                row.getCell(2).setCellValue(list.get(i).getGreenLandArea());
+                row.getCell(3).setCellValue(list.get(i).getBuildingArea());
+                row.getCell(4).setCellValue(list.get(i).getSchoolPropertyArea());
+                row.getCell(5).setCellValue(list.get(i).getSchoolBuilding());
+                row.getCell(6).setCellValue(list.get(i).getWrongSchoolProperty());
+                row.getCell(7).setCellValue(list.get(i).getScientificAuxiliary());
+                row.getCell(8).setCellValue(list.get(i).getClassroom());
+                row.getCell(9).setCellValue(list.get(i).getLibrary());
+                row.getCell(10).setCellValue(list.get(i).getLaboratoriesPlaces());
+                row.getCell(11).setCellValue(list.get(i).getResearchRoom());
+                row.getCell(12).setCellValue(list.get(i).getGymnasium());
+                row.getCell(13).setCellValue(list.get(i).getHall());
+                row.getCell(14).setCellValue(list.get(i).getAdministrativeOffice());
+                row.getCell(15).setCellValue(list.get(i).getCollegeAreaRoom());
+                row.getCell(16).setCellValue(list.get(i).getStudentDormitory());
+                row.getCell(17).setCellValue(list.get(i).getStudentCanteen());
+                row.getCell(18).setCellValue(list.get(i).getTeachingDormitory());
+                row.getCell(19).setCellValue(list.get(i).getStaffCan());
+                row.getCell(20).setCellValue(list.get(i).getLifeWelfare());
+                row.getCell(21).setCellValue(list.get(i).getFacultyHousing());
+                row.getCell(22).setCellValue(list.get(i).getOtherRooms());
                 count++;
-            }*/
+            }
+            int rowIndex2 = 17;
+            List<BookCollection> list2 =  tableAttributeDao.getBookCollectionList();
+            for (int i = 0; i < list2.size(); i++) {
+                Row row = sheet.getRow(rowIndex2+i);
+                row.getCell(1).setCellValue(list2.get(i).getTotalNumber());
+                row.getCell(2).setCellValue(list2.get(i).getSchoolYearAdd());
+                row.getCell(3).setCellValue(list2.get(i).getChinesePaperJournal());
+                row.getCell(4).setCellValue(list2.get(i).getForeignPaperJournals());
+                row.getCell(5).setCellValue(list2.get(i).getElectronicJournal());
+                count++;
+            }
+
+            int rowIndex3 = 24;
+            List<MachineClassroom> list3 =  tableAttributeDao.getMachineClassroomList();
+            for (int i = 0; i < list3.size(); i++) {
+                Row row = sheet.getRow(rowIndex3+i);
+                row.getCell(1).setCellValue(list3.get(i).getReadingRoomSeat());
+                row.getCell(2).setCellValue(list3.get(i).getComputerNumber());
+                row.getCell(3).setCellValue(list3.get(i).getTeachingComputer());
+                row.getCell(4).setCellValue(list3.get(i).getTabletPc());
+                row.getCell(5).setCellValue(list3.get(i).getPublicComputerRoom());
+                row.getCell(6).setCellValue(list3.get(i).getProfessionalComputer());
+                row.getCell(7).setCellValue(list3.get(i).getClassroom());
+                row.getCell(8).setCellValue(list3.get(i).getMultimediaClassroom());
+                count++;
+            }
+            int rowIndex4 = 34;
+            List<GeneralConstruction> list4 = tableAttributeDao.getGeneralConstructionList();
+            for (int i = 0; i < list4.size(); i++) {
+                Row row = sheet.getRow(rowIndex4+i);
+                row.getCell(1).setCellValue(list4.get(i).getInternetBandwidth());
+                row.getCell(2).setCellValue(list4.get(i).getNetworkBandwidth());
+                row.getCell(3).setCellValue(list4.get(i).getOneCardUseShow());
+                row.getCell(4).setCellValue(list4.get(i).getWirelessCoverageShow());
+                row.getCell(5).setCellValue(list4.get(i).getNetworkInformation());
+                row.getCell(6).setCellValue(list4.get(i).getManagementInformation());
+                row.getCell(7).setCellValue(list4.get(i).getSystemMailNumber());
+                row.getCell(8).setCellValue(list4.get(i).getOnlineCourses());
+                row.getCell(9).setCellValue(list4.get(i).getDigitalResources());
+                row.getCell(10).setCellValue(list4.get(i).getElectronicsBook());
+                count++;
+            }
+            int rowIndex5 = 40;
+            List<ManagementInformation> list5 = tableAttributeDao.getManagementInformationList();
+            int count5 = 1;
+            for (int i = 0; i < list5.size(); i++) {
+                Row row = sheet.getRow(rowIndex5+i);
+                row.getCell(1).setCellValue(count5);
+                row.getCell(2).setCellValue(list5.get(i).getTypeShow());
+                row.getCell(3).setCellValue(list5.get(i).getSystemName());
+                row.getCell(4).setCellValue(list5.get(i).getSourcesShow());
+                row.getCell(5).setCellValue(list5.get(i).getUnitName());
+                count5++;
+            }
+
+
+
+            int rowIndex6 = 68;
+            int count6 = 1;
+            List<InformationPersonnel>  list6 = tableAttributeDao.getInformationPersonnelList();
+            for (int i = 0; i < list6.size(); i++) {
+                Row row = sheet.getRow(rowIndex6+i);
+                row.getCell(1).setCellValue(count6);
+                row.getCell(2).setCellValue(list6.get(i).getOrganizationCode());
+                row.getCell(3).setCellValue(list6.get(i).getOrganizationName());
+                row.getCell(4).setCellValue(list6.get(i).getPersonStaff());
+                row.getCell(5).setCellValue(list6.get(i).getPersonName());
+                row.getCell(6).setCellValue(list6.get(i).getStaffNumber());
+                row.getCell(7).setCellValue(list6.get(i).getEmployeNumber());
+                count6++;
+            }
+
+            int rowIndex7 = 75;
+            List<FixedAssets>  list7 = tableAttributeDao.getFixedAssetsList();
+            for (int i = 0; i < list7.size(); i++) {
+                Row row = sheet.getRow(rowIndex7+i);
+                row.getCell(1).setCellValue(list7.get(i).getTotalSchoolValue());
+                row.getCell(2).setCellValue(list7.get(i).getTotalAssets());
+                row.getCell(3).setCellValue(list7.get(i).getAssetsAdd());
+                count6++;
+            }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();
@@ -526,6 +688,34 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 e.printStackTrace();
             }
         }
+    }
+
+    public List<InstitutionalArea> getInstitutionalAreaList(){
+        return tableAttributeDao.getInstitutionalAreaList();
+    }
+
+    public  List<BookCollection> getBookCollectionList(){
+        return tableAttributeDao.getBookCollectionList();
+    }
+
+    public List<MachineClassroom> getMachineClassroomList(){
+        return tableAttributeDao.getMachineClassroomList();
+    }
+
+    public List<GeneralConstruction> getGeneralConstructionList(){
+        return tableAttributeDao.getGeneralConstructionList();
+    }
+
+    public List<ManagementInformation> getManagementInformationList(){
+        return tableAttributeDao.getManagementInformationList();
+    }
+
+    public List<InformationPersonnel> getInformationPersonnelList(){
+        return tableAttributeDao.getInformationPersonnelList();
+    }
+
+    public List<FixedAssets> getFixedAssetsList(){
+        return tableAttributeDao.getFixedAssetsList();
     }
 
     public void expertExcel_A4_1(HttpServletResponse response, TabularFile tabularFile) {

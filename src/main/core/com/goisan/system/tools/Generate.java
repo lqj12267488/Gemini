@@ -18,20 +18,20 @@ public class Generate {
 //   配置
     /**
      * 1.数据库表, 字段备注必填
-     * 2. 如果使用字典,备注使用{CodeValue}标识,如${ZJ}
+     * 2. 如果使用字典,备注使用{CodeValue}标识,如{ZJ}
      * 3. 如果找不到oracle驱动, 项目设置（Libraries- '+' - 添加ojdbc包）
      *
      */
     /**实体名*/
-    private static String BASE_NAME = "TeachContact";
+    private static String BASE_NAME = "FixedAssets";
     /**数据库表名*/
-    private static String TABLE_NAME = "T_TAB_TEACH_CONTACT";
+    private static String TABLE_NAME = "T_TAB_FIXED_ASSETS";
     /**1. 模块名,不填默认business （core,business）*/
     private static String MODULE_NAME = "";
     /** packageName 包所在位置;实际包生成所在位置=MODULE_NAME+PACKAGE_NAME*/
     private static String PACKAGE_NAME = "com.goisan.table";
     /** jsp 文件所在路径; jsp文件生成所在位置 = MODULE_NAME + JSP_PATH*/
-    private static String JSP_PATH = "/table/teachcontact";
+    private static String JSP_PATH = "/table/fixedassets";
     /** 表主键*/
     private static String PRIMARY = "id";
 

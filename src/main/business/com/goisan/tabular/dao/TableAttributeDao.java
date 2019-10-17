@@ -38,6 +38,20 @@ public interface TableAttributeDao {
 
     void expertExcel_A3(HttpServletResponse response, TabularFile tabularFile);//A3基本办学条件表1
 
+    List<InstitutionalArea> getInstitutionalAreaList();
+
+    List<BookCollection> getBookCollectionList();
+
+    List<MachineClassroom> getMachineClassroomList();
+
+    List<GeneralConstruction> getGeneralConstructionList();
+
+    List<ManagementInformation> getManagementInformationList();
+
+    List<InformationPersonnel> getInformationPersonnelList();
+
+    List<FixedAssets> getFixedAssetsList();
+
     void expertExcel_A4_1(HttpServletResponse response, TabularFile tabularFile);//A4-1校内实线基地表
 
     void expertExcel_A4_2(HttpServletResponse response, TabularFile tabularFile);//A4-2校外实习实训基地表1

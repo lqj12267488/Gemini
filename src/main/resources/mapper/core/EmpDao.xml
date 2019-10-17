@@ -669,7 +669,7 @@
     </select>
     <select id="GroupEmpByDept" resultType="com.goisan.system.bean.Emp">
         SELECT FUNC_GET_DEPTNAME(dept_id) as deptId , COUNT (1) as personOrder
-            FROM T_RS_EMPLOYEE_DEPT t  WHERE valid_flag = '1' and t.dept_id like func_get_range(#{dept},'6')
+            FROM T_RS_EMPLOYEE_DEPT t
         GROUP BY t.dept_id
     </select>
     <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.MachineClassroomDao">
+    <select id="getMachineClassroomList"
+            parameterType="com.goisan.table.bean.MachineClassroom"
+            resultType="com.goisan.table.bean.MachineClassroom">
+        select id,reading_room_seat,computer_number,teaching_computer,tablet_pc,public_computer_room,professional_computer,classroom,multimedia_classroom,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_MACHINE_CLASSROOM where 1=1 
+<if test='readingRoomSeat != "" and readingRoomSeat != null'> AND reading_room_seat like '%'||#{readingRoomSeat}||'%' </if> 
+<if test='computerNumber != "" and computerNumber != null'> AND computer_number like '%'||#{computerNumber}||'%' </if> 
+<if test='teachingComputer != "" and teachingComputer != null'> AND teaching_computer like '%'||#{teachingComputer}||'%' </if> 
+<if test='tabletPc != "" and tabletPc != null'> AND tablet_pc like '%'||#{tabletPc}||'%' </if> 
+<if test='publicComputerRoom != "" and publicComputerRoom != null'> AND public_computer_room like '%'||#{publicComputerRoom}||'%' </if> 
+<if test='professionalComputer != "" and professionalComputer != null'> AND professional_computer like '%'||#{professionalComputer}||'%' </if> 
+<if test='classroom != "" and classroom != null'> AND classroom like '%'||#{classroom}||'%' </if> 
+<if test='multimediaClassroom != "" and multimediaClassroom != null'> AND multimedia_classroom like '%'||#{multimediaClassroom}||'%' </if> 
+
+    </select>
+    <insert id="saveMachineClassroom" parameterType="com.goisan.table.bean.MachineClassroom">
+        insert into t_tab_machine_classroom (id,reading_room_seat,computer_number,teaching_computer,tablet_pc,public_computer_room,professional_computer,classroom,multimedia_classroom,creator,create_time,create_dept) values (func_get_uuid ,#{readingRoomSeat},#{computerNumber},#{teachingComputer},#{tabletPc},#{publicComputerRoom},#{professionalComputer},#{classroom},#{multimediaClassroom},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getMachineClassroomById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.MachineClassroom">
+        select * from T_TAB_MACHINE_CLASSROOM where id = #{id}
+    </select>
+    <update id="updateMachineClassroom" parameterType="com.goisan.table.bean.MachineClassroom">
+        update t_tab_machine_classroom set reading_room_seat=#{readingRoomSeat},computer_number=#{computerNumber},teaching_computer=#{teachingComputer},tablet_pc=#{tabletPc},public_computer_room=#{publicComputerRoom},professional_computer=#{professionalComputer},classroom=#{classroom},multimedia_classroom=#{multimediaClassroom},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delMachineClassroom" parameterType="java.lang.String">
+        delete from T_TAB_MACHINE_CLASSROOM where id = #{id}
+    </delete>
+</mapper>

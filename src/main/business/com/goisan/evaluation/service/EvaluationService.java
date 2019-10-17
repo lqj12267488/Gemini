@@ -327,4 +327,15 @@ public interface EvaluationService {
     List<EvaluationTask> getUserTask(String loginId);
 
     List<EvaluationTask> getTaskResultList();
+
+    List getInterviewersGroupList(Group group);
+
+    List<Tree> getInterviwerTree();
+
+    List<EvaluationTask> getInterviewersTasks(EvaluationTask task);
+
+    List<EvaluationEmpsMenmbers> getInterviewersListTask(EvaluationEmpsMenmbers evaluationEmpsMenmbers);
+
+    @Transactional
+    void saveGroupInterviewersEmps(String ids, String groupId, String evaluationType);
 }

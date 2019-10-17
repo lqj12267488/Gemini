@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.ContactInformationDao">
+    <select id="getContactInformationList"
+            parameterType="com.goisan.table.bean.ContactInformation"
+            resultType="com.goisan.table.bean.ContactInformation">
+        select id,mailing_address,postal_code,school_website,area_number,area_fax,mail_box,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag,contacts_area_number,contacts_area_fax,contacts_mail_box from T_TAB_CONTACT_INFORMATION where 1=1 
+<if test='mailingAddress != "" and mailingAddress != null'> AND mailing_address like '%'||#{mailingAddress}||'%' </if> 
+<if test='postalCode != "" and postalCode != null'> AND postal_code like '%'||#{postalCode}||'%' </if> 
+<if test='schoolWebsite != "" and schoolWebsite != null'> AND school_website like '%'||#{schoolWebsite}||'%' </if> 
+<if test='areaNumber != "" and areaNumber != null'> AND area_number like '%'||#{areaNumber}||'%' </if> 
+<if test='areaFax != "" and areaFax != null'> AND area_fax like '%'||#{areaFax}||'%' </if> 
+<if test='mailBox != "" and mailBox != null'> AND mail_box like '%'||#{mailBox}||'%' </if> 
+<if test='contactsAreaNumber != "" and contactsAreaNumber != null'> AND contacts_area_number like '%'||#{contactsAreaNumber}||'%' </if> 
+<if test='contactsAreaFax != "" and contactsAreaFax != null'> AND contacts_area_fax like '%'||#{contactsAreaFax}||'%' </if> 
+<if test='contactsMailBox != "" and contactsMailBox != null'> AND contacts_mail_box like '%'||#{contactsMailBox}||'%' </if> 
+
+    </select>
+    <insert id="saveContactInformation" parameterType="com.goisan.table.bean.ContactInformation">
+        insert into t_tab_contact_information (id,mailing_address,postal_code,school_website,area_number,area_fax,mail_box,creator,create_time,create_dept,contacts_area_number,contacts_area_fax,contacts_mail_box) values (func_get_uuid ,#{mailingAddress},#{postalCode},#{schoolWebsite},#{areaNumber},#{areaFax},#{mailBox},#{creator},sysdate ,#{createDept},#{contactsAreaNumber},#{contactsAreaFax},#{contactsMailBox})
+    </insert>
+    <select id="getContactInformationById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.ContactInformation">
+        select * from T_TAB_CONTACT_INFORMATION where id = #{id}
+    </select>
+    <update id="updateContactInformation" parameterType="com.goisan.table.bean.ContactInformation">
+        update t_tab_contact_information set mailing_address=#{mailingAddress},postal_code=#{postalCode},school_website=#{schoolWebsite},area_number=#{areaNumber},area_fax=#{areaFax},mail_box=#{mailBox},changer=#{changer},change_time= sysdate,change_dept=#{changeDept},contacts_area_number=#{contactsAreaNumber},contacts_area_fax=#{contactsAreaFax},contacts_mail_box=#{contactsMailBox} where id = #{id}
+    </update>
+    <delete id="delContactInformation" parameterType="java.lang.String">
+        delete from T_TAB_CONTACT_INFORMATION where id = #{id}
+    </delete>
+</mapper>

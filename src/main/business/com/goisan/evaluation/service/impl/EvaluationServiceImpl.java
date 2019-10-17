@@ -831,4 +831,58 @@ public class EvaluationServiceImpl implements EvaluationService {
     public  List<EvaluationTask> getTaskResultList(){
         return evaluationDao.getTaskResultList();
     }
+
+    public List getInterviewersGroupList(Group group){
+        return evaluationDao.getInterviewersGroupList(group);
+    }
+
+    public List<Tree> getInterviwerTree(){
+        return evaluationDao.getInterviwerTree();
+    }
+
+    public List<EvaluationTask> getInterviewersTasks(EvaluationTask task){
+        return evaluationDao.getInterviewersTasks(task);
+    }
+
+    public List<EvaluationEmpsMenmbers> getInterviewersListTask(EvaluationEmpsMenmbers evaluationEmpsMenmbers){
+        return evaluationDao.getInterviewersListTask(evaluationEmpsMenmbers);
+    }
+
+    public void saveGroupInterviewersEmps(String ids, String groupId, String evaluationType){
+        boolean b, c;
+        EvaluationGroupEmps eGroupEmps = new EvaluationGroupEmps();
+        eGroupEmps.setGroupId(groupId);
+        eGroupEmps.setEvaluationType(evaluationType);
+        CommonUtil.save(eGroupEmps);
+
+        String[] tmp = ids.split(";");
+        if (!"".equals(ids)) {
+            for (String memberIdAndDeptId : tmp) {
+                if(memberIdAndDeptId.split(",").length <2)
+                    continue;
+                eGroupEmps.setEmpId(CommonUtil.getUUID());
+                if(memberIdAndDeptId.split(",")[0].length()==36){
+                    eGroupEmps.setPersonId(memberIdAndDeptId.split(",")[0]);
+                    eGroupEmps.setDeptId("");
+                    eGroupEmps.setName(memberIdAndDeptId.split(",")[1]);
+                    evaluationDao.insertGroupEmps(eGroupEmps);
+                }
+
+            }
+          /*  for (String memberIdAndDeptId : tmp) {
+                if(memberIdAndDeptId.split(",").length <=2)
+                    continue;
+                b = Pattern.matches("^\\d{15}|^\\d{17}([0-9]|X|x)$", memberIdAndDeptId.split(",")[0]);
+                c = memberIdAndDeptId.split(",")[0].length() == 36;
+                eGroupEmps.setEmpId(CommonUtil.getUUID());
+                eGroupEmps.setPersonId(memberIdAndDeptId.split(",")[0]);
+                if( ("0".equals(evaluationType) && c) ||("1".equals(evaluationType) && b))  {
+                    eGroupEmps.setDeptId(memberIdAndDeptId.split(",")[1]);
+                    eGroupEmps.setName(memberIdAndDeptId.split(",")[2]);
+                    evaluationDao.insertGroupEmps(eGroupEmps);
+                }
+            }*/
+        }
+        evaluationDao.updateGroupEmpsNum(groupId);
+    }
 }

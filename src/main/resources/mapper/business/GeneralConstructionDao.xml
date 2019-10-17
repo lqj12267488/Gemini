@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.GeneralConstructionDao">
+    <select id="getGeneralConstructionList"
+            parameterType="com.goisan.table.bean.GeneralConstruction"
+            resultType="com.goisan.table.bean.GeneralConstruction">
+        select creator,create_time,create_dept,changer,change_time,change_dept,valid_flag,id,internet_bandwidth,network_bandwidth,one_card_use,func_get_dicvalue(one_card_use,'SF') oneCardUseShow,wireless_coverage,func_get_dicvalue(wireless_coverage,'WXFGQK') wirelessCoverageShow,network_information,management_information,system_mail_number,online_courses,digital_resources,electronics_book from T_TAB_GENERAL_CONSTRUCTION where 1=1 
+<if test='internetBandwidth != "" and internetBandwidth != null'> AND internet_bandwidth like '%'||#{internetBandwidth}||'%' </if> 
+<if test='networkBandwidth != "" and networkBandwidth != null'> AND network_bandwidth like '%'||#{networkBandwidth}||'%' </if> 
+<if test='oneCardUse != "" and oneCardUse != null'> AND one_card_use = #{oneCardUse} </if> 
+<if test='wirelessCoverage != "" and wirelessCoverage != null'> AND wireless_coverage = #{wirelessCoverage} </if> 
+<if test='networkInformation != "" and networkInformation != null'> AND network_information like '%'||#{networkInformation}||'%' </if> 
+<if test='managementInformation != "" and managementInformation != null'> AND management_information like '%'||#{managementInformation}||'%' </if> 
+<if test='systemMailNumber != "" and systemMailNumber != null'> AND system_mail_number like '%'||#{systemMailNumber}||'%' </if> 
+<if test='onlineCourses != "" and onlineCourses != null'> AND online_courses like '%'||#{onlineCourses}||'%' </if> 
+<if test='digitalResources != "" and digitalResources != null'> AND digital_resources like '%'||#{digitalResources}||'%' </if> 
+<if test='electronicsBook != "" and electronicsBook != null'> AND electronics_book like '%'||#{electronicsBook}||'%' </if> 
+
+    </select>
+    <insert id="saveGeneralConstruction" parameterType="com.goisan.table.bean.GeneralConstruction">
+        insert into t_tab_general_construction (creator,create_time,create_dept,id,internet_bandwidth,network_bandwidth,one_card_use,wireless_coverage,network_information,management_information,system_mail_number,online_courses,digital_resources,electronics_book) values (#{creator},sysdate ,#{createDept},func_get_uuid ,#{internetBandwidth},#{networkBandwidth},#{oneCardUse},#{wirelessCoverage},#{networkInformation},#{managementInformation},#{systemMailNumber},#{onlineCourses},#{digitalResources},#{electronicsBook})
+    </insert>
+    <select id="getGeneralConstructionById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.GeneralConstruction">
+        select * from T_TAB_GENERAL_CONSTRUCTION where id = #{id}
+    </select>
+    <update id="updateGeneralConstruction" parameterType="com.goisan.table.bean.GeneralConstruction">
+        update t_tab_general_construction set changer=#{changer},change_time= sysdate,change_dept=#{changeDept},internet_bandwidth=#{internetBandwidth},network_bandwidth=#{networkBandwidth},one_card_use=#{oneCardUse},wireless_coverage=#{wirelessCoverage},network_information=#{networkInformation},management_information=#{managementInformation},system_mail_number=#{systemMailNumber},online_courses=#{onlineCourses},digital_resources=#{digitalResources},electronics_book=#{electronicsBook} where id = #{id}
+    </update>
+    <delete id="delGeneralConstruction" parameterType="java.lang.String">
+        delete from T_TAB_GENERAL_CONSTRUCTION where id = #{id}
+    </delete>
+</mapper>

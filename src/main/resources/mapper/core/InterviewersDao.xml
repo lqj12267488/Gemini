@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.system.dao.InterviewersDao">
+    <select id="interviewersAction" resultType="com.goisan.system.bean.Interviewers"
+            parameterType="com.goisan.system.bean.Interviewers">
+        select
+        id id,
+        name name,
+        FUNC_GET_DICVALUE(sex,'XB') sex,
+        graduate_school graduateSchool,
+        major major,
+        FUNC_GET_DICVALUE(nation,'MZ') nation,
+        post post,
+        FUNC_GET_DICVALUE(education,'XL') education,
+        to_char(graduation_time, 'yyyy-mm-dd') graduationTime,
+        person_salary personSalary,
+        job job,
+        FUNC_GET_DICVALUE(term,'XQ') term
+        from T_RS_INTERVIEWERS
+        WHERE 1 = 1
+        <if test=" name != null and name != '' ">
+            AND NAME LIKE '%'||#{name}||'%'
+        </if>
+        <if test=" job != null and job != '' ">
+            AND JOB LIKE '%'||#{job}||'%'
+        </if>
+        <if test="sex != null and sex != '' ">
+            AND sex = #{sex}
+        </if>
+        <if test="nation != null and nation != '' ">
+            AND nation = #{nation}
+        </if>
+        <if test="education != null and education != '' ">
+            AND education = #{education}
+        </if>
+        <if test="personSalary != null and personSalary != '' ">
+            AND person_salary = #{personSalary}
+        </if>
+        ORDER BY create_time DESC
+    </select>
+    <insert id="insertInterviewers" parameterType="com.goisan.system.bean.Interviewers">
+        INSERT INTO T_RS_INTERVIEWERS
+        (id,
+         NAME,
+         sex,
+         graduate_school,
+         major,
+         nation,
+         post,
+         education,
+         graduation_time,
+         person_salary,
+         JOB,
+         term,
+         creator,
+         create_time,
+         create_dept,
+         valid_flag)
+            VALUES (FUNC_GET_UUID,
+                    '${name}',
+                    '${sex}',
+                    '${graduateSchool}',
+                    '${major}',
+                    '${nation}',
+                    '${post}',
+                    '${education}',
+                    to_date('${graduationTime}', 'yyyy-mm-dd'),
+                    '${personSalary}',
+                    '${job}',
+                    '${term}',
+                    '${creator}',
+                    sysdate,
+                    '${createDept}',
+                    '1')
+    </insert>
+    <select id="getInterviewersById" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Interviewers">
+        select id,
+               name     name,
+               sex     sex,
+               graduate_school     graduateSchool,
+               major     major,
+               nation     nation,
+               post     post,
+               education     education,
+               to_char(graduation_time, 'yyyy-mm-dd')     graduationTime,
+               person_salary     personSalary,
+               job     job,
+               term     term
+        from T_RS_INTERVIEWERS
+        WHERE 1 = 1
+          AND id = #{id}
+        ORDER BY create_time DESC
+    </select>
+    <update id="updateInterviewersById" parameterType="com.goisan.system.bean.Interviewers">
+        UPDATE T_RS_INTERVIEWERS
+        SET
+            name      = #{name},
+            sex      = #{sex},
+            graduate_school      = #{graduateSchool},
+            major      = #{major},
+            nation      = #{nation},
+            post      = #{post},
+            education      = #{education},
+            graduation_time = to_date(#{graduationTime}, 'yyyy-mm-dd'),
+            person_salary      = #{person_salary},
+            job      = #{job},
+            term      = #{term},
+            change_dept       = #{changeDept},
+            change_time       = sysdate
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteInterviewersById" parameterType="java.lang.String">
+        DELETE T_RS_INTERVIEWERS
+        WHERE id = #{id}
+    </delete>
+</mapper>

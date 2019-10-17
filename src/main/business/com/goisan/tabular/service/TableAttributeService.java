@@ -8,7 +8,7 @@ import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.Dept;
 import com.goisan.system.bean.Emp;
 import com.goisan.system.bean.Student;
-import com.goisan.table.bean.Programme;
+import com.goisan.table.bean.*;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
 
@@ -31,6 +31,20 @@ public interface TableAttributeService {
     List<Emp> getExpertExcel_A2();
 
     void expertExcel_A3(HttpServletResponse response, TabularFile tabularFile);//A3基本办学条件表1
+
+    List<InstitutionalArea> getInstitutionalAreaList();
+
+    List<BookCollection> getBookCollectionList();
+
+    List<MachineClassroom> getMachineClassroomList();
+
+    List<GeneralConstruction> getGeneralConstructionList();
+
+    List<ManagementInformation> getManagementInformationList();
+
+    List<InformationPersonnel> getInformationPersonnelList();
+
+    List<FixedAssets> getFixedAssetsList();
 
     void expertExcel_A4_1(HttpServletResponse response, TabularFile tabularFile);//A4-1校内实线基地表
 
