@@ -116,7 +116,7 @@
     })
 
     function evalutionEmp(taskId, empPersonId, empDeptId, endTime, planId, taskName, empName) {
-        $("#dialog").load("<%=request.getContextPath()%>/evaluation/result/listResult", {
+        $("#dialog").load("<%=request.getContextPath()%>/evaluation/result/listResultInterviewers", {
             taskId: taskId,
             empPersonId: empPersonId,
             empDeptId: empDeptId,

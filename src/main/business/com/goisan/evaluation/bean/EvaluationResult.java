@@ -33,7 +33,8 @@ public class EvaluationResult extends BaseBean {
     private String rowspan;
     private List<EvaluationResult> evalList;
     private String fullScore;
-
+    private String interviewDecision;
+    private String interviewEvaluate;
 
     public String getParentIndexId() {
         return parentIndexId;
@@ -227,4 +228,19 @@ public class EvaluationResult extends BaseBean {
         this.fullScore = fullScore;
     }
 
+    public String getInterviewDecision() {
+        return interviewDecision;
+    }
+
+    public void setInterviewDecision(String interviewDecision) {
+        this.interviewDecision = interviewDecision;
+    }
+
+    public String getInterviewEvaluate() {
+        return interviewEvaluate;
+    }
+
+    public void setInterviewEvaluate(String interviewEvaluate) {
+        this.interviewEvaluate = interviewEvaluate;
+    }
 }

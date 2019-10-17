@@ -7,6 +7,7 @@ import com.goisan.system.bean.*;
 import com.goisan.system.service.CommonService;
 import com.goisan.system.service.EmpService;
 import com.goisan.evaluation.service.EvaluationService;
+import com.goisan.system.service.InterviewersService;
 import com.goisan.system.service.ParameterService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
@@ -49,6 +50,9 @@ public class EvaluationController {
 
     @Resource
     public ParameterService parameterService;
+
+    @Resource
+    public InterviewersService interviewersService;
 
     @RequestMapping("/evaluation/group")
     public String group() {
@@ -540,6 +544,7 @@ public class EvaluationController {
         map.put("selected", evaluationEmps);
         return map;
     }
+
 
     @ResponseBody
     @RequestMapping("/evaluation/getEmpsCheckByTask")
@@ -3671,7 +3676,7 @@ public class EvaluationController {
         mv.addObject("head", "修改");
         return mv;
     }
-    @RequestMapping("/evaluation/toSelectInterviewersEmp")
+    @RequestMapping("/evaluation/toSelectInterviewersEmp")//22222222222222222222222222
     public ModelAndView getSelectInterviewersEmpTree(String id, String evaluationType) {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/business/evaluation/interview/group/empGroup/selectInterviewersEmp");
@@ -3843,5 +3848,195 @@ public class EvaluationController {
         return studentList;
     }
 
+    @RequestMapping("/evaluation/result/listResultInterviewers")
+    public ModelAndView gerlistResultInterviewers(EvaluationEmpsMenmbers evaluationEmpsMenmbers) {
+        ModelAndView mv = new ModelAndView("/business/evaluation/interview/group/result/listEditResultInterviewers");
+        LoginUser loginUser = CommonUtil.getLoginUser();
+        evaluationEmpsMenmbers.setMemberPersonId(loginUser.getPersonId());
+        evaluationEmpsMenmbers.setMemberDeptId(loginUser.getDefaultDeptId());
+        Interviewers interviewers = interviewersService.getInterviewersById(evaluationEmpsMenmbers.getEmpPersonId());
+        List<Index> iList = evaluationService.getlistIndex(evaluationEmpsMenmbers.getPlanId());
+        List<Index> iListReturn = new ArrayList<Index>();
+        for (Iterator iListItemFir = iList.iterator(); iListItemFir.hasNext(); ) {
+            //第一层
+            Index indexFir = (Index) iListItemFir.next();
+            if (indexFir.getParentIndexId().equals(evaluationEmpsMenmbers.getPlanId()) && indexFir.getLeafFlag()
+                    .equals("1")) {
+                //第一层 叶子
+                iListReturn.add(indexFir);
+            } else if (indexFir.getParentIndexId().equals(evaluationEmpsMenmbers.getPlanId()) && indexFir.getLeafFlag
+                    ().equals("0")) {
+                //第二层
+                List<Index> iListSe = new ArrayList<Index>();
+                for (Iterator iListItemSe = iList.iterator(); iListItemSe.hasNext(); ) {
+                    Index indexSe = (Index) iListItemSe.next();
+                    if (indexSe.getParentIndexId().equals(indexFir.getIndexId()) && indexSe.getLeafFlag().equals("1")) {
+                        //第二层叶子
+                        iListSe.add(indexSe);
+                    } else if (indexSe.getParentIndexId().equals(indexFir.getIndexId()) && indexSe.getLeafFlag()
+                            .equals("0")) {
+                        //第三层
+                        List<Index> iListThr = new ArrayList<Index>();
+                        for (Iterator iListItemThr = iList.iterator(); iListItemThr.hasNext(); ) {
+                            Index indexThr = (Index) iListItemThr.next();
+                            if (indexThr.getParentIndexId().equals(indexSe.getIndexId())) {
+                                //第三层叶子
+                                iListThr.add(indexThr);
+                            }
+                        }
+                        indexSe.setIndexList(iListThr);
+                        iListSe.add(indexSe);
+                    }
+                }
+                indexFir.setIndexList(iListSe);
+                iListReturn.add(indexFir);
+            }
+        }
+        mv.addObject("iList", iListReturn);
+        mv.addObject("taskId", evaluationEmpsMenmbers.getTaskId());
+        mv.addObject("empPersonId", evaluationEmpsMenmbers.getEmpPersonId());
+        mv.addObject("empDeptId", evaluationEmpsMenmbers.getEmpDeptId());
+        mv.addObject("empName", evaluationEmpsMenmbers.getEmpName());
+        mv.addObject("taskName", evaluationEmpsMenmbers.getTaskName());
+        mv.addObject("interviewerName", interviewers.getName());
+        mv.addObject("interviewerSex", interviewers.getSexShow());
+        mv.addObject("interviewerNation", interviewers.getNationShow());
+        mv.addObject("interviewerPost", interviewers.getPost());
+        mv.addObject("interviewerGraduateSchool", interviewers.getGraduateSchool());
+        mv.addObject("interviewerMajor", interviewers.getMajor());
+        mv.addObject("interviewersEducation", interviewers.getEducationShow());
+        mv.addObject("interviewersTime", interviewers.getGraduationTime());
+        mv.addObject("interviewersSalary", interviewers.getPersonSalary());
+        mv.addObject("interviewersJob", interviewers.getJob());
+        return mv;
+    }
+    @ResponseBody
+    @RequestMapping("/evaluation/result/insertResultInterviewers")
+    public Message updateResultInterviewers(String taskId, String empPersonId, String empDeptId, String returnValue, String
+            empName,String interviewDecision,String interviewEvaluate) {
+        LoginUser loginUser = CommonUtil.getLoginUser();
+        String memberPersonId = loginUser.getPersonId(); //memberPersonId = "a88c0353-bc45-4c27-85a1-96aa86ba1d72";
+        String memberDeptId = loginUser.getDefaultDeptId();// memberDeptId = "001001";
+        String memberName = loginUser.getName();
+        evaluationService.insertResultInterviewers(taskId, empPersonId, empDeptId, returnValue, empName,
+                memberPersonId, memberDeptId, memberName,interviewDecision,interviewEvaluate);
+
+//        evaluationService.updateEmpsMenmbers(taskId);
+        return new Message(0, "保存成功！", null);
+    }
+
+    @RequestMapping("/evaluation/monitorInterviewers")
+    public String monitorInterviewers() {
+        return "/business/evaluation/interview/group/monitor/monitorInterviewers";
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/getMonitorInterviewersTask")
+    public Map getMonitorInterviewersTask(String taskname, String evaluationType, String planName) {
+        EvaluationTask task = new EvaluationTask();
+        if (null != taskname && !taskname.equals(""))
+            task.setTaskName("%" + taskname + "%");
+        if (null != planName && !planName.equals(""))
+            task.setPlanName("%" + planName + "%");
+        if (null != evaluationType && !evaluationType.equals(""))
+            task.setEvaluationType(evaluationType);
+        List list = evaluationService.getMonitorInterviewersTask(task);
+        return CommonUtil.tableMap(list);
+    }
+
+    @RequestMapping("/evaluation/toInterviewers")
+    public String toInterviewers(String id, String taskName, String evaluationType, Model model) {
+        model.addAttribute("id", id);
+        model.addAttribute("taskName", taskName);
+        model.addAttribute("evaluationType", evaluationType);
+        return "business/evaluation/interview/group/monitor/monitorToInterviewers";
+    }
+
+    @RequestMapping("/evaluation/toInterviewersDetails")
+    public String toInterviewersDetails(String id, String taskId, String name, String taskName, Model model) {
+        List<Index> indices = evaluationService.getIndexByTaskId(taskId);
+        Integer maxLevel = evaluationService.getMaxLevel(taskId);
+        model.addAttribute("id", id);
+        model.addAttribute("taskId", taskId);
+        model.addAttribute("indices", indices);
+        model.addAttribute("maxLevel", maxLevel);
+        model.addAttribute("name", name);
+        model.addAttribute("taskName", taskName);
+        return "/business/evaluation/interview/group/monitor/interviewersDetails";
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/getInterviewersDetails")
+    public Map getInterviewersDetails(String id, String taskId) {
+        List<EvaluationEmpsMenmbers> evaluationMembers = evaluationService.getMembersByTaskIdAndEmpId
+                (id, taskId);
+        List<Map> data = new ArrayList<Map>();
+        List<Index> indices = evaluationService.getIndexByTaskId(taskId);
+        for (EvaluationEmpsMenmbers members : evaluationMembers) {
+            Map<String, String> tmp = new HashMap<String, String>();
+            tmp.put("id", members.getId());
+            tmp.put("membersName", members.getMemberName());
+            tmp.put("invalidFlag", members.getInvalidFlag());
+            tmp.put("evaluationFlag", members.getEvaluationFlag());
+            String ScoreVal = members.getScore();
+            if (ScoreVal != null && ScoreVal.subSequence(0, 1).equals(".")) {
+                ScoreVal = "0" + ScoreVal;
+            }
+            tmp.put("score", ScoreVal);
+            List<EvaluationResult> results = evaluationService.getMonitorResults(id, taskId,
+                    members.getMemberPersonId());
+            if (results.size() == 0) {
+                for (Index index : indices) {
+                    if ("1".equals(index.getLeafFlag())) {
+                        tmp.put(index.getIndexId() + "-score", "");
+                        tmp.put(index.getIndexId() + "-remark", "");
+                        tmp.put("interviewDecision", "");
+                        tmp.put("interviewEvaluate", "");
+                    }
+                }
+            } else {
+                for (EvaluationResult result : results) {
+                    tmp.put(result.getIndexId() + "-score", result.getScore() + "");
+                    tmp.put(result.getIndexId() + "-remark", result.getRemark());
+                    tmp.put("interviewDecision", result.getInterviewDecision());
+                    tmp.put("interviewEvaluate", result.getInterviewEvaluate());
+                }
+            }
+            data.add(tmp);
+        }
+        return CommonUtil.tableMap(data);
+    }
+
+
+    @RequestMapping("/evaluation/toTaskInterviewersSelectEmps")
+    public ModelAndView toTaskInterviewersSelectEmps(String id, String startFlag, String evaluationType) {
+        ModelAndView mv = new ModelAndView("/business/evaluation/interview/group/task/taskInterviewersEmps");
+        mv.addObject("id", id);
+        mv.addObject("evaluationType", evaluationType);
+        if (startFlag.equals("未启动"))
+            mv.addObject("startFlag", 0);
+        else
+            mv.addObject("startFlag", 1);
+        return mv;
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/getEmpsInterviewersCheckByTask")
+    public Map<String, List> getEmpsInterviewersCheckByTask(String id, String evaluationType) {
+        Map<String, List> map = new HashMap<String, List>();
+            map.put("tree", evaluationService.getEmpsInterviewersCheckByTask(id));
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/getEmpsInterviewersByTask")
+    public Map<String, List> getEmpsInterviewersByTask(String id) {
+        List<Tree> trees = commonService.getEmpTree();
+        List<EvaluationEmp> evaluationEmps = evaluationService.getEmpsInterviewersByTaskId(id);//
+        Map<String, List> map = new HashMap<String, List>();
+        map.put("tree", trees);
+        map.put("selected", evaluationEmps);
+        return map;
+    }
 
 }

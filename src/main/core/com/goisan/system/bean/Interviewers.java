@@ -13,7 +13,9 @@ public class Interviewers extends BaseBean{
     private String personSalary;
     private String job;
     private String term;
-
+    private String sexShow;
+    private String nationShow;
+    private String educationShow;
     public String getId() {
         return id;
     }
@@ -108,5 +110,29 @@ public class Interviewers extends BaseBean{
 
     public void setTerm(String term) {
         this.term = term;
+    }
+
+    public String getSexShow() {
+        return sexShow;
+    }
+
+    public void setSexShow(String sexShow) {
+        this.sexShow = sexShow;
+    }
+
+    public String getNationShow() {
+        return nationShow;
+    }
+
+    public void setNationShow(String nationShow) {
+        this.nationShow = nationShow;
+    }
+
+    public String getEducationShow() {
+        return educationShow;
+    }
+
+    public void setEducationShow(String educationShow) {
+        this.educationShow = educationShow;
     }
 }

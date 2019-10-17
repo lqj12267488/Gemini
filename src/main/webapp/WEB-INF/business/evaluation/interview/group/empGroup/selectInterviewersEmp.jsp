@@ -65,7 +65,7 @@
             groupTree.expandNode(node, true, false, false);
             var selected = data.selected;
             for (var i = 0; i < selected.length; i++) {
-                var node = groupTree.getNodeByParam("id", selected[i].personId +","+ selected[i].deptId ) ;
+                var node = groupTree.getNodeByParam("id", selected[i].personId) ;
                 groupTree.checkNode(node, true, false);
             }
 

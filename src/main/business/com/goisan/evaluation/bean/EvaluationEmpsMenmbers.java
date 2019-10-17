@@ -27,7 +27,8 @@ public class EvaluationEmpsMenmbers extends BaseBean {
     private String invalidOperatorDept;
     private String invalidReason;
     private String evaluationType;
-
+    private String interviewDecision;
+    private String interviewEvaluate;
     public String getId() {
         return id;
     }
@@ -202,5 +203,21 @@ public class EvaluationEmpsMenmbers extends BaseBean {
 
     public void setEvaluationType(String evaluationType) {
         this.evaluationType = evaluationType;
+    }
+
+    public String getInterviewDecision() {
+        return interviewDecision;
+    }
+
+    public void setInterviewDecision(String interviewDecision) {
+        this.interviewDecision = interviewDecision;
+    }
+
+    public String getInterviewEvaluate() {
+        return interviewEvaluate;
+    }
+
+    public void setInterviewEvaluate(String interviewEvaluate) {
+        this.interviewEvaluate = interviewEvaluate;
     }
 }

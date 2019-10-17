@@ -71,6 +71,8 @@ public interface EvaluationDao {
 
     List<EvaluationEmp> getEmpsByTaskId(String id);
 
+    List<EvaluationEmp>  getEmpsInterviewersByTaskId(String id);
+
     void deleteEmpsByTaskId(String taskId);
 
     void saveEmps(EvaluationEmp evaluationEmp);
@@ -102,6 +104,8 @@ public interface EvaluationDao {
     List<EvaluationResult> listResultByPersonid(EvaluationEmpsMenmbers evaluationEmpsMenmbers);
 
     void insertResult(EvaluationResult evaluationResult);
+
+    void insertResultInterviewers(EvaluationResult evaluationResult);
 
     void updateEvaluationEmpMenmber(EvaluationEmpsMenmbers evaluationEmpsMenmbers);
 
@@ -144,7 +148,13 @@ public interface EvaluationDao {
 
     void delectResult(EvaluationResult eResult);
 
+    void delectResultInterviewers(EvaluationResult eResult);
+
+    void updateEvaluationEmpMenmberInterviewers(EvaluationEmpsMenmbers evaluationEmpsMenmbers);
+
     List<Tree> getEmpsCheckByTask(String id);
+
+    List<Tree> getEmpsInterviewersCheckByTask(String id);
 
     List<Tree> getClassStudentCheckByTask(String id);
 
@@ -209,6 +219,8 @@ public interface EvaluationDao {
     void updateEmpGroup(Group group);
 
     List<EvaluationGroupEmps> getEmpsTree(@Param("groupId") String groupId);
+
+    List<Interviewers> getInterviwerTree(@Param("groupId") String groupId);
 
     List<EvaluationGroupEmps> getEmpsTreeByTaskId(@Param("taskId") String taskId);
 
@@ -368,4 +380,6 @@ public interface EvaluationDao {
     List<EvaluationTask> getInterviewersTasks(EvaluationTask task);
 
     List<EvaluationEmpsMenmbers> getInterviewersListTask(EvaluationEmpsMenmbers evaluationEmpsMenmbers);
+
+    List<EvaluationTask> getMonitorInterviewersTask(EvaluationTask task);
 }

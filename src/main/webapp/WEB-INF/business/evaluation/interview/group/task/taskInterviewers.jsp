@@ -206,7 +206,7 @@
 
 
     function toSelectEmps(id, startFlag) {
-        $("#dialog").load("<%=request.getContextPath()%>/evaluation/toSelectInterviewersEmp", {
+        $("#dialog").load("<%=request.getContextPath()%>/evaluation/toTaskInterviewersSelectEmps", {
             id: id,
             startFlag: startFlag,
             evaluationType: eType,

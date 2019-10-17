@@ -476,7 +476,20 @@
         ORDER BY i.CREATE_TIME
     </select>
     <select id="getMonitorResults" resultType="com.goisan.evaluation.bean.EvaluationResult">
-        SELECT *
+        SELECT
+            RESULT_ID,
+            INDEX_ID,
+            TASK_ID,
+            EMP_PERSON_ID,
+            EMP_DEPT_ID,
+            EMP_NAME,
+            MEMBER_PERSON_ID,
+            MEMBER_DEPT_ID,
+            MEMBER_NAME,
+            SCORE,
+            REMARK,
+            INTERVIEW_EVALUATE,
+            FUNC_GET_DICVALUE(interview_decision,'MSJD') interviewDecision
         FROM t_kh_evaluation_result
         WHERE emp_person_id = #{empId}
           AND member_person_id =
@@ -586,6 +599,15 @@
                 #{memberPersonId}, #{memberDeptId}, #{memberName}, #{score}, #{remark},
                 '1', #{creator}, sysdate, #{createDept})
     </insert>
+    <insert id="insertResultInterviewers" parameterType="com.goisan.evaluation.bean.EvaluationResult">
+        INSERT INTO T_KH_EVALUATION_RESULT
+        (RESULT_ID, EMP_PERSON_ID, EMP_DEPT_ID, EMP_NAME, INDEX_ID, TASK_ID,
+         MEMBER_PERSON_ID, MEMBER_DEPT_ID, MEMBER_NAME, SCORE, REMARK,INTERVIEW_DECISION,
+             INTERVIEW_EVALUATE,VALID_FLAG, creator, create_time, create_dept)
+        VALUES (#{resultId}, #{empPersonId}, #{empDeptId}, #{empName}, #{indexId}, #{taskId},
+                #{memberPersonId}, #{memberDeptId}, #{memberName}, #{score}, #{remark},#{interviewDecision},
+                #{interviewEvaluate},'1', #{creator}, sysdate, #{createDept})
+    </insert>
     <update id="updateEvaluationEmpMenmber"
             parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
         UPDATE T_KH_EVALUATION_EMPS_MEMBERS t
@@ -614,6 +636,34 @@
           AND t.member_person_id = #{memberPersonId}
           AND t.member_dept_id = #{memberDeptId}
     </update>
+
+    <update id="updateEvaluationEmpMenmberInterviewers" parameterType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
+        UPDATE T_KH_EVALUATION_EMPS_MEMBERS t
+        SET t.CHANGE_TIME     = sysdate,
+            t.EVALUATION_FLAG = 1,
+            t.score           =
+                (
+                    SELECT SUM(scorevalue)
+                    FROM (
+                             SELECT t1.score * t2.weights * t3.score / (t2.score * 100) AS scorevalue
+                             FROM T_KH_EVALUATION_RESULT t1,
+                                  T_KH_EVALUATION_INDEX t2,
+                                  T_KH_EVALUATION_PLAN t3
+                             WHERE t1.index_id = t2.index_id
+                               AND t3.plan_id = t2.plan_id
+                               AND t1.task_id = #{taskId}
+                               AND t1.emp_person_id = #{empPersonId}
+                               AND t1.member_person_id = #{memberPersonId}
+                               AND t1.member_dept_id = #{memberDeptId}
+                         )
+                )
+        WHERE t.task_id = #{taskId}
+          AND t.emp_person_id = #{empPersonId}
+          AND t.member_person_id = #{memberPersonId}
+          AND t.member_dept_id = #{memberDeptId}
+
+    </update>
+
     <select id="getMembersByTaskIdAndEmpId"
             resultType="com.goisan.evaluation.bean.EvaluationEmpsMenmbers">
         SELECT m.id,
@@ -723,6 +773,13 @@
         WHERE task_id = #{taskId}
           and emp_person_id = #{empPersonId}
           and emp_dept_id = #{empDeptId}
+          and member_person_id = #{memberPersonId}
+          and member_dept_id = #{memberDeptId}
+    </delete>
+    <delete id="delectResultInterviewers" parameterType="com.goisan.evaluation.bean.EvaluationResult">
+        DELETE T_KH_EVALUATION_RESULT
+        WHERE task_id = #{taskId}
+          and emp_person_id = #{empPersonId}
           and member_person_id = #{memberPersonId}
           and member_dept_id = #{memberDeptId}
     </delete>
@@ -2425,5 +2482,46 @@
             AND t3.task_id = #{taskId}
         </if>
         ORDER BY t2.create_time desc ,t2.task_name
+    </select>
+
+    <select id="getMonitorInterviewersTask" resultType="com.goisan.evaluation.bean.EvaluationTask"
+            parameterType="com.goisan.evaluation.bean.EvaluationTask">
+        SELECT
+        t.task_id,t.task_name,FUNC_GET_DICVALUE(t.term,'XQ') term,t.start_time,t.end_time,t.remark,
+        p.plan_name,g.group_name,FUNC_GET_DICVALUE(t.task_type,'JSPJRWLX') task_type,
+        round((SELECT count(*)
+        FROM t_kh_evaluation_emps_members m2
+        WHERE m2.task_id = t.task_id AND m2.evaluation_flag = '1') /
+        (SELECT decode(count(*),0,1,count(*))
+        FROM t_kh_evaluation_emps_members m1
+        WHERE m1.task_id = t.task_id) * 100) || '%' schedule
+        FROM t_kh_evaluation_task t, t_kh_evaluation_plan p, t_kh_evaluation_group g
+        WHERE t.plan_id = p.plan_id
+        AND t.group_id = g.group_id
+        AND (t.start_flag = '1' OR t.START_TIME &lt; sysdate)
+        AND t.valid_flag='1'
+        AND t.task_type = '6'
+        AND t.evaluation_type = #{evaluationType}
+        <if test="taskName != null and taskName != '' ">
+            AND t.task_name LIKE #{taskName}
+        </if>
+        <if test="planName != null and planName != '' ">
+            AND p.plan_name LIKE #{planName}
+        </if>
+        ORDER BY t.create_time desc
+    </select>
+
+    <select id="getEmpsInterviewersCheckByTask" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Tree">
+        SELECT t.person_id id, t.name, '0' pid, '1' checked
+        FROM T_KH_EVALUATION_EMPSLIST t
+        WHERE t.group_id =
+              (SELECT k.emp_group_id FROM T_KH_EVALUATION_TASK k WHERE k.task_id = #{taskId})
+    </select>
+    <select id="getEmpsInterviewersByTaskId" parameterType="java.lang.String"
+            resultType="com.goisan.evaluation.bean.EvaluationEmp">
+        SELECT *
+        FROM t_kh_evaluation_emps
+        WHERE task_id = #{taskId}
     </select>
 </mapper>

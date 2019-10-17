@@ -71,6 +71,8 @@ public interface EvaluationService {
 
     List<EvaluationEmp> getEmpsByTaskId(String id);
 
+    List<EvaluationEmp>  getEmpsInterviewersByTaskId(String id);
+
     void deleteEmpsByTaskId(String taskId);
 
     void saveEmps(EvaluationEmp evaluationEmp);
@@ -101,9 +103,14 @@ public interface EvaluationService {
 
     void insertResult (EvaluationResult evaluationResult);
 
+    void insertResultInterviewers(EvaluationResult evaluationResult);
+
     @Transactional
     void insertResult (String taskId, String empPersonId, String empDeptId, String returnValue, String
             empName,String memberPersonId,String memberDeptId,String memberName);
+    @Transactional
+    void insertResultInterviewers (String taskId, String empPersonId, String empDeptId, String returnValue, String
+            empName,String memberPersonId,String memberDeptId,String memberName,String interviewDecision,String interviewEvaluate);
 
     void updateEvaluationEmpMenmber(EvaluationEmpsMenmbers evaluationEmpsMenmbers);
 
@@ -145,7 +152,13 @@ public interface EvaluationService {
 
     void delectResult(EvaluationResult eResult);
 
+    void delectResultInterviewers(EvaluationResult eResult);
+
+    void updateEvaluationEmpMenmberInterviewers(EvaluationEmpsMenmbers evaluationEmpsMenmbers);
+
     List<Tree> getEmpsCheckByTask(String id);
+
+    List<Tree> getEmpsInterviewersCheckByTask(String id);
 
     List<Tree> getClassStudentCheckByTask(String id);
 
@@ -338,4 +351,6 @@ public interface EvaluationService {
 
     @Transactional
     void saveGroupInterviewersEmps(String ids, String groupId, String evaluationType);
+
+    List<EvaluationTask> getMonitorInterviewersTask(EvaluationTask task);
 }
