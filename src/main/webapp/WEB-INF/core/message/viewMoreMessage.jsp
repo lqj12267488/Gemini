@@ -63,6 +63,7 @@
 <input id="nottype" hidden value="${message.type}">
 <input id="printFunds" hidden value="<%=request.getContextPath()%>/message/printMessage?id=${message.id}">
 <script>
+
     $("#business").load('${url}')
     $.post("<%=request.getContextPath()%>/files/getFilesByBusinessId", {
         businessId: $("#id").val(),

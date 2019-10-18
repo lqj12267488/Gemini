@@ -13,6 +13,7 @@
                 &times;
             </button>
             <span style="font-size: 14px">${head}</span>
+            <input id="seeFlag" type="hidden" value="${seeFlag}">
         </div>
         <div class="modal-body clearfix">
             <div id="layout" style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
@@ -44,6 +45,13 @@
 </div>
 
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        if($("#seeFlag").val()=='1'){
+            $("#saveBtn").hide();
+            $("textarea").attr('readonly','readonly');
+        }
+    });
 
     $(function () {
         if ("${diAnswerEdit.answerId}"!=null &&"${diAnswerEdit.answerId}"!=""){

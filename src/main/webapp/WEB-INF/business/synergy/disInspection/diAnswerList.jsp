@@ -114,7 +114,7 @@
     }
 
     function see(remarkId,answerId) {
-        $("#dialog").load("<%=request.getContextPath()%>/diAnswer/editDiAnswer?remarkId="+remarkId+"&answerId="+answerId);
+        $("#dialog").load("<%=request.getContextPath()%>/diAnswer/editDiAnswer?remarkId="+remarkId+"&answerId="+answerId+"&seeFlag=1");
         $("#dialog").modal("show");
     }
 </script>

@@ -55,7 +55,7 @@ public class DiAnswerController {
     }
 
     @RequestMapping("/diAnswer/editDiAnswer")
-    public ModelAndView editDiAnswer(DiAnswer diAnswer,String flag){
+    public ModelAndView editDiAnswer(DiAnswer diAnswer,String flag,String seeFlag){
         ModelAndView modelAndView = new ModelAndView();
         DiAnswer diAnswerEdit;
         if ("1".equals(flag)) {
@@ -66,6 +66,12 @@ public class DiAnswerController {
         modelAndView.addObject("head", "回复");
         modelAndView.addObject("diAnswerEdit", diAnswerEdit);
         modelAndView.setViewName("/business/synergy/disInspection/editDiAnswer");
+        if (seeFlag != null) {
+            if (seeFlag.equals("1") || seeFlag == "1") {
+                modelAndView.addObject("head", "详情信息");
+                modelAndView.addObject("seeFlag", seeFlag);
+            }
+        }
         return modelAndView;
     }
 
