@@ -129,7 +129,7 @@
             "columns": [
                 {"data": "personId", "visible": false},
                 {"data": "deptId", "visible": false},
-                {"data": "name", "title": "姓名"},
+                {"data": "name", "title": "姓名" },
                 {"data": "deptShow", "title": "所在部门"},
                 {"data": "idcard", "title": "证件号"},
                 {"data": "contractTypeShow", "title": "签订合同情况"},

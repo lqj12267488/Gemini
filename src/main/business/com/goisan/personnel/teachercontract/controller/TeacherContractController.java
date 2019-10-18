@@ -59,10 +59,9 @@ public class TeacherContractController {
          PageHelper.startPage(start / length + 1, length);
          Map<String, Object> map = new HashMap(16);
          List<TeacherContract> list =  teacherContractService.getTeacherContractList(teacherContract);
-         PageInfo<List<BaseBean>> info = new PageInfo(list);
          map.put("draw", draw);
-         map.put("recordsTotal", info.getTotal());
-         map.put("recordsFiltered", info.getTotal());
+         map.put("recordsTotal", list.size());
+         map.put("recordsFiltered", list.size());
          map.put("data", list);
         return map;
     }

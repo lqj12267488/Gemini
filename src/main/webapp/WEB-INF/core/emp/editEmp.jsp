@@ -26,48 +26,47 @@
                         <input id="name" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
                                class="validate[required,maxSize[20]] form-control" value="${emp.name}"/>
                     </div>
-                    <div style="float: right;width: 354px;height: 150px;">
-                        <div style="width: 218px;height: 150px;margin-top: -4px;">
-                            <img id="photo" style="border: 1px dashed #ffffff
-                            ;width: 136px;height: 172px;margin-top: 2px;margin-left: 58px"
-                                 src="<%=request.getContextPath()%>/idcardimg/bg.png">
-                        </div>
-                    </div>
-                    <div class="col-md-2 tar" style="margin-top: 2%">
-                        <span class="iconBtx">*</span>教职工编号
-                    </div>
-                    <div class="col-md-3" style="margin-top: 2%">
-                        <input id="staffId" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.staffId}"/>
-                    </div>
+                    <%--<div style="float: right;width: 354px;height: 150px;">--%>
+                        <%--<div style="width: 218px;height: 150px;margin-top: -4px;">--%>
+                            <%--<img id="photo" style="border: 1px dashed #ffffff--%>
+                            <%--;width: 136px;height: 172px;margin-top: 2px;margin-left: 58px"--%>
+                                 <%--src="<%=request.getContextPath()%>/idcardimg/bg.png">--%>
+                        <%--</div>--%>
+                    <%--</div>--%>
 
-                    <div class="col-md-2 tar"  style="margin-top: 2%">
-                        曾用名
-                    </div>
-                    <div class="col-md-3"  style="margin-top: 2%">
-                        <input id="usedName" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.usedName}"/>
-                    </div>
-
-                    <div class="col-md-2 tar" style="margin-top: 2%">
+                    <div class="col-md-2 tar" >
                         <span class="iconBtx">*</span>性别
                     </div>
-                    <div class="col-md-3" style="margin-top: 2%">
+                    <div class="col-md-3" >
                         <select id="sex" class="js-example-basic-single"></select>
                     </div>
-
                 </div>
                 <div class="form-row">
-                    <div class="col-md-2 tar">
+                    <div class="col-md-2 tar" >
                         民族
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" >
                         <select id="nation" class="js-example-basic-single"></select>
                     </div>
-
-                    <div class="col-md-2 tar">
+                    <div class="col-md-2 tar" >
                         <span class="iconBtx"></span>出生日期
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" >
                         <input id="birthday" type="date" class="js-example-basic-single" value="${emp.birthday}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar" >
+                        曾用名
+                    </div>
+                    <div class="col-md-3" >
+                        <input id="usedName" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.usedName}"/>
+                    </div>
+                    <div class="col-md-2 tar" >
+                        <span class="iconBtx">*</span>教职工编号
+                    </div>
+                    <div class="col-md-3">
+                        <input id="staffId" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.staffId}"/>
                     </div>
                 </div>
                 <div class="form-row">
@@ -94,12 +93,13 @@
                         <input id="tel" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.tel}"/>
                     </div>
                     <div class="col-md-2 tar">
-                        地址
+                        现住址
                     </div>
                     <div class="col-md-3">
                         <input id="address" type="text" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;" value="${emp.address}"/>
                     </div>
                 </div>
+
 
                 <div class="form-row">
                     <div class="col-md-2 tar">
@@ -142,6 +142,20 @@
                         <select id="nativePlaceCounty" class="js-example-basic-single">
                             <option value="">请选择</option>
                         </select>
+                    </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx"></span>户口所属地区
+                    </div>
+                    <div class="col-md-3">
+                        <select id="permanent_residence_local" type="text"/>
+                    </div>
+                </div>
+                <div  class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx"></span>户口所在地
+                    </div>
+                    <div class="col-md-3">
+                        <input id="hkszdqSel" type="text" value="${emp.permanentResidence}"/>
                     </div>
                     <div class="col-md-2 tar">
                         政治面貌
@@ -216,7 +230,8 @@
                         签订合同情况
                     </div>
                     <div class="col-md-3">
-                        <select id="contractType" class="js-example-basic-single" disabled></select>
+                        <select id="contractType" class="validate[required,maxSize[100]] form-control js-example-basic-single" disabled>
+                        </select>
                     </div>
 
                     <div class="col-md-2 tar">
@@ -278,7 +293,7 @@
                         <input id="post" class="js-example-basic-single" type="text" value="${emp.post}"></input>
                     </div>
                     <div class="col-md-2 tar">
-                        职称
+                        职称名称
                     </div>
                     <div class="col-md-3">
                         <input id="positional_titles" class="js-example-basic-single" type="text" value="${emp.positionalTitles}"></input>
@@ -332,7 +347,7 @@
 
                 <div class="form-row">
                     <div class="col-md-2 tar">
-                        学历
+                        文化程度
                     </div>
                     <div class="col-md-3">
                         <select id="educational_level" class="js-example-basic-single"></select>
@@ -367,21 +382,7 @@
                     <div class="col-md-3">
                         <select id="education_technique" class="js-example-basic-single"></select>
                     </div>
-                    <div class="col-md-2 tar">
-                        <span class="iconBtx"></span>户口所属地区
-                    </div>
-                    <div class="col-md-3">
-                        <select id="permanent_residence_local" type="text"/>
-                    </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="col-md-2 tar">
-                        <span class="iconBtx"></span>户口所在地
-                    </div>
-                    <div class="col-md-3">
-                        <input id="hkszdqSel" type="text" value="${emp.permanentResidence}"/>
-                    </div>
                     <div class="col-md-2 tar">
                         是否政审
                     </div>

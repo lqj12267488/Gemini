@@ -254,8 +254,7 @@
                                 保密协议
                             </div>
                             <div class="col-md-2">
-                                <input id="confidentAgreementEdit" value="${data.confidentAgreement}"
-                                       class="validate[required,maxSize[20]] form-control"/>
+                                <select id="confidentAgreementEdit" class="validate[required,maxSize[20]] form-control"/>
                             </div>
                             <div class="col-md-2 tar">
                                 试用期工资
@@ -350,6 +349,11 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
             addOption(data, 'retireNyEdit', '${data.retireNy}');
         });
+
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=YW", function (data) {
+            addOption(data,'confidentAgreementEdit','${data.confidentAgreement}');
+        })
+
         if ("${seeFlag}" == "1") {
             $("#save").hide();
             $("#data input").attr("readonly", "readonly")

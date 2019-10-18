@@ -25,7 +25,7 @@
         on e.person_id = d.person_id
         left join  T_RS_EMPLOYEE_CONTRACT c
         on c.person_id = d.person_id
-        where 1 = 1
+        where  e.VALID_FLAG = '1'
         <if test='deptId!="" and deptId !=null'>AND d.DEPT_ID = #{deptId} </if>
      <if test='name!="" and name !=null'>AND e.NAME like '%'||#{name}||'%'</if>
      <if test='idcard!="" and idcard !=null'>AND e.IDCARD like '%'||#{idcard}||'%'</if>

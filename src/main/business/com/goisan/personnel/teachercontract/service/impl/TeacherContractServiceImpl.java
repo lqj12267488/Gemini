@@ -160,7 +160,7 @@ public class TeacherContractServiceImpl implements TeacherContractService {
             teacherContract.setContractType("1");
             teacherContract.setContractTypeShow("试用期");
         }else if (startTime.equals(teacherContract.getFirstStartTime())){
-            teacherContract.setEndTime(teacherContract.getFirstStartTime());
+            teacherContract.setEndTime(teacherContract.getFirstEndTime());
             teacherContract.setContractType("2");
             teacherContract.setContractTypeShow("劳动合同");
         }else if (startTime.equals(teacherContract.getSecStartTime())){

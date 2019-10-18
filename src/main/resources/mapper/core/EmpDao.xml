@@ -667,11 +667,22 @@
     <select id="getPhotoByPersonid" parameterType="java.lang.String" resultType="java.sql.Blob">
         SELECT phone FROM t_rs_employee WHERE  person_id = #{personId}
     </select>
+    <!--<select id="GroupEmpByDept" resultType="com.goisan.system.bean.Emp">-->
+        <!--SELECT FUNC_GET_DEPTNAME(dept_id) as deptId , COUNT (1) as personOrder-->
+            <!--FROM T_RS_EMPLOYEE_DEPT t-->
+        <!--GROUP BY t.dept_id-->
+    <!--</select>-->
+
     <select id="GroupEmpByDept" resultType="com.goisan.system.bean.Emp">
-        SELECT FUNC_GET_DEPTNAME(dept_id) as deptId , COUNT (1) as personOrder
-            FROM T_RS_EMPLOYEE_DEPT t
-        GROUP BY t.dept_id
+        select d.dept_name as deptId, count(e.person_id) as personOrder
+          from T_RS_EMPLOYEE_DEPT ed, T_SYS_DEPT d, T_RS_EMPLOYEE e
+         where ed.dept_id = d.dept_id
+           and e.person_id = ed.person_id
+           and e.valid_flag = '1'
+           and d.valid_flag  = '1'
+         GROUP BY d.dept_name
     </select>
+
     <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT name from t_rs_employee WHERE  person_id = #{personId}
     </select>
