@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.QualificationDao">
+    <select id="getQualificationList"
+            parameterType="com.goisan.table.bean.Qualification"
+            resultType="com.goisan.table.bean.Qualification">
+        select id,qualification_name,qualification_level,func_get_dicvalue(qualification_level,'ZGZSDJ') qualificationLevelShow,qualification_authority,identification_site,func_get_dicvalue(identification_site,'JDDD') identificationSiteShow,creator,create_time,create_dept,changer,change_time,change_dept
+        from T_TAB_QUALIFICATION
+        where 1=1
+        <if test='qualificationName != "" and qualificationName != null'> AND qualification_name like '%'||#{qualificationName}||'%' </if>
+        <if test='qualificationLevel != "" and qualificationLevel != null'> AND qualification_level = #{qualificationLevel} </if>
+    </select>
+    <insert id="saveQualification" parameterType="com.goisan.table.bean.Qualification">
+        insert into t_tab_qualification (id,qualification_name,qualification_level,qualification_authority,identification_site,creator,create_time,create_dept) values (func_get_uuid ,#{qualificationName},#{qualificationLevel},#{qualificationAuthority},#{identificationSite},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getQualificationById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.Qualification">
+        select * from T_TAB_QUALIFICATION where id = #{id}
+    </select>
+    <update id="updateQualification" parameterType="com.goisan.table.bean.Qualification">
+        update t_tab_qualification set qualification_name=#{qualificationName},qualification_level=#{qualificationLevel},qualification_authority=#{qualificationAuthority},identification_site=#{identificationSite},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delQualification" parameterType="java.lang.String">
+        delete from T_TAB_QUALIFICATION where id = #{id}
+    </delete>
+    <select id="getQualificationBySelect" resultType="java.util.Map">
+        select id as "id",qualification_name||func_get_dicvalue(qualification_level,'ZGZSDJ') as "text"
+        from T_TAB_QUALIFICATION
+    </select>
+</mapper>

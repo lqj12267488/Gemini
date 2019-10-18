@@ -3327,7 +3327,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
-        List<Map> list = tableAttributeDao.expertExcel_A7_3_1(new Major());
+        List<Map> list = tableAttributeDao.expertExcel_A7_3_1();
 
         Workbook wb = null;
 
@@ -3357,9 +3357,9 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(1).setCellValue(count);
                 row.getCell(2).setCellValue(map.get("DEPARTMENTSIDSHOW").toString());
                 row.getCell(3).setCellValue(map.get("MAJOR_CODE").toString());
-//                row.getCell(4).setCellValue(map.get("MAJOR_NAME").toString());
+                row.getCell(4).setCellValue(map.get("MAJOR_NAME").toString());
                 row.getCell(5).setCellValue(map.get("MAJOR_DIRECTION_CODE").toString());
-//                row.getCell(6).setCellValue(map.get("MAJOR_DIRECTION").toString());
+                row.getCell(6).setCellValue(map.get("MAJOR_DIRECTION").toString());
                 row.getCell(7).setCellValue(map.get("QUALIFICATION_NAME").toString());
                 row.getCell(8).setCellValue(map.get("DIC_NAME").toString());
                 row.getCell(9).setCellValue(map.get("STUDENTNUM").toString());
@@ -3393,7 +3393,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
-        List<Major> majorList = tableAttributeDao.expertExcel_A7_3_2(new Major());
+        List<Map> list = tableAttributeDao.expertExcel_A7_3_2();
 
         Workbook wb = null;
 
@@ -3414,16 +3414,24 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
             int rowIndex = 10;
-            int end = 2 + majorList.size();
+            int end = 2 + list.size();
             int count = 1;
-            for (int i = 0; i < majorList.size(); i++) {
+            Map map;
+            for (int i = 0; i < list.size(); i++) {
                 Row row = sheet.getRow(rowIndex + i);
+                map = list.get(i);
                 row.getCell(1).setCellValue(count);
-                row.getCell(2).setCellValue(majorList.get(i).getDepartmentsId());
-                row.getCell(3).setCellValue(majorList.get(i).getMajorCode());
-                row.getCell(4).setCellValue(majorList.get(i).getMajorName());
-                row.getCell(5).setCellValue(majorList.get(i).getMajorDirectionCode());
-                row.getCell(6).setCellValue(majorList.get(i).getMajorDirection());
+                row.getCell(2).setCellValue(map.get("DEPARTMENTSIDSHOW").toString());
+                row.getCell(3).setCellValue(map.get("MAJOR_CODE").toString());
+                row.getCell(4).setCellValue(map.get("MAJOR_NAME").toString());
+                row.getCell(5).setCellValue(map.get("MAJOR_DIRECTION_CODE").toString());
+                row.getCell(6).setCellValue(map.get("MAJOR_DIRECTION").toString());
+                row.getCell(7).setCellValue(map.get("STUDENTNUM").toString());
+                row.getCell(8).setCellValue(map.get("P3").toString());
+                row.getCell(10).setCellValue(map.get("P2").toString());
+                row.getCell(12).setCellValue(map.get("P1").toString());
+                row.getCell(14).setCellValue(map.get("P4").toString());
+                row.getCell(16).setCellValue(map.get("TDAY").toString());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),

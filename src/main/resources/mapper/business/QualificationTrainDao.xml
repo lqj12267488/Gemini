@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.goisan.table.dao.QualificationTrainDao">
+    <select id="getQualificationTrainList"
+            parameterType="com.goisan.table.bean.QualificationTrain"
+            resultType="com.goisan.table.bean.QualificationTrain">
+        select qt.id,
+            qt.student_id studentId,
+            qualification_name qualificationName,
+            qualification_level qualificationLevel,
+            func_get_dicvalue(qualification_level, 'ZGZSDJ') qualificationLevelShow,
+            train_day,
+            s.name studentIdShow
+        from T_TAB_QUALIFICATION_TRAIN qt, t_xg_student s, t_tab_qualification q
+        where qt.student_id=s.student_id and qt.qualification_id=q.id
+        <if test='studentIdShow != "" and studentIdShow != null'> AND s.name like '%'||#{studentIdShow}||'%' </if>
+        <if test='qualificationId != "" and qualificationId != null'> AND qualification_id like '%'||#{qualificationId}||'%' </if>
+    </select>
+    <insert id="saveQualificationTrain" parameterType="com.goisan.table.bean.QualificationTrain">
+        insert into t_tab_qualification_train (id,student_id,qualification_id,train_day,creator,create_time,create_dept) values (func_get_uuid ,#{studentId},#{qualificationId},#{trainDay},#{creator},sysdate ,#{createDept})
+    </insert>
+    <select id="getQualificationTrainById" parameterType="java.lang.String"
+            resultType="com.goisan.table.bean.QualificationTrain">
+        select qt.*,s.name studentIdShow
+        from t_tab_qualification_train qt, t_xg_student s
+        where qt.student_id=s.student_id and id = #{id}
+    </select>
+    <update id="updateQualificationTrain" parameterType="com.goisan.table.bean.QualificationTrain">
+        update t_tab_qualification_train set student_id=#{studentId},qualification_id=#{qualificationId},train_day=#{trainDay},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+    </update>
+    <delete id="delQualificationTrain" parameterType="java.lang.String">
+        delete from t_tab_qualification_train where id = #{id}
+    </delete>
+</mapper>

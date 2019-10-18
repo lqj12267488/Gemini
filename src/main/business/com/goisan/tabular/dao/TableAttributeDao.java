@@ -184,9 +184,9 @@ public interface TableAttributeDao {
     /**
      * modify by wangxue start
      */
-    List<Map> expertExcel_A7_3_1(Major major);//A7-3-1职业资格证书表
+    List<Map> expertExcel_A7_3_1();//A7-3-1职业资格证书表
 
-    List<Major> expertExcel_A7_3_2(Major major);//A7-3-2应届毕业生获证及社会技术培训情况表
+    List<Map> expertExcel_A7_3_2();//A7-3-2应届毕业生获证及社会技术培训情况表
 
     List<Major> expertExcel_A7_4(Major major);//A7-4顶岗实习表
 
