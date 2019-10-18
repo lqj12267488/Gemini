@@ -279,4 +279,11 @@ public class CommonController {
         return new ModelAndView("/common/saveLoading");
     }
 
+    //查询人员部门、班级
+    @ResponseBody
+    @RequestMapping("/common/getPersonDeptAndClass")
+    public List<AutoComplete> getPersonDeptAndClass() {
+        return commonService.getPersonDeptAndClass();
+    }
+
 }

@@ -110,4 +110,6 @@ public interface CommonService {
     List<RoleEmpDeptRelation> getRoleByPersonId(String personId);
 
     List<RoleEmpDeptRelation> getRoleByPersonId1(String personId);
+
+    List<AutoComplete> getPersonDeptAndClass();
 }

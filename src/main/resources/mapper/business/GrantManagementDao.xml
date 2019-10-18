@@ -3,14 +3,15 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.goisan.studentwork.grantmanagement.dao.GrantManagementDao">
-    <select id="getGrantManagementList" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement" parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
+    <select id="getGrantManagementList" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement"
+            parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
         SELECT
         t.id,
-        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
         FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
         FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
-        FUNC_GET_TABLEVALUE(t.department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentId,
+        FUNC_GET_TABLEVALUE(t.department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentId,
         FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
         FUNC_GET_DICVALUE(t.grant_management_term,'XQ') grantManagementTermShow,
         FUNC_GET_DICVALUE(t.GRANT_MANAGEMENT_NAME,'JZXJMC') grantManagementNameShow,
@@ -24,7 +25,7 @@
         t.valid_flag
         FROM
         T_XG_GRANT_MANAGEMENT_WF t
-        where 1 = 1  AND t.request_flag = '0'
+        where 1 = 1 AND t.request_flag = '0'
         <if test="creator != 'sa'  and creator != null and creator != '' ">
             AND t.creator= #{creator}
         </if>
@@ -32,7 +33,7 @@
             AND FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE '%'||#{studentId}||'%'
         </if>
         <if test="requestDate != null and requestDate != '' ">
-            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
         </if>
         <if test="grantManagementName != null and grantManagementName != '' ">
             AND t.GRANT_MANAGEMENT_NAME = #{grantManagementName}
@@ -56,7 +57,8 @@
         ORDER BY t.create_time desc
     </select>
 
-    <select id="getLeaveBy" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement" parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
+    <select id="getLeaveBy" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement"
+            parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
         SELECT
             t.id,
             to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
@@ -90,7 +92,8 @@
         WHERE t.id = #{id}
         ORDER BY t.create_time desc
     </select>
-    <select id="getGrantManagementById" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement" parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
+    <select id="getGrantManagementById" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement"
+            parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
         SELECT
         t.id,
         to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
@@ -127,7 +130,7 @@
         '${classId}','${studentId}','${departmentId}',
         '${sex}','${grantManagementName}','${grantManagementTerm}')
     </insert>
-    <delete id="deleteGrantManagementById"  parameterType="java.lang.String">
+    <delete id="deleteGrantManagementById" parameterType="java.lang.String">
         DELETE FROM T_XG_GRANT_MANAGEMENT_WF WHERE id = #{id}
     </delete>
     <update id="updateGrantManagementById" parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
@@ -154,14 +157,15 @@
         t.student_id as "value"
         FROM T_XG_STUDENT t
     </select>
-    <select id="getProcessList" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement" parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
+    <select id="getProcessList" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement"
+            parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
         SELECT
         t.id,
-        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
         FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
         FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
-        FUNC_GET_TABLEVALUE(t.department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentId,
+        FUNC_GET_TABLEVALUE(t.department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentId,
         FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
         FUNC_GET_DICVALUE(t.grant_management_term,'XQ') grantManagementTermShow,
         FUNC_GET_DICVALUE(t.GRANT_MANAGEMENT_NAME,'JZXJMC') grantManagementNameShow,
@@ -183,7 +187,7 @@
             AND FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE '%'||#{studentId}||'%'
         </if>
         <if test="requestDate != null and requestDate != '' ">
-            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
         </if>
         <if test="grantManagementName != null and grantManagementName != '' ">
             AND t.GRANT_MANAGEMENT_NAME = #{grantManagementName}
@@ -204,18 +208,19 @@
         <if test="classId != null and classId != '' ">
             AND t.class_id= #{classId}
         </if>
-        AND (r.state='1'  or  r.state='3')AND  t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        AND (r.state='1' or r.state='3')AND t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
         ORDER BY t.create_time desc
     </select>
-    <select id="getCompleteList" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement" parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
+    <select id="getCompleteList" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement"
+            parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
         SELECT
         DISTINCT
         t.id,
-        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
         FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
         FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
-        FUNC_GET_TABLEVALUE(t.department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentId,
+        FUNC_GET_TABLEVALUE(t.department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentId,
         FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
         FUNC_GET_DICVALUE(t.grant_management_term,'XQ') grantManagementTermShow,
         FUNC_GET_DICVALUE(t.GRANT_MANAGEMENT_NAME,'JZXJMC') grantManagementNameShow,
@@ -239,7 +244,7 @@
             AND FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE '%'||#{studentId}||'%'
         </if>
         <if test="requestDate != null and requestDate != '' ">
-            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
         </if>
         <if test="grantManagementName != null and grantManagementName != '' ">
             AND t.GRANT_MANAGEMENT_NAME = #{grantManagementName}
@@ -260,14 +265,15 @@
         <if test="classId != null and classId != '' ">
             AND t.class_id= #{classId}
         </if>
-        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        AND r.state='2' AND t.id = s.business_id AND s.start_id = r.start_id
         ORDER BY t.create_time desc
     </select>
-    <select id="getLeaveCancelList" resultType="com.goisan.personnel.leave.bean.Leave" parameterType="com.goisan.personnel.leave.bean.Leave">
+    <select id="getLeaveCancelList" resultType="com.goisan.personnel.leave.bean.Leave"
+            parameterType="com.goisan.personnel.leave.bean.Leave">
         SELECT
         DISTINCT
         t.id,
-        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
         FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
         FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
@@ -285,9 +291,9 @@
         T_RS_LEAVE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
         where 1 = 1 AND feedback_flag = 1
         <if test="requestDate != null and requestDate != '' ">
-            AND  to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
         </if>
-        AND r.state='2' AND  t.id = s.business_id AND s.start_id = r.start_id
+        AND r.state='2' AND t.id = s.business_id AND s.start_id = r.start_id
         ORDER BY t.create_time desc
     </select>
     <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
@@ -304,6 +310,7 @@
             s.sex,
             s.year,
             d.CLASS_ID,
+            FUNC_GET_TABLEVALUE(d.CLASS_ID,'T_XG_CLASS','class_id','class_name') classShow,
             FUNC_GET_TABLEVALUE(c.departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_ID') departmentsId,
             FUNC_GET_TABLEVALUE(d.CLASS_ID,'T_XG_CLASS','CLASS_ID','MAJOR_CODE')    majorCode
         FROM T_XG_STUDENT s left join T_XG_STUDENT_CLASS d on s.STUDENT_ID = d.STUDENT_ID
@@ -311,14 +318,15 @@
         WHERE s.student_id = #{studentId}
     </select>
     <!-- 奖助学金查询 -->
-    <select id="getGrantManagementSearchList" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement" parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
+    <select id="getGrantManagementSearchList" resultType="com.goisan.studentwork.grantmanagement.bean.GrantManagement"
+            parameterType="com.goisan.studentwork.grantmanagement.bean.GrantManagement">
         SELECT
         t.id,
-        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') studentId,
         FUNC_GET_TABLEVALUE(t.class_id,'T_XG_CLASS','CLASS_ID','CLASS_NAME') classId,
         FUNC_GET_TABLEVALUE(t.major_code,'t_xg_major','major_code','major_name') majorCode,
-        FUNC_GET_TABLEVALUE(t.department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME')  departmentId,
+        FUNC_GET_TABLEVALUE(t.department_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentId,
         FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
         FUNC_GET_DICVALUE(t.grant_management_term,'XQ') grantManagementTermShow,
         FUNC_GET_DICVALUE(t.GRANT_MANAGEMENT_NAME,'JZXJMC') grantManagementNameShow,
@@ -332,7 +340,7 @@
         t.valid_flag
         FROM
         T_XG_GRANT_MANAGEMENT_WF t
-        where 1 = 1  AND t.request_flag = '2'
+        where 1 = 1 AND t.request_flag = '2'
         <if test="studentId != '' and  studentId != null">
             AND FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','NAME') LIKE '%'||#{studentId}||'%'
         </if>
@@ -356,5 +364,11 @@
             AND t.class_id= #{classId}
         </if>
         ORDER BY t.create_time desc
+    </select>
+
+
+    <select id="getStudentId" resultType="java.lang.String" parameterType="java.lang.String">
+    select t.student_id from T_XG_STUDENT t
+    where t.NAME = #{name}
     </select>
 </mapper>

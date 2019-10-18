@@ -34,5 +34,7 @@ public interface GrantManagementService {
     Student getStudentByStudentId(String studentId);
 
     List<GrantManagement> getGrantManagementSearchList(GrantManagement grantManagement);
+
+    String getStudentId(String name);
 }
 

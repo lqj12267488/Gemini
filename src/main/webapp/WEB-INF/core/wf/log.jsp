@@ -70,6 +70,8 @@
 
         if("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}'){
             $("#dayin").hide();
+        }else if ("T_DT_REPORT_MANAGEMENT" == '${tableName}'){
+            $("#dayin").hide();
         }
         $("#div1").hide();
         $("#business").load('${url}')

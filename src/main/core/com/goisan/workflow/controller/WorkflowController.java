@@ -3,6 +3,8 @@ package com.goisan.workflow.controller;
 import com.goisan.educational.score.bean.ScoreChange;
 import com.goisan.educational.score.bean.ScoreImport;
 import com.goisan.educational.score.service.ScoreChangeService;
+import com.goisan.partybuilding.reportmanagement.bean.ReportManagement;
+import com.goisan.partybuilding.reportmanagement.service.ReportManagementService;
 import com.goisan.synergy.message.service.MessageService;
 import com.goisan.synergy.notice.service.NoticeService;
 import com.goisan.system.bean.BaseBean;
@@ -49,7 +51,8 @@ public class WorkflowController {
     private UpdateBusiness updateBusiness;
     @Resource
     private ScoreChangeService scoreChangeService;
-
+    @Resource
+    private ReportManagementService reportManagementService;
 
     @RequestMapping("/workflow")
     public String workflow() {
@@ -445,16 +448,40 @@ public class WorkflowController {
                 emps = workflowService.getStudentAuditer(tableName, businessId);
             } else if ("T_JW_SLOW_EXAMINATION".equals(tableName) || "T_XG_GRANT_MANAGEMENT_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
                 emps = workflowService.getStudentAuditer(tableName, businessId);
-            } else {
+            } else if ("T_DT_REPORT_MANAGEMENT".equals(tableName)) {
+                ReportManagement reportManagement = reportManagementService.getReportManagementById(businessId);
+                if ("1".equals(reportManagement.getStudentTeacherType())){
+                    emps = workflowService.getAuditerByCreator(tableName, businessId);
+                }else {
+                    emps = workflowService.getStudentAuditer(tableName, businessId);
+                }
+            } else{
                 emps = workflowService.getAuditerByCreator(tableName, businessId);
             }
         } else {
             if ("2".equals(nextNode.getNodeOrder())) {
                 if ("T_XG_STUDENT_PROVE_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
                     emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());
-                } else if ("T_XG_GRANT_MANAGEMENT_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
+                } else if ("T_XG_GRANT_MANAGEMENT_WF".equals(tableName)) {
                     emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());
-                } else {
+                }  else if ("T_DT_REPORT_MANAGEMENT".equals(tableName)) {
+                    ReportManagement reportManagement = reportManagementService.getReportManagementById(businessId);
+                        if ("1".equals(reportManagement.getStudentTeacherType())){
+                            if ("1".equals(roleRange)) {
+                                emps = workflowService.getAuditer(nextNode.getHandleRole());
+                            }
+                            if ("2".equals(roleRange)) {
+                                emps = workflowService.getAuditerByDept(tableName, businessId, nextNode
+                                        .getHandleRole());
+                            }
+                            if ("3".equals(roleRange)) {
+                                emps = workflowService.getAuditerByRange(tableName, businessId);
+                            }
+                        }else{
+                            emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());
+                        }
+                    /*emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());*/
+                }else {
                     if ("1".equals(roleRange)) {
                         emps = workflowService.getAuditer(nextNode.getHandleRole());
                     }

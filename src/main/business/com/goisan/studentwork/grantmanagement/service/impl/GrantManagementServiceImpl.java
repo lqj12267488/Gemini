@@ -86,4 +86,9 @@ public class GrantManagementServiceImpl implements GrantManagementService {
     public List<GrantManagement> getGrantManagementSearchList(GrantManagement grantManagement) {
         return grantManagementDao.getGrantManagementSearchList(grantManagement);
     }
+
+    @Override
+    public String getStudentId(String name) {
+       return grantManagementDao.getStudentId(name);
+    }
 }

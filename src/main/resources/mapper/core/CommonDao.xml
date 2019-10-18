@@ -284,7 +284,7 @@
     <select id="getMajorByDeptId" resultType="com.goisan.system.bean.Select2">
         SELECT MAJOR_ID "id",MAJOR_NAME "text" FROM T_XG_MAJOR
         <if test="deptId != null and deptId != ''">
-            WHERE DEPARTMENTS_ID = #{deptId}  AND VALID_FLAG = 1
+            WHERE DEPARTMENTS_ID = #{deptId} AND VALID_FLAG = 1
         </if>
     </select>
     <select id="getMajorByDeptId2" resultType="com.goisan.system.bean.Select2">
@@ -324,7 +324,8 @@
     </select>
     <!--通过教学任务，专业 获取班级-->
     <select id="getClassByPlan" resultType="com.goisan.system.bean.Select2">
-        SELECT distinct class.CLASS_ID id,class.CLASS_NAME text FROM T_XG_CLASS class,T_JW_TEACHINGTASK t WHERE MAJOR_CODE = #{majorCode}
+        SELECT distinct class.CLASS_ID id,class.CLASS_NAME text FROM T_XG_CLASS class,T_JW_TEACHINGTASK t WHERE
+        MAJOR_CODE = #{majorCode}
         AND TRAINING_LEVEL = #{trainingLevel}
         and class.departments_id = t.department
         and t.class_info = class.class_id
@@ -456,6 +457,26 @@
         from T_RS_EMPLOYEE_DEPT_ROLE t
         where t.role_id = 'e59b0376-1dbc-4611-9c56-0235096f773b'
           and #{id} in person_id
+    </select>
+
+    <select id="getPersonDeptAndClass" resultType="com.goisan.system.bean.AutoComplete">
+      SELECT
+        decode(DEPT_NAME, '', t.name, t.name || ' ---- ' || DEPT_NAME) as "label",
+        decode(DEPT_ID, '', t.person_id, DEPT_ID || ',' || t.person_id) as "value"
+        FROM T_RS_EMPLOYEE t
+        LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID
+        FROM T_RS_EMPLOYEE_DEPT R,
+        T_SYS_DEPT D
+        WHERE R.DEPT_ID = D.DEPT_ID) ON T.PERSON_ID = PERSON
+        WHERE VALID_FLAG = '1'
+        union all
+         SELECT decode(t2.CLASS_NAME, '', t.name, t.name || '  ----  ' || t2.class_name)   as "label",
+               decode(CLASS_ID, '', ',' || t.student_id, CLASS_ID || ',' || t.student_id) as "value"
+        FROM T_XG_STUDENT t
+                 , (SELECT R.STUDENT_ID STUDENT, D.CLASS_NAME, D.CLASS_ID
+                            FROM T_XG_STUDENT_CLASS R,
+                                 T_XG_CLASS D
+                            WHERE R.CLASS_ID = D.CLASS_ID AND D.VALID_FLAG = '1') t2 where T.student_id = t2.STUDENT
     </select>
 
 </mapper>

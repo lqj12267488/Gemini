@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.partybuilding.reportmanagement.dao.ReportManagementDao">
+    <select id="getReportManagementList" resultType="com.goisan.partybuilding.reportmanagement.bean.ReportManagement"
+            parameterType="com.goisan.partybuilding.reportmanagement.bean.ReportManagement">
+        select t.id id,
+        decode(STUDENT_TEACHER_TYPE,'1',FUNC_GET_USERNAME(t.manager),FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME')) manager,
+        decode(STUDENT_TEACHER_TYPE,'1',func_get_deptname(t.request_dept),FUNC_GET_TABLEVALUE(t.request_dept,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.REPORT_TYPE,'SSLX')  reportTypeShow,
+        t.report_content reportContent,
+        t.request_flag requestFlag,
+        t.creator creator,
+        t.create_time createTime
+        from T_DT_REPORT_MANAGEMENT t
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE '%'||#{requestDate}||'%'
+        </if>
+        <if test="reportType != null and reportType != '' ">
+            AND t.report_type=#{reportType}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND t.manager = #{manager}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND t.creator= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND t.create_dept= #{createDept}
+        </if>
+        AND t.request_flag = '0' ORDER BY t.create_time DESC
+    </select>
+    <select id="reportManagementProcessList" resultType="com.goisan.partybuilding.reportmanagement.bean.ReportManagement">
+        select t.id id,
+        decode(STUDENT_TEACHER_TYPE,'1',FUNC_GET_USERNAME(t.manager),FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME')) manager,
+        decode(STUDENT_TEACHER_TYPE,'1',func_get_deptname(t.request_dept),FUNC_GET_TABLEVALUE(t.request_dept,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.REPORT_TYPE,'SSLX')  reportTypeShow,
+        t.report_content reportContent,
+        t.request_flag requestFlag,
+        t.creator creator,
+        t.create_time createTime
+        FROM T_DT_REPORT_MANAGEMENT t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE '%'||#{requestDate}||'%'
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND t.manager = #{manager}
+        </if>
+        <if test="reportType != null and reportType != '' ">
+            AND t.report_type=#{reportType}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="studentTeacherType=='1'">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND (r.state='1' or r.state = '3') AND t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag !=
+        '4'
+        ORDER BY t.create_time DESC
+    </select>
+    <select id="reportManagementCompleteList" resultType="com.goisan.partybuilding.reportmanagement.bean.ReportManagement">
+        select DISTINCT t.id id,
+        decode(STUDENT_TEACHER_TYPE,'1',FUNC_GET_USERNAME(t.manager),FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME')) manager,
+        decode(STUDENT_TEACHER_TYPE,'1',func_get_deptname(t.request_dept),FUNC_GET_TABLEVALUE(t.request_dept,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.REPORT_TYPE,'SSLX')  reportTypeShow,
+        t.report_content reportContent,
+        t.creator creator,
+        t.create_time createTime,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag
+        from
+        T_DT_REPORT_MANAGEMENT t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
+        WHERE 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE '%'||#{requestDate}||'%'
+        </if>
+        <if test="reportType != null and reportType != '' ">
+            AND t.report_type=#{reportType}
+        </if>
+        <if test="manager != null and manager != '' ">
+            AND t.manager=#{manager}
+        </if>
+        <if test="creator != 'sa'  and creator != null and creator != '' ">
+            AND r.handle_user= #{creator}
+        </if>
+        <if test="createDept != null and createDept != '' ">
+            AND r.handle_dept= #{createDept}
+        </if>
+        AND r.state='2' AND t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time DESC
+    </select>
+
+    <insert id="insertReportManagement" parameterType="com.goisan.partybuilding.reportmanagement.bean.ReportManagement">
+		INSERT INTO T_DT_REPORT_MANAGEMENT
+          (id,
+           manager,
+           request_dept,
+           create_time,
+           request_date,
+           creator,
+           request_flag,
+           create_dept,
+           report_type,
+           report_content,
+           STUDENT_TEACHER_TYPE)
+        values
+          ('${id}',
+           '${manager}',
+           '${requestDept}',
+           sysdate,
+           to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+           '${creator}',
+           '0',
+           '${createDept}',
+           '${reportType}',
+           '${reportContent}',
+           '${studentTeacherType}'
+           )
+	</insert>
+    <select id="getReportManagementById" parameterType="java.lang.String"
+            resultType="com.goisan.partybuilding.reportmanagement.bean.ReportManagement">
+		select t.id id,
+        decode(STUDENT_TEACHER_TYPE,'1',FUNC_GET_USERNAME(t.manager),FUNC_GET_TABLEVALUE(t.manager,'T_XG_STUDENT','STUDENT_ID','NAME')) manager,
+        decode(STUDENT_TEACHER_TYPE,'1',func_get_deptname(t.request_dept),FUNC_GET_TABLEVALUE(t.request_dept,'T_XG_CLASS','CLASS_ID','CLASS_NAME')) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+         FUNC_GET_DICVALUE(t.report_type,'SQLX')  reportTypeShow,
+        t.report_content reportContent,
+        t.report_type reportType,
+        t.STUDENT_TEACHER_TYPE studentTeacherType,
+        t.request_flag  requestFlag,
+        t.creator       creator,
+        t.create_time   createTime
+    from T_DT_REPORT_MANAGEMENT t
+    WHERE id =#{id} ORDER BY t.create_time DESC
+	</select>
+    <update id="updateReportManagement" parameterType="com.goisan.partybuilding.reportmanagement.bean.ReportManagement">
+		UPDATE T_DT_REPORT_MANAGEMENT SET
+        manager = #{manager},
+        request_dept = #{requestDept},
+        request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        report_type = #{reportType},
+        changer = #{changer},
+        change_dept = #{changeDept},
+        change_time = sysdate,
+        report_content = #{reportContent}
+        WHERE id = #{id}
+	</update>
+
+    <delete id="deleteById" parameterType="java.lang.String">
+		DELETE  T_DT_REPORT_MANAGEMENT WHERE id = #{id}
+	</delete>
+    <!--查询关联事物是否有数据-->
+    <select id="getReportManagementDetailList" parameterType="java.lang.String"
+            resultType="com.goisan.partybuilding.reportmanagement.bean.ReportManagement">
+    select * from t_bg_funds_relation_wf fr where funds_id =#{id}
+    </select>
+    <!--通过id查关联业务名称-->
+    <select id="getWorkFlowbyBusinessId" parameterType="java.lang.String" resultType="java.lang.String">
+    SELECT DISTINCT
+    wmsys.wm_concat( to_char(ws.CREATE_TIME, 'yyyy-mm-dd hh24:mi')||' '|| w.WORKFLOW_NAME)
+    FROM
+    T_SYS_WORKFLOW_START ws,
+    T_SYS_WORKFLOW w
+    WHERE w.WORKFLOW_ID = ws.WORKFLOW_ID
+    and ws.business_id in (select business_id from t_bg_funds_relation_wf fr where funds_id = #{id})
+   </select>
+
+    <update id="updateLoanPrintNum" parameterType="java.lang.String">
+		UPDATE T_DT_REPORT_MANAGEMENT SET
+        print_num = print_num+1
+        WHERE id = #{id}
+	</update>
+</mapper>

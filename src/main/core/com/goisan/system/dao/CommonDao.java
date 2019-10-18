@@ -110,4 +110,6 @@ public interface CommonDao {
     List<RoleEmpDeptRelation> getRoleByPersonId(String personId);
 
     List<RoleEmpDeptRelation> getRoleByPersonId1(String personId);
+
+    List<AutoComplete> getPersonDeptAndClass();
 }

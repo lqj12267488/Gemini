@@ -6,7 +6,6 @@
     <select id="getMealCardHandleList" resultType="com.goisan.synergy.workflow.bean.MealCardHandle" parameterType="com.goisan.synergy.workflow.bean.MealCardHandle">
         SELECT
         t.id id,
-
         FUNC_GET_USERNAME(t.teacher_id)  teacherId,
         FUNC_GET_DEPTNAME(t.dept_id)  deptId,
         FUNC_GET_DICVALUE(t.meal_card_type, 'FKLX') mealCardTypeShow,
