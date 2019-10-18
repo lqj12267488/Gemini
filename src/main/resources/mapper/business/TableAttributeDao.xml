@@ -9,6 +9,23 @@
         from T_SYS_DEPT t
         where t.dept_id != '001'
     </select>
+    <select id="getContactInformationList"  resultType="com.goisan.table.bean.ContactInformation">
+        select
+            id,mailing_address,postal_code,school_website,
+            area_number,area_fax,mail_box,creator,create_time,
+            area_person areaPerson,
+            contacts_person contactsPerson,
+            FUNC_GET_TABLEVALUE(area_person,'T_RS_EMPLOYEE','person_id','STAFF_ID')  areaStaff,
+            FUNC_GET_TABLEVALUE(area_person,'T_RS_EMPLOYEE','person_id','post')  areaPost,
+            FUNC_GET_TABLEVALUE(contacts_person,'T_RS_EMPLOYEE','person_id','STAFF_ID')  areaContactsStaff,
+            FUNC_GET_TABLEVALUE(contacts_person,'T_RS_EMPLOYEE','person_id','TEL')  areaContactsPhone,
+            FUNC_GET_TABLEVALUE(contacts_person,'T_RS_EMPLOYEE','person_id','post')  areaContactsPost,
+            FUNC_GET_USERNAME(area_person)  areaPersonName,
+            FUNC_GET_USERNAME(contacts_person)  contactsPersonName,
+            create_dept,changer,change_time,change_dept,valid_flag,
+            contacts_area_number,contacts_area_fax,contacts_mail_box
+        from T_TAB_CONTACT_INFORMATION where 1=1
+    </select>
     <select id="getExpertExcel_A2" resultType="com.goisan.system.bean.Emp">
         select STAFF_ID                                                 staffId,
                "NAME"                                                   name,

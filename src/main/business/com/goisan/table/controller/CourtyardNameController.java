@@ -22,17 +22,12 @@ public class CourtyardNameController {
     private CourtyardNameService courtyardNameService;
 
     @RequestMapping("/courtyardname/toCourtyardNameList")
-    public String toCourtyardNameList(String id, Model model) {
+    public String toCourtyardNameList(Model model) {
+        List<CourtyardName> list =  courtyardNameService.getCourtyardNameList(new CourtyardName());
         CourtyardName courtyardName = new CourtyardName();
-        List<CourtyardName> list =  courtyardNameService.getCourtyardNameList(courtyardName);
-        if(list.size()>0){
-            model.addAttribute("data", courtyardNameService.getCourtyardNameById(id));
-            return "/business/table/courtyardname/courtyardNameList";
-        }else{
-            model.addAttribute("data", courtyardNameService.getCourtyardNameById(id));
-            return "/business/table/courtyardname/courtyardNameList";
-        }
-
+        if (list.size()>0) courtyardName = list.get(0);
+        model.addAttribute("data", courtyardName);
+        return "/business/table/courtyardname/courtyardNameList";
     }
 
     @ResponseBody
@@ -52,19 +47,23 @@ public class CourtyardNameController {
     @RequestMapping("/courtyardname/toCourtyardNameAdd")
     public String toAddCourtyardName(Model model) {
         model.addAttribute("head", "新增");
+        List<CourtyardName> list =  courtyardNameService.getCourtyardNameList(new CourtyardName());
+        CourtyardName courtyardName = new CourtyardName();
+        if (list.size()>0) courtyardName = list.get(0);
+        model.addAttribute("data", courtyardName);
         return "/business/table/courtyardname/courtyardNameEdit";
     }
 
     @RequestMapping("/courtyardname/saveCourtyardName")
-    public String saveCourtyardName(CourtyardName courtyardName) {
+    public Message saveCourtyardName(CourtyardName courtyardName) {
         if (null != courtyardName.getId() && !"".equals(courtyardName.getId())) {
-           CommonUtil.update(courtyardName);
+            CommonUtil.update(courtyardName);
             courtyardNameService.updateCourtyardName(courtyardName);
-            return "/business/table/courtyardname/courtyardNameList";
-        } else {
+            return new Message(1, "新增成功！", null);
+        }else{
             CommonUtil.save(courtyardName);
             courtyardNameService.saveCourtyardName(courtyardName);
-            return "/business/table/courtyardname/courtyardNameList";
+            return new Message(1, "修改成功！", null);
         }
     }
 

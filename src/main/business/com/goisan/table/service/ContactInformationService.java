@@ -1,6 +1,7 @@
 package com.goisan.table.service;
 
 import com.goisan.system.bean.BaseBean;
+import com.goisan.table.bean.ContactInformation;
 
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface ContactInformationService {
 
     void delContactInformation(String id);
 
+    ContactInformation getPersonByPersonId(String personId);
 }

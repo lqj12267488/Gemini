@@ -160,7 +160,10 @@
 <input id="id" hidden value="${data.id}"/>
 <script>
     $(document).ready(function () {
-        addAdministrativeDivisions("arcadProvinceEdit", "${data.province}", "arcadCityEdit", "${data.city}", "arcadCountyEdit", "${data.arcadCounty}", path);
+        var path = '<%=request.getContextPath()%>';
+        addAdministrativeDivisions("arcadProvinceEdit", "${data.province}",
+            "arcadCityEdit","${data.city}",
+            "nativePlaceCounty", "", path);
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=XXJBZXZ", function (data) {
             addOption(data, 'natureSel','${data.nature}');
         });
@@ -321,20 +324,13 @@
             });
             return;
         }
-        var scores = $("#scores").serializeArray();
-        $.post("<%=request.getContextPath()%>/courtyardname/saveCourtyardName", scores, function (msg) {
-            swal({title: msg.msg, type: "success"});
-            search();
-        })
-    }
-    function save() {
 
         $.post("<%=request.getContextPath()%>/courtyardname/saveCourtyardName", {
             id: "${data.id}",
             schoolIdcode: $("#schoolIdcodeSel").val(),
             schoolName: $("#schoolNameSel").val(),
-            province: $("#provinceSel").val(),
-            city: $("#citySel").val(),
+            province: $("#arcadProvinceEdit option:selected").val(),
+            city: $("#arcadCityEdit option:selected").val(),
             enableTime: $("#enableTimeSel").val(),
             establishTime: $("#establishTimeSel").val(),
             establishBasics: $("#establishBasicsSel").val(),

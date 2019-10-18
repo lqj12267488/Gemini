@@ -22,8 +22,23 @@ public class ContactInformationController {
     private ContactInformationService contactInformationService;
 
     @RequestMapping("/contactinformation/toContactInformationList")
-    public String toContactInformationList() {
+    public String toContactInformationList(Model model) {
+        List<BaseBean> list =  contactInformationService.getContactInformationList(new ContactInformation());
+        BaseBean contactInformation = new ContactInformation();
+        if (list.size()>0) contactInformation = list.get(0);
+        model.addAttribute("data", contactInformation);
         return "/business/table/contactinformation/contactInformationList";
+    }
+
+    @ResponseBody
+    @RequestMapping("/contactinformation/getPersonByPersonId")
+    public Map getPersonByPersonId(String personId) {
+        ContactInformation student = contactInformationService.getPersonByPersonId(personId);
+        Map studentList = new HashMap();
+        studentList.put("areaContactsStaff",student.getAreaContactsStaff());
+        studentList.put("areaContactsPhone",student.getAreaContactsPhone());
+        studentList.put("areaContactsPost",student.getAreaContactsPost());
+        return studentList;
     }
 
     @ResponseBody

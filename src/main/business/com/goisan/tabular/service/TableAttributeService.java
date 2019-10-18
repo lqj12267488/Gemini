@@ -22,6 +22,8 @@ public interface TableAttributeService {
      */
     void expertExcel_A1(HttpServletResponse response, TabularFile tabularFile);
 
+    List<ContactInformation> getContactInformationList();
+
     void expertExcel_A1_6(HttpServletResponse response, TabularFile tabularFile);//A1-6机构设置表
 
     List<Dept> getExpertExcel_A1_6();

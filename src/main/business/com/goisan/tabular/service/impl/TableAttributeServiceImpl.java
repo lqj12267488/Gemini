@@ -87,6 +87,9 @@ public class TableAttributeServiceImpl implements TableAttributeService {
      * 例
      * * @param response
      */
+    public List<ContactInformation> getContactInformationList(){
+        return tableAttributeDao.getContactInformationList();
+    }
     public void expertExcel_A1(HttpServletResponse response, TabularFile tabularFile) {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
@@ -107,63 +110,60 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             String sheetName = sheet.getSheetName();
-            List<CourtyardName> list = courtyardNameDao.getCourtyardNameList(null);
+            List<CourtyardName> list =  courtyardNameDao.getCourtyardNameList(new CourtyardName());
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
-                CourtyardName pea = (CourtyardName) list.get(i);
                 Row row = sheet.getRow(rowIndex + i);
-                row.getCell(1).setCellValue(pea.getSchoolIdcode());
-                row.getCell(2).setCellValue(pea.getSchoolName());
-                row.getCell(3).setCellValue(pea.getProvince());
-                row.getCell(4).setCellValue(pea.getCity());
-                row.getCell(5).setCellValue(pea.getEnableTime());
-                row.getCell(6).setCellValue(pea.getEstablishTime());
-                row.getCell(7).setCellValue(pea.getEstablishBasics());
-                row.getCell(8).setCellValue(pea.getNatureShow());
-                row.getCell(9).setCellValue(pea.getHoldLevelShow());
-                row.getCell(10).setCellValue(pea.getSchoolTypeShow());
-                row.getCell(11).setCellValue(pea.getSchoolMotto());
-                row.getCell(12).setCellValue(pea.getExemplaryNatureShow());
-                row.getCell(13).setCellValue(pea.getExemplaryLevelShow());
-                row.getCell(14).setCellValue(pea.getEstablishmentDept());
-                row.getCell(15).setCellValue(pea.getEstablishmentTime());
-                row.getCell(16).setCellValue(pea.getAssessmentOneTime());
-                row.getCell(17).setCellValue(pea.getEvaluationConclusionOne());
-                row.getCell(18).setCellValue(pea.getAssessmentTwoTime());
-                row.getCell(19).setCellValue(pea.getEvaluationConclusionTwo());
-                row.getCell(20).setCellValue(pea.getUnassessedShow());
+                row.getCell(1).setCellValue(list.get(i).getSchoolIdcode());
+                row.getCell(2).setCellValue(list.get(i).getSchoolName());
+                row.getCell(3).setCellValue(list.get(i).getProvince());
+                row.getCell(4).setCellValue(list.get(i).getCity());
+                row.getCell(5).setCellValue(list.get(i).getEnableTime());
+                row.getCell(6).setCellValue(list.get(i).getEstablishTime());
+                row.getCell(7).setCellValue(list.get(i).getEstablishBasics());
+                row.getCell(8).setCellValue(list.get(i).getNatureShow());
+                row.getCell(9).setCellValue(list.get(i).getHoldLevelShow());
+                row.getCell(10).setCellValue(list.get(i).getSchoolTypeShow());
+                row.getCell(11).setCellValue(list.get(i).getSchoolMotto());
+                row.getCell(12).setCellValue(list.get(i).getExemplaryNatureShow());
+                row.getCell(13).setCellValue(list.get(i).getExemplaryLevelShow());
+                row.getCell(14).setCellValue(list.get(i).getEstablishmentDept());
+                row.getCell(15).setCellValue(list.get(i).getEstablishmentTime());
+                row.getCell(16).setCellValue(list.get(i).getAssessmentOneTime());
+                row.getCell(17).setCellValue(list.get(i).getEvaluationConclusionOne());
+                row.getCell(18).setCellValue(list.get(i).getAssessmentTwoTime());
+                row.getCell(19).setCellValue(list.get(i).getEvaluationConclusionTwo());
+                row.getCell(20).setCellValue(list.get(i).getUnassessedShow());
                 count++;
             }
 
             int rowIndex2 = 17;
-            ContactInformation contactInformation = new ContactInformation();
-            List<BaseBean> list1 =  contactInformationDao.getContactInformationList(contactInformation);
+            List<ContactInformation> list1 = tableAttributeDao.getContactInformationList();
             for (int i = 0; i < list1.size(); i++) {
-                ContactInformation pea = (ContactInformation) list1.get(i);
                 Row row = sheet.getRow(rowIndex2 + i);
-                row.getCell(1).setCellValue(pea.getMailingAddress());
-                row.getCell(2).setCellValue(pea.getPostalCode());
-                row.getCell(3).setCellValue(pea.getSchoolWebsite());
-                row.getCell(4).setCellValue("法人教工号");
-                row.getCell(5).setCellValue("法人姓名");
-                row.getCell(6).setCellValue("法人职务");
-                row.getCell(7).setCellValue(pea.getAreaNumber());
-                row.getCell(8).setCellValue(pea.getAreaFax());
-                row.getCell(9).setCellValue(pea.getMailBox());
-                row.getCell(10).setCellValue("联系人教工号");
-                row.getCell(11).setCellValue("联系人姓名");
-                row.getCell(12).setCellValue("联系人职务");
-                row.getCell(13).setCellValue(pea.getContactsAreaNumber());
-                row.getCell(14).setCellValue(pea.getContactsAreaFax());
-                row.getCell(15).setCellValue("联系人电话号");
-                row.getCell(16).setCellValue(pea.getContactsMailBox());
+                row.getCell(1).setCellValue(list1.get(i).getMailingAddress());
+                row.getCell(2).setCellValue(list1.get(i).getPostalCode());
+                row.getCell(3).setCellValue(list1.get(i).getSchoolWebsite());
+                row.getCell(4).setCellValue(list1.get(i).getAreaStaff());
+                row.getCell(5).setCellValue(list1.get(i).getAreaPersonName());
+                row.getCell(6).setCellValue(list1.get(i).getAreaPost());
+                row.getCell(7).setCellValue(list1.get(i).getAreaNumber());
+                row.getCell(8).setCellValue(list1.get(i).getAreaFax());
+                row.getCell(9).setCellValue(list1.get(i).getMailBox());
+                row.getCell(10).setCellValue(list1.get(i).getAreaContactsStaff());
+                row.getCell(11).setCellValue(list1.get(i).getContactsPersonName());
+                row.getCell(12).setCellValue(list1.get(i).getAreaContactsPost());
+                row.getCell(13).setCellValue(list1.get(i).getContactsAreaNumber());
+                row.getCell(14).setCellValue(list1.get(i).getContactsAreaFax());
+                row.getCell(15).setCellValue(list1.get(i).getAreaContactsPost());
+                row.getCell(16).setCellValue(list1.get(i).getContactsMailBox());
                 count++;
             }
-            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
             os = response.getOutputStream();
-            os.write(FileUtils.readFileToByteArray(file));
+            wb.write(os);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {

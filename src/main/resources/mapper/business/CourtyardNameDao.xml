@@ -5,40 +5,100 @@
     <select id="getCourtyardNameList"
             parameterType="com.goisan.table.bean.CourtyardName"
             resultType="com.goisan.table.bean.CourtyardName">
-        select id,school_idcode,school_name,province,city,enable_time,establish_time,establish_basics,nature,func_get_dicvalue(nature,'XXJBZXZ') natureShow,hold_level,func_get_dicvalue(hold_level,'XXJBZJB') holdLevelShow,school_type,func_get_dicvalue(school_type,'XXXZLB') schoolTypeShow,school_motto,exemplary_nature,func_get_dicvalue(exemplary_nature,'SFXGDZYYXXZ') exemplaryNatureShow,exemplary_level,func_get_dicvalue(exemplary_level,'SFXGDZYYXJB') exemplaryLevelShow,establishment_dept,establishment_time,assessment_one_time,evaluation_conclusion_one,assessment_two_time,evaluation_conclusion_two,unassessed,func_get_dicvalue(unassessed,'SF') unassessedShow,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_COURTYARD_NAME where 1=1
-<if test='schoolIdcode != "" and schoolIdcode != null'> AND school_idcode like '%'||#{schoolIdcode}||'%' </if> 
-<if test='schoolName != "" and schoolName != null'> AND school_name like '%'||#{schoolName}||'%' </if> 
-<if test='province != "" and province != null'> AND province like '%'||#{province}||'%' </if> 
-<if test='city != "" and city != null'> AND city like '%'||#{city}||'%' </if> 
-<if test='enableTime != "" and enableTime != null'> AND enable_time like '%'||#{enableTime}||'%' </if> 
-<if test='establishTime != "" and establishTime != null'> AND establish_time like '%'||#{establishTime}||'%' </if> 
-<if test='establishBasics != "" and establishBasics != null'> AND establish_basics like '%'||#{establishBasics}||'%' </if> 
-<if test='nature != "" and nature != null'> AND nature = #{nature} </if> 
-<if test='holdLevel != "" and holdLevel != null'> AND hold_level = #{holdLevel} </if> 
-<if test='schoolType != "" and schoolType != null'> AND school_type = #{schoolType} </if> 
-<if test='schoolMotto != "" and schoolMotto != null'> AND school_motto like '%'||#{schoolMotto}||'%' </if> 
-<if test='exemplaryNature != "" and exemplaryNature != null'> AND exemplary_nature = #{exemplaryNature} </if> 
-<if test='exemplaryLevel != "" and exemplaryLevel != null'> AND exemplary_level = #{exemplaryLevel} </if> 
-<if test='establishmentDept != "" and establishmentDept != null'> AND establishment_dept like '%'||#{establishmentDept}||'%' </if> 
-<if test='establishmentTime != "" and establishmentTime != null'> AND establishment_time like '%'||#{establishmentTime}||'%' </if> 
-<if test='assessmentOneTime != "" and assessmentOneTime != null'> AND assessment_one_time like '%'||#{assessmentOneTime}||'%' </if> 
-<if test='evaluationConclusionOne != "" and evaluationConclusionOne != null'> AND evaluation_conclusion_one like '%'||#{evaluationConclusionOne}||'%' </if> 
-<if test='assessmentTwoTime != "" and assessmentTwoTime != null'> AND assessment_two_time like '%'||#{assessmentTwoTime}||'%' </if> 
-<if test='evaluationConclusionTwo != "" and evaluationConclusionTwo != null'> AND evaluation_conclusion_two like '%'||#{evaluationConclusionTwo}||'%' </if> 
-<if test='unassessed != "" and unassessed != null'> AND unassessed = #{unassessed} </if> 
+        select
+        id,school_idcode,school_name,province,city,to_char(enable_time,'yyyy-mm')  enable_time,
+        to_char(establish_time,'yyyy-mm') establish_time,establish_basics,nature,func_get_dicvalue(nature,'XXJBZXZ')
+        natureShow,hold_level,func_get_dicvalue(hold_level,'XXJBZJB')
+        holdLevelShow,school_type,func_get_dicvalue(school_type,'XXXZLB')
+        schoolTypeShow,school_motto,exemplary_nature,func_get_dicvalue(exemplary_nature,'SFXGDZYYXXZ')
+        exemplaryNatureShow,exemplary_level,func_get_dicvalue(exemplary_level,'SFXGDZYYXJB')
+        exemplaryLevelShow,establishment_dept,to_char(establishment_time,'yyyy') establishment_time,to_char(assessment_one_time,'yyyy-mm') assessment_one_time,evaluation_conclusion_one,to_char(assessment_two_time,'yyyy-mm') assessment_two_time,evaluation_conclusion_two,unassessed,func_get_dicvalue(unassessed,'SF')
+        unassessedShow,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from
+        T_TAB_COURTYARD_NAME where 1=1
+        <if test='schoolIdcode != "" and schoolIdcode != null'>AND school_idcode like '%'||#{schoolIdcode}||'%'</if>
+        <if test='schoolName != "" and schoolName != null'>AND school_name like '%'||#{schoolName}||'%'</if>
+        <if test='province != "" and province != null'>AND province like '%'||#{province}||'%'</if>
+        <if test='city != "" and city != null'>AND city like '%'||#{city}||'%'</if>
+        <if test='enableTime != "" and enableTime != null'>AND enable_time like '%'||#{enableTime}||'%'</if>
+        <if test='establishTime != "" and establishTime != null'>AND establish_time like '%'||#{establishTime}||'%'</if>
+        <if test='establishBasics != "" and establishBasics != null'>AND establish_basics like
+            '%'||#{establishBasics}||'%'
+        </if>
+        <if test='nature != "" and nature != null'>AND nature = #{nature}</if>
+        <if test='holdLevel != "" and holdLevel != null'>AND hold_level = #{holdLevel}</if>
+        <if test='schoolType != "" and schoolType != null'>AND school_type = #{schoolType}</if>
+        <if test='schoolMotto != "" and schoolMotto != null'>AND school_motto like '%'||#{schoolMotto}||'%'</if>
+        <if test='exemplaryNature != "" and exemplaryNature != null'>AND exemplary_nature = #{exemplaryNature}</if>
+        <if test='exemplaryLevel != "" and exemplaryLevel != null'>AND exemplary_level = #{exemplaryLevel}</if>
+        <if test='establishmentDept != "" and establishmentDept != null'>AND establishment_dept like
+            '%'||#{establishmentDept}||'%'
+        </if>
+        <if test='establishmentTime != "" and establishmentTime != null'>AND establishment_time like
+            '%'||#{establishmentTime}||'%'
+        </if>
+        <if test='assessmentOneTime != "" and assessmentOneTime != null'>AND assessment_one_time like
+            '%'||#{assessmentOneTime}||'%'
+        </if>
+        <if test='evaluationConclusionOne != "" and evaluationConclusionOne != null'>AND evaluation_conclusion_one like
+            '%'||#{evaluationConclusionOne}||'%'
+        </if>
+        <if test='assessmentTwoTime != "" and assessmentTwoTime != null'>AND assessment_two_time like
+            '%'||#{assessmentTwoTime}||'%'
+        </if>
+        <if test='evaluationConclusionTwo != "" and evaluationConclusionTwo != null'>AND evaluation_conclusion_two like
+            '%'||#{evaluationConclusionTwo}||'%'
+        </if>
+        <if test='unassessed != "" and unassessed != null'>AND unassessed = #{unassessed}</if>
 
     </select>
     <insert id="saveCourtyardName" parameterType="com.goisan.table.bean.CourtyardName">
-        insert into t_tab_courtyard_name (id,school_idcode,school_name,province,city,enable_time,establish_time,establish_basics,nature,hold_level,school_type,school_motto,exemplary_nature,exemplary_level,establishment_dept,establishment_time,assessment_one_time,evaluation_conclusion_one,assessment_two_time,evaluation_conclusion_two,unassessed,creator,create_time,create_dept) values (func_get_uuid ,#{schoolIdcode},#{schoolName},#{province},#{city},#{enableTime},#{establishTime},#{establishBasics},#{nature},#{holdLevel},#{schoolType},#{schoolMotto},#{exemplaryNature},#{exemplaryLevel},#{establishmentDept},#{establishmentTime},#{assessmentOneTime},#{evaluationConclusionOne},#{assessmentTwoTime},#{evaluationConclusionTwo},#{unassessed},#{creator},sysdate ,#{createDept})
+        insert into t_tab_courtyard_name (id, school_idcode, school_name, province, city, enable_time, establish_time,
+                                          establish_basics, nature, hold_level, school_type, school_motto,
+                                          exemplary_nature, exemplary_level, establishment_dept, establishment_time,
+                                          assessment_one_time, evaluation_conclusion_one, assessment_two_time,
+                                          evaluation_conclusion_two, unassessed, creator, create_time, create_dept)
+        values (func_get_uuid, #{schoolIdcode}, #{schoolName}, #{province}, #{city},to_date('${enableTime}','yyyy-mm'),to_date('${establishTime}','yyyy-mm'),
+                #{establishBasics}, #{nature}, #{holdLevel}, #{schoolType}, #{schoolMotto}, #{exemplaryNature},
+                #{exemplaryLevel}, #{establishmentDept},to_date('${establishmentTime}','yyyy'),to_date('${assessmentOneTime}','yyyy-mm'),
+                #{evaluationConclusionOne},to_date('${assessmentTwoTime}','yyyy-mm'), #{evaluationConclusionTwo}, #{unassessed}, #{creator},
+                sysdate, #{createDept})
     </insert>
     <select id="getCourtyardNameById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.CourtyardName">
-        select * from T_TAB_COURTYARD_NAME where id = #{id}
+        select *
+        from T_TAB_COURTYARD_NAME
+        where id = #{id}
     </select>
     <update id="updateCourtyardName" parameterType="com.goisan.table.bean.CourtyardName">
-        update t_tab_courtyard_name set school_idcode=#{schoolIdcode},school_name=#{schoolName},province=#{province},city=#{city},enable_time=#{enableTime},establish_time=#{establishTime},establish_basics=#{establishBasics},nature=#{nature},hold_level=#{holdLevel},school_type=#{schoolType},school_motto=#{schoolMotto},exemplary_nature=#{exemplaryNature},exemplary_level=#{exemplaryLevel},establishment_dept=#{establishmentDept},establishment_time=#{establishmentTime},assessment_one_time=#{assessmentOneTime},evaluation_conclusion_one=#{evaluationConclusionOne},assessment_two_time=#{assessmentTwoTime},evaluation_conclusion_two=#{evaluationConclusionTwo},unassessed=#{unassessed},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+        update t_tab_courtyard_name
+        set school_idcode=#{schoolIdcode},
+            school_name=#{schoolName},
+            province=#{province},
+            city=#{city},
+            enable_time=to_date(#{enableTime},'yyyy-mm'),
+            establish_time=to_date(#{establishTime},'yyyy-mm'),
+            establish_basics=#{establishBasics},
+            nature=#{nature},
+            hold_level=#{holdLevel},
+            school_type=#{schoolType},
+            school_motto=#{schoolMotto},
+            exemplary_nature=#{exemplaryNature},
+            exemplary_level=#{exemplaryLevel},
+            establishment_dept=#{establishmentDept},
+            establishment_time=to_date(#{establishmentTime},'yyyy'),
+            assessment_one_time=to_date(#{assessmentOneTime},'yyyy-mm'),
+            evaluation_conclusion_one=#{evaluationConclusionOne},
+            assessment_two_time=to_date(#{assessmentTwoTime},'yyyy-mm'),
+            evaluation_conclusion_two=#{evaluationConclusionTwo},
+            unassessed=#{unassessed},
+            changer=#{changer},
+            change_time= sysdate,
+            change_dept=#{changeDept}
+        where id = #{id}
     </update>
     <delete id="delCourtyardName" parameterType="java.lang.String">
-        delete from T_TAB_COURTYARD_NAME where id = #{id}
+        delete
+        from T_TAB_COURTYARD_NAME
+        where id = #{id}
     </delete>
 </mapper>

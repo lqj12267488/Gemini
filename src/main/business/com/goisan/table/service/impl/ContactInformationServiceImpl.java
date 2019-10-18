@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.table.bean.ContactInformation;
 import com.goisan.table.dao.ContactInformationDao;
 import com.goisan.table.service.ContactInformationService;
 import com.goisan.system.bean.BaseBean;
@@ -42,5 +43,10 @@ public class ContactInformationServiceImpl implements ContactInformationService 
     @Override
     public void delContactInformation(String id) {
         contactInformationDao.delContactInformation(id);
+    }
+
+    @Override
+    public ContactInformation getPersonByPersonId(String personId){
+        return contactInformationDao.getPersonByPersonId(personId);
     }
 }
