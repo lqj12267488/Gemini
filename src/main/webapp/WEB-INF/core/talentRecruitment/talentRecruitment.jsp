@@ -165,6 +165,11 @@
                 $('#dialogFile').load('<%=request.getContextPath()%>/files/filesUpload?businessId=' + id + '&businessType=TEST&tableName=T_RS_TALENT_RECRUITMENT_WF');
                 $('#dialogFile').modal('show');
             }
+
+            if (this.id=="previewSel") {
+                $("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + id + "&role=leader");
+                $("#dialog").modal("show");
+            }
         });
     })
 
@@ -212,6 +217,7 @@
                         return "<a id='edittalentRecruitment' class='icon-edit' title='修改'></a>&nbsp;&nbsp;&nbsp;" +
                             "<a id='upload' class='icon-cloud-upload' title='上传附件'></a>&nbsp;&nbsp;&nbsp;" +
                             "<a id='deltalentRecruitment' class='icon-trash' title='删除'></a>&nbsp;&nbsp;&nbsp;" +
+                            "<a id='previewSel' class='icon-eye-open' title='查看附件'></a>&nbsp;&nbsp;&nbsp;" +
                             "<a id='submit' class='icon-upload-alt' title='提交'></a>";
                     }
                 }

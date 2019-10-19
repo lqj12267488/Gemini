@@ -111,4 +111,20 @@ public class InterviewersController {
         interviewersService.deleteInterviewersById(id);
         return new Message(1, "删除成功！", null);
     }
+
+
+    /**
+     * 面试人员查看
+     * @param id
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/interviewers/searchDetils")
+    public ModelAndView searchDetils(String id) {
+        ModelAndView mv = new ModelAndView("/core/interviewers/searchDetils");
+        Interviewers interviewers = interviewersService.getInterviewersById(id);
+        mv.addObject("head", "查看");
+        mv.addObject("interviewers", interviewers);
+        return mv;
+    }
 }

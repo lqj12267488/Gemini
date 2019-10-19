@@ -108,7 +108,7 @@
             post      = #{post},
             education      = #{education},
             graduation_time = to_date(#{graduationTime}, 'yyyy-mm-dd'),
-            person_salary      = #{person_salary},
+            person_salary      = #{personSalary},
             job      = #{job},
             term      = #{term},
             change_dept       = #{changeDept},

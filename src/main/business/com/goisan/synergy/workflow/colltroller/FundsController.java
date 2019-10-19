@@ -122,14 +122,15 @@ public class FundsController {
     public Map<String, Object> search(Funds funds,int draw,int start,int length){
         PageHelper.startPage(start/length + 1,length);
         Map<String, Object>  fundsMap = new HashMap<String, Object>();
-        fundsMap.put("data",fundsService.fundsAction(funds));
+        /*fundsMap.put("data",fundsService.fundsAction(funds));*/
         funds.setCreator(CommonUtil.getPersonId());
         funds.setCreateDept(CommonUtil.getDefaultDept());
-        PageInfo<List<Funds>> info = new PageInfo(fundsService.fundsAction(funds));
+        List<Funds> list = fundsService.fundsAction(funds);
+        PageInfo<List<Funds>> info = new PageInfo(list);
         fundsMap.put("draw",draw);
         fundsMap.put("recordsTotal",info.getTotal());
         fundsMap.put("recordsFiltered",info.getTotal());
-        fundsMap.put("data",fundsService.fundsAction(funds));
+        fundsMap.put("data",list);
        /* List<Funds> r = fundsService.fundsAction(funds);
         fundsMap.put("data", r);
         return fundsMap;*/

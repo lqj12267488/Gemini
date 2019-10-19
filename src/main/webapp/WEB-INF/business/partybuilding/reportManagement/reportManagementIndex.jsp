@@ -109,7 +109,7 @@
             if (this.id == "delLoan") {
                 swal({
                     title: "您确定要删除本条信息?",
-                    text: "摘要："+data.reportContent+"\n\n删除后将无法恢复，请谨慎操作！",
+                    text: "申请内容："+data.reportContent+"\n\n删除后将无法恢复，请谨慎操作！",
                     type: "warning",
                     showCancelButton: true,
                     cancelButtonText: "取消",

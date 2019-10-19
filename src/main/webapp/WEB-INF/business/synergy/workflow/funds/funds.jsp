@@ -173,8 +173,8 @@
             requestDate = '%' + requestDate + '%';
 
         roleTable = $('#funds').DataTable({
-            // "processing": true,
-            // "serverSide": true,
+            "processing": true,
+            "serverSide": true,
             "ajax": {
                 "type": "post",
                 "url": '<%=request.getContextPath()%>/funds/search',
@@ -206,11 +206,9 @@
                 }
             ],
             'order' : [1,'desc'],
-            //  paging: true,
+            paging: true,
             "dom": 'rtlip',
-            // language: language
-            // "dom": '<"rtlip">rtlip',
-            language: language
+            "language": language
         });
 
     }

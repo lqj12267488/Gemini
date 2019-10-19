@@ -258,8 +258,6 @@
                 type: "info"
             });
         }
-
-
     }
 
     function checkAll() {
@@ -269,7 +267,6 @@
             $("[name='checkbox']").removeAttr("checked");
         }
     }
-
 
     function search() {
         var did = $("#did option:selected").val();

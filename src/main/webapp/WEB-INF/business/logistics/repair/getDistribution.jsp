@@ -52,6 +52,17 @@
     var repairManGrid;
     var pname;
     $(document).ready(function () {
+
+       /* if (msg.status == 1) {
+            swal({
+                title: "该请求状态为维修完成，不可再进行分配任务！",
+                type: "error"
+            });
+            $("#dialog").modal('hide');
+        } else {
+            $("#dialog").modal("show");
+        }*/
+
         repairManGrid = $("#repairManGrid").DataTable({
             "ajax": {
                 "url": '<%=request.getContextPath()%>/repair/searchgetDistribution?repairID='+$("#rID").val(),

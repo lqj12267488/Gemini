@@ -1012,4 +1012,12 @@
     <select id="selectName" parameterType = "java.lang.String" resultType="java.lang.String">
         select name from T_SYS_USER t where t.user_id = #{creator}
     </select>
+
+    <select id="checkStatus" resultType="com.goisan.logistics.repair.bean.Repair"
+            parameterType="com.goisan.logistics.repair.bean.Repair">
+
+      select t.*, t.rowid from T_ZW_REPAIR t where t.request_flag = '3'
+
+    </select>
+
 </mapper>

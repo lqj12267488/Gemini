@@ -118,6 +118,10 @@
                 $("#dialog").load("<%=request.getContextPath()%>/interviewers/getInterviewersById?id=" + id);
                 $("#dialog").modal("show");
             }
+            if(this.id == "selectId"){
+                $("#dialog").load("<%=request.getContextPath()%>/interviewers/searchDetils?id=" + id);
+                $("#dialog").modal("show");
+            }
             if (this.id == "delRole") {
                 swal({
                     title: "您确定要删除本条信息?",
@@ -191,7 +195,8 @@
                     "title": "操作",
                     "render": function () {
                         return "<a id='uRole' class='icon-edit' title='修改'></a>&nbsp;&nbsp;&nbsp;" +
-                            "<a id='delRole' class='icon-trash' title='删除'></a>&nbsp;&nbsp;&nbsp;";
+                            "<a id='delRole' class='icon-trash' title='删除'></a>&nbsp;&nbsp;&nbsp;" +
+                            "<a id='selectId' class='icon-search' title='详情'></a>";
                     }
                 }
             ],

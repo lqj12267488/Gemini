@@ -54,6 +54,7 @@
     </div>
 </div>
 <input id="repairID" hidden value="${repair.repairID}">
+<input id="requestFlagSel" hidden value="${repair.requestFlag}">
 <script>
     var repairTable;
     //维修任务分配主页面显示的数据
@@ -108,8 +109,20 @@
             var flag = data.requestFlag;
             //分配任务
             if (this.id == "submitRepair") {
-                $("#dialog").load("<%=request.getContextPath()%>/repair/getDistribution?repairID=" + repairID);
-                $("#dialog").modal("show");
+                $.get("<%=request.getContextPath()%>/repair/getStatus?requestFlag=" + flag,function (msg) {
+                    if (msg.status == 0) {
+                        swal({
+                            title: "此请求状态为维修完成，不可再进行分配任务！",
+                            type: "error"
+                        });
+                        return;
+
+                    } else {
+                        $("#dialog").load("<%=request.getContextPath()%>/repair/getDistribution?repairID=" + repairID);
+                        $("#dialog").modal("show");
+                    }
+                })
+
             }
             //任务详情
             if (this.id == "searchFenPei") {

@@ -12,7 +12,7 @@
        t.reason     reason,
        t.lowercase_amount   amount,
        t.request_flag  requestFlag,
-       t."UPPERCASE AMOUNT"      amountUpper,
+       t."UPPERCASE_AMOUNT"      amountUpper,
        t.creator       creator,
        t.create_time   createTime
     from T_BG_FUNDS_WF t
@@ -37,7 +37,7 @@
         t.reason     reason,
         t.lowercase_amount   amount,
         t.request_flag  requestFlag,
-        t."UPPERCASE AMOUNT"      amountUpper,
+        t."UPPERCASE_AMOUNT"      amountUpper,
         t.creator       creator,
         t.create_time   createTime
         FROM T_BG_Funds_WF t,T_SYS_WORKFLOW_START s,T_SYS_WORKFLOW_HANDLE r
@@ -68,7 +68,7 @@
         t.remark        remark,
         t.reason     reason,
         t.lowercase_amount   amount,
-        t."UPPERCASE AMOUNT"      amountUpper,
+        t."UPPERCASE_AMOUNT"      amountUpper,
         t.creator       creator,
         t.create_time   createTime,
         t.feedback feedback,
@@ -104,7 +104,7 @@
         t.reason     reason,
         t.lowercase_amount   amount,
         t.request_flag  requestFlag,
-        t."UPPERCASE AMOUNT"      amountUpper,
+        t."UPPERCASE_AMOUNT"      amountUpper,
         t.creator       creator,
         t.create_time   createTime
         from T_BG_Funds_WF t
@@ -131,7 +131,7 @@
            remark,
            reason,
            lowercase_amount,
-           "UPPERCASE AMOUNT",
+           "UPPERCASE_AMOUNT",
            request_flag,
            create_dept)
         values
@@ -159,7 +159,7 @@
         remark,
         reason,
         lowercase_amount,
-        "UPPERCASE AMOUNT",
+        "UPPERCASE_AMOUNT",
         request_flag,
         create_dept)
         values
@@ -185,7 +185,7 @@
         t.reason     reason,
         t.lowercase_amount   amount,
         t.request_flag  requestFlag,
-        t."UPPERCASE AMOUNT"      amountUpper,
+        t."UPPERCASE_AMOUNT"      amountUpper,
         t.creator       creator,
         t.create_time   createTime
   from T_BG_Funds_WF t
@@ -199,7 +199,7 @@
         remark = #{remark},
         reason = #{reason},
         lowercase_amount = #{amount},
-        "UPPERCASE AMOUNT" = #{amountUpper},
+        "UPPERCASE_AMOUNT" = #{amountUpper},
         changer = #{changer},
         change_dept = #{changeDept},
         change_time = sysdate
@@ -279,7 +279,7 @@ values
         request_flag ='1',
         reason = #{reason},
         lowercase_amount = #{amount},
-        "UPPERCASE AMOUNT" = #{amountUpper},
+        "UPPERCASE_AMOUNT" = #{amountUpper},
         creator=#{creator},
         create_time=sysdate,
         changer = #{creator},

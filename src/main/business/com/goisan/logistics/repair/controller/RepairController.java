@@ -68,7 +68,7 @@ public class RepairController {
                     newname = newname + name + ",";
                 }
             }
-            if(!"".equals(newname)) newname = newname.substring(0,newname.length()-1);
+            if (!"".equals(newname)) newname = newname.substring(0, newname.length() - 1);
             repair1.setItemNameShow(newname);
             if (repair.getItemName() != null && !"".equals(repair.getItemName())) {
                 if (newname.contains(repair.getItemName())) {
@@ -108,9 +108,9 @@ public class RepairController {
                 newname.append(name).append(",");
             }
         }
-        if(newname.length()>0){
+        if (newname.length() > 0) {
             repair.setItemNameShow(newname.substring(0, newname.length() - 1));
-        }else {
+        } else {
             repair.setItemNameShow("");
         }
         String personName = empService.getPersonNameById(CommonUtil.getPersonId());
@@ -187,7 +187,7 @@ public class RepairController {
         repair.setLevel(CommonUtil.getLoginUser().getLevel());
         List<Repair> ll = repairService.distributionInfo(repair);
         for (Repair repair1 : ll) {
-            String name =  repairService.selectName(repair1.getCreator());
+            String name = repairService.selectName(repair1.getCreator());
             repair1.setCreatorName(name);
         }
         String name = "";
@@ -225,6 +225,17 @@ public class RepairController {
         mv.addObject("head", "维修任务分配");
         mv.addObject("repair", repair);
         return mv;
+    }
+
+    @ResponseBody
+    @RequestMapping("/repair/getStatus")
+    public Message getStatus(String requestFlag) {
+        if("维修完成".equals(requestFlag)){
+            return new Message(0, "", "");
+        }else{
+            return new Message(1, "", "");
+        }
+
     }
 
     /*分配维修员查询*/
@@ -471,7 +482,7 @@ public class RepairController {
         repair.setCreateDept(CommonUtil.getDefaultDept());
         List<Repair> ll = repairService.repairDefine(repair);
         for (Repair repair1 : ll) {
-           String name =  repairService.selectName(repair1.getCreator());
+            String name = repairService.selectName(repair1.getCreator());
             repair1.setCreatorName(name);
         }
         String name = "";
@@ -1062,7 +1073,7 @@ public class RepairController {
     public Message deletePeople(Repair repair) {
         repairService.deletePeople(repair);
         List<Repair> list = repairService.getRepairExecuteByRepairId(repair.getRepairID());
-        if(list.size()<1){
+        if (list.size() < 1) {
             repairService.repairChenXiaoFenPei(repair);
         }
         return new Message(1, "撤销成功！", null);

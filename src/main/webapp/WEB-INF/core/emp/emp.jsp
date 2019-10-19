@@ -283,7 +283,6 @@
         }
     }
     function allot() {
-        debugger;
         var chk_value = "'";
         if ($('input[name="checkbox"]:checked').length > 0) {
             $('input[name="checkbox"]:checked').each(function () {
