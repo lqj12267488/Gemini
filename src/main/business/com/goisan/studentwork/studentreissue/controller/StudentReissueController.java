@@ -111,6 +111,7 @@ public class StudentReissueController {
             studentReissue.setFamilyAddress(student.getAddress());
             studentReissue.setIdcard(student.getIdcard());
             studentReissue.setPhone(student.getTel());
+            studentReissue.setProvince("650000");
         }
         studentReissue.setRequestDate(datetime);
         mv.addObject("head", "学生证补办申请新增");
@@ -263,6 +264,9 @@ public class StudentReissueController {
         ModelAndView mv = new ModelAndView("/business/studentwork/studentreissue/printStudentReissue");
         String workflowName = workflowService.getWorkflowNameByWorkflowCode("T_XG_STUDENT_REISSUE_WF01");
         StudentReissue leave = studentReissueService.getLeaveBy(id);
+        mv.addObject("requestDateYear",leave.getRequestDate().split("T")[0].split("-")[0]);
+        mv.addObject("requestDateMonth",leave.getRequestDate().split("T")[0].split("-")[1]);
+        mv.addObject("requestDateDay",leave.getRequestDate().split("T")[0].split("-")[2]);
         leave.setRequestDate(leave.getRequestDate().split("T")[0].split("-")[0]+"年"+leave.getRequestDate().split("T")[0].split("-")[1]+"月"+leave.getRequestDate().split("T")[0].split("-")[2]+"日");
         mv.addObject("studentReissue", leave);
         mv.addObject("workflowName", workflowName);

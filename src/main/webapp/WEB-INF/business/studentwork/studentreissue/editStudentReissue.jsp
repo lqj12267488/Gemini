@@ -28,7 +28,7 @@
             <div id="layout"
                  style="display:none;z-index:999;position:absolute;width: 100%;height: 100%;text-align: center"></div>
             <div class="controls">
-                <form id="dailySignUp" >
+                <form id="dailySignUp">
                     <input id="studentReissueid" hidden value="${studentReissue.id}">
                     <input type="file" name="file" style="display: none" id="imgFile" onchange="fileChange(this)">
                     <div class="form-row">
@@ -42,22 +42,22 @@
                         </div>
                         <div style="float: right;width: 230px;height: 160px;">
                             <div style="width: 160px;height: 160px;margin-top: -4px;">
-                        <c:choose>
-                            <c:when test="${studentReissue.img == null}">
-                                <img onclick="showInputFile()"
-                                     style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
-                                     src="<%=request.getContextPath()%>/libs/img/upload.png"
-                                     height="150"
-                                     width="110" alt="" id="userImg">
-                            </c:when>
-                            <c:otherwise>
-                                <img onclick="showInputFile()"
-                                     style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
-                                     src="data:image/png;base64,${studentReissue.img}"
-                                     height="150"
-                                     width="110" alt="" id="userImg1">
-                            </c:otherwise>
-                        </c:choose>
+                                <c:choose>
+                                    <c:when test="${studentReissue.img == null}">
+                                        <img onclick="showInputFile()"
+                                             style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
+                                             src="<%=request.getContextPath()%>/libs/img/upload.png"
+                                             height="150"
+                                             width="110" alt="" id="userImg">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img onclick="showInputFile()"
+                                             style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
+                                             src="data:image/png;base64,${studentReissue.img}"
+                                             height="150"
+                                             width="110" alt="" id="userImg1">
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                         <div class="col-md-2 tar" style="float: left;">
@@ -120,8 +120,10 @@
                             <span class="iconBtx">*</span>乘车区间
                         </div>
                         <div class="col-md-9">
+                            <div style="float: left">乌市站到</div>
                             <input id="f_rideZone" maxlength="100" placeholder="最多输入100个字"
-                                   style="resize:none;" value="${studentReissue.rideZone}"/>
+                                   style="resize:none;width: 320px;float: left" value="${studentReissue.rideZone}"/>
+                            <div style="float: left">站</div>
                         </div>
                     </div>
                     <div class="form-row">
@@ -138,7 +140,7 @@
                             <span class="iconBtx">*</span>电话
                         </div>
                         <div class="col-md-9">
-                            <input id="f_phone"  value="${studentReissue.phone}"/>
+                            <input id="f_phone" value="${studentReissue.phone}"/>
                         </div>
                     </div>
                     <div class="form-row">
@@ -146,7 +148,7 @@
                             <span class="iconBtx">*</span>新疆省
                         </div>
                         <div class="col-md-9">
-                            <select id="houseProvince" class="js-example-basic-single"></select>
+                            <select id="houseProvince" disabled="disabled" class="js-example-basic-single"></select>
                         </div>
                     </div>
                     <div class="form-row">
@@ -246,14 +248,12 @@
     function save() {
         var date = $("#f_requestDate").val();
         date = date.replace('T', '');
-        if(null == '${studentReissue.img}' || "" == '${studentReissue.img}'){
-            if ($("#imgFile").val() == "" || $("#imgFile").val() == "0" || $("#imgFile").val() == undefined) {
-                swal({
-                    title: "请上传头像",
-                    type: "info"
-                });
-                return;
-            }
+        if ($("#imgFile").val() == "" || $("#imgFile").val() == undefined) {
+            swal({
+                title: "请上传头像",
+                type: "info"
+            });
+            return;
         }
         if ($("#f_rideZone").val() == "" || $("#f_rideZone").val() == undefined) {
             swal({

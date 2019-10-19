@@ -267,13 +267,13 @@ public class StudentProveController {
         for (Handle s : list) {
             requestDate = s.getHandleTime();
             if ("经办人".equals(s.getHandleRole())) {
-                agent = s.getRemark();
+                agent = s.getHandleName();
             }
             if ("部门负责人".equals(s.getHandleRole())) {
-                departmentName = s.getRemark();
+                departmentName = s.getHandleName();
             }
             if ("学生处负责人".equals(s.getHandleRole())) {
-                departmentNameStudent = s.getRemark();
+                departmentNameStudent = s.getHandleName();
             }
         }
         if ("".equals(requestDate)) {

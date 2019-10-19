@@ -283,9 +283,10 @@ public class SurveyController {
         List<Survey> courseList = surveyService.getSurveyEditList(survey);
         //创建HSSFWorkbook对象
         HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet;
+        sheet = wb.createSheet("就业调查信息表");
         for (int t = 0; t < courseList.size(); t++) {
             //创建HSSFSheet对象
-            HSSFSheet sheet = wb.createSheet(courseList.get(t).getDept() + "就业调查信息表");
             int tmp = 0;
             HSSFRow row0 = sheet.createRow(tmp);
             row0.createCell(0).setCellValue("");

@@ -8,8 +8,54 @@
 
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
 <div class="form-row">
+    <div class="col-md-3 tar" style="float: left;">
+        申请时间
+    </div>
+    <div class="col-md-7" style="margin-top: 4px;">
+        <input id="f_requestDate" type="datetime-local" readonly="readonly"
+               class="validate[required,maxSize[100]] form-control"
+               value="${studentReissue.requestDate}"/>
+    </div>
+    <div style="float: right;width: 230px;height: 160px;">
+        <div style="width: 160px;height: 160px;margin-top: -4px;">
+                    <img onclick="showInputFile()"
+                         style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
+                         src="data:image/png;base64,${studentReissue.img}"
+                         height="150"
+                         width="110" alt="" id="userImg1">
+        </div>
+    </div>
+    <div class="col-md-3 tar" style="float: left;">
+        学生姓名
+    </div>
+    <div class="col-md-7" style="margin-top: 4px;">
+        <input id="studentId" type="text" class="validate[required,maxSize[100]] form-control"
+               value="${studentReissue.studentId}" readonly="readonly"/>
+    </div>
+    <div class="col-md-3 tar" style="float: left;">
+        民族
+    </div>
+    <div class="col-md-7" style="margin-top: 4px;">
+        <input id="f_nation" type="text" class="validate[required,maxSize[100]] form-control"
+               value="${studentReissue.nation}" readonly="readonly"/>
+    </div>
+    <div class="col-md-3 tar" style="float: left;">
+        性别
+    </div>
+    <div class="col-md-7" style="margin-top: 4px;">
+        <input id="f_sex" type="text" class="validate[required,maxSize[100]] form-control"
+               value="${studentReissue.sex}" readonly="readonly"/>
+    </div>
+    <div class="col-md-3 tar" style="float: left;">
+        班级
+    </div>
+    <div class="col-md-7" style="margin-top: 4px;">
+        <input id="classId" type="text" class="validate[required,maxSize[100]] form-control"
+               value="${studentReissue.classId}" readonly="readonly"/>
+    </div>
+</div>
+<%--<div class="form-row">
     <div class="col-md-3 tar">
         申请时间
     </div>
@@ -18,8 +64,8 @@
                class="validate[required,maxSize[100]] form-control"
                value="${studentReissue.requestDate}"/>
     </div>
-</div>
-<div class="form-row">
+</div>--%>
+<%--<div class="form-row">
     <div class="col-md-3 tar">
         学生姓名
     </div>
@@ -54,7 +100,7 @@
         <input id="classId" type="text" class="validate[required,maxSize[100]] form-control"
                value="${studentReissue.classId}" readonly="readonly"/>
     </div>
-</div>
+</div>--%>
 <div class="form-row">
     <div class="col-md-3 tar">
         专业

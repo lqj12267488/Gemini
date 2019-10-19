@@ -24,11 +24,13 @@
             text-align: right;
             background: #eeeeee !important;
         }
+
         .footTxt {
             float: right;
             padding-right: 3%;
             text-align: center;
         }
+
         .right {
             background: #fff !important;
             font-size: 14pt;
@@ -42,6 +44,7 @@
             height: 25px;
             border-bottom: solid 2px #333
         }
+
         .clearBoth {
             clear: both;
             margin-bottom: 10px
@@ -51,7 +54,7 @@
 <div style="margin-left: 30%;margin-top: 5%;">
     <h2>${projectName}${workflowName}</h2>
 </div>
-<div style="font-size: 10.5pt;margin-top:10%;padding-right: 2%;" align="right" >
+<div style="font-size: 10.5pt;margin-top:10%;padding-right: 2%;" align="right">
     编号：${number}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;填表日期：${studentReissue.requestDate}
 </div>
 <table border="1" cellpadding="0" cellspacing="0" class="box">
@@ -64,10 +67,10 @@
         <td align="center" class="left1" style="text-align:center; width: 96px;">${studentReissue.idcard}</td>
         <td rowspan="4" style="width:15%;">
             <img
-                style="width: 130px;height: 162px;margin-left:9px;"
-                src="data:image/png;base64,${studentReissue.img}"
-                height="150"
-                width="110" alt="" id="userImg">
+                    style="width: 130px;height: 162px;margin-left:9px;"
+                    src="data:image/png;base64,${studentReissue.img}"
+                    height="150"
+                    width="110" alt="" id="userImg">
         </td>
     </tr>
     <tr>
@@ -86,7 +89,11 @@
     <tr>
         <td class="left" align="center" style="text-align:center;  width: 140px;">乘车区间：</td>
         <td align="center" class="left1" style="text-align:center; width: 420px;"
-            colspan="5">${studentReissue.rideZone}</td>
+            colspan="5">
+            <span style="float: left">乌市站到</span>
+            <span style="border-bottom: dotted 1px #000;width: 120px;float: left">${requestDateMonth}</span>
+            <span style="float: left">站</span>
+        </td>
     </tr>
 
 
@@ -100,7 +107,13 @@
     </tr>
     <tr>
         <td class="left" align="center" style="text-align:center;width: 140px;">籍贯：</td>
-        <td align="center" class="left1" style="text-align:center;" colspan="6">${studentReissue.nativePlace}</td>
+        <td align="center" class="left1" style="text-align:center;" colspan="6">
+            <span style="float: left">新疆省</span>
+            <span style="border-bottom: dotted 1px #000;width: 120px;float: left">${studentReissue.regional}</span>
+            <span style="float: left">地区（州）</span>
+            <span style="border-bottom: dotted 1px #000;width: 120px;float: left">${studentReissue.city}</span>
+            <span style="float: left">市（县）</span>
+        </td>
     </tr>
     <tr>
         <td class="left" align="center" style="text-align:center;width:140px;">申请项目：</td>
@@ -113,7 +126,8 @@
             <br>
             我承诺以上理由均属实；若有不实，本人甘愿接受任何处罚。
             <br>
-            学生签字：${studentReissue.studentId} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${studentReissue.requestDate}
+            学生签字：${studentReissue.studentId}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${studentReissue.requestDate}
         </td>
     </tr>
     <tr>
@@ -124,7 +138,8 @@
         <td align="center" class="left1" style="text-align:center;" colspan="6">
             ${departmentName}
             <br>
-            辅导员签名：${departmentNames}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${departmentNameRequestDate}
+            辅导员签名：${departmentNames}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${departmentNameRequestDate}
         </td>
     </tr>
     <tr>
@@ -146,15 +161,33 @@
         <td align="center" class="left1" style="text-align:center;" colspan="6">
             ${departmentNameStudent}
             <br>
-            学生处签名：${departmentStudentNames} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${departmentNameStudentRequestDate}
+            学生处签名：${departmentStudentNames}
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${departmentNameStudentRequestDate}
         </td>
     </tr>
     <tr>
         <td class="left" align="center" style="text-align:center;width: 140px;">办理情况</td>
         <td align="center" class="left1" style="text-align:center;" colspan="6">
-            ${studentReissue.studentId} 同学的学生证已于${requestDate}办理完毕，于 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;发放。特备此表备查。<br>
-            20   &nbsp;&nbsp;&nbsp;年    &nbsp;&nbsp;&nbsp;月    &nbsp;&nbsp;&nbsp;日在 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;报纸上声明丢失；<br>
-            学生签名：  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <span class="right" style="width:60px; float: left">${studentReissue.studentId}</span>
+            <span style="float: left">同学的学生证已于 </span>
+            <span class="right" style="width:40px; float: left">${requestDateYear}</span>
+            <span style="float: left">年</span>
+            <span class="right" style="width:20px; float: left">${requestDateMonth}</span>
+            <span style="float: left">月</span>
+            <span class="right" style="width:20px; float: left">${requestDateDay}</span>
+            <span style="float: left">日办理完毕，于 </span>
+            <span class="right" style="width:10px; float: left"></span>年
+            <span style="float: left">年</span>
+            <span class="right" style="width:10px; float: left"></span>
+            <span style="float: left">月</span>
+            <span class="right" style="width:10px; float: left"></span>
+            <span style="float: left">日发放。特备此表备查。</span>
+            <br>
+            <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20 &nbsp;&nbsp;&nbsp;年 &nbsp;&nbsp;&nbsp;月 &nbsp;&nbsp;&nbsp;日在
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;报纸上声明丢失；<br>
+            <div class="clearBoth footTxt" style="width: 220px;">
+                <span align="right">学生签名：20 &nbsp;&nbsp;&nbsp;年 &nbsp;&nbsp;&nbsp;月 &nbsp;&nbsp;&nbsp;日</span>
+            </div>
         </td>
     </tr>
 </table>
