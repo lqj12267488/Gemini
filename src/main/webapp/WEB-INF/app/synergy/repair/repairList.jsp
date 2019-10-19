@@ -13,7 +13,7 @@
 <body>
 <header class="mui-bar mui-bar-nav">
     <span id="back" class=" mui-icon mui-icon-left-nav mui-pull-left" onclick="mui.back()" style="color:#fff;"></span>
-    <h1 id="title" class="mui-title">报修进度</h1>
+    <h1 id="title" class="mui-title">报修查询</h1>
     <span id="appIndex" class="mui-icon mui-icon-home mui-pull-right" onclick="backMain()" style="color:#fff;"></span>
 
 </header>
