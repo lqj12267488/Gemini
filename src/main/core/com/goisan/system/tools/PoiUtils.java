@@ -5,9 +5,12 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
@@ -237,5 +240,28 @@ public class PoiUtils {
         }
     }
 
+    /**
+     * 导入文件名是否正确
+     */
+    public static Boolean checkFile(String sheetName,String trueName){
+        return sheetName.contains(trueName)?true:false;
+    }
+
+    /**
+     * 根据url 创建Workbook
+     * @param path
+     * @return
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static Workbook buildWorkbook(String path) throws FileNotFoundException, IOException{
+        Workbook wb = null;
+        if (path.endsWith(".xls")){
+            wb = (Workbook) new HSSFWorkbook(new FileInputStream(path));
+        } else if (path.endsWith(".xlsx")){
+            wb = (Workbook) new XSSFWorkbook(new FileInputStream(path));
+        }
+        return wb;
+    }
 
 }

@@ -160,7 +160,15 @@ public class TeachMgeInfoController {
         List<Select2> yw = commonService.getSysDict("YW","");
         try {
             workbook = new HSSFWorkbook(file.getInputStream());
+        }catch (Exception e){
+            return new Message(0,"文件错误,请下载导入模板导入",null);
+        }
+        try {
             HSSFSheet sheet = workbook.getSheetAt(0);
+            if (!PoiUtils.checkFile(sheet.getSheetName(),"档案资料信息")){
+                return new Message(0,"文件错误,请下载导入模板导入",null);
+            }
+
             int end = sheet.getLastRowNum();
             for (int i = 3; i <= end; i++) {
                 HSSFRow row = sheet.getRow(i);
@@ -219,7 +227,7 @@ public class TeachMgeInfoController {
                 }
                 count++;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         if (errCount==0) {

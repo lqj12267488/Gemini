@@ -15,6 +15,7 @@ import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.JsonUtils;
 import com.goisan.system.tools.Message;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -75,7 +76,6 @@ public class RepairAppController {
             workFlow =  repairService.RepairActionInfoList(personId);
         }
 
-
         return getJsonTaskList(workFlow,page);
     }
     /**报修-向前台jsp传数据*/
@@ -98,7 +98,8 @@ public class RepairAppController {
                 title="(此报修名称已被删)";
             }
             String requestFlag=repair.getRequestFlag();
-            String repairmanPersonID=empService.getPersonNameById(repair.getRepairmanPersonID());
+            String repairmanPersonID= repair.getPersonIdShow();
+//                    empService.getPersonNameById(repair.getRepairmanPersonID());
             if(null==repairmanPersonID && ("维修分配中".equals(repair.getRequestFlag()) || "未提交".equals(repair.getRequestFlag()))){
                 repairmanPersonID=repair.getRequestFlag();
             }else{
@@ -322,9 +323,15 @@ public class RepairAppController {
     }
 
     @RequestMapping("/repair/repairFeedback")
-    public ModelAndView repairFeedback(String id){
+    public ModelAndView repairFeedback(String id,String repairmanPersonID){
         ModelAndView modelAndView = new ModelAndView("/app/synergy/repair/repairFeedback");
         modelAndView.addObject("id",id);
+        if ("未提交".equals(repairmanPersonID)){
+            modelAndView.addObject("msg","1");
+            String emJson = getRepairName(1);
+            modelAndView.addObject("emJson", emJson);
+            modelAndView.setViewName("/app/synergy/repair/repairList");
+        }
         return modelAndView;
     }
 

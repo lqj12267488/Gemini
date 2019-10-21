@@ -29,6 +29,13 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/libs/js/app/mui.js"></script>
 <script src="<%=request.getContextPath()%>/libs/js/app/mui.min.js"></script>
 <script type="text/javascript">
+    $(function () {
+        if ("1"=="${msg}"){
+            alert("未提交的不可反馈");
+            var page = 1;
+            pullupRefresh();
+        }
+    })
     var nid;
     //启用双击监听
     mui.init({
@@ -80,32 +87,35 @@
                     page = 2;
                 }
             });
-            function createEmlist(jsonStr){
-                var emlistData = jsonStr;
-                $.each(emlistData, function(key, map){
-                    var  titleData = decodeURI(decodeURI(map.title));
-                    var requestFlag=decodeURI(decodeURI(map.requestFlag));
-                    var repairmanPersonID=decodeURI(decodeURI(map.repairmanPersonID));
-                    titleData = decodeURI(decodeURI(titleData));
-                    requestFlag=decodeURI(decodeURI(requestFlag));
-                    repairmanPersonID=decodeURI(decodeURI(repairmanPersonID));
-                    var li = document.createElement('li');
-                    li.className = 'mui-table-view-cell';
-                    li.innerHTML = '<div class="mui-table" >'+
-                        '<div class="mui-table-cell mui-col-xs-10">'+
-                        '<h3 class="mui-ellipsis">' +
-                        '<a open-type="common" >'
-                        +titleData+" &nbsp;&nbsp;&nbsp;&nbsp;"+'</a>'+
-                        '</h3>' + '<p style="text-align: center">' +
-                        '<a style="font-size: 16px;color: #797979;text-align:center;">' +repairmanPersonID+'</a>' +'</p>'+
-                        '</div></div>';
-                    table.appendChild(li);
-                });
-            }
+
             //动态拼接内容end
             mui('#pullrefresh').pullRefresh().endPulldownToRefresh(); //refresh completed
         }, 1500);
     }
+
+    function createEmlist(jsonStr){
+        var emlistData = jsonStr;
+        $.each(emlistData, function(key, map){
+            var  titleData = decodeURI(decodeURI(map.title));
+            var requestFlag=decodeURI(decodeURI(map.requestFlag));
+            var repairmanPersonID=decodeURI(decodeURI(map.repairmanPersonID));
+            titleData = decodeURI(decodeURI(titleData));
+            requestFlag=decodeURI(decodeURI(requestFlag));
+            repairmanPersonID=decodeURI(decodeURI(repairmanPersonID)).replace(/%2C/g,',');
+            var li = document.createElement('li');
+            li.className = 'mui-table-view-cell';
+            li.innerHTML = '<div class="mui-table" >'+
+                '<div class="mui-table-cell mui-col-xs-10">'+
+                '<h3 class="mui-ellipsis">' +
+                '<a open-type="common" >'
+                +titleData+" &nbsp;&nbsp;&nbsp;&nbsp;"+'</a>'+
+                '</h3>' + '<p style="text-align: center">' +
+                '<a style="font-size: 16px;color: #797979;text-align:center;">' +repairmanPersonID+'</a>' +'</p>'+
+                '</div></div>';
+            table.appendChild(li);
+        });
+    }
+
     var count = 0;
     /**
      * 上拉加载具体业务实现
@@ -116,6 +126,7 @@
             var table = document.body.querySelector('.mui-table-view');
             var cells = document.body.querySelectorAll('.mui-table-view-cell');
             //1.第一次正常加载
+            debugger;
             if(page == 1){
                 createEmlist('${emJson}');
                 //2.以后加载，后台根据page过滤数据返回前台
@@ -146,21 +157,21 @@
                     var  title = decodeURI(decodeURI(map.title));
                     var id = map.id;
                     var requestFlag=decodeURI(decodeURI(map.requestFlag));
-                    var repairmanPersonID=decodeURI(decodeURI(map.repairmanPersonID));
+                    var repairmanPersonID=decodeURI(decodeURI(map.repairmanPersonID)).replace(/%2C/g,",");
                     var name = map.creator;
                     var feedback = map.feedback;
                     var str = "申请人："+name+"  维修状态:"+repairmanPersonID+" 反馈状态:"+feedback;
                     title = decodeURI(decodeURI(title));
                     requestFlag=decodeURI(decodeURI(requestFlag));
-                    repairmanPersonID=decodeURI(decodeURI(repairmanPersonID));
+                    // repairmanPersonID=decodeURI(decodeURI(repairmanPersonID));
                     console.log(repairmanPersonID)
                     var li = document.createElement('li');
                     li.className = "mui-table-view-cell";
-                    li.innerHTML = "<div class='mui-table' >"+
+                    li.innerHTML = " <div class='mui-table'>"+
                         "<div class='mui-table-cell mui-col-xs-10'>"+
-                        "<h3 class='mui-ellipsis' onclick='goto(\""+repairmanPersonID+"\",\""+id+"\")'>" +
-                                "<span open-type='common'  >"
-                                            +title+" &nbsp;&nbsp;&nbsp;&nbsp;"+"</span>"+
+                        "<h3 class='mui-ellipsis' >" +
+                                "<a open-type='common' href=<%=request.getContextPath()%>/repair/repairFeedback?id="+id+"&repairmanPersonID="+repairmanPersonID+" >"
+                                            +title+" &nbsp;&nbsp;&nbsp;&nbsp;"+"</a>"+
                         "</h3>" + "<p style='text-align: center'>" +
                     "<a style='font-size: 16px;color: #797979;text-align:center;'>" +str+"</a>" +"</p>"+
                         "</div></div>";
@@ -170,9 +181,6 @@
             //动态拼接内容end
         }, 1500);
     }
-
-
-
     if (mui.os.plus) {
         mui.plusReady(function() {
             setTimeout(function() {
@@ -259,16 +267,15 @@
     function backMain() {
         window.location.href = "<%=request.getContextPath()%>/loginApp/index";
     }
-    function goto(repairmanPersonID,id) {
+
+    /*function goto(repairmanPersonID,id) {
+        debugger;
         if (repairmanPersonID=="未提交"){
             alert("未提交的不可反馈")
             return;
         }
-
-
         window.location.href = "<%=request.getContextPath()%>/repair/repairFeedback?id="+id;
-
-    }
+    }*/
 </script>
 
 </html>

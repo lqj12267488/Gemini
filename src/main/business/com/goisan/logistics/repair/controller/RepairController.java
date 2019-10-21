@@ -191,17 +191,20 @@ public class RepairController {
         List<Repair> dd = new ArrayList<>();
         for (Repair repair1 : ll) {
             String[] name_id = repair1.getItemName().split(",");
-            String newname = "";
+            StringBuilder newname = new StringBuilder();
             for (int j = 0; j < name_id.length; j++) {
                 String a = name_id[j];
                 name = userDicService.getDicName(a);
                 if (name != null) {
-                    newname = newname + name + ",";
+                    newname.append(name);
+                if (j<name_id.length -1 ) {
+                    newname.append(",");
+                    }
                 }
             }
-            repair1.setItemNameShow(newname);
+            repair1.setItemNameShow(newname.toString());
             if (repair.getItemName() != null && !"".equals(repair.getItemName())) {
-                if (newname.contains(repair.getItemName())) {
+                if (newname.toString().contains(repair.getItemName())) {
                     dd.add(repair1);
                 }
             }
@@ -1190,7 +1193,10 @@ public class RepairController {
             String a = name_id[j];
             name = userDicService.getDicName(a);
             if (name != null) {
-                newname = newname + name + ",";
+                newname = newname + name;
+                if (j<name_id.length-1) {
+                    newname = name + ",";
+                }
             }
         }
         repair.setItemNameShow(newname);

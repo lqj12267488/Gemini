@@ -3,11 +3,58 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.goisan.logistics.repair.dao.RepairDao">
     <!--主页查询-->
+    <!--<select id="RepairAction" resultType="com.goisan.logistics.repair.bean.Repair"-->
+            <!--parameterType="com.goisan.logistics.repair.bean.Repair">-->
+        <!--SELECT-->
+        <!--REPAIR_ID,-->
+        <!--REPAIR_TYPE,-->
+        <!--func_get_userdicvalue(REPAIR_TYPE,'BXLXGL') repairTypeShow,-->
+        <!--ASSETS_ID,-->
+        <!--POSITION,-->
+        <!--FUNC_GET_DEPTNAME(DEPT) dept,-->
+        <!--DEPT deptName,-->
+        <!--ITEM_NAME itemName,-->
+        <!--&#45;&#45;func_get_userdicvalue(ITEM_NAME,'BXWPXX') itemNameShow,-->
+        <!--REPAIR_ADDRESS,-->
+        <!--FAULT_DESCRIPTION,-->
+        <!--CONTACT_NUMBER,-->
+        <!--REPAIRMAN_ID,-->
+        <!--REPAIRMAN_PERSON_ID,-->
+        <!--REPAIRMAN_DEPT_ID,-->
+        <!--REPAIR_RESULT,-->
+        <!--func_get_dicvalue(t.REQUEST_FLAG,'WXLCZT') requestFlag,-->
+        <!--FEEDBACK,-->
+        <!--func_get_dicvalue(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,-->
+        <!--to_char(t.FEEDBACK_TIME,'yyyy-mm-dd hh24:mi') feedbackTime,-->
+        <!--to_char(t.confirm_time,'yyyy-mm-dd hh24:mi') confirmTime,-->
+        <!--to_char(t.submit_time,'yyyy-mm-dd hh24:mi') submitTime,-->
+        <!--CHECKER,-->
+        <!--CHECKER_DEPT,-->
+        <!--func_get_dicvalue(t.CHECK_FLAG,'WXHJZT') checkFlag,-->
+        <!--CHECK_RESULT,-->
+        <!--CREATOR,-->
+        <!--CREATE_TIME,-->
+        <!--CREATE_DEPT,-->
+        <!--CHANGER,-->
+        <!--CHANGE_TIME,-->
+        <!--CHANGE_DEPT-->
+        <!--FROM-->
+        <!--T_ZW_REPAIR t-->
+        <!--WHERE 1 = 1 and t.REQUEST_FLAG !='4'-->
+        <!--<if test="creator != 'sa'  and creator != null and creator != '' ">-->
+            <!--AND t.creator= #{creator}-->
+        <!--</if>-->
+        <!--&#45;&#45; 部门数据-->
+        <!--<if test="createDept != null and createDept != '' ">-->
+            <!--AND t.create_dept= #{createDept}-->
+        <!--</if>-->
+        <!--ORDER BY t.create_time DESC-->
+    <!--</select>-->
+
     <select id="RepairAction" resultType="com.goisan.logistics.repair.bean.Repair"
             parameterType="com.goisan.logistics.repair.bean.Repair">
         SELECT
-        DISTINCT
-        REPAIR_ID,
+        t.REPAIR_ID,
         REPAIR_TYPE,
         func_get_userdicvalue(REPAIR_TYPE,'BXLXGL') repairTypeShow,
         ASSETS_ID,
@@ -15,17 +62,11 @@
         FUNC_GET_DEPTNAME(DEPT) dept,
         DEPT deptName,
         ITEM_NAME itemName,
-        --func_get_userdicvalue(ITEM_NAME,'BXWPXX') itemNameShow,
         REPAIR_ADDRESS,
         FAULT_DESCRIPTION,
         CONTACT_NUMBER,
-        REPAIRMAN_ID,
-        REPAIRMAN_PERSON_ID,
-        REPAIRMAN_DEPT_ID,
         REPAIR_RESULT,
-        -- func_get_userdicvalue(t.REQUEST_FLAG,'WXHCLX') requestFlagShow,
         func_get_dicvalue(t.REQUEST_FLAG,'WXLCZT') requestFlag,
-        -- REQUEST_FLAG,
         FEEDBACK,
         func_get_dicvalue(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,
         to_char(t.FEEDBACK_TIME,'yyyy-mm-dd hh24:mi') feedbackTime,
@@ -34,16 +75,21 @@
         CHECKER,
         CHECKER_DEPT,
         func_get_dicvalue(t.CHECK_FLAG,'WXHJZT') checkFlag,
-        CHECK_RESULT,
-        CREATOR,
-        CREATE_TIME,
-        CREATE_DEPT,
-        CHANGER,
-        CHANGE_TIME,
-        CHANGE_DEPT
+        t.CHECK_RESULT,
+        t.CREATOR,
+        t.create_time,
+        t.CREATE_DEPT,
+        t.CHANGER,
+        t.change_time,
+        t.change_dept,
+        wm_concat(func_get_username(e.person_id)) PersonIdShow
         FROM
-        T_ZW_REPAIR t
-        WHERE 1 = 1 and t.REQUEST_FLAG !='4'
+        T_ZW_REPAIR t left join T_ZW_REPAIR_EXECUTE e
+        on t.repair_id = e.repair_id
+        group by t.REPAIR_ID,REPAIR_TYPE,ASSETS_ID,POSITION,DEPT,ITEM_NAME,REPAIR_ADDRESS,
+        FAULT_DESCRIPTION,CONTACT_NUMBER,REPAIR_RESULT,t.REQUEST_FLAG,FEEDBACK,FEEDBACK_FLAG,FEEDBACK_TIME,confirm_time,submit_time,
+        CHECKER,CHECKER_DEPT,t.CHECK_FLAG,CHECK_RESULT, t.CREATOR, t.create_time, t.CREATE_DEPT,t.change_time,t.change_dept,t.CHANGER
+        having  t.REQUEST_FLAG !='4'
         <if test="creator != 'sa'  and creator != null and creator != '' ">
             AND t.creator= #{creator}
         </if>
@@ -127,12 +173,58 @@
         WHERE
         REPAIR_ID = #{repairID}
     </update>
-    <!--维修任务分配界面查询-->
+    <!--&lt;!&ndash;维修任务分配界面查询&ndash;&gt;-->
+    <!--<select id="distributionInfo" resultType="com.goisan.logistics.repair.bean.Repair"-->
+            <!--parameterType="com.goisan.logistics.repair.bean.Repair">-->
+        <!--SELECT-->
+        <!--DISTINCT-->
+        <!--e.id id,-->
+        <!--t.REPAIR_ID,-->
+        <!--t.REPAIR_TYPE,-->
+        <!--func_get_userdicvalue(t.REPAIR_TYPE,'BXLXGL') repairTypeShow,-->
+        <!--t.ASSETS_ID,-->
+        <!--t.POSITION,-->
+        <!--FUNC_GET_DEPTNAME(t.DEPT) dept,-->
+        <!--t.DEPT,-->
+        <!--t.ITEM_NAME itemName,-->
+        <!--&#45;&#45;func_get_userdicvalue(ITEM_NAME,'BXWPXX') itemNameShow,-->
+        <!--t.REPAIR_ADDRESS,-->
+        <!--t.FAULT_DESCRIPTION,-->
+        <!--t.CONTACT_NUMBER,-->
+        <!--t.REPAIRMAN_ID,-->
+        <!--t.REPAIRMAN_PERSON_ID,-->
+        <!--FUNC_GET_USERNAME(t.REPAIRMAN_PERSON_ID) repairmanPersonID,-->
+        <!--t.REPAIRMAN_DEPT_ID,-->
+        <!--t.REPAIR_RESULT,-->
+        <!--func_get_dicvalue(t.REQUEST_FLAG,'WXLCZT') requestFlag,-->
+        <!--t.REQUEST_FLAG requestFlagShow,-->
+        <!--t.FEEDBACK,-->
+        <!--func_get_dicvalue(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,-->
+        <!--to_char(t.SUBMIT_TIME,'yyyy-mm-dd hh24:mi') submitTime,-->
+        <!--t.CHECKER,-->
+        <!--t.CHECKER_DEPT,-->
+        <!--t.CHECK_FLAG,-->
+        <!--t.CHECK_RESULT,-->
+        <!--t.CREATOR,-->
+        <!--t.CREATE_TIME,-->
+        <!--t.CREATE_DEPT,-->
+        <!--t.CHANGER,-->
+        <!--t.CHANGE_TIME,-->
+        <!--t.CHANGE_DEPT,-->
+        <!--FUNC_GET_USERNAME(e.PERSON_ID) personName-->
+        <!--FROM-->
+        <!--T_ZW_REPAIR t-->
+        <!--LEFT join T_ZW_REPAIR_EXECUTE e ON t.repair_id = e.repair_id-->
+        <!--WHERE 1 = 1-->
+        <!--AND t.REQUEST_FLAG !='0' and t.REQUEST_FLAG !='4'-->
+        <!--AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})-->
+        <!--ORDER BY t.create_time DESC-->
+    <!--</select>-->
+
+    <!--维修任务分配界面查询,修改-->
     <select id="distributionInfo" resultType="com.goisan.logistics.repair.bean.Repair"
             parameterType="com.goisan.logistics.repair.bean.Repair">
         SELECT
-        DISTINCT
-        e.id id,
         t.REPAIR_ID,
         t.REPAIR_TYPE,
         func_get_userdicvalue(t.REPAIR_TYPE,'BXLXGL') repairTypeShow,
@@ -164,11 +256,9 @@
         t.CREATE_DEPT,
         t.CHANGER,
         t.CHANGE_TIME,
-        t.CHANGE_DEPT,
-        FUNC_GET_USERNAME(e.PERSON_ID) personName
+        t.CHANGE_DEPT
         FROM
         T_ZW_REPAIR t
-        LEFT join T_ZW_REPAIR_EXECUTE e ON t.repair_id = e.repair_id
         WHERE 1 = 1
         AND t.REQUEST_FLAG !='0' and t.REQUEST_FLAG !='4'
         AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
@@ -899,110 +989,197 @@
 
     <select id="selectDistributionInfo" resultType="com.goisan.logistics.repair.bean.Repair"
             parameterType="java.lang.String">
-   select
-   FUNC_GET_USERNAME(t.CREATOR) creator,
+   select FUNC_GET_USERNAME(t.CREATOR) creator,
        to_char(t.SUBMIT_TIME, 'yyyy-mm-dd hh24:mi') submitTime,
        t.ITEM_NAME,
        t.Repair_Address,
        t.Fault_Description,
        t.CONTACT_NUMBER,
-       func_get_username(t1.Person_Id)PersonIdShow,
+       wm_concat(func_get_username(t1.person_id)) PersonIdShow,
        to_char(t.create_time, 'yyyy-mm-dd hh24:mi') assignTime,
        t.REPAIR_ID
   from T_ZW_REPAIR t, T_ZW_REPAIR_EXECUTE t1
-  where t.repair_id = t1.repair_id
-  and t.repair_id = #{repairID}
+ where t.repair_id = t1.repair_id
+     and t.repair_id = #{repairID}
+   group by t.CREATOR,t.SUBMIT_TIME,ITEM_NAME,Repair_Address,Fault_Description,CONTACT_NUMBER,t.create_time,t.REPAIR_ID
+
     </select>
 
 
     <select id="RepairActionInfo" resultType="com.goisan.logistics.repair.bean.Repair"
                      parameterType="java.lang.String">
-         SELECT
-        DISTINCT
-        REPAIR_ID,
-        REPAIR_TYPE,
-        func_get_userdicvalue(REPAIR_TYPE,'BXLXGL') repairTypeShow,
-        ASSETS_ID,
-        POSITION,
-        FUNC_GET_DEPTNAME(DEPT) dept,
-        DEPT deptName,
-        ITEM_NAME itemName,
-        --func_get_userdicvalue(ITEM_NAME,'BXWPXX') itemNameShow,
-        REPAIR_ADDRESS,
-        FAULT_DESCRIPTION,
-        CONTACT_NUMBER,
-        REPAIRMAN_ID,
-        REPAIRMAN_PERSON_ID,
-        REPAIRMAN_DEPT_ID,
-        REPAIR_RESULT,
-        -- func_get_userdicvalue(t.REQUEST_FLAG,'WXHCLX') requestFlagShow,
-        func_get_dicvalue(t.REQUEST_FLAG,'WXLCZT') requestFlag,
-        -- REQUEST_FLAG,
-        FEEDBACK,
-        func_get_dicvalue(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,
-        to_char(t.FEEDBACK_TIME,'yyyy-mm-dd hh24:mi') feedbackTime,
-        to_char(t.confirm_time,'yyyy-mm-dd hh24:mi') confirmTime,
-        to_char(t.submit_time,'yyyy-mm-dd hh24:mi') submitTime,
-        CHECKER,
-        CHECKER_DEPT,
-        func_get_dicvalue(t.CHECK_FLAG,'WXHJZT') checkFlag,
-        CHECK_RESULT,
-        CREATOR,
-        CREATE_TIME,
-        CREATE_DEPT,
-        CHANGER,
-        CHANGE_TIME,
-        CHANGE_DEPT
-        FROM
-        T_ZW_REPAIR t
-        WHERE 1 = 1 and t.REQUEST_FLAG !='4' and CREATOR = #{personId}
-
-        ORDER BY t.create_time DESC
+       SELECT t.REPAIR_ID,
+       REPAIR_TYPE,
+       func_get_userdicvalue(REPAIR_TYPE, 'BXLXGL') repairTypeShow,
+       ASSETS_ID,
+       POSITION,
+       FUNC_GET_DEPTNAME(DEPT) dept,
+       DEPT deptName,
+       ITEM_NAME itemName,
+       REPAIR_ADDRESS,
+       FAULT_DESCRIPTION,
+       CONTACT_NUMBER,
+       REPAIR_RESULT,
+       func_get_dicvalue(t.REQUEST_FLAG, 'WXLCZT') requestFlag,
+       FEEDBACK,
+       func_get_dicvalue(t.FEEDBACK_FLAG, 'GZLFKZT') feedbackFlag,
+       to_char(t.FEEDBACK_TIME, 'yyyy-mm-dd hh24:mi') feedbackTime,
+       to_char(t.confirm_time, 'yyyy-mm-dd hh24:mi') confirmTime,
+       to_char(t.submit_time, 'yyyy-mm-dd hh24:mi') submitTime,
+       CHECKER,
+       CHECKER_DEPT,
+       func_get_dicvalue(t.CHECK_FLAG, 'WXHJZT') checkFlag,
+       t.CHECK_RESULT,
+       t.CREATOR,
+       t.create_time,
+       t.CREATE_DEPT,
+       t.CHANGER,
+       t.change_time,
+       t.change_dept,
+       wm_concat(e.person_id) personIds,
+       wm_concat(func_get_username(e.person_id)) PersonIdShow
+  FROM T_ZW_REPAIR t
+  left join T_ZW_REPAIR_EXECUTE e
+    on t.repair_id = e.repair_id
+ group by t.REPAIR_ID,
+          REPAIR_TYPE,
+          ASSETS_ID,
+          POSITION,
+          DEPT,
+          ITEM_NAME,
+          REPAIR_ADDRESS,
+          FAULT_DESCRIPTION,
+          CONTACT_NUMBER,
+          REPAIR_RESULT,
+          t.REQUEST_FLAG,
+          FEEDBACK,
+          FEEDBACK_FLAG,
+          FEEDBACK_TIME,
+          confirm_time,
+          submit_time,
+          CHECKER,
+          CHECKER_DEPT,
+          t.CHECK_FLAG,
+          CHECK_RESULT,
+          t.CREATOR,
+          t.create_time,
+          t.CREATE_DEPT,
+          t.change_time,
+          t.change_dept,
+          t.CHANGER
+    having 1 = 1
+       and t.REQUEST_FLAG != '4' and t.CREATOR = #{personId}
+       ORDER BY t.create_time DESC
     </select>
+
+    <!--<select id="RepairActionInfoList" resultType="com.goisan.logistics.repair.bean.Repair"-->
+            <!--parameterType="java.lang.String">-->
+         <!--SELECT-->
+        <!--DISTINCT-->
+        <!--REPAIR_ID,-->
+        <!--REPAIR_TYPE,-->
+        <!--func_get_userdicvalue(REPAIR_TYPE,'BXLXGL') repairTypeShow,-->
+        <!--ASSETS_ID,-->
+        <!--POSITION,-->
+        <!--FUNC_GET_DEPTNAME(DEPT) dept,-->
+        <!--DEPT deptName,-->
+        <!--ITEM_NAME itemName,-->
+        <!--REPAIR_ADDRESS,-->
+        <!--FAULT_DESCRIPTION,-->
+        <!--CONTACT_NUMBER,-->
+        <!--REPAIRMAN_ID,-->
+        <!--REPAIRMAN_PERSON_ID,-->
+        <!--REPAIRMAN_DEPT_ID,-->
+        <!--REPAIR_RESULT,-->
+        <!--func_get_dicvalue(t.REQUEST_FLAG,'WXLCZT') requestFlag,-->
+        <!--FEEDBACK,-->
+        <!--func_get_dicvalue(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,-->
+        <!--to_char(t.FEEDBACK_TIME,'yyyy-mm-dd hh24:mi') feedbackTime,-->
+        <!--to_char(t.confirm_time,'yyyy-mm-dd hh24:mi') confirmTime,-->
+        <!--to_char(t.submit_time,'yyyy-mm-dd hh24:mi') submitTime,-->
+        <!--CHECKER,-->
+        <!--CHECKER_DEPT,-->
+        <!--func_get_dicvalue(t.CHECK_FLAG,'WXHJZT') checkFlag,-->
+        <!--CHECK_RESULT,-->
+        <!--CREATOR,-->
+        <!--CREATE_TIME,-->
+        <!--CREATE_DEPT,-->
+        <!--CHANGER,-->
+        <!--CHANGE_TIME,-->
+        <!--CHANGE_DEPT-->
+        <!--FROM-->
+        <!--T_ZW_REPAIR t-->
+        <!--WHERE 1 = 1 and t.REQUEST_FLAG !='4' and CREATOR = #{personId}  or REPAIRMAN_ID = #{personId}-->
+        <!--ORDER BY t.create_time DESC-->
+    <!--</select>-->
 
     <select id="RepairActionInfoList" resultType="com.goisan.logistics.repair.bean.Repair"
             parameterType="java.lang.String">
-         SELECT
-        DISTINCT
-        REPAIR_ID,
-        REPAIR_TYPE,
-        func_get_userdicvalue(REPAIR_TYPE,'BXLXGL') repairTypeShow,
-        ASSETS_ID,
-        POSITION,
-        FUNC_GET_DEPTNAME(DEPT) dept,
-        DEPT deptName,
-        ITEM_NAME itemName,
-        --func_get_userdicvalue(ITEM_NAME,'BXWPXX') itemNameShow,
-        REPAIR_ADDRESS,
-        FAULT_DESCRIPTION,
-        CONTACT_NUMBER,
-        REPAIRMAN_ID,
-        REPAIRMAN_PERSON_ID,
-        REPAIRMAN_DEPT_ID,
-        REPAIR_RESULT,
-        -- func_get_userdicvalue(t.REQUEST_FLAG,'WXHCLX') requestFlagShow,
-        func_get_dicvalue(t.REQUEST_FLAG,'WXLCZT') requestFlag,
-        -- REQUEST_FLAG,
-        FEEDBACK,
-        func_get_dicvalue(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,
-        to_char(t.FEEDBACK_TIME,'yyyy-mm-dd hh24:mi') feedbackTime,
-        to_char(t.confirm_time,'yyyy-mm-dd hh24:mi') confirmTime,
-        to_char(t.submit_time,'yyyy-mm-dd hh24:mi') submitTime,
-        CHECKER,
-        CHECKER_DEPT,
-        func_get_dicvalue(t.CHECK_FLAG,'WXHJZT') checkFlag,
-        CHECK_RESULT,
-        CREATOR,
-        CREATE_TIME,
-        CREATE_DEPT,
-        CHANGER,
-        CHANGE_TIME,
-        CHANGE_DEPT
-        FROM
-        T_ZW_REPAIR t
-        WHERE 1 = 1 and t.REQUEST_FLAG !='4' and CREATOR = #{personId}  or REPAIRMAN_ID = #{personId}
-
-        ORDER BY t.create_time DESC
+        SELECT t.REPAIR_ID,
+       REPAIR_TYPE,
+       func_get_userdicvalue(REPAIR_TYPE, 'BXLXGL') repairTypeShow,
+       ASSETS_ID,
+       POSITION,
+       FUNC_GET_DEPTNAME(DEPT) dept,
+       DEPT deptName,
+       ITEM_NAME itemName,
+       REPAIR_ADDRESS,
+       FAULT_DESCRIPTION,
+       CONTACT_NUMBER,
+       REPAIR_RESULT,
+       func_get_dicvalue(t.REQUEST_FLAG, 'WXLCZT') requestFlag,
+       FEEDBACK,
+       func_get_dicvalue(t.FEEDBACK_FLAG, 'GZLFKZT') feedbackFlag,
+       to_char(t.FEEDBACK_TIME, 'yyyy-mm-dd hh24:mi') feedbackTime,
+       to_char(t.confirm_time, 'yyyy-mm-dd hh24:mi') confirmTime,
+       to_char(t.submit_time, 'yyyy-mm-dd hh24:mi') submitTime,
+       CHECKER,
+       CHECKER_DEPT,
+       func_get_dicvalue(t.CHECK_FLAG, 'WXHJZT') checkFlag,
+       t.CHECK_RESULT,
+       t.CREATOR,
+       t.create_time,
+       t.CREATE_DEPT,
+       t.CHANGER,
+       t.change_time,
+       t.change_dept,
+       wm_concat(e.person_id) personIds,
+       wm_concat(func_get_username(e.person_id)) PersonIdShow
+  FROM T_ZW_REPAIR t
+  left join T_ZW_REPAIR_EXECUTE e
+    on t.repair_id = e.repair_id
+ group by t.REPAIR_ID,
+          REPAIR_TYPE,
+          ASSETS_ID,
+          POSITION,
+          DEPT,
+          ITEM_NAME,
+          REPAIR_ADDRESS,
+          FAULT_DESCRIPTION,
+          CONTACT_NUMBER,
+          REPAIR_RESULT,
+          t.REQUEST_FLAG,
+          FEEDBACK,
+          FEEDBACK_FLAG,
+          FEEDBACK_TIME,
+          confirm_time,
+          submit_time,
+          CHECKER,
+          CHECKER_DEPT,
+          t.CHECK_FLAG,
+          CHECK_RESULT,
+          t.CREATOR,
+          t.create_time,
+          t.CREATE_DEPT,
+          t.change_time,
+          t.change_dept,
+          t.CHANGER
+ having 1 = 1
+   and t.REQUEST_FLAG != '4' and
+   (wm_concat(e.person_id) like '%' || #{personId} ||'%'
+   or t.CREATOR = #{personId}
+   )
+   ORDER BY t.create_time DESC
     </select>
 
     <update id="saveFeedbackInfo" parameterType="com.goisan.logistics.repair.bean.Repair">
