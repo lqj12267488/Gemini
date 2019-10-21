@@ -147,10 +147,22 @@
                             <div class="col-md-4">
                                 <select id="unassessedSel"></select>
                             </div>
+                            <div class="form-row">
+                                <div class="col-md-2 tar">
+
+                                </div>
+                                <div class="col-md-4">
+
+                                </div>
+                                <div class="col-md-2 tar">
+
+                                </div>
+                                <div class="col-md-4"  style="text-align: right; margin-top: 10px;">
+                                    <button type="button" class="btn btn-default btn-clean" onclick="save()">保存</button>
+                                </div>
+                            </div>
                         </div>
                         </form>
-                        <button type="button" class="btn btn-success btn-clean" onclick="save()">保存
-                        </button>
                     </div>
                 </div>
             </div>
