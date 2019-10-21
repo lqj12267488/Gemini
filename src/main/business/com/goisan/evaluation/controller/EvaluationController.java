@@ -4052,4 +4052,46 @@ public class EvaluationController {
         etask.setEvaluationType(evaluationType);
         return CommonUtil.tableMap(evaluationService.getMonitoerEmpsByTaskId(etask));
     }
+
+    @RequestMapping("/evaluation/toAddIndexInterviewers")
+    public String toAddIndexInterviewers(String planId, String pId, Model model) {
+        model.addAttribute("planId", planId);
+        model.addAttribute("pId", pId);
+        return "/business/evaluation/interview/group/plan/index/addIndexInterviewers";
+    }
+
+    @RequestMapping("/evaluation/toEditIndexInterviewers")
+    public String toEditIndexInterviewers(String id, Model model) {
+        model.addAttribute("index", evaluationService.getIndexById(id));
+        return "/business/evaluation/interview/group/plan/index/editIndexInterviewers";
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/deleteIndexInterviewers")
+    public Message deleteIndexInterviewers(String id) {
+        Index index = evaluationService.getIndexById(id);
+        evaluationService.deleteIndex(id);
+        Integer total = evaluationService.getLeafTotal(index.getParentIndexId());
+        if (total == 0) {
+            evaluationService.updateIndexLeafFlag(index.getParentIndexId(), 1, 2);
+        } else {
+            evaluationService.updateIndexLeafFlag(index.getParentIndexId(), 0, total);
+        }
+        return new Message(1, "删除成功！", null);
+    }
+
+    @RequestMapping("/evaluation/toIndexInterviewers")
+    public String toIndexInterviewers(String id, Model model, String planName) {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = null;
+        try {
+            json = mapper.writeValueAsString(evaluationService.getIndexByPlanId(id));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        model.addAttribute("id", id);
+        model.addAttribute("data", json);
+        model.addAttribute("planName", planName);
+        return "/business/evaluation/interview/group/plan/index/indexInterviewers";
+    }
 }

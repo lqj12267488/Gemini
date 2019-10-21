@@ -83,38 +83,38 @@
         $("#tr3").remove()
         </c:if>
         var th1 = '<th rowspan="${maxLevel + 1}">评委</th><th rowspan="${maxLevel + 1}">评教状态</th>' +
-            '<th rowspan="${maxLevel + 1}">得分</th><th rowspan="${maxLevel + 1}">面试评定意见</th>'+
+            '<th rowspan="${maxLevel + 1}">得分</th><th rowspan="${maxLevel + 1}">面试评定意见</th>' +
             '<th rowspan="${maxLevel + 1}">面试决定</th><th rowspan="${maxLevel + 1}">是否废票</th>';
         var th2;
         var th3;
         var th4 = '<th rowspan="${maxLevel + 1}">操作</th>';
         <c:forEach items="${indices}" var="index">
-        <c:if test="${index.leafFlag == '1' && index.indexLevel == '1'}">
-        th1 += '<th rowspan="${(maxLevel - index.indexLevel) + 1}"colspan="${index.colspan * 2}">' +
-            '${index.indexName}' + '</th>';
-        </c:if>
-        <c:if test="${index.leafFlag != '1' && index.indexLevel == '1'}">
-        th1 += '<th colspan="${index.colspan * 2}">${index.indexName}</th>';
-        <c:forEach items="${indices}" var="index2">
-        <c:if test="${index2.parentIndexId == index.indexId &&
-                index2.leafFlag == '1'&& index2.indexLevel=='2'}">
-        th2 += '<th rowspan="${(maxLevel - index2.indexLevel) + 1}"colspan="${index2.colspan * 2}">' +
-            '${index2.indexName}' + '</th>';
-        </c:if>
-        <c:if test="${index2.parentIndexId == index.indexId &&
-                index2.leafFlag != '1'&& index2.indexLevel=='2'}">
-        th2 += '<th colspan="${index2.colspan * 2}">${index2.indexName}</th>';
-        <c:forEach items="${indices}" var="index3">
-        <c:if test="${index3.parentIndexId == index2.indexId &&
-                    index3.leafFlag=='1' && index3.indexLevel=='3'}">
-        th3 += '<th rowspan="${(maxLevel - index3.indexLevel) + 1}"colspan="${index3.colspan * 2}">' +
-            '${index3.indexName}' + '</th>';
+            <c:if test="${index.leafFlag == '1' && index.indexLevel == '1'}">
+            th1 += '<th rowspan="${(maxLevel - index.indexLevel) + 1}"colspan="${index.colspan * 2}">' +
+                '${index.indexName}' + '</th>';
+            </c:if>
+            <c:if test="${index.leafFlag != '1' && index.indexLevel == '1'}">
+            th1 += '<th colspan="${index.colspan * 2}">${index.indexName}</th>';
+                <c:forEach items="${indices}" var="index2">
+                    <c:if test="${index2.parentIndexId == index.indexId &&
+                            index2.leafFlag == '1'&& index2.indexLevel=='2'}">
+                    th2 += '<th rowspan="${(maxLevel - index2.indexLevel) + 1}"colspan="${index2.colspan * 2}">' +
+                        '${index2.indexName}' + '</th>';
+                    </c:if>
+                    <c:if test="${index2.parentIndexId == index.indexId &&
+                            index2.leafFlag != '1'&& index2.indexLevel=='2'}">
+                    th2 += '<th colspan="${index2.colspan * 2}">${index2.indexName}</th>';
+                        <c:forEach items="${indices}" var="index3">
+                            <c:if test="${index3.parentIndexId == index2.indexId &&
+                                        index3.leafFlag=='1' && index3.indexLevel=='3'}">
+                            th3 += '<th rowspan="${(maxLevel - index3.indexLevel) + 1}"colspan="${index3.colspan * 2}">' +
+                                '${index3.indexName}' + '</th>';
 
-        </c:if>
-        </c:forEach>
-        </c:if>
-        </c:forEach>
-        </c:if>
+                            </c:if>
+                        </c:forEach>
+                    </c:if>
+                </c:forEach>
+            </c:if>
         </c:forEach>
         $("#tr1").html(th1 + th4);
         $("#tr2").html(th2);

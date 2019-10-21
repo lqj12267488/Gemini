@@ -89,7 +89,7 @@
             } else {
                 level = treeNode.level;
                 $("#addIndex").show();
-                $("#addIndex").load("<%=request.getContextPath()%>/evaluation/toAddIndex", {planId: '${id}', pId: treeNode.id})
+                $("#addIndex").load("<%=request.getContextPath()%>/evaluation/toAddIndexInterviewers", {planId: '${id}', pId: treeNode.id})
             }
             return false;
         });
@@ -124,7 +124,7 @@
                 confirmButtonText: "删除",
                 closeOnConfirm: false
             }, function () {
-                $.get("<%=request.getContextPath()%>/evaluation/deleteIndex?id=" + treeNode.id, function (msg) {
+                $.get("<%=request.getContextPath()%>/evaluation/deleteIndexInterviewers?id=" + treeNode.id, function (msg) {
                     swal({
                         title: msg.msg,
                         type: "success"
@@ -142,7 +142,7 @@
     function onClick(event, treeId, treeNode) {
         if (treeNode.level != 0) {
             $("#index").show();
-            $("#addIndex").load("<%=request.getContextPath()%>/evaluation/toEditIndex", {id: treeNode.id});
+            $("#addIndex").load("<%=request.getContextPath()%>/evaluation/toEditIndexInterviewers", {id: treeNode.id});
         } else {
             $("#index").hide();
         }
