@@ -40,9 +40,9 @@
     </div>
     <tr>
         <td class="left"  align="center" style="padding-left: 2%;text-align:center; width: 140px;">资产购买时间：</td>
-        <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${assetsDetails.buyTime}</td>
+        <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${assetsDetails.buyTimeStr}</td>
         <td class="left" align="center" style="padding-left: 2%;text-align:center; width: 140px;">资产分配时间：</td>
-        <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${assetsDetails.useTime}</td>
+        <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${assetsDetails.useTimeStr}</td>
     </tr>
     <table border="1" cellpadding="0" cellspacing="0" style="margin-top: 0.13%;border-top:none;">
         <tr>

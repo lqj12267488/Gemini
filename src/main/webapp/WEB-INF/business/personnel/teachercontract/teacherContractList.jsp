@@ -133,8 +133,8 @@
                 {"data": "deptShow", "title": "所在部门"},
                 {"data": "idcard", "title": "证件号"},
                 {"data": "contractTypeShow", "title": "签订合同情况"},
-                {"data": "startTime", "title": "开始时间"},
-                {"data": "endTime", "title": "截止时间"},
+                {"data": "syStartTime", "title": "开始时间"},
+                {"data": "syEndTime", "title": "截止时间"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {

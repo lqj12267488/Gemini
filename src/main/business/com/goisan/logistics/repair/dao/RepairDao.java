@@ -7,6 +7,7 @@ import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Tree;
 import com.sun.org.apache.regexp.internal.RE;
 
+import java.util.Date;
 import java.util.List;
 
 public interface RepairDao {
@@ -97,4 +98,6 @@ public interface RepairDao {
     void saveFeedbackInfo(Repair repair);
 
     String selectName(String creator);
+
+    void updateConfirmTime(Repair repair);
 }

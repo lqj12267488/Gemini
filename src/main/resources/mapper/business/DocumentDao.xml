@@ -356,7 +356,7 @@
         select * from t_sys_workflow_start where business_id =  #{id}
     </select>
     <select id="getHandleTime" resultType="java.lang.String" parameterType="java.lang.String">
-        SELECT to_char(handle_time,'yyyy')||'年'|| to_char(handle_time,'mm')||'月'||to_char(handle_time,'dd')||'日'  handleTime
+        SELECT DISTINCT to_char(handle_time,'yyyy')||'年'|| to_char(handle_time,'mm')||'月'||to_char(handle_time,'dd')||'日'  handleTime
         FROM T_SYS_WORKFLOW_HANDLE
         WHERE start_id
         IN

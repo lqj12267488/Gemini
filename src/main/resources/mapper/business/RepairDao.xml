@@ -1013,6 +1013,11 @@
         select name from T_SYS_USER t where t.user_id = #{creator}
     </select>
 
+
+    <update id="updateConfirmTime" parameterType="com.goisan.logistics.repair.bean.Repair">
+        update T_ZW_REPAIR set CONFIRM_TIME = #{confirmTime1} where REPAIR_ID = #{repairID}
+    </update>
+
     <select id="checkStatus" resultType="com.goisan.logistics.repair.bean.Repair"
             parameterType="com.goisan.logistics.repair.bean.Repair">
 

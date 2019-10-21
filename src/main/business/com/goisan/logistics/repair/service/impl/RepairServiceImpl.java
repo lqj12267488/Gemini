@@ -10,6 +10,7 @@ import com.goisan.system.bean.Tree;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -284,5 +285,14 @@ public class RepairServiceImpl implements RepairService {
     public String selectName(String creator) {
         return repairDao.selectName(creator);
     }
+
+    @Override
+    public void updateConfirmTime(Date date,String repairID) {
+        Repair repair = new Repair();
+        repair.setRepairID(repairID);
+        repair.setConfirmTime1(date);
+        repairDao.updateConfirmTime(repair);
+    }
+
 
 }

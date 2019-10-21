@@ -88,7 +88,7 @@ function searchClear() {
                     {
                         "title": "操作",
                         "render": function (data, type, row) {
-                            return '<span class="icon-search" title="修改" onclick=edit("' + row.relId + '")/>'
+                            return '<span class="icon-search" title="维护" onclick=edit("' + row.relId + '")/>'
                         },
                         "width":"10%"
                     }

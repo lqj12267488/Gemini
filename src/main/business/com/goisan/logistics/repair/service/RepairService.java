@@ -6,6 +6,7 @@ import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Tree;
 
+import java.util.Date;
 import java.util.List;
 
 public interface RepairService {
@@ -132,5 +133,7 @@ public interface RepairService {
     void saveFeedbackInfo(String feedbackFlag, String fback, String id);
 
     String selectName(String creator);
+
+    void updateConfirmTime(Date date,String repairID);
 
 }

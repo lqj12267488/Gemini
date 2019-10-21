@@ -24,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.stereotype.Controller;
@@ -104,29 +105,30 @@ public class ParentController {
     public Map getStudentByStudentNumber(String studentId) {
         Student student = studentProveService.getStudentByStudentId(studentId);
         Map studentList = new HashMap();
-        if(null == student){
-            studentList.put("householdRegisterPlace","");
-            studentList.put("studentName","");
-        }else{
-            studentList.put("householdRegisterPlace",student.getHouseholdRegisterPlace());
-            studentList.put("studentName",student.getName());
+        if (null == student) {
+            studentList.put("householdRegisterPlace", "");
+            studentList.put("studentName", "");
+        } else {
+            studentList.put("householdRegisterPlace", student.getHouseholdRegisterPlace());
+            studentList.put("studentName", student.getName());
         }
         return studentList;
     }
+
     @ResponseBody
     @RequestMapping("/core/parent/saveParent")
-    public Message save(Parent parent,String studentId,String relationVal) {
+    public Message save(Parent parent, String studentId, String relationVal) {
         if (null == parent.getParentId() || "".equals(parent.getParentId()) || "null".equals(parent.getParentId())) {
-            String parentIdCard = CommonUtil.toIdcardCheck( parent.getIdcard() );
-            studentId = CommonUtil.toIdcardCheck( studentId );
+            String parentIdCard = CommonUtil.toIdcardCheck(parent.getIdcard());
+            studentId = CommonUtil.toIdcardCheck(studentId);
 
             parent.setIdcard(parentIdCard);
             String count = parentService.checkParentIdcard(parentIdCard);
             List<BaseBean> chechStudent = studentParentRelationService.checkStudentRelation(studentId);
-            if( null != chechStudent  && chechStudent.size() > 0 ){
+            if (null != chechStudent && chechStudent.size() > 0) {
                 return new Message(0, "此学生已添加家长！", "error");
             }
-            if(count.equals("0")){
+            if (count.equals("0")) {
                 parent.setParentId(parentIdCard);
                 CommonUtil.save(parent);
                 parentService.saveParent(parent);
@@ -153,7 +155,7 @@ public class ParentController {
                 loginUserService.saveUser(loginUser);
 
                 return new Message(1, "添加成功！", "success");
-            }else{
+            } else {
                 return new Message(0, "此家长身份证号信息已存在,新增失败", "error");
             }
         } else {
@@ -167,7 +169,7 @@ public class ParentController {
 
     @RequestMapping("/core/parent/toParentEdit")
     public String toEdit(String id, String ifIndex, Model model) {
-        if(null == id || id.equals(""))
+        if (null == id || id.equals(""))
             id = CommonUtil.getPersonId();
         model.addAttribute("data", parentService.getParentById(id));
         model.addAttribute("head", "修改");
@@ -204,6 +206,7 @@ public class ParentController {
 
     /**
      * 导出模板
+     *
      * @param response
      */
     @RequestMapping("/core/parent/getParentTemplate")
@@ -247,54 +250,63 @@ public class ParentController {
         cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
         HSSFCellStyle headStyle = wb.createCellStyle();
         headStyle.cloneStyleFrom(cellStyle);
+        headStyle.setAlignment(HorizontalAlignment.CENTER);
         HSSFFont hssfFont = wb.createFont();
         hssfFont.setColor(HSSFColor.RED.index);
         headStyle.setFont(hssfFont);
         sheet.setDefaultColumnWidth(25);
         sheet.createRow(0).createCell(0).setCellStyle(headStyle);
         //sheet.getRow(0).getCell(0).setCellValue("");
-        sheet.getRow(0).getCell(0).setCellValue("说明：此项为必填项");
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 10));
+        sheet.getRow(0).getCell(0).setCellValue("高等教育学生父母或监护人信息录取表");
         sheet.getRow(0).createCell(1).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(1).setCellValue("说明：此项为必填项");
+
         sheet.getRow(0).createCell(2).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(2).setCellValue("说明：此项为必填项");
+
         sheet.getRow(0).createCell(3).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(3).setCellValue("说明：此项为必填项");
+
         sheet.getRow(0).createCell(4).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(4).setCellValue("说明：此项为必填项");
+
         sheet.getRow(0).createCell(5).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(5).setCellValue("说明：此项为必填项");
+
         sheet.getRow(0).createCell(6).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(6).setCellValue("说明：此项为必填项");
+
         sheet.getRow(0).createCell(7).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(7).setCellValue("说明：此项为必填项");
+
         sheet.getRow(0).createCell(8).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(8).setCellValue("说明：此项为必填项");
+        sheet.getRow(0).createCell(9).setCellStyle(headStyle);
+        sheet.getRow(0).createCell(10).setCellStyle(headStyle);
+
 
         sheet.createRow(1).createCell(0).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(0).setCellValue("学生身份证件号码");
+        sheet.getRow(1).getCell(0).setCellValue("序号");
         sheet.getRow(1).createCell(1).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(1).setCellValue("父母或监护人1姓名");
+        sheet.getRow(1).getCell(1).setCellValue("学生姓名");
         sheet.getRow(1).createCell(2).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(2).setCellValue("父母或监护人1身份证件类型");
+        sheet.getRow(1).getCell(2).setCellValue("学生身份证件号码");
         sheet.getRow(1).createCell(3).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(3).setCellValue("父母或监护人1身份证件号码");
+        sheet.getRow(1).getCell(3).setCellValue("父母或监护人1姓名");
         sheet.getRow(1).createCell(4).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(4).setCellValue("父母或监护人1联系方式");
+        sheet.getRow(1).getCell(4).setCellValue("父母或监护人1身份证件类型");
         sheet.getRow(1).createCell(5).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(5).setCellValue("父母或监护人2姓名");
+        sheet.getRow(1).getCell(5).setCellValue("父母或监护人1身份证件号码");
         sheet.getRow(1).createCell(6).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(6).setCellValue("父母或监护人2身份证件类型");
+        sheet.getRow(1).getCell(6).setCellValue("父母或监护人1联系方式");
         sheet.getRow(1).createCell(7).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(7).setCellValue("父母或监护人2身份证件号码");
+        sheet.getRow(1).getCell(7).setCellValue("父母或监护人2姓名");
         sheet.getRow(1).createCell(8).setCellStyle(cellStyle);
-        sheet.getRow(1).getCell(8).setCellValue("父母或监护人2联系方式");
+        sheet.getRow(1).getCell(8).setCellValue("父母或监护人2身份证件类型");
+        sheet.getRow(1).createCell(9).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(9).setCellValue("父母或监护人2身份证件号码");
+        sheet.getRow(1).createCell(10).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(10).setCellValue("父母或监护人2联系方式");
+
         HSSFCellStyle textS = wb.createCellStyle();
         HSSFDataFormat form = wb.createDataFormat();
         textS.setDataFormat(form.getFormat("@"));
         for (int i = 2; i < 10000; i++) {
             HSSFRow row = sheet.createRow(i);
-            for (int j = 0; j <9; j++) {
+            for (int j = 0; j < 9; j++) {
                 row.createCell(j).setCellStyle(textS);
             }
         }
@@ -307,13 +319,15 @@ public class ParentController {
         setHSSFPrompt(sheet, "", "", 1, 65535, 6, 6);
         setHSSFPrompt(sheet, "", "", 1, 65535, 7, 7);
         setHSSFPrompt(sheet, "", "", 1, 65535, 8, 8);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 9, 9);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 10, 10);
         List<Select2> list5 = assetsService.getUserDictName("JZZJLX");
         String[] major = new String[list5.size()];
         for (int i = 0; i < list5.size(); i++) {
             major[i] = list5.get(i).getText();
         }
-        setHSSFValidation(sheet, major, 2, 65535, 2, 2);
-        setHSSFValidation(sheet, major, 2, 65535, 6, 6);
+        setHSSFValidation(sheet, major, 2, 65535, 4, 4);
+        setHSSFValidation(sheet, major, 2, 65535, 8, 8);
         OutputStream os = null;
         try {
             response.setContentType("application/vnd.ms-excel");
@@ -334,6 +348,7 @@ public class ParentController {
             }
         }
     }
+
     private static void setDataValidation(HSSFSheet sheet, String strFormula, int firstRow, int endRow, int firstCol, int endCol) {
         CellRangeAddressList regions = new CellRangeAddressList(firstRow, endRow, firstCol, endCol);
         DVConstraint constraint = DVConstraint.createFormulaListConstraint(strFormula);//add
@@ -345,6 +360,7 @@ public class ParentController {
 
     /**
      * 导入数据
+     *
      * @param file
      * @return
      */
@@ -380,37 +396,36 @@ public class ParentController {
                 HSSFRow row = sheet.getRow(i);
                 int flag = 1;
                 Parent parent = new Parent();
-                parent.setParentId(CommonUtil.changeToString(row.getCell(3)));
-                //assets.setAssetsId(CommonUtil.changeToString(row.getCell(1)));
-               /* for (Select2  ParentType: List1) {
-                    if (ParentType.getText().equals(row.getCell(0).toString())) {
-                        parent.setIdCardType(ParentType.getId());
-                    }
-                }*/
-                parent.setStudentId(CommonUtil.changeToString(row.getCell(0)));
-                parent.setParentName(CommonUtil.changeToString(row.getCell(1)));
-                for (Select2  ParentType: List1) {
-                    if (ParentType.getText().equals(row.getCell(2).toString())) {
+
+                parent.setParentId(CommonUtil.changeToString(row.getCell(5)));
+                parent.setStudentId(CommonUtil.changeToString(row.getCell(2)));
+                parent.setParentName(CommonUtil.changeToString(row.getCell(3)));
+                parent.setIdcard(CommonUtil.changeToString(row.getCell(5)));
+                parent.setParentTel(CommonUtil.changeToString(row.getCell(6)));
+                parent.setParentNameSecond(CommonUtil.changeToString(row.getCell(7)));
+                parent.setIdcardSecond(CommonUtil.changeToString(row.getCell(9)));
+                parent.setParentTelSecond(CommonUtil.changeToString(row.getCell(10)));
+
+
+                for (Select2 ParentType : List1) {
+                    if (ParentType.getText().equals(row.getCell(4).toString())) {
                         parent.setIdCardType(ParentType.getId());
                     }
                 }
 
-                parent.setIdcard(CommonUtil.changeToString(row.getCell(3)));
-                parent.setParentTel(CommonUtil.changeToString(row.getCell(4)));
-                parent.setParentNameSecond(CommonUtil.changeToString(row.getCell(5)));
-                for (Select2  ParentType: List1) {
-                    if (ParentType.getText().equals(row.getCell(6).toString())) {
+                for (Select2 ParentType : List1) {
+                    if (ParentType.getText().equals(row.getCell(8).toString())) {
                         parent.setIdCardTypeSecond(ParentType.getId());
                     }
                 }
-                parent.setIdcardSecond(CommonUtil.changeToString(row.getCell(7)));
-                parent.setParentTelSecond(CommonUtil.changeToString(row.getCell(8)));
-                Student student = studentProveService.getStudentByStudentId(parent.getStudentId());
-                if (null == student){
+
+                String studentId = parent.getStudentId();
+                Student student = studentProveService.getStudentByStudentId(studentId);
+                if (null == student) {
                     return new Message(0, "此学生不存在", null);
                 }
                 List<BaseBean> chechStudent = studentParentRelationService.checkStudentRelation(parent.getStudentId());
-                if( null != chechStudent  && chechStudent.size() > 0 ){
+                if (null != chechStudent && chechStudent.size() > 0) {
                     return new Message(0, "此学生已添加家长！", "error");
                 }
                 parentService.saveParent(parent);
@@ -444,7 +459,8 @@ public class ParentController {
             if (count > 0) {
                 msg = msg.substring(0, msg.length() - 1) + "行,人员身份信息不正确！请重新导入！";
             } else {
-                msg = "导入成功！";
+                int resSize = end - 2;
+                msg = "成功导入" + resSize + "条数据！";
             }
             return new Message(1, msg, null);
         }
@@ -452,6 +468,7 @@ public class ParentController {
 
     /**
      * 获取真实行数
+     *
      * @param workbook 工作簿对象
      * @return 真实行数
      */
@@ -469,19 +486,16 @@ public class ParentController {
                 try {
                     cell.setCellType(CellType.STRING);
                     str.append(cell.getStringCellValue());
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     break error;
                 }
 
             }
-            if (!"".equals(str.toString().replaceAll(" ", "")))
-            {
+            if (!"".equals(str.toString().replaceAll(" ", ""))) {
                 realLastRowNum = realLastRowNum + 1;
             }
         }
-        System.err.println("----------------------> 真实行数 "+realLastRowNum);
+        System.err.println("----------------------> 真实行数 " + realLastRowNum);
         return realLastRowNum;
 
     }
@@ -510,10 +524,11 @@ public class ParentController {
 
     /**
      * 家长 查看 学生个人课表菜单
+     *
      * @return
      */
     @RequestMapping("/core/parent/toStudentScheduleList")
-    public ModelAndView lookPersonal(){
+    public ModelAndView lookPersonal() {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/core/xg/parent/children/ScheduleList");
         return mv;
@@ -533,8 +548,8 @@ public class ParentController {
      */
     @RequestMapping("/core/parent/lookStudentViewCourse")
     public ModelAndView lookStudentViewCourse(ArrayClassStudent arrayClassStudent, String arrayClassName) {
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
-        arrayClassStudent.setStudentId( studentId );
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
+        arrayClassStudent.setStudentId(studentId);
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/core/xg/parent/children/ScheduleListView");
 
@@ -543,32 +558,33 @@ public class ParentController {
         mv.addObject("arrayclassResultClassList", JsonUtils.toJson(studentArrayClassLooks));
 
         List<ArrayClassTime> arrayClassTimeList = arrayClassResultClassService.getArrayClassTimeByStudent(arrayClassStudent);
-        mv.addObject("arrayClassTimeList",arrayClassTimeList);
+        mv.addObject("arrayClassTimeList", arrayClassTimeList);
 
-        List<Select2> weekShow = commonService.getSysDict("XQZ","");
-        mv.addObject("weekShow",weekShow);
+        List<Select2> weekShow = commonService.getSysDict("XQZ", "");
+        mv.addObject("weekShow", weekShow);
         TableDict tableDict = new TableDict();
         tableDict.setId("class_id");
         tableDict.setText("class_name");
         tableDict.setTableName(" T_XG_CLASS ");
-        tableDict.setWhere(" where class_id in(select class_id from T_XG_STUDENT_CLASS where student_id ='"+studentId+"') ");
+        tableDict.setWhere(" where class_id in(select class_id from T_XG_STUDENT_CLASS where student_id ='" + studentId + "') ");
         List<Select2> className = commonService.getTableDict(tableDict);
-        mv.addObject("className",className);
+        mv.addObject("className", className);
 
-        mv.addObject("arrayclassId",arrayClassStudent.getArrayclassId());
-        mv.addObject("studentId",arrayClassStudent.getStudentId());
-        mv.addObject("studentName",arrayClassStudent.getStudentName());
-        mv.addObject("arrayClassName",arrayClassName);
+        mv.addObject("arrayclassId", arrayClassStudent.getArrayclassId());
+        mv.addObject("studentId", arrayClassStudent.getStudentId());
+        mv.addObject("studentName", arrayClassStudent.getStudentName());
+        mv.addObject("arrayClassName", arrayClassName);
         return mv;
     }
 
     /**
      * 家长 查看 学生个人课表菜单
+     *
      * @return
      */
     @RequestMapping("/core/parent/toStudentScoreListResult")
-    public ModelAndView toStudentScoreListResult(){
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
+    public ModelAndView toStudentScoreListResult() {
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/core/xg/parent/score/scoreStudentResult");
 
@@ -577,12 +593,12 @@ public class ParentController {
         tableDict.setId("class_id");
         tableDict.setText("class_name");
         tableDict.setTableName(" T_XG_CLASS ");
-        tableDict.setWhere(" where class_id in(select class_id from T_XG_STUDENT_CLASS where student_id ='"+studentId+"') ");
+        tableDict.setWhere(" where class_id in(select class_id from T_XG_STUDENT_CLASS where student_id ='" + studentId + "') ");
         List<Select2> className = commonService.getTableDict(tableDict);
-        mv.addObject("className",className);
-        mv.addObject("classNum",className.size());
-        if(null !=className && className.size()!=0)
-            mv.addObject("classCheck",className.get(0).getId());
+        mv.addObject("className", className);
+        mv.addObject("classNum", className.size());
+        if (null != className && className.size() != 0)
+            mv.addObject("classCheck", className.get(0).getId());
 
         ScoreImport scoreImports = new ScoreImport();
         scoreImports.setStudentId(studentId);
@@ -591,8 +607,8 @@ public class ParentController {
         mv.addObject("courseList", CommonUtil.jsonUtil(coreImports));
 
         // 班級信息
-        List<Map> map = parentService.getScoreExamCourseList(studentId , className);
-        mv.addObject("classScoreExam",map);
+        List<Map> map = parentService.getScoreExamCourseList(studentId, className);
+        mv.addObject("classScoreExam", map);
         return mv;
     }
 
@@ -600,7 +616,7 @@ public class ParentController {
     @ResponseBody
     @RequestMapping("/core/parent/getClassList11111")
     public Map getArrayClassList(String classId) {
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
         Map resultMap = new HashMap();
         // 课程列表(适用于基教)
         TableDict tableDict = new TableDict();
@@ -608,24 +624,25 @@ public class ParentController {
         tableDict.setText(" distinct c.COURSE_NAME ");
         tableDict.setTableName(" t_jw_score_import i, t_jw_course c, t_jw_score_exam e ");
         tableDict.setWhere(" where c.course_id = i.course_id and " +
-                "i.score_exam_id = e.score_exam_id  and i.class_id = '"+classId+"' ");
+                "i.score_exam_id = e.score_exam_id  and i.class_id = '" + classId + "' ");
         List<Select2> courseName = commonService.getTableDict(tableDict);
-        resultMap.put("courseName",courseName);
+        resultMap.put("courseName", courseName);
 
         return resultMap;
     }
 
     /**
      * 家长 查看 各任课教师信息
+     *
      * @return
      */
     @RequestMapping("/core/parent/toTeacherList")
-    public ModelAndView toTeacherList(){
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
+    public ModelAndView toTeacherList() {
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
         Student stu = studentService.getStudentNameByStudentId(studentId);
         ModelAndView mv = new ModelAndView();
-        mv.addObject("studentName",stu.getName());
-        mv.addObject("studentId",studentId);
+        mv.addObject("studentName", stu.getName());
+        mv.addObject("studentId", studentId);
         mv.setViewName("/core/xg/parent/teacher/teacherList");
         return mv;
     }
@@ -634,45 +651,46 @@ public class ParentController {
     @ResponseBody
     @RequestMapping("/core/parent/getTeacherList")
     public Map getTeacherList() {
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
         Map resultMap = new HashMap();
 
         TableDict tableDict = new TableDict();
         tableDict.setId("class_id");
         tableDict.setText("class_name");
         tableDict.setTableName(" T_XG_CLASS ");
-        tableDict.setWhere(" where class_id in(select class_id from T_XG_STUDENT_CLASS where student_id ='"+studentId+"') ");
+        tableDict.setWhere(" where class_id in(select class_id from T_XG_STUDENT_CLASS where student_id ='" + studentId + "') ");
         List<Select2> className = commonService.getTableDict(tableDict);
 
         List id = new ArrayList();
-        for (int i = 0 ;i < className.size() ; i++) {
+        for (int i = 0; i < className.size(); i++) {
             id.add(className.get(i).getId());
         }
-        List list =  parentService.getCourseTeacherList(id);
-        resultMap.put("data",list);
+        List list = parentService.getCourseTeacherList(id);
+        resultMap.put("data", list);
         return resultMap;
     }
 
     /**
      * 家长 查看 各任课教师信息
+     *
      * @return
      */
     @RequestMapping("/core/parent/toTeachingResult")
-    public ModelAndView toTeachingResult(String teacherId , String teacherName){
+    public ModelAndView toTeachingResult(String teacherId, String teacherName) {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("teacherName",teacherName);
-        mv.addObject("teacherId",teacherId);
+        mv.addObject("teacherName", teacherName);
+        mv.addObject("teacherId", teacherId);
 
         // 教师教授班级
         List courseList = parentService.getCourseListByTeacher(teacherId);
-        mv.addObject("courseList",CommonUtil.jsonUtil(courseList));
+        mv.addObject("courseList", CommonUtil.jsonUtil(courseList));
 
         // 教师校验成果列表
         TeachingResultProject teachingResultProject = new TeachingResultProject();
         teachingResultProject.setPersonId(teacherId);
 //        teachingResultProject.setPersonId("2411b600-d401-4912-8d7e-b6bf658eaf05");
-        List teachingResultList= teacherResultService.getCountList(teachingResultProject);
-        mv.addObject("teachingResultList",CommonUtil.jsonUtil(teachingResultList));
+        List teachingResultList = teacherResultService.getCountList(teachingResultProject);
+        mv.addObject("teachingResultList", CommonUtil.jsonUtil(teachingResultList));
 
         // 教师评教 查看
         EvaluationTask task = new EvaluationTask();
@@ -680,32 +698,32 @@ public class ParentController {
         task.setCreator(teacherId);
 //        task.setCreator("13a86cd0-bbb6-4794-8b07-f0d766dd4ebe");
         List evaluationlist = evaluationService.getMonitoerTaskByTeacherId(task);
-        mv.addObject("evaluationList",CommonUtil.jsonUtil(evaluationlist));
+        mv.addObject("evaluationList", CommonUtil.jsonUtil(evaluationlist));
 
-        mv.addObject("teacherId",teacherId);
+        mv.addObject("teacherId", teacherId);
         mv.setViewName("/core/xg/parent/teacher/teachingResult");
         return mv;
     }
 
     @RequestMapping("/core/parent/resultEmps")
-    public ModelAndView resultEmps(EvaluationTask task,String personId,String head) {
+    public ModelAndView resultEmps(EvaluationTask task, String personId, String head) {
         ModelAndView mv = new ModelAndView();
-        List<EvaluationEmp> list= evaluationService.getMonitoerEmpsByTaskId(task);
+        List<EvaluationEmp> list = evaluationService.getMonitoerEmpsByTaskId(task);
         List<EvaluationEmp> re = new ArrayList<EvaluationEmp>();
         for (EvaluationEmp sel : list) {
-            if(sel.getPersonId().equals(personId)
+            if (sel.getPersonId().equals(personId)
 //                    || sel.getPersonId().equals("210203199909050529")|| sel.getPersonId().equals("13a86cd0-bbb6-4794-8b07-f0d766dd4ebe")
-                    ){//
+            ) {//
                 re.add(sel);
             }
         }
-        mv.addObject("data",CommonUtil.jsonUtil( re));
-        if(task.getEvaluationType().equals("0"))
-            mv.addObject("title","被评人部门" );
-        else if(task.getEvaluationType().equals("1"))
-            mv.addObject("title","被评人班级" );
+        mv.addObject("data", CommonUtil.jsonUtil(re));
+        if (task.getEvaluationType().equals("0"))
+            mv.addObject("title", "被评人部门");
+        else if (task.getEvaluationType().equals("1"))
+            mv.addObject("title", "被评人班级");
         mv.addObject("head", head);
-        mv.setViewName("/core/xg/parent/teacher/resultEmps") ;
+        mv.setViewName("/core/xg/parent/teacher/resultEmps");
         return mv;
     }
 
@@ -713,17 +731,17 @@ public class ParentController {
     public ModelAndView toClassList() {
         ModelAndView mv = new ModelAndView();
 
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
         TableDict tableDict = new TableDict();
         tableDict.setId("class_id");
         tableDict.setText("class_name");
         tableDict.setTableName(" T_XG_CLASS ");
-        tableDict.setWhere(" where class_id in(select class_id from T_XG_STUDENT_CLASS where student_id ='"+studentId+"') ");
+        tableDict.setWhere(" where class_id in(select class_id from T_XG_STUDENT_CLASS where student_id ='" + studentId + "') ");
         List<Select2> className = commonService.getTableDict(tableDict);
 
-        mv.addObject("className",className);
-        mv.addObject("classList",CommonUtil.jsonUtil(className));
-        mv.addObject("classCheck",className.get(0).getId());
+        mv.addObject("className", className);
+        mv.addObject("classList", CommonUtil.jsonUtil(className));
+        mv.addObject("classCheck", className.get(0).getId());
         mv.setViewName("/core/xg/parent/cadre/cadreList");
         return mv;
     }
@@ -738,16 +756,16 @@ public class ParentController {
         tableDict.setId(" FUNC_GET_DICVALUE(sex, 'XB') ");
         tableDict.setText(" count(1) ");
         tableDict.setTableName(" t_xg_student t, t_xg_student_class s ");
-        tableDict.setWhere(" where t.student_id = s.student_id and s.class_id = '"+classCadre.getClassId()+"' group by t.sex  order by sex ");
+        tableDict.setWhere(" where t.student_id = s.student_id and s.class_id = '" + classCadre.getClassId() + "' group by t.sex  order by sex ");
         List<Select2> sexSel = commonService.getTableDict(tableDict);
         int i = 0;
         for (Select2 sex : sexSel) {
-            i = i+ Integer.parseInt(sex.getText());
+            i = i + Integer.parseInt(sex.getText());
         }
         Select2 all = new Select2();
         all.setId("班级总数");
-        all.setText(i+"");
-        sexSel.add(0,all);
+        all.setText(i + "");
+        sexSel.add(0, all);
         map.put("sexSel", sexSel);
         return map;
     }
@@ -756,9 +774,9 @@ public class ParentController {
     @RequestMapping("/core/parent/paymentResult")
     public ModelAndView toPaymentResult() {
         ModelAndView mv = new ModelAndView();
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
 //        studentId = "220581199201171673";
-        mv.addObject("studentId",studentId);
+        mv.addObject("studentId", studentId);
         mv.setViewName("/core/xg/parent/payment/paymentList");
         return mv;
     }
@@ -767,10 +785,10 @@ public class ParentController {
     @RequestMapping("/core/parent/toPaymentResult")
     public ModelAndView toSearchPaymentResult(String planId) {
         ModelAndView mv = new ModelAndView();
-        mv.addObject("planId",planId);
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
+        mv.addObject("planId", planId);
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
 //        studentId = "220581199201171673";
-        mv.addObject("studentId",studentId);
+        mv.addObject("studentId", studentId);
         mv.setViewName("/core/xg/parent/payment/paymentResult");
         return mv;
     }
@@ -779,8 +797,8 @@ public class ParentController {
     @RequestMapping("/core/parent/toevaluationList")
     public ModelAndView toSea1rchPaymentResult() {
         ModelAndView mv = new ModelAndView();
-        String studentId =  CommonUtil.getLoginUser().getDefaultDeptId();
-        mv.addObject("studentId",studentId);
+        String studentId = CommonUtil.getLoginUser().getDefaultDeptId();
+        mv.addObject("studentId", studentId);
         mv.setViewName("/core/xg/parent/children/studentResultList");
         return mv;
     }
@@ -789,7 +807,7 @@ public class ParentController {
     @RequestMapping("/core/parent/getStudentTask")
     public Map getPaymentInfoStandardList(EvaluationTask task) {
 //        task.setCreator("210203199909050529");
-        return CommonUtil.tableMap( evaluationService.getMonitoerTaskByTeacherId(task) );
+        return CommonUtil.tableMap(evaluationService.getMonitoerTaskByTeacherId(task));
     }
 
     /**
@@ -816,10 +834,22 @@ public class ParentController {
         cellStyle0.setAlignment(HorizontalAlignment.CENTER);
         cellStyle0.setVerticalAlignment(VerticalAlignment.CENTER);
         cellStyle0.setWrapText(true);
+        HSSFCellStyle cellStyle = wb.createCellStyle();
+        //cellStyle.setFillForegroundColor((short) 13);// 设置背景色
+        cellStyle.setBorderLeft(BorderStyle.THIN);//左边框
+        cellStyle.setBorderTop(BorderStyle.THIN);//上边框
+        cellStyle.setBorderRight(BorderStyle.THIN);//右边框
+        cellStyle.setBorderBottom(BorderStyle.THIN); //下边框
+        cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
+        HSSFCellStyle headStyle = wb.createCellStyle();
+        headStyle.cloneStyleFrom(cellStyle);
+        headStyle.setAlignment(HorizontalAlignment.CENTER);
 
         int tmp = 0;
         tmp++;
-
+        sheet.createRow(0).createCell(0).setCellStyle(headStyle);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 18));
+        sheet.getRow(0).getCell(0).setCellValue("高等教育学生父母或监护人信息录取表");
         HSSFRow row1 = sheet.createRow(tmp);
         //创建HSSFCell对象
         row1.createCell(0).setCellValue("序号");

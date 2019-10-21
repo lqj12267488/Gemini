@@ -3,6 +3,8 @@ package com.goisan.logistics.assets.bean;
 
 import com.goisan.system.bean.BaseBean;
 
+import java.util.Date;
+
 public class Assets extends BaseBean {
 
     private String id;
@@ -19,6 +21,15 @@ public class Assets extends BaseBean {
     private String inTime;
     private String assetsId;
     private String buyTime;
+    private String buyTimeStr;
+
+    public String getBuyTimeStr() {
+        return buyTimeStr;
+    }
+
+    public void setBuyTimeStr(String buyTimeStr) {
+        this.buyTimeStr = buyTimeStr;
+    }
 
     public String getBuyTime() {
         return buyTime;

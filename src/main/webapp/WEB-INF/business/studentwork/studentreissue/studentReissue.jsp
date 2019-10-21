@@ -137,7 +137,7 @@
             if (this.id == "delstudentReissue") {
                 swal({
                     title: "您确定要删除本条信息?",
-                    text: "学生姓名：" + data.studentId + "的请假\n\n删除后将无法恢复，请谨慎操作！",
+                    text: "学生姓名：" + data.studentId + "\n\n删除后将无法恢复，请谨慎操作！",
                     type: "warning",
                     showCancelButton: true,
                     cancelButtonText: "取消",

@@ -49,7 +49,7 @@
         <td class="left" align="center" style="padding-left: 2%;text-align:center;  width: 140px;">申请日期：</td>
         <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${requestDate}</td>
         <td class="left" align="center" style="padding-left: 2%;text-align:center;  width: 140px;">接待时间：</td>
-        <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${borrowTime}</td>
+        <td align="center" class="left1" style="padding-left: 2%;text-align:center; width: 140px;">${revertTime}</td>
     </tr>
     <tr>
         <td class="left" align="center" style="padding-left: 2%;text-align:center;  width: 140px;">接待事由：</td>

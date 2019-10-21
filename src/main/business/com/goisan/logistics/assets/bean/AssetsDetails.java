@@ -4,6 +4,7 @@ package com.goisan.logistics.assets.bean;
 import com.goisan.system.bean.BaseBean;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class AssetsDetails extends BaseBean {
 
@@ -22,20 +23,46 @@ public class AssetsDetails extends BaseBean {
     private String useType;
     private String userDept;
     private String userId;
-    private Timestamp useTime;
+    private Date useTime;
+    private String useTimeStr;
     private String usePosition;
     private String direction;
     private String useTimeShow;
     private String scrapReson;
-    private Timestamp buyTime;
+    private Date buyTime;
+    private String buyTimeStr;
 
 
-    public Timestamp getBuyTime() {
+    public Date getUseTime() {
+        return useTime;
+    }
+
+    public void setUseTime(Date useTime) {
+        this.useTime = useTime;
+    }
+
+    public String getUseTimeStr() {
+        return useTimeStr;
+    }
+
+    public void setUseTimeStr(String useTimeStr) {
+        this.useTimeStr = useTimeStr;
+    }
+
+    public Date getBuyTime() {
         return buyTime;
     }
 
-    public void setBuyTime(Timestamp buyTime) {
+    public void setBuyTime(Date buyTime) {
         this.buyTime = buyTime;
+    }
+
+    public String getBuyTimeStr() {
+        return buyTimeStr;
+    }
+
+    public void setBuyTimeStr(String buyTimeStr) {
+        this.buyTimeStr = buyTimeStr;
     }
 
     public String getAssetsId() {
@@ -174,13 +201,8 @@ public class AssetsDetails extends BaseBean {
         this.assetsName = assetsName;
     }
 
-    public Timestamp getUseTime() {
-        return useTime;
-    }
 
-    public void setUseTime(Timestamp useTime) {
-        this.useTime = useTime;
-    }
+
 
     public String getUseTimeShow() {
         return useTimeShow;

@@ -148,7 +148,7 @@
                     </div>
                     <div class="col-md-9">
                         <div>
-                            <input id="buyTime" type="date" value="${assets.inTime}"/>
+                            <input id="buyTime" type="date" value="${assets.buyTime}"/>
                         </div>
                     </div>
                 </div>

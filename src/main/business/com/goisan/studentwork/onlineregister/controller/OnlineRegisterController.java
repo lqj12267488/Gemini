@@ -54,6 +54,9 @@ public class OnlineRegisterController {
         PageHelper.startPage(start / length + 1, length);
         Map<String, Object> result = new HashMap();
         List<OnlineRegister> list = onlineRegisterService.getOnlineRegisterList(onlineRegister);
+        for (OnlineRegister register : list) {
+            register.setMajorName("护理");
+        }
         PageInfo<List<OnlineRegister>> info = new PageInfo(list);
         result.put("draw", draw);
         result.put("recordsTotal", info.getTotal());

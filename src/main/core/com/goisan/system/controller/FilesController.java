@@ -295,7 +295,8 @@ public class FilesController extends HttpServlet {
     @ResponseBody
     @RequestMapping("/files/getFilesByBusinessId")
     public Map getFilesByBusinessId(String businessId) {
-        return CommonUtil.tableMap(filesService.getFilesByBusinessId(businessId));
+        List<Files> filesByBusinessId = filesService.getFilesByBusinessId(businessId);
+        return CommonUtil.tableMap(filesByBusinessId);
     }
 
     @ResponseBody

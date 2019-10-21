@@ -25,10 +25,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class RepairController {
@@ -529,6 +526,8 @@ public class RepairController {
     @RequestMapping("/repair/repairContent")
     public ModelAndView repairContent(Repair repair) {
         ModelAndView mv = new ModelAndView("/business/logistics/repair/repairContent");
+        //维护确认维修时间
+        repairService.updateConfirmTime(new Date(),repair.getRepairID());
         repair = repairService.getRepairListInfo(repair.getRepairID());
         String name = "";
         for (int i = 0; i < repair.getItemName().length(); i++) {

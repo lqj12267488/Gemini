@@ -2,6 +2,8 @@ package com.goisan.logistics.repair.bean;
 
 import com.goisan.system.bean.BaseBean;
 
+import java.util.Date;
+
 public class Repair  extends BaseBean {
     private String id;
     private String repairID;
@@ -48,6 +50,16 @@ public class Repair  extends BaseBean {
     private String sysName; //派单人
     private String PersonIdShow; //维修人
     private String creatorName;
+
+    private Date confirmTime1 ;
+
+    public Date getConfirmTime1() {
+        return confirmTime1;
+    }
+
+    public void setConfirmTime1(Date confirmTime1) {
+        this.confirmTime1 = confirmTime1;
+    }
 
     public String getCreatorName() {
         return creatorName;
