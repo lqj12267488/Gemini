@@ -157,7 +157,7 @@ function rsglCol(liListFlag, liList, liListAll, myCharts, myChartFlag, options, 
         calculable: true,
         series: [
             {
-                name: '成绩',
+                name: '年龄',
                 type: 'pie',
                 radius: [30, 90],
                 center: ['50%', '50%'],

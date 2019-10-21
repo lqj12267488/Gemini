@@ -6,7 +6,7 @@
     <select id="getrsglEcharts" resultType="com.goisan.system.bean.EchartsMenu">
     select * from
     (select sum(case when sex = '1' then 1 else 0 end) || ',' ||
-        sum(case when sex = '2' then 1 else 0 end) as sex from T_RS_EMPLOYEE) m,
+        sum(case when sex = '2' then 1 else 0 end) as sex from T_RS_EMPLOYEE where valid_flag = '1') m,
     (select
         count(t.age) || ',' ||
         count(case
@@ -48,12 +48,12 @@
         sum(case when n.staff_status = '299' then 1 else 0 end) || ',' ||
         sum(case when n.staff_status = '100' then 1 else 0 end)
         as jzgztstatus from
-    (select t.staff_status from T_RS_EMPLOYEE t where t.staff_status is not null) n) z,
+    (select t.staff_status from T_RS_EMPLOYEE t where t.staff_status is not null and t.valid_flag='1') n) z,
     (select wmsys.wm_concat(o.sex) as deptsex from (select
         i.deptdata || ',' || sum(case when i.sex = '1' then 1 else 0 end) || ',' ||
         sum(case when i.sex = '2' then 1 else 0 end) as sex
          from (select u.dept_name as deptdata,s.sex from T_RS_EMPLOYEE_DEPT t,T_RS_EMPLOYEE s,T_SYS_DEPT u
-        where t.person_id = s.person_id and u.dept_id = t.dept_id and s.sex is not null) i group by i.deptdata) o) p
+        where t.person_id = s.person_id and u.dept_id = t.dept_id and s.sex is not null and s.valid_flag='1') i group by i.deptdata) o) p
     </select>
     <select id="getxtbgEcharts" resultType="com.goisan.system.bean.EchartsMenu">
         select * from

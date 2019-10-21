@@ -1035,7 +1035,7 @@
         COUNT( CASE temp.qualification_level WHEN 4 then 1 else null end ) as p4,
         sum(tday) tday
         from (select qt.student_id, sum(qt.train_day) tday, min(q.qualification_level) qualification_level  from t_tab_qualification q, t_tab_qualification_train qt where qt.qualification_id=q.id group by qt.student_id) temp
-        inner join t_xg_student s on temp.student_id=s.student_id
+        inner join t_xg_student s on temp.student_id=s.student_id and s.student_status='1'
         inner join t_xg_student_class sc on s.student_id=sc.student_id
         inner join t_xg_class c on sc.class_id=c.class_id
         inner join t_xg_major m on c.major_code=m.major_code

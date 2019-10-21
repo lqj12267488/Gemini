@@ -79,7 +79,7 @@ public class OnlineRegisterServiceImpl implements OnlineRegisterService {
                 new File(path + File.separator + tiem + "_graduatedImg").mkdir();
                 for(MultipartFile mf:graduatedImg){
                     fileName = CommonUtil.getUUID() + "." + CommonUtil.getFileExt(mf.getOriginalFilename());
-                    fileNames += "," + tiem + "_graduatedImg" + fileName;
+                    fileNames += "," + tiem + "_graduatedImg" + File.separator + fileName;
                     mf.transferTo(new File(path + File.separator + tiem + "_graduatedImg" + File.separator + fileName));
                 }
                 onlineRegister.setGraduatedImg(fileNames.substring(1));

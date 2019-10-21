@@ -173,7 +173,7 @@
                         户口本附件
                     </div>
                     <div class="col-md-4">
-                        <a href="#" onclick="showFiles('${data.hukouImg}')">查看附件</a>
+                        <a href="#" onclick="showFiles('${data.hukouImg.replaceAll("\\\\", "/")}')">查看附件</a>
                     </div>
                 </div>
                 <div class="form-row">
@@ -181,7 +181,7 @@
                         毕业证附件
                     </div>
                     <div class="col-md-4">
-                        <a href="#" onclick="showFiles('${data.graduatedImg}')">查看附件</a>
+                        <a href="#" onclick="showFiles('${data.graduatedImg.replaceAll("\\\\", "/")}')">查看附件</a>
                     </div>
                 </div>
                 <div class="form-row">

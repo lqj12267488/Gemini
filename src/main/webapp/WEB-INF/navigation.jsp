@@ -41,15 +41,18 @@
             <img src="<%=request.getContextPath()%>/libs/img/login/ind_pic_08.png"/>
             <ul class="dnd">
                 <li>
-                    <shiro:hasPermission name="SYS:GLPT">
-                        <a href="<%=request.getContextPath()%>/index?system=GLPT&id=001">管理平台</a>
-                    </shiro:hasPermission>
+                    <a href=""></a>
                 </li>
                 <li><a href=""></a></li>
                 <li><a href="http://www.bcvit.cn">门户网站平台</a></li>
                 <li><a href=""></a></li>
                 <li><a href=""></a></li>
-                <li><a href="<%=request.getContextPath()%>/resourceLibrary/toIndex">资源平台</a></li>
+                <li>
+                    <shiro:hasPermission name="SYS:GLPT">
+                        <a href="<%=request.getContextPath()%>/index?system=GLPT&id=001">管理平台</a>
+                    </shiro:hasPermission>
+                </li>
+                <%--<li><a href="<%=request.getContextPath()%>/resourceLibrary/toIndex">资源平台</a></li>--%>
                 <li><a href=""></a></li>
                 <li><a href=""></a></li>
             </ul>

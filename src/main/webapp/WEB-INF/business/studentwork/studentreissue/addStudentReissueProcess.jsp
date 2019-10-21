@@ -19,8 +19,8 @@
     </div>
     <div style="float: right;width: 230px;height: 160px;">
         <div style="width: 160px;height: 160px;margin-top: -4px;">
-                    <img onclick="showInputFileImg()"
-                         style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
+                    <img onclick="showInputFileImg(this.src)"
+                         style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px;cursor:pointer;"
                          src="data:image/png;base64,${studentReissue.img}"
                          height="150"
                          width="110" alt="" id="userImg1">
@@ -186,6 +186,27 @@
 <input id="printFunds" hidden value="<%=request.getContextPath()%>/studentReissue/printStudentReissue?id=${studentReissue.id}">
 
 <script>
-
+    //下载图片
+    function showInputFileImg(imgUrl) {
+        // 这里是获取到的图片base64编码,这里只是个例子哈，要自行编码图片替换这里才能测试看到效果
+        //const imgUrl = 'data:image/png;base64,...'
+        // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
+        if (window.navigator.msSaveOrOpenBlob) {
+            var bstr = atob(imgUrl.split(',')[1])
+            var n = bstr.length
+            var u8arr = new Uint8Array(n)
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n)
+            }
+            var blob = new Blob([u8arr])
+            window.navigator.msSaveOrOpenBlob(blob, '${studentReissue.studentId}' + '.' + 'png')
+        } else {
+            // 这里就按照chrome等新版浏览器来处理
+            const a = document.createElement('a')
+            a.href = imgUrl
+            a.setAttribute('download', '${studentReissue.studentId}')
+            a.click()
+        }
+    }
 </script>
 
