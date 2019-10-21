@@ -1277,8 +1277,8 @@
 
     <insert id="copyMemberGroup" parameterType="java.lang.String">
         INSERT INTO T_KH_EVALUATION_GROUP
-        (group_id, group_name, evaluation_type, members_num, creator, create_time, create_dept)
-        SELECT #{groupId}, group_name || '(复制)', evaluation_type, members_num, #{creator}, SYSDATE, #{createDept}
+        (group_id, group_name, evaluation_type, members_num, creator, create_time, create_dept,GROUP_TYPE)
+        SELECT #{groupId}, group_name || '(复制)', evaluation_type, members_num, #{creator}, SYSDATE, #{createDept},group_type
         FROM T_KH_EVALUATION_GROUP
         WHERE group_id = #{id}
     </insert>
@@ -2475,9 +2475,6 @@
         <if test="empPersonId != null and empPersonId != '' ">
             AND t3.emp_person_id = #{empPersonId}
         </if>
-        <if test="empDeptId != null and empDeptId != '' ">
-            AND t3.emp_dept_id = #{empDeptId}
-        </if>
         <if test="taskId != null and taskId != '' ">
             AND t3.task_id = #{taskId}
         </if>
@@ -2523,5 +2520,11 @@
         SELECT *
         FROM t_kh_evaluation_emps
         WHERE task_id = #{taskId}
+    </select>
+    <select id="getInterviewers" resultType="com.goisan.system.bean.AutoComplete">
+        SELECT
+        name as "label",
+        id as "value"
+        FROM T_RS_INTERVIEWERS
     </select>
 </mapper>

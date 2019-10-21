@@ -382,4 +382,6 @@ public interface EvaluationDao {
     List<EvaluationEmpsMenmbers> getInterviewersListTask(EvaluationEmpsMenmbers evaluationEmpsMenmbers);
 
     List<EvaluationTask> getMonitorInterviewersTask(EvaluationTask task);
+
+    List<AutoComplete> getInterviewers();
 }

@@ -46,7 +46,6 @@
                 {"data": "empsId", "visible": false},
                 {"data": "personId", "visible": false},
                 {"data": "name", "title": "被评人"},
-                {"data": "deptShow", "title": "被评人部门"},
                 {"data": "evaluation", "title": "已评人数"},
                 {"data": "unEvaluation", "title": "未评人数"},
                 /*{"data": "total", "title": "得分"},*/

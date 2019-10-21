@@ -353,4 +353,6 @@ public interface EvaluationService {
     void saveGroupInterviewersEmps(String ids, String groupId, String evaluationType);
 
     List<EvaluationTask> getMonitorInterviewersTask(EvaluationTask task);
+
+    List<AutoComplete> getInterviewers();
 }

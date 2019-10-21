@@ -3,10 +3,7 @@ package com.goisan.evaluation.service.impl;
 import com.goisan.evaluation.bean.*;
 import com.goisan.evaluation.dao.EvaluationDao;
 import com.goisan.evaluation.service.EvaluationService;
-import com.goisan.system.bean.EchartsMenu;
-import com.goisan.system.bean.Index;
-import com.goisan.system.bean.Select2;
-import com.goisan.system.bean.Tree;
+import com.goisan.system.bean.*;
 import com.goisan.system.dao.EchartsMenuDao;
 import com.goisan.system.tools.CommonUtil;
 import org.apache.ibatis.annotations.Param;
@@ -923,6 +920,10 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     public  List<EvaluationTask> getMonitorInterviewersTask(EvaluationTask task){
         return evaluationDao.getMonitorInterviewersTask(task);
+    }
+
+    public List<AutoComplete> getInterviewers(){
+        return evaluationDao.getInterviewers();
     }
 
     public void saveGroupInterviewersEmps(String ids, String groupId, String evaluationType) {

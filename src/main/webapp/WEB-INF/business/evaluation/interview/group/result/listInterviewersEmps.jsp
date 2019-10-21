@@ -98,7 +98,7 @@
             }
         });
 
-        $.get("<%=request.getContextPath()%>/common/getPersonDept", function (data) {
+        $.get("<%=request.getContextPath()%>/evaluation/getInterviewersPersonDept", function (data) {
             $("#empNameSel").autocomplete({
                 source: data,
                 select: function (event, ui) {

@@ -3825,9 +3825,7 @@ public class EvaluationController {
             }
             if (null != eEmps.getEmpPersonId() && !eEmps.getEmpPersonId().equals("") && !eEmps.getEmpPersonId()
                     .equals("undefined")) {
-                String[] str = eEmps.getEmpPersonId().split(",");
-                eEmpsMenmbers.setEmpDeptId(str[0]);
-                eEmpsMenmbers.setEmpPersonId(str[1]);
+                eEmpsMenmbers.setEmpPersonId(eEmps.getEmpPersonId());
             }
         }
         eEmpsMenmbers.setEvaluationFlag(eEmps.getEvaluationFlag());
@@ -4039,4 +4037,19 @@ public class EvaluationController {
         return map;
     }
 
+    @ResponseBody
+    @RequestMapping("/evaluation/getInterviewersPersonDept")
+    public List<AutoComplete> getInterviewers(String examId) {
+        List<AutoComplete> personDept = evaluationService.getInterviewers();
+        return personDept;
+    }
+
+    @ResponseBody
+    @RequestMapping("/evaluation/getMonitoerInterviewersEmpsByTaskId")
+    public Map getMonitoerInterviewersEmpsByTaskId(String id, String evaluationType) {
+        EvaluationTask etask = new EvaluationTask();
+        etask.setTaskId(id);
+        etask.setEvaluationType(evaluationType);
+        return CommonUtil.tableMap(evaluationService.getMonitoerEmpsByTaskId(etask));
+    }
 }
