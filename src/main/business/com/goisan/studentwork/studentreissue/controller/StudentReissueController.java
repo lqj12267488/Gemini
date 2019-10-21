@@ -8,12 +8,14 @@ import com.goisan.studentwork.studentreissue.bean.StudentReissue;
 import com.goisan.studentwork.studentreissue.service.StudentReissueService;
 import com.goisan.synergy.workflow.service.StampService;
 import com.goisan.system.bean.AutoComplete;
+import com.goisan.system.bean.Files;
 import com.goisan.system.bean.LoginUser;
 import com.goisan.system.bean.Student;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import com.goisan.workflow.bean.Handle;
 import com.goisan.workflow.service.WorkflowService;
+import org.apache.commons.io.FileUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +23,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -71,6 +76,7 @@ public class StudentReissueController {
         studentReissueMap.put("data", studentReissueService.getStudentReissueList(studentReissue));
         return studentReissueMap;
     }
+
     @ResponseBody
     @RequestMapping("/studentReissue/autoCompleteDept")
     public List<AutoComplete> autoCompleteDept() {
@@ -132,6 +138,32 @@ public class StudentReissueController {
         mv.addObject("studentReissue", leave);
         return mv;
 
+    }
+
+
+    //base64字符串转化成图片
+    public static String GenerateImage(String imgStr) {   //对字节数组字符串进行Base64解码并生成图片
+        if (imgStr == null) //图像数据为空
+            return "";
+        BASE64Decoder decoder = new BASE64Decoder();
+        try {
+            //Base64解码
+            byte[] b = decoder.decodeBuffer(imgStr);
+            for (int i = 0; i < b.length; ++i) {
+                if (b[i] < 0) {//调整异常数据
+                    b[i] += 256;
+                }
+            }
+            //生成jpeg图片
+            String imgFilePath = "d://222.jpg";//新生成的图片
+            OutputStream out = new FileOutputStream(imgFilePath);
+            out.write(b);
+            out.flush();
+            out.close();
+            return imgFilePath;
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     /**
@@ -264,10 +296,10 @@ public class StudentReissueController {
         ModelAndView mv = new ModelAndView("/business/studentwork/studentreissue/printStudentReissue");
         String workflowName = workflowService.getWorkflowNameByWorkflowCode("T_XG_STUDENT_REISSUE_WF01");
         StudentReissue leave = studentReissueService.getLeaveBy(id);
-        mv.addObject("requestDateYear",leave.getRequestDate().split("T")[0].split("-")[0]);
-        mv.addObject("requestDateMonth",leave.getRequestDate().split("T")[0].split("-")[1]);
-        mv.addObject("requestDateDay",leave.getRequestDate().split("T")[0].split("-")[2]);
-        leave.setRequestDate(leave.getRequestDate().split("T")[0].split("-")[0]+"年"+leave.getRequestDate().split("T")[0].split("-")[1]+"月"+leave.getRequestDate().split("T")[0].split("-")[2]+"日");
+        mv.addObject("requestDateYear", leave.getRequestDate().split("T")[0].split("-")[0]);
+        mv.addObject("requestDateMonth", leave.getRequestDate().split("T")[0].split("-")[1]);
+        mv.addObject("requestDateDay", leave.getRequestDate().split("T")[0].split("-")[2]);
+        leave.setRequestDate(leave.getRequestDate().split("T")[0].split("-")[0] + "年" + leave.getRequestDate().split("T")[0].split("-")[1] + "月" + leave.getRequestDate().split("T")[0].split("-")[2] + "日");
         mv.addObject("studentReissue", leave);
         mv.addObject("workflowName", workflowName);
         String state = stampService.getStateById(id);
@@ -292,17 +324,17 @@ public class StudentReissueController {
             if ("年级组组长".equals(s.getHandleRole())) {
                 agentNames = s.getHandleName();
                 agent = s.getRemark();
-                agentRequestDate =  s.getHandleTime().split(" ")[0].split("-")[0]+"年"+s.getHandleTime().split(" ")[0].split("-")[1]+"月"+s.getHandleTime().split(" ")[0].split("-")[2]+"日";
+                agentRequestDate = s.getHandleTime().split(" ")[0].split("-")[0] + "年" + s.getHandleTime().split(" ")[0].split("-")[1] + "月" + s.getHandleTime().split(" ")[0].split("-")[2] + "日";
             }
             if ("部门负责人".equals(s.getHandleRole())) {
                 departmentNames = s.getHandleName();
                 departmentName = s.getRemark();
-                departmentNameRequestDate =  s.getHandleTime().split(" ")[0].split("-")[0]+"年"+s.getHandleTime().split(" ")[0].split("-")[1]+"月"+s.getHandleTime().split(" ")[0].split("-")[2]+"日";
+                departmentNameRequestDate = s.getHandleTime().split(" ")[0].split("-")[0] + "年" + s.getHandleTime().split(" ")[0].split("-")[1] + "月" + s.getHandleTime().split(" ")[0].split("-")[2] + "日";
             }
             if ("学生处负责人".equals(s.getHandleRole())) {
                 departmentStudentNames = s.getHandleName();
                 departmentNameStudent = s.getRemark();
-                departmentNameStudentRequestDate =  s.getHandleTime().split(" ")[0].split("-")[0]+"年"+s.getHandleTime().split(" ")[0].split("-")[1]+"月"+s.getHandleTime().split(" ")[0].split("-")[2]+"日";
+                departmentNameStudentRequestDate = s.getHandleTime().split(" ")[0].split("-")[0] + "年" + s.getHandleTime().split(" ")[0].split("-")[1] + "月" + s.getHandleTime().split(" ")[0].split("-")[2] + "日";
             }
         }
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式

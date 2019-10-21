@@ -19,7 +19,7 @@
     </div>
     <div style="float: right;width: 230px;height: 160px;">
         <div style="width: 160px;height: 160px;margin-top: -4px;">
-                    <img onclick="showInputFile()"
+                    <img onclick="showInputFileImg()"
                          style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
                          src="data:image/png;base64,${studentReissue.img}"
                          height="150"
@@ -186,7 +186,6 @@
 <input id="printFunds" hidden value="<%=request.getContextPath()%>/studentReissue/printStudentReissue?id=${studentReissue.id}">
 
 <script>
-
 
 </script>
 
