@@ -2,6 +2,7 @@ package com.goisan.personnel.teachercontract.controller;
 
 import com.goisan.personnel.teachercontract.bean.TeacherContract;
 import com.goisan.personnel.teachercontract.service.TeacherContractService;
+import com.goisan.studentwork.maintenance.bean.MtType;
 import com.goisan.system.bean.Emp;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.service.CommonService;
@@ -53,16 +54,26 @@ public class TeacherContractController {
         return "/business/personnel/teachercontract/teacherContractList";
     }
 
+//    @ResponseBody
+//    @RequestMapping("/TeacherContract/getTeacherContractList")
+//    public Map<String,Object> getTeacherContractList(TeacherContract teacherContract,int draw, int start, int length) {
+//         PageHelper.startPage(start / length + 1, length);
+//         Map<String, Object> map = new HashMap(16);
+//         List<TeacherContract> list =  teacherContractService.getTeacherContractList(teacherContract);
+//         PageInfo<List<TeacherContract>> info = new PageInfo(list);
+//         map.put("draw", draw);
+//         map.put("recordsTotal",  list.size());
+//         map.put("recordsFiltered", list.size());
+//         map.put("data", list);
+//        return map;
+//    }
+
     @ResponseBody
     @RequestMapping("/TeacherContract/getTeacherContractList")
-    public Map<String,Object> getTeacherContractList(TeacherContract teacherContract,int draw, int start, int length) {
-         PageHelper.startPage(start / length + 1, length);
-         Map<String, Object> map = new HashMap(16);
-         List<TeacherContract> list =  teacherContractService.getTeacherContractList(teacherContract);
-         map.put("draw", draw);
-         map.put("recordsTotal", list.size());
-         map.put("recordsFiltered", list.size());
-         map.put("data", list);
+    public Map<String,Object> getTeacherContractList(TeacherContract teacherContract) {
+        Map<String, Object> map = new HashMap(16);
+        List<TeacherContract> list =  teacherContractService.getTeacherContractList(teacherContract);
+        map.put("data", list);
         return map;
     }
 

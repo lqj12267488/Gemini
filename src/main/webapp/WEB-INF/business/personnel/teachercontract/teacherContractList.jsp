@@ -111,8 +111,8 @@
 
     function search(fature) {
         $("#table").DataTable({
-            "processing": true,
-            "serverSide": true,
+            // "processing": true,
+            // "serverSide": true,
             "ajax": {
                 "type": "post",
                 "url": '<%=request.getContextPath()%>/TeacherContract/getTeacherContractList',
