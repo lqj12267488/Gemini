@@ -1027,8 +1027,35 @@ public class EmpController {
     }
 
     private void setColumnDefaultStyleAndWidth(HSSFSheet sheet, HSSFCellStyle style) {
-
-        sheet.setDefaultRowHeightInPoints(10);
+        sheet.setColumnWidth(0,20* 256);
+        sheet.setColumnWidth(1,20* 256);
+        sheet.setColumnWidth(2,15* 256);
+        sheet.setColumnWidth(3,40* 256);
+        sheet.setColumnWidth(4,15* 256);
+        sheet.setColumnWidth(5,15* 256);
+        sheet.setColumnWidth(6,15* 256);
+        sheet.setColumnWidth(7,15* 256);
+        sheet.setColumnWidth(8,20* 256);
+        sheet.setColumnWidth(9,15* 256);
+        sheet.setColumnWidth(10,30* 256);
+        sheet.setColumnWidth(11,40* 256);
+        sheet.setColumnWidth(12,30* 256);
+        sheet.setColumnWidth(13,20* 256);
+        sheet.setColumnWidth(14,15* 256);
+        sheet.setColumnWidth(15,15* 256);
+        sheet.setColumnWidth(16,15* 256);
+        sheet.setColumnWidth(17,15* 256);
+        sheet.setColumnWidth(18,15* 256);
+        sheet.setColumnWidth(19,15* 256);
+        sheet.setColumnWidth(20,15* 256);
+        sheet.setColumnWidth(21,15* 256);
+        sheet.setColumnWidth(22,15* 256);
+        sheet.setColumnWidth(23,15* 256);
+        sheet.setColumnWidth(24,40* 256);
+        sheet.setColumnWidth(25,15* 256);
+        sheet.setColumnWidth(26,15* 256);
+        sheet.setColumnWidth(27,15* 256);
+        sheet.setDefaultRowHeightInPoints(27);
         sheet.setDefaultColumnStyle(0, style);
         sheet.setDefaultColumnStyle(1, style);
         sheet.setDefaultColumnStyle(2, style);
@@ -1123,31 +1150,29 @@ public class EmpController {
         hssfFont.setColor(HSSFColor.RED.index);
         headStyle.setFont(hssfFont);
         sheet.setDefaultColumnWidth(25);
-
-
         sheet.createRow(0).createCell(0).setCellStyle(headStyle);
         sheet.createRow(1).createCell(0).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(0).setCellValue("");
-        sheet.getRow(0).getCell(0).setCellValue("说明：此项为必填项");
-        sheet.getRow(0).createCell(1).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(1).setCellValue("说明：此项为必填项");
-        sheet.getRow(0).createCell(3).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(3).setCellValue("说明：此项为必填项 格式：2000-01-01");
-        sheet.getRow(0).createCell(8).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(8).setCellValue("说明：此项为必填项");
-        sheet.getRow(0).createCell(10).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(10).setCellValue("格式：2000-01-01");
-        sheet.getRow(0).createCell(11).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(11).setCellValue("说明：此项为必填项");
-        sheet.getRow(0).createCell(12).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(12).setCellValue("说明：此项为必填项");
-        sheet.getRow(0).createCell(13).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(13).setCellValue("说明：此项为必填项");
-        sheet.getRow(0).createCell(24).setCellStyle(headStyle);
-        sheet.getRow(0).getCell(24).setCellValue("格式：2000-01-01");
+        sheet.getRow(1).getCell(0).setCellValue("");
+        sheet.getRow(1).getCell(0).setCellValue("说明：此项为必填项");
+        sheet.getRow(1).createCell(1).setCellStyle(headStyle);
+        sheet.getRow(1).getCell(1).setCellValue("说明：此项为必填项");
+        sheet.getRow(1).createCell(3).setCellStyle(headStyle);
+        sheet.getRow(1).getCell(3).setCellValue("说明：此项为必填项 格式：2000-01-01");
+        sheet.getRow(1).createCell(8).setCellStyle(headStyle);
+        sheet.getRow(1).getCell(8).setCellValue("说明：此项为必填项");
+        sheet.getRow(1).createCell(10).setCellStyle(headStyle);
+        sheet.getRow(1).getCell(10).setCellValue("格式：2000-01-01");
+        sheet.getRow(1).createCell(11).setCellStyle(headStyle);
+        sheet.getRow(1).getCell(11).setCellValue("说明：此项为必填项");
+        sheet.getRow(1).createCell(12).setCellStyle(headStyle);
+        sheet.getRow(1).getCell(12).setCellValue("说明：此项为必填项");
+        sheet.getRow(1).createCell(13).setCellStyle(headStyle);
+        sheet.getRow(1).getCell(13).setCellValue("说明：此项为必填项");
+        sheet.getRow(1).createCell(24).setCellStyle(headStyle);
+        sheet.getRow(1).getCell(24).setCellValue("格式：2000-01-01");
 
-        sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 27));
-        HSSFRow rowTil = sheet.createRow(1);
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 27));
+        HSSFRow rowTil = sheet.createRow(0);
         HSSFFont font = PoiUtils.createFont(wb, 16, "宋体", true, null);
         HSSFCellStyle tilStyle = PoiUtils.createStyle(wb, font, false);
         tilStyle.setAlignment(HorizontalAlignment.LEFT);
