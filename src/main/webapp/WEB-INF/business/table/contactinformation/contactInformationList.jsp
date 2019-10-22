@@ -28,15 +28,19 @@
                             <div class="col-md-4">
                                 <input id="schoolWebsiteEdit" value="${data.schoolWebsite}">
                             </div>
-                            <div class="col-md-2 tar">
+                        </div>
+                            <div  id="ldht">
+                                <div class="form-row">
+                                    法人代表信息
+                                </div>
+                                <div class="form-row">
+                              <div class="col-md-2 tar">
                                 <span class="iconBtx">*</span> 法人姓名：
                             </div>
                             <div class="col-md-4">
                                 <input id="teacherInfoName" type="text" value="${data.areaPersonName}"/>
                                 <input id="perId" type="hidden" value="${data.areaPerson}"/>
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 教职工号：
                             </div>
@@ -44,6 +48,8 @@
                                 <input id="personNumber" class="validate[required,maxSize[20]] form-control"
                                        readonly="readonly" value="${data.areaStaff}">
                             </div>
+                           </div>
+                         <div class="form-row" >
                             <div class="col-md-2 tar">
                                 职务：
                             </div>
@@ -51,28 +57,31 @@
                                 <input id="personPost" class="validate[required,maxSize[20]] form-control"
                                        readonly="readonly" value="${data.areaPost}">
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 <span class="iconBtx">*</span> 法人区号－电话号码：
                             </div>
                             <div class="col-md-4">
                                 <input id="areaNumberEdit" value="${data.areaNumber}">
                             </div>
+                         </div>
                             <div class="col-md-2 tar">
                                 <span class="iconBtx">*</span> 法人区号－传真号：
                             </div>
                             <div class="col-md-4">
                                 <input id="areaFaxEdit" value="${data.areaFax}">
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 <span class="iconBtx">*</span> 法人电子邮箱：
                             </div>
                             <div class="col-md-4">
                                 <input id="mailBoxEdit" value="${data.mailBox}">
                             </div>
+                        </div>
+                      <div id="jzxy">
+                         <div class="form-row">
+                            法人代表信息
+                        </div>
+                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 <span class="iconBtx">*</span> 联系人姓名：
                             </div>
@@ -80,8 +89,6 @@
                                 <input id="teacherInfoNameContacts" type="text" value="${data.contactsPersonName}"/>
                                 <input id="perIdContacts" type="hidden" value="${data.contactsPerson}"/>
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 教职工号：
                             </div>
@@ -89,6 +96,8 @@
                                 <input id="f_personNumber" class="validate[required,maxSize[20]] form-control"
                                        readonly="readonly" value="${data.areaContactsStaff}">
                             </div>
+                        </div>
+                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 职务：
                             </div>
@@ -96,22 +105,20 @@
                                 <input id="f_personPost" class="validate[required,maxSize[20]] form-control"
                                        readonly="readonly"  value="${data.areaContactsPost}">
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 <span class="iconBtx">*</span> 联系人区号－电话号码：
                             </div>
                             <div class="col-md-4">
                                 <input id="contactsAreaNumberEdit" value="${data.contactsAreaNumber}">
                             </div>
+                        </div>
+                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 <span class="iconBtx">*</span> 联系人区号－传真号：
                             </div>
                             <div class="col-md-4">
                                 <input id="contactsAreaFaxEdit" value="${data.contactsAreaFax}">
                             </div>
-                        </div>
-                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 手机号：
                             </div>
@@ -119,6 +126,8 @@
                                 <input id="f_phone" class="validate[required,maxSize[20]] form-control"
                                        readonly="readonly"  value="${data.areaContactsPhone}">
                             </div>
+                        </div>
+                        <div class="form-row">
                             <div class="col-md-2 tar">
                                 <span class="iconBtx">*</span> 联系人电子邮箱：
                             </div>
@@ -126,15 +135,11 @@
                                 <input id="contactsMailBoxEdit" value="${data.contactsMailBox}">
                             </div>
                         </div>
-                        <div class="form-row">
                             <div class="col-md-2 tar">
-
                             </div>
                             <div class="col-md-4">
-
                             </div>
                             <div class="col-md-2 tar">
-
                             </div>
                             <div class="col-md-4"  style="text-align: right;">
                                 <button type="button" class="btn btn-default btn-clean" onclick="save()">保存</button>
