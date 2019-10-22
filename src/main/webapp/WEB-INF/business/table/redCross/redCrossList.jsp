@@ -35,12 +35,9 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="col-md-1 tar">
-                                总数：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="sumSel">
-                            </div>
+                            会员数量(人):
+                        </div>
+                        <div class="form-row">
                             <div class="col-md-1 tar">
                                 教工数：
                             </div>
@@ -53,12 +50,9 @@
                             <div class="col-md-2">
                                 <input id="studentnumberSel">
                             </div>
-                            <div class="col-md-1 tar">
-                                总数：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="moneynumSel">
-                            </div>
+                        </div>
+                        <div class="form-row">
+                            会费情况(人):
                         </div>
                         <div class="form-row">
                             <div class="col-md-1 tar">
@@ -72,6 +66,9 @@
                             </div>
                             <div class="col-md-2">
                                 <input id="selfSel">
+                            </div>
+                            <div class="form-row">
+                                姓名:
                             </div>
                             <div class="col-md-1 tar">
                                 姓名：
@@ -87,12 +84,9 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            <div class="col-md-1 tar">
-                                总数：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="fundssumSel">
-                            </div>
+                            活动经济来源(元):
+                        </div>
+                        <div class="form-row">
                             <div class="col-md-1 tar">
                                 会费：
                             </div>
@@ -119,11 +113,8 @@
                             <div class="col-md-2">
                                 <input id="otherSel">
                             </div>
-                            <div class="col-md-1 tar">
-                                总数：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="contributesumSel">
+                            <div class="form-row">
+                                捐赠情况(元):
                             </div>
                             <div class="col-md-1 tar">
                                 上交业务主管单位：
@@ -145,17 +136,17 @@
                             <div class="col-md-2">
                                 <input id="activitycontentSel">
                             </div>
-                            <div class="col-md-1 tar">
-                                总数：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="personsumSel">
+                            <div class="form-row">
+                                培训情况:
                             </div>
                             <div class="col-md-1 tar">
                                 获得证书数：
                             </div>
                             <div class="col-md-2">
                                 <input id="certificatenumberSel">
+                            </div>
+                            <div class="form-row">
+                                造血干细胞(人次):
                             </div>
                             <div class="col-md-1 tar">
                                 采集数 ：
@@ -299,13 +290,6 @@
             });
             return;
         }
-        if ($("#sumSel").val() == "" || $("#sumSel").val() == undefined || $("#sumSel").val() == null) {
-            swal({
-                title: "请填写总数！",
-                type: "warning"
-            });
-            return;
-        }
         if ($("#teachingstaffnumberSel").val() == "" || $("#teachingstaffnumberSel").val() == undefined || $("#teachingstaffnumberSel").val() == null) {
             swal({
                 title: "请填写教工数！",
@@ -316,13 +300,6 @@
         if ($("#studentnumberSel").val() == "" || $("#studentnumberSel").val() == undefined || $("#studentnumberSel").val() == null) {
             swal({
                 title: "请填写学生数！",
-                type: "warning"
-            });
-            return;
-        }
-        if ($("#moneynumSel").val() == "" || $("#moneynumSel").val() == undefined || $("#moneynumSel").val() == null) {
-            swal({
-                title: "请填写总数！",
                 type: "warning"
             });
             return;
@@ -355,13 +332,6 @@
             });
             return;
         }
-        if ($("#fundssumSel").val() == "" || $("#fundssumSel").val() == undefined || $("#fundssumSel").val() == null) {
-            swal({
-                title: "请填写总数！",
-                type: "warning"
-            });
-            return;
-        }
         if ($("#membershipduesSel").val() == "" || $("#membershipduesSel").val() == undefined || $("#membershipduesSel").val() == null) {
             swal({
                 title: "请填写会费！",
@@ -390,13 +360,6 @@
             });
             return;
         }
-        if ($("#contributesumSel").val() == "" || $("#contributesumSel").val() == undefined || $("#contributesumSel").val() == null) {
-            swal({
-                title: "请填写总数！",
-                type: "warning"
-            });
-            return;
-        }
         if ($("#governingbodySel").val() == "" || $("#governingbodySel").val() == undefined || $("#governingbodySel").val() == null) {
             swal({
                 title: "请填写上交业务主管单位！",
@@ -414,13 +377,6 @@
         if ($("#activitycontentSel").val() == "" || $("#activitycontentSel").val() == undefined || $("#activitycontentSel").val() == null) {
             swal({
                 title: "请填写主要活动内容！",
-                type: "warning"
-            });
-            return;
-        }
-        if ($("#personsumSel").val() == "" || $("#personsumSel").val() == undefined || $("#personsumSel").val() == null) {
-            swal({
-                title: "请填写总数！",
                 type: "warning"
             });
             return;

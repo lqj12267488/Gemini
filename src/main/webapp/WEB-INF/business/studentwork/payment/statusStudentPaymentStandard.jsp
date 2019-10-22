@@ -228,7 +228,7 @@
 
 
             ],
-            "processing": true,
+            "processing": false,
             "serverSide": true,
             paging: true,
             'order': [[2, 'desc'], [3, 'desc'], [4, 'desc'], [5, 'desc'], [6, 'desc'], [7, 'desc']],
@@ -262,7 +262,7 @@
 
     function checkAll() {
         if ($("#checkAll").attr("checked")) {
-            $("[name='checkbox']").attr("checked", "checked");
+            $("[name='checkbox']").attr("checked",true);
         } else {
             $("[name='checkbox']").removeAttr("checked");
         }

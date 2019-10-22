@@ -237,4 +237,18 @@ public class MessageServiceImpl implements MessageService {
     public List<Message> getMessageMoreReaded(String loginID, String deptId) {
         return messageDao.getMessageMoreReaded(loginID,deptId);
     }
+
+    @Override
+    public Message selectMessage(String id) {
+        Message message = messageDao.selectMessage(id);
+        String str = "";
+        if ("0".equals(message.getMEETINGREQUEST())){
+            str = "行政会议";
+        }else{
+            str = "党务会议";
+        }
+        message.setTypeShow(str);
+        message.setRequester(messageDao.selectCreator(message.getCreator()));
+        return message;
+    }
 }

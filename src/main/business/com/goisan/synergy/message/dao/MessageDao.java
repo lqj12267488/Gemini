@@ -68,4 +68,8 @@ public interface MessageDao {
     List<Message> getMessageMoreList(@Param("loginID") String loginID, @Param("deptId") String deptId);
 
     List<Message> getMessageMoreReaded(@Param("loginID") String loginID, @Param("deptId") String deptId);
+
+    Message selectMessage(String id);
+
+    String selectCreator(String creator);
 }

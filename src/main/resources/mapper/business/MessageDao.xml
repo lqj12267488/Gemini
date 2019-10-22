@@ -432,4 +432,17 @@
         request_flag='2'
         WHERE id = #{id}
     </update>
+    <select id="selectMessage" parameterType="java.lang.String" resultType="com.goisan.synergy.message.bean.Message">
+         select t.*, FUNC_GET_TABLEVALUE(
+           t.MEETING_SITE,
+           'T_JW_MEETINGROOM',
+           'id',
+           'MEETING_ROOM_NAME') || '举行' || t.content ||
+           '会议，请参会人员准时参加。' title
+           from   T_BG_HALLUSE_WF t
+           where t.id = #{id}
+    </select>
+    <select id="selectCreator" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.name from T_SYS_USER t where t.user_id = #{creator}
+    </select>
 </mapper>

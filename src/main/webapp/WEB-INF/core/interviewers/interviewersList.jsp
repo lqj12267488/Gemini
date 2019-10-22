@@ -173,10 +173,10 @@
                 "data": {
                     name: $("#s_name").val(),
                     sex: $("#s_sex option:selected").val(),
-                    person: $("#s_person").val(),
+                    personSalary: $("#s_person").val(),
                     education: $("#s_education option:selected").val(),
                     nation: $("#s_nation option:selected").val(),
-                    post: $("#s_post").val(),
+                    job: $("#s_post").val(),
                 }
             },
             "destroy": true,

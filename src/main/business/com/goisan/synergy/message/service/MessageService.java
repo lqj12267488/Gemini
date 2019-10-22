@@ -69,4 +69,5 @@ public interface MessageService {
 
     List<Message> getMessageMoreReaded(String loginID,String deptId);
 
+    Message selectMessage(String id);
 }

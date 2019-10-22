@@ -36,7 +36,15 @@ public class Message extends BaseBean {
     private String requestFlag;
     private String workFlowFlag;
     private String isDean;
+    private String MEETINGREQUEST;
 
+    public String getMEETINGREQUEST() {
+        return MEETINGREQUEST;
+    }
+
+    public void setMEETINGREQUEST(String MEETINGREQUEST) {
+        this.MEETINGREQUEST = MEETINGREQUEST;
+    }
 
     public String getTypeShow() {
         return typeShow;

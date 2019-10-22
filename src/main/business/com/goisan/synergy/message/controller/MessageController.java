@@ -245,6 +245,9 @@ public class MessageController {
     public ModelAndView moreMessage(String id) {
         ModelAndView mv = new ModelAndView("/core/message/viewMoreMessage");
         Message message = messageService.getMessageById(id);
+        if (message==null){
+             message =   messageService.selectMessage(id);
+        }
         mv.addObject("message", message);
         mv.addObject("head", "");
         return mv;

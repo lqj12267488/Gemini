@@ -483,60 +483,85 @@
     </select>
     <!--首页通知公告更多(已读)-->
     <select id="getNoticeMoreReaded" resultType="com.goisan.synergy.notice.bean.Notice">
-       select * from (
-      SELECT '1' abc,
-            t.id,
-            t.title,
-            NVL(t.isdean,' ') isDean,
-            to_char(t.content) content,
-            t.type,
-            t.public_time publicTime,
-            FUNC_GET_DICVALUE(t.type, 'GGLX') typeShow,
-            t.create_time createTime,
-            t.dept_id deptId,
-            FUNC_GET_USERNAME(t.creator) requester ,t.creator
-            FROM T_SYS_NOTICE t
-            WHERE 1 = 1 AND valid_flag = '1' and t.publish_flag = '1'
-            and t.DEPT_ID LIKE FUNC_GET_SCHOOL_RANGE('${deptId}','${level}')
-            and t.title is not null
-            and t.ID IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${loginID}')
+select   *
+  from (SELECT '1' abc,
+               t.id,
+               t.title,
+               NVL(t.isdean, ' ') isDean,
+               to_char(t.content) content,
+               t.type,
+               t.public_time publicTime,
+               FUNC_GET_DICVALUE(t.type, 'GGLX') typeShow,
+               t.create_time createTime,
+               t.dept_id deptId,
+               FUNC_GET_USERNAME(t.creator) requester,
+               t.creator
+          FROM T_SYS_NOTICE t
+         WHERE 1 = 1
+           AND valid_flag = '1'
+           and t.publish_flag = '1'
+           and t.DEPT_ID LIKE FUNC_GET_SCHOOL_RANGE('001007', '10')
+           and t.title is not null
+           and t.ID IN
+               (SELECT ll.notice_id
+                  FROM T_SYS_NOTICE_LOG ll
+                 WHERE ll.CREATOR = 'aa18204b-6421-48c8-a236-b74e52ca6da5')
         UNION
         SELECT '2' abc,
-            tt.id,
-            tt.title,
-            NVL(tt.isdean,' ') isDean,
-            tt.content,
-            tt.type,
-            tt.public_time publicTime,
-            FUNC_GET_DICVALUE(tt.type, 'TZLX') typeShow,
-            tt.create_time createTime,
-            tt.dept_id deptId,
-            FUNC_GET_USERNAME(tt.creator) requester , tt.creator
-            FROM T_SYS_MESSAGE tt
-            WHERE 1 = 1
-            --and tt.request_flag = '2'
-            and tt.publish_flag = '1'
-            and (tt.emp_id LIKE '%'||'${loginID}'||'%' OR tt.creator = '${loginID}' OR tt.dept_id LIKE '%'||'${deptId}'||'%')
-            and tt.id in (select message_id from T_SYS_MESSAGE_LOG l where l.creator ='${loginID}')
-            and tt.title is not null
-            and tt.valid_flag = '1'
-      UNION
-      SELECT '3' abc,
-             t.id,
-             '【'||FUNC_GET_DICVALUE(t.MEETING_REQUEST, 'HYSQ')||'】'||to_char(t.start_time,'yyyy')||'年'||to_char(t.start_time,'MM')||'月'||to_char(t.start_time,'dd')||'日，在'||FUNC_GET_TABLEVALUE(t.MEETING_SITE, 'T_JW_MEETINGROOM', 'id', 'MEETING_ROOM_NAME')||'举行'||t.content||'会议，请参会人员准时参加。' title,
-             FUNC_GET_DEPTNAME(t.create_dept) isdean,
-             to_char(t.content) content,
-             t.MEETING_REQUEST type,
-             t.create_time publicTime,
-             '会议通知' typeShow,
-             t.create_time createTime,
-             t.create_dept deptId,
-             FUNC_GET_USERNAME(t.creator) requester ,t.creator
-      FROM T_BG_HALLUSE_WF t
-      WHERE valid_flag = '1' and t.request_flag ='2'
-        and t.ID IN (SELECT ll.notice_id FROM T_SYS_NOTICE_LOG ll WHERE ll.CREATOR ='${loginID}')
-
-                     ) a  ORDER BY createTime DESC
+               tt.id,
+               tt.title,
+               NVL(tt.isdean, ' ') isDean,
+               tt.content,
+               tt.type,
+               tt.public_time publicTime,
+               FUNC_GET_DICVALUE(tt.type, 'TZLX') typeShow,
+               tt.create_time createTime,
+               tt.dept_id deptId,
+               FUNC_GET_USERNAME(tt.creator) requester,
+               tt.creator
+          FROM T_SYS_MESSAGE tt
+         WHERE 1 = 1
+           and tt.request_flag = '2'
+           and tt.publish_flag = '1'
+           and (tt.emp_id LIKE
+               '%' || 'aa18204b-6421-48c8-a236-b74e52ca6da5' || '%' OR
+               tt.creator = 'aa18204b-6421-48c8-a236-b74e52ca6da5' OR
+               tt.dept_id LIKE '%' || '001007' || '%')
+           and tt.id in
+               (select message_id
+                  from T_SYS_MESSAGE_LOG l
+                 where l.creator = 'aa18204b-6421-48c8-a236-b74e52ca6da5')
+           and tt.title is not null
+           and tt.valid_flag = '1'
+        UNION
+        SELECT   '3' abc,
+               tt.id,
+               '【' || FUNC_GET_DICVALUE(t.MEETING_REQUEST, 'HYSQ') || '】' ||
+               to_char(t.start_time, 'yyyy') || '年' ||
+               to_char(t.start_time, 'MM') || '月' ||
+               to_char(t.start_time, 'dd') || '日，在' ||
+               FUNC_GET_TABLEVALUE(t.MEETING_SITE,
+                                   'T_JW_MEETINGROOM',
+                                   'id',
+                                   'MEETING_ROOM_NAME') || '举行' || t.content ||
+               '会议，请参会人员准时参加。' title,
+               FUNC_GET_DEPTNAME(t.create_dept) isdean,
+               to_char(t.content) content,
+               t.MEETING_REQUEST type,
+               t.create_time publicTime,
+               '会议通知' typeShow,
+               t.create_time createTime,
+               t.create_dept deptId,
+               FUNC_GET_USERNAME(t.creator) requester,
+               t.creator
+          FROM T_BG_HALLUSE_WF t ,T_BG_HALLUSE_WF tt
+         WHERE t.valid_flag = '1'
+           and t.request_flag = '2'
+           and t.ID IN
+               (SELECT ll.notice_id
+                  FROM T_SYS_NOTICE_LOG ll
+                 WHERE ll.CREATOR = 'aa18204b-6421-48c8-a236-b74e52ca6da5')) a
+ ORDER BY createTime DESC
     </select>
     <select id="getProcessList" resultType="com.goisan.synergy.notice.bean.Notice"
             parameterType="com.goisan.synergy.notice.bean.Notice">
