@@ -104,7 +104,7 @@
 
     <select id="getEnrollmentStudentList" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"
             resultType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent">
-        SELECT
+   <!--     SELECT
         t.student_id studentId,
         t.DEPARTMENTS_ID departmentsId,
         t.MAJOR_CODE majorCode,
@@ -118,6 +118,7 @@
         t.nation,
         t.address,
         t.REPORT_STATUS reportStatus,
+        FUNC_GET_DICVALUE(t.REPORT_STATUS, 'BDZT') reportStatusShow,
       /*  t.PROGRAM_DURATION programDuration,*/
         t.household_register_place housePlace,
         t.household_register_province houseProvince,
@@ -128,8 +129,8 @@
         t.MAJOR_DIRECTION majorDirection,
         t.tel,
         decode(t.departments_id,'','',FUNC_GET_DEPTNAME(t.departments_id) ) departmentShow,
-        decode(t.major_code,'','',FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '--' ||
-        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') || '--' || FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC'))
+        decode(t.major_code,'','',FUNC_GET_TABLEVALUE(t.major_code, 'T_XG_MAJOR', 'MAJOR_CODE', 'MAJOR_NAME') || '&#45;&#45;' ||
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') || '&#45;&#45;' || FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC'))
         majorShow,
         FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') trainingLevelShow,
         FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
@@ -148,16 +149,72 @@
         <if test="name != null and name != '' ">
             AND t.name like '%'||#{name}||'%'
         </if>
-        <!--<if test="departmentsId != null and departmentsId != '' ">
+        &lt;!&ndash;<if test="departmentsId != null and departmentsId != '' ">
             AND t.departments_id= #{departmentsId}
-        </if>-->
+        </if>&ndash;&gt;
         <if test="majorCode != null and majorCode != '' ">
             AND t.major_code like '%' ||#{majorCode}||'%'
         </if>
         <if test="idcard != null and idcard != '' ">
             AND t.idcard like '%' ||#{idcard}||'%'
         </if>
-        order by t.CREATE_TIME desc,t.departments_id desc,t.major_code desc,t.major_direction desc,t.training_level desc
+        order by t.CREATE_TIME desc,t.departments_id desc,t.major_code desc,t.major_direction desc,t.training_level desc-->
+        SELECT TMP_PAGE.studentId,TMP_PAGE.departmentsId,TMP_PAGE.majorCode,TMP_PAGE.trainingLevel,TMP_PAGE.name,TMP_PAGE.sex,TMP_PAGE.idcard,
+        TMP_PAGE.studentNumber,TMP_PAGE.birthday,TMP_PAGE.nationality,TMP_PAGE.nation,TMP_PAGE.address,TMP_PAGE.reportStatus, FUNC_GET_DICVALUE(TMP_PAGE.reportStatus, 'BDZT') reportStatusShow,
+        TMP_PAGE.housePlace,TMP_PAGE.houseProvince,TMP_PAGE.houseCity,TMP_PAGE.houseCounty,TMP_PAGE.politicalStatus,TMP_PAGE.homePhone,TMP_PAGE.majorDirection,
+        TMP_PAGE.tel,TMP_PAGE.departmentShow,TMP_PAGE.majorShow,TMP_PAGE.trainingLevelShow,TMP_PAGE.majorDirectionShow,
+        TMP_PAGE.sexShow,TMP_PAGE.nationalityShow,TMP_PAGE.nationShow,TMP_PAGE.studentStatusShow,TMP_PAGE.programDurationShow,TMP_PAGE.gradationShow,TMP_PAGE.studentStatus
+        FROM (SELECT ROWNUM row_id,  t.student_id studentId,
+        t.DEPARTMENTS_ID departmentsId,
+        t.MAJOR_CODE majorCode,
+        t.TRAINING_LEVEL trainingLevel,
+        t.name name,
+        t.sex,
+        t.idcard,
+        t.student_number studentNumber,
+        t.birthday,
+        t.nationality,
+        t.nation,
+        t.address,
+        t.REPORT_STATUS reportStatus,
+        t.household_register_place housePlace,
+        t.household_register_province houseProvince,
+        t.household_register_city houseCity,
+        t.household_register_county houseCounty,
+        t.political_status politicalStatus,
+        t.home_phone homePhone,
+        t.MAJOR_DIRECTION majorDirection,
+        t.tel,
+        decode(t.departments_id,
+        '',
+        '',
+        FUNC_GET_DEPTNAME(t.departments_id)) departmentShow,
+        decode(t.major_code,
+        '',
+        '',
+        FUNC_GET_TABLEVALUE(t.major_code,
+        'T_XG_MAJOR',
+        'MAJOR_CODE',
+        'MAJOR_NAME') || '--' ||
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX') || '--' ||
+        FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC')) majorShow,
+        FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') trainingLevelShow,
+        FUNC_GET_DICVALUE(t.MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
+        FUNC_GET_DICVALUE(t.REPORT_STATUS, 'BDZT') reportStatusShow,
+        FUNC_GET_DICVALUE(t.sex, 'XB') sexShow,
+        FUNC_GET_DICVALUE(t.nationality, 'GJ') nationalityShow,
+        FUNC_GET_DICVALUE(t.nation, 'MZ') nationShow,
+        FUNC_GET_DICVALUE(t.STUDENT_STATUS, 'XSZT') studentStatusShow,
+        FUNC_GET_DICVALUE(t.program_duration, 'XZ') programDurationShow,
+        FUNC_GET_DICVALUE(t.gradation, 'CC') gradationShow,
+        t.STUDENT_STATUS studentStatus
+        FROM T_XG_ENROLLMENT_STUDENT t
+        WHERE 1 = 1
+        order by t.CREATE_TIME     desc,
+        t.departments_id  desc,
+        t.major_code      desc,
+        t.major_direction desc,
+        t.training_level  desc) TMP_PAGE
     </select>
 
     <!--<select id="getDepartmentsId" parameterType="com.goisan.studentwork.enrollment.bean.EnrollmentStudent"-->

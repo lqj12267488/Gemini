@@ -171,7 +171,7 @@
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>退休证名
+                            <span class="iconBtx">*</span>退休证明
                         </div>
                         <div class="col-md-3">
                             <select id="retireProveEdit" class="validate[required,maxSize[20]] form-control"/>

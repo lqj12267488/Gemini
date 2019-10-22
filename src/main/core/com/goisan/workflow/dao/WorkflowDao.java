@@ -178,6 +178,9 @@ public interface WorkflowDao {
     List<Select2> getStudentAuditer(@Param("tableName") String tableName, @Param("businessId")
             String businessId);
 
+    List<Select2> getStudentAuditerGrantManagement(@Param("tableName") String tableName, @Param("businessId")
+            String businessId);
+
     /**
      * 获取当前节点 角色是（校级/副校级领导审核）
      * @param startId

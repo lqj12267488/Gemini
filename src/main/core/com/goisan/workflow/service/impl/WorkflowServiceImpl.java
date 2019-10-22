@@ -353,6 +353,11 @@ public class WorkflowServiceImpl implements WorkflowService {
         return workflowDao.getStudentAuditer(tableName,businessId);
     }
 
+    public List<Select2> getStudentAuditerGrantManagement(@Param("tableName") String tableName, @Param("businessId")
+            String businessId){
+        return workflowDao.getStudentAuditerGrantManagement(tableName,businessId);
+    }
+
     public String getCuurentNodeIdByStartIdAndHandleUserHandleRole(@Param("startId") String startId, @Param
             ("personId") String personId){
         return workflowDao.getCuurentNodeIdByStartIdAndHandleUserHandleRole(startId,personId);

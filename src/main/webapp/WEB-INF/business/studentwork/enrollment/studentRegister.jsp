@@ -101,6 +101,7 @@
                 {"width": "10%", "data": "majorShow", "title": "专业"},
                 {"width": "10%", "data": "programDurationShow", "title": "学制"},
                 {"width": "10%", "data": "gradationShow", "title": "层次"},
+                {"width": "10%", "data": "reportStatusShow", "title": "报到状态"},
                 {
 
                     "width": "10%",

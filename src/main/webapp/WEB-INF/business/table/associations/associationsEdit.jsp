@@ -85,7 +85,7 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>姓名
+                        <span class="iconBtx">*</span>负责人姓名
                     </div>
                     <div class="col-md-9">
                         <input id="nameEdit" value="${data.name}"/>

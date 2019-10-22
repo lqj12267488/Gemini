@@ -184,6 +184,19 @@
        AND b.id = #{businessId}
        AND s.student_id = b.creator
     </select>
+    <select id="getStudentAuditerGrantManagement" parameterType="java.lang.String"
+            resultType="com.goisan.system.bean.Select2">
+      SELECT c.HEAD_TEACHER || ':' || c.HEAD_TEACHER_DEPT id,
+       Func_get_username(c.HEAD_TEACHER)|| '--' || func_get_deptname(c.HEAD_TEACHER_DEPT) text
+      FROM t_xg_student       s,
+       t_xg_student_class sc,
+       t_xg_class         c,
+       ${tableName}       b
+      WHERE s.student_id = sc.student_id
+       AND sc.class_id = c.class_id
+       AND b.id = #{businessId}
+       AND s.student_id = b.creator
+    </select>
     <select id="getAuditerByDept" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Select2">
         SELECT

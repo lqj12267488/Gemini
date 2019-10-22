@@ -446,8 +446,8 @@ public class WorkflowController {
         if ("1".equals(nextNode.getStartFlag())) {
             if ("T_JW_SLOW_EXAMINATION".equals(tableName) || "T_XG_STUDENT_PROVE_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
                 emps = workflowService.getStudentAuditer(tableName, businessId);
-            } else if ("T_JW_SLOW_EXAMINATION".equals(tableName) || "T_XG_GRANT_MANAGEMENT_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
-                emps = workflowService.getStudentAuditer(tableName, businessId);
+            } else if ("T_XG_GRANT_MANAGEMENT_WF".equals(tableName)) {
+                emps = workflowService.getStudentAuditerGrantManagement(tableName, businessId);
             } else if ("T_DT_REPORT_MANAGEMENT".equals(tableName)) {
                 ReportManagement reportManagement = reportManagementService.getReportManagementById(businessId);
                 if ("1".equals(reportManagement.getStudentTeacherType())){
@@ -463,7 +463,7 @@ public class WorkflowController {
                 if ("T_XG_STUDENT_PROVE_WF".equals(tableName) || "T_XG_STUDENT_REISSUE_WF".equals(tableName)) {
                     emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());
                 } else if ("T_XG_GRANT_MANAGEMENT_WF".equals(tableName)) {
-                    emps = workflowService.getHeadTeacherByStudentId(CommonUtil.getPersonId());
+                    emps = workflowService.getStudentAuditerGrantManagement(tableName, businessId);
                 }  else if ("T_DT_REPORT_MANAGEMENT".equals(tableName)) {
                     ReportManagement reportManagement = reportManagementService.getReportManagementById(businessId);
                         if ("1".equals(reportManagement.getStudentTeacherType())){
