@@ -6,30 +6,15 @@
             parameterType="com.goisan.table.bean.SchExpend"
             resultType="com.goisan.table.bean.SchExpend">
         select id,land,exp_inf,EXP_DEV_ALL,exp_teach_dev,train_cost,train_pro,hire_pt_teach,sport,
-        daily_oth,rs_pro_name,rs_pro_money,tc_pro_name,tc_pro_money,
+        daily_oth,rs_pro_name,rs_pro_money,tc_pro_name,tc_pro_money,func_get_dicvalue(particular_year,'ND') year,
         lib_cost,oth_cost,pay_loan from T_TAB_SCHOOL_EXPEND where 1=1
-<if test='land != "" and land != null'> AND land like '%'||#{land}||'%' </if>
-<if test='expInf != "" and expInf != null'> AND exp_inf like '%'||#{expInf}||'%' </if> 
-<if test='expTeachDev != "" and expTeachDev != null'> AND exp_teach_dev like '%'||#{expTeachDev}||'%' </if>
-<if test='trainCost != "" and trainCost != null'> AND train_cost like '%'||#{trainCost}||'%' </if> 
-<if test='trainPro != "" and trainPro != null'> AND train_pro like '%'||#{trainPro}||'%' </if> 
-<if test='hirePtTeach != "" and hirePtTeach != null'> AND hire_pt_teach like '%'||#{hirePtTeach}||'%' </if> 
-<if test='sport != "" and sport != null'> AND sport like '%'||#{sport}||'%' </if> 
-<if test='dailyOth != "" and dailyOth != null'> AND daily_oth like '%'||#{dailyOth}||'%' </if> 
-<if test='rsProName != "" and rsProName != null'> AND rs_pro_name like '%'||#{rsProName}||'%' </if>
-<if test='rsProMoney != "" and rsProMoney != null'> AND rs_pro_money like '%'||#{rsProMoney}||'%' </if> 
-<if test='tcProName != "" and tcProName != null'> AND tc_pro_name like '%'||#{tcProName}||'%' </if>
-<if test='tcProMoney != "" and tcProMoney != null'> AND tc_pro_money like '%'||#{tcProMoney}||'%' </if> 
-<if test='libCost != "" and libCost != null'> AND lib_cost like '%'||#{libCost}||'%' </if> 
-<if test='othCost != "" and othCost != null'> AND oth_cost like '%'||#{othCost}||'%' </if> 
-<if test='payLoan != "" and payLoan != null'> AND pay_loan like '%'||#{payLoan}||'%' </if> 
-
+        <if test='year != "" and year != null'> AND particular_year like '${year}' </if>
     </select>
     <insert id="saveSchExpend" parameterType="com.goisan.table.bean.SchExpend">
-        insert into t_tab_school_expend (id,EXP_DEV_ALL,land,exp_inf,exp_teach_dev,train_cost,train_pro,hire_pt_teach,sport,
+        insert into t_tab_school_expend (id,EXP_DEV_ALL,particular_year,land,exp_inf,exp_teach_dev,train_cost,train_pro,hire_pt_teach,sport,
         daily_oth,rs_pro_name,rs_pro_money,
         tc_pro_name,tc_pro_money,lib_cost,oth_cost,pay_loan)
-        values (func_get_uuid ,#{expDevAll},#{land},#{expInf},#{expTeachDev},#{trainCost},#{trainPro},#{hirePtTeach},#{sport},#{dailyOth},
+        values (func_get_uuid ,#{expDevAll},#{year},#{land},#{expInf},#{expTeachDev},#{trainCost},#{trainPro},#{hirePtTeach},#{sport},#{dailyOth},
         #{rsProName},#{rsProMoney},#{tcProName},#{tcProMoney},#{libCost},#{othCost},#{payLoan})
     </insert>
     <select id="getSchExpendById" parameterType="java.lang.String"
@@ -38,7 +23,7 @@
     </select>
     <update id="updateSchExpend" parameterType="com.goisan.table.bean.SchExpend">
         update t_tab_school_expend set EXP_DEV_ALL = #{expDevAll},land=#{land},exp_inf=#{expInf},exp_teach_dev=#{expTeachDev},
-        train_cost=#{trainCost},train_pro=#{trainPro},hire_pt_teach=#{hirePtTeach},sport=#{sport},daily_oth=#{dailyOth},
+        train_cost=#{trainCost},train_pro=#{trainPro},particular_year=#{year},hire_pt_teach=#{hirePtTeach},sport=#{sport},daily_oth=#{dailyOth},
        rs_pro_name=#{rsProName},rs_pro_money=#{rsProMoney},tc_pro_name=#{tcProName},
        tc_pro_money=#{tcProMoney},lib_cost=#{libCost},oth_cost=#{othCost},pay_loan=#{payLoan} where id = #{id}
     </update>

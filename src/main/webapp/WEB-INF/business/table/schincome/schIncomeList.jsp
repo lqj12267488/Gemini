@@ -25,12 +25,17 @@
                         <div class="col-md-2">
                             <input id="finProNameSel">
                         </div>
+                        <div class="col-md-1 tar">
+                            年份：
+                        </div>
+                        <div class="col-md-2">
+                            <select id="yeara"/>
+                        </div>
                         <div class="col-md-2 tar">
                             <button type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                             <button type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
                         </div>
                     </div>
-                </div>
             </div>
             <div class="block block-drop-shadow content">
                 <div class="form-row">
@@ -52,7 +57,9 @@
 </div>
 <script>
     $(document).ready(function () {
-
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, "yeara");
+        });
 
         search();
     })
@@ -73,6 +80,7 @@
                     awProMoney: $("#awProMoneySel").val(),
                     finProName: $("#finProNameSel").val(),
                     finProMoney: $("#finProMoneySel").val(),
+                    year:$("#yeara").val(),
                 }
             },
             "destroy": true,
@@ -86,6 +94,7 @@
                 {"data": "awProMoney", "title": "补助项目金额"},
                 {"data": "finProName", "title": "专项投入名称"},
                 {"data": "finProMoney", "title": "项目金额"},
+                {"data": "year", "title": "年份"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {

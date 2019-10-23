@@ -145,6 +145,14 @@
                         <input id="payLoanEdit" value="${data.payLoan}" class="validate[required,maxSize[20]] form-control"/>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        年份
+                    </div>
+                    <div class="col-md-4">
+                        <select id="years" value="${data.year}" class="validate[required,maxSize[20]] form-control"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -158,6 +166,9 @@
 
 <script>
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, "years");
+        });
         if ("${seeFlag}" == "1"){
             $("#data input").attr("readonly","readonly")
             $("#data select").attr("disabled","disabled")
@@ -301,6 +312,7 @@
             libCost: $("#libCostEdit").val(),
             othCost: $("#othCostEdit").val(),
             payLoan: $("#payLoanEdit").val(),
+            year:$("#years").val(),
         }, function (msg) {
             swal({
                 title: msg.msg,

@@ -31,7 +31,16 @@ public class SchIncome extends BaseBean {
     /**项目金额（万元）*/
     private String finProMoney;
 
+    /**年份*/
+    private String year;
 
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
 
     public String getId() {
         return id;

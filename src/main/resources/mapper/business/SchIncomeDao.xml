@@ -7,25 +7,19 @@
             resultType="com.goisan.table.bean.SchIncome">
         select id,sf_stu_type,sf_std,sf_money,
         aw_pro_name,aw_std,aw_pro_money,
+        func_get_dicvalue(particular_year,'ND') year,
         fin_pro_name,fin_pro_money
         from T_TAB_SCHOOL_INCOME where 1=1
-
-<if test='sfStuType != "" and sfStuType != null'> AND sf_stu_type like '%'||#{sfStuType}||'%' </if>
-<if test='sfStd != "" and sfStd != null'> AND sf_std like '%'||#{sfStd}||'%' </if> 
-<if test='sfMoney != "" and sfMoney != null'> AND sf_money like '%'||#{sfMoney}||'%' </if> 
-<if test='awProName != "" and awProName != null'> AND aw_pro_name like '%'||#{awProName}||'%' </if>
-<if test='awStd != "" and awStd != null'> AND aw_std like '%'||#{awStd}||'%' </if> 
-<if test='awProMoney != "" and awProMoney != null'> AND aw_pro_money like '%'||#{awProMoney}||'%' </if> 
-<if test='finProName != "" and finProName != null'> AND fin_pro_name like '%'||#{finProName}||'%' </if>
-<if test='finProMoney != "" and finProMoney != null'> AND fin_pro_money like '%'||#{finProMoney}||'%' </if> 
+        <if test='year != "" and year != null'> AND particular_year like '${year}' </if>
     </select>
     <insert id="saveSchIncome" parameterType="com.goisan.table.bean.SchIncome">
         insert into t_tab_school_income
         (id,sf_stu_type,sf_std,sf_money,
         aw_pro_name,aw_std,aw_pro_money,
+        particular_year,
         fin_pro_name,fin_pro_money)
          values (func_get_uuid ,#{sfStuType},#{sfStd},#{sfMoney},
-         #{awProName},#{awStd},#{awProMoney},
+         #{awProName},#{awStd},#{awProMoney},#{year},
          #{finProName},#{finProMoney})
     </insert>
     <select id="getSchIncomeById" parameterType="java.lang.String"
@@ -36,7 +30,8 @@
         update t_tab_school_income set
         sf_stu_type=#{sfStuType},sf_std=#{sfStd},sf_money=#{sfMoney},
         aw_pro_name=#{awProName},aw_std=#{awStd},aw_pro_money=#{awProMoney},
-        fin_pro_name=#{finProName},fin_pro_money=#{finProMoney}
+        fin_pro_name=#{finProName},fin_pro_money=#{finProMoney},
+        particular_year=#{year}
        where id = #{id}
     </update>
     <delete id="delSchIncome" parameterType="java.lang.String">

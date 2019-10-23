@@ -19,6 +19,13 @@
                         <div class="col-md-2">
                             <input id="tcProNameSel">
                         </div>
+                        <div class="col-md-2 tar">
+                            年份：
+                        </div>
+                        <div class="col-md-2">
+                            <select id="yeara"/>
+                        </div>
+                        <div class="col-md-2 tar">
                         <button type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                         <button type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
                     </div>
@@ -44,6 +51,9 @@
 </div>
 <script>
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, "yeara");
+        });
         search();
     })
 
@@ -57,6 +67,7 @@
                 "data": {
                     rsProName: $("#rsProNameSel").val(),
                     tcProName: $("#tcProNameSel").val(),
+                    year:$("#yeara").val(),
                 }
             },
             "destroy": true,
@@ -68,6 +79,7 @@
                 {"data": "rsProMoney", "title": "教学项目金额"},
                 {"data": "tcProName", "title": "师资建设项目名称"},
                 {"data": "tcProMoney", "title": "项目金额"},
+                {"data": "year", "title": "年份"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
