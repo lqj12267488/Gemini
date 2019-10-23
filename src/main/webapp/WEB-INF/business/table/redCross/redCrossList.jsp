@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            会员数量(人):
+                            会员数量(人)
                         </div>
                         <div class="form-row">
                             <div class="col-md-1 tar">
@@ -52,7 +52,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            会费情况(人):
+                            会费情况(人)
                         </div>
                         <div class="form-row">
                             <div class="col-md-1 tar">
@@ -68,7 +68,7 @@
                                 <input id="selfSel">
                             </div>
                             <div class="form-row">
-                                姓名:
+                                会长
                             </div>
                             <div class="col-md-1 tar">
                                 姓名：
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                         <div class="form-row">
-                            活动经济来源(元):
+                            活动经济来源(元)
                         </div>
                         <div class="form-row">
                             <div class="col-md-1 tar">
@@ -114,7 +114,7 @@
                                 <input id="otherSel">
                             </div>
                             <div class="form-row">
-                                捐赠情况(元):
+                                捐赠情况(元)
                             </div>
                             <div class="col-md-1 tar">
                                 上交业务主管单位：
@@ -137,7 +137,7 @@
                                 <input id="activitycontentSel">
                             </div>
                             <div class="form-row">
-                                培训情况:
+                                培训情况
                             </div>
                             <div class="col-md-1 tar">
                                 获得证书数：
@@ -146,7 +146,7 @@
                                 <input id="certificatenumberSel">
                             </div>
                             <div class="form-row">
-                                造血干细胞(人次):
+                                造血干细胞(人次)
                             </div>
                             <div class="col-md-1 tar">
                                 采集数 ：
@@ -162,10 +162,19 @@
                             <div class="col-md-2">
                                 <input id="pairingnumberSel">
                             </div>
-                            <div class="col-md-2">
-                                <button  type="button" class="btn btn-default btn-clean" onclick="save()">保存</button>
-                                <button  type="button" class="btn btn-default btn-clean" onclick="del()">删除</button>
-                            </div>
+                            <div class="form-row">
+                                <div class="col-md-2 tar">
+
+                                </div>
+                                <div class="col-md-4">
+
+                                </div>
+                                <div class="col-md-2 tar">
+
+                                </div>
+                                <div class="col-md-4"  style="text-align: right; margin-top: 10px;">
+                                    <button type="button" class="btn btn-default btn-clean" onclick="save()">保存</button>
+                                </div>
                         </div>
                     </div>
                 </div>
