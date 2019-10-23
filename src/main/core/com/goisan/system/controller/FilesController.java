@@ -1,5 +1,6 @@
 package com.goisan.system.controller;
 
+import com.goisan.common.transcoding.WordUtil;
 import com.goisan.educational.major.bean.TalentTrain;
 import com.goisan.educational.major.service.MajorService;
 import com.goisan.system.bean.Files;
@@ -33,7 +34,8 @@ public class FilesController extends HttpServlet {
 
     public static String COM_REPORT_PATH = null;
 
-
+    @Resource
+    private WordUtil wordUtil;
     /**
      * 通过id查询文件
      */
@@ -159,7 +161,7 @@ public class FilesController extends HttpServlet {
             String fileName = file.getOriginalFilename();
             String path = String.format(urlParten, request.getParameter("tableName"),
                     sdf.format(new Date()));
-            String url = path + "/" + CommonUtil.getUUID()
+            final String url = path + "/" + CommonUtil.getUUID()
                     + fileName.substring(fileName.indexOf("."));
             FileOutputStream fos = null;
             try {
@@ -180,6 +182,14 @@ public class FilesController extends HttpServlet {
                     e.printStackTrace();
                 }
             }
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    wordUtil.init();
+                    wordUtil.wordToPdf(COM_REPORT_PATH + url);
+                }
+            });
+            t.start();
             Files uploadFiles = new Files();
             String id=CommonUtil.getUUID();
             uploadFiles.setFileId(id);
