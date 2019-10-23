@@ -25,6 +25,8 @@
                         <div class="col-md-2">
                             <input id="finProNameSel">
                         </div>
+                    </div>
+                    <div class="form-row">
                         <div class="col-md-1 tar">
                             年份：
                         </div>
