@@ -66,7 +66,7 @@
         select t.*,
           func_get_tablevalue(MT_ID, 'T_XG_MAINTENANCE_TYPE', 'MT_ID', 'MT_NAME') mtName,
           GOOD_NUM*UNIT_PRICE as goodPrice,
-           FUNC_GET_DICVALUE(t.mt_flag,'ISMT') mtFalgShow
+           FUNC_GET_DIC/loadMoreNoticesVALUE(t.mt_flag,'ISMT') mtFalgShow
        from T_XG_MAINTENANCE_RELATION t where rel_id = #{relId} and  valid_flag = '1'
        <if test='mtId!="" and null != mtId '>
           and MT_ID = #{mtId}

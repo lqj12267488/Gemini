@@ -15,6 +15,7 @@
             <h4 class="modal-title"> &nbsp;</h4>
         </div>
         <div class="modal-body clearfix">
+
             <button onclick="doPrint()" class="btn btn-default btn-clean" id="dayin">打印</button>
             <div class="controls">
                 <div class="form-row">
@@ -86,6 +87,9 @@
         }
     })
     $(document).ready(function () {
+        if('党务会议' == '${message.typeShow}' || '行政会议' == '${message.typeShow}'){
+            $("#dayin").hide();
+        }
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=TZLX", function (data) {
             addOption(data, "type", "${message.type}");
         })
