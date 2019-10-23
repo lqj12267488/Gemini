@@ -101,7 +101,7 @@
 
     function del(id){
         swal({
-            title: "请确认是否要删除该附件?",
+            title: "请确认是否要删除?",
             text: "删除后将无法恢复，请谨慎操作！",
             type: "warning",
             showCancelButton: true,
