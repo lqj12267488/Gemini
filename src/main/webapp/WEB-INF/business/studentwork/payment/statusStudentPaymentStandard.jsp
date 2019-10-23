@@ -209,7 +209,7 @@
                 {
                     "render": function (data, type, row) {
                         return "<input type='checkbox' name='checkbox' value='" + row.studentId + "," + row.itemId + "," + row.classId + "'/>";
-                    }
+                    },"orderable":false
                 },
                 {"data": "studentId", "visible": false},
                 {"data": "departmentsId", "visible": false},

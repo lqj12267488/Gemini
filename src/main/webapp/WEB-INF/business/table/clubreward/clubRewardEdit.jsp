@@ -66,7 +66,7 @@
                         <span class="iconBtx">*</span>指导教师名单
                     </div>
                     <div class="col-md-9">
-                        <input id="guidanceTeacherEdit" value="${data.guidanceTeacher}" placeholder="最多输入5名知道教师"/>
+                        <input id="guidanceTeacherEdit" value="${data.guidanceTeacher}" placeholder="最多输入5名指导教师"/>
                     </div>
                 </div>
             </div>
