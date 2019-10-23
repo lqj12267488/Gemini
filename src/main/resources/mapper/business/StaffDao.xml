@@ -9,6 +9,7 @@
         t1.id,
         t1.personid,
         t1.grade,
+        func_get_dicvalue(t1.grade,'ZYDJ') gradeShow,
         t1.givenname,
         t1.issuer,
         t1.getdate,
@@ -24,7 +25,9 @@
       <if test="groupNameSel!=null and groupNameSel!=''">
           and t1.GIVENNAME like #{groupNameSel}
       </if>
-
+        <if test="personid != null and personid != '' ">
+            AND t1.personid = #{personid}
+        </if>
     </select>
     <insert id="saveStaff" parameterType="com.goisan.staff.bean.Staff">
         insert into T_TAB_STAFF (
@@ -66,7 +69,21 @@
     </insert>
     <select id="getStaffById" parameterType="java.lang.String"
             resultType="com.goisan.staff.bean.Staff">
-        select * from T_TAB_STAFF where id = #{id}
+         select
+        t1.id,
+        t1.personid,
+        t1.grade,
+        func_get_dicvalue(t1.grade,'ZYDJ') gradeShow,
+        t1.givenname,
+        t1.issuer,
+        t1.getdate,
+        t1.teachingmanagement,
+        t1.studentmanagement,
+        t1.politicalcounselor,
+        t1.psychologicalconsultant,
+        t1.employmentoffice,
+        t1.expertise,
+        t1.workinghours from T_TAB_STAFF t1 where t1.id = #{id}
     </select>
     <update id="updateStaff" parameterType="com.goisan.staff.bean.Staff">
         update T_TAB_STAFF set
@@ -101,10 +118,10 @@
         decode(DEPT_NAME, '', t.name, t.name || ' ---- ' || DEPT_NAME) as "label",
         decode(DEPT_ID, '', t.person_id, DEPT_ID || ',' || t.person_id) as "value"
         FROM T_RS_EMPLOYEE t
-        LEFT JOIN (SELECT R.PERSON_ID PERSON, D.DEPT_NAME, D.DEPT_ID
-        FROM T_RS_EMPLOYEE_DEPT R,
+        LEFT JOIN (SELECT R.user_id PERSON, D.DEPT_NAME, D.DEPT_ID
+        FROM t_sys_user R,
         T_SYS_DEPT D
-        WHERE R.DEPT_ID = D.DEPT_ID) ON T.PERSON_ID = PERSON
+        WHERE R.Default_Dept = D.DEPT_ID and R.user_id = #{personid}) ON T.PERSON_ID = PERSON
         WHERE VALID_FLAG = '1'
         and t.person_id = #{personid}
     </select>

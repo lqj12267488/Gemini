@@ -60,8 +60,24 @@ public class Major extends BaseBean {
     private String internshipPositions;//实习岗位
     private String internshipUnitIdShow;
     private String postsTime;//实习时间
+    private String normalMajor;//是否师范专业
+    private String normalMajorShow;
 
+    public String getNormalMajor() {
+        return normalMajor;
+    }
 
+    public void setNormalMajor(String normalMajor) {
+        this.normalMajor = normalMajor;
+    }
+
+    public String getNormalMajorShow() {
+        return normalMajorShow;
+    }
+
+    public void setNormalMajorShow(String normalMajorShow) {
+        this.normalMajorShow = normalMajorShow;
+    }
 
     private String planNumber;//计划招生数
     private String realNumber;//报道人数

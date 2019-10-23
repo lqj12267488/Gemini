@@ -17,6 +17,7 @@ public class Research extends BaseBean {
     /**等级*/
     private String grade;
 
+    private String gradeShow;
     /**名称*/
     private String givenname;
 
@@ -285,6 +286,14 @@ public class Research extends BaseBean {
 
     public void setExpertise(String expertise) {
         this.expertise = expertise;
+    }
+
+    public String getGradeShow() {
+        return gradeShow;
+    }
+
+    public void setGradeShow(String gradeShow) {
+        this.gradeShow = gradeShow;
     }
 
 }

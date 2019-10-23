@@ -121,9 +121,7 @@
     var handleName = "";
     var personId = "";
     $(document).ready(function () {
-        if("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}'){
-            $("#dayin").hide();
-        }else if ("T_DT_REPORT_MANAGEMENT" == '${tableName}'){
+        if("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}' || "T_DT_REPORT_MANAGEMENT" == '${tableName}' || "T_RS_TALENT_RECRUITMENT_WF" == '${tableName}'){
             $("#dayin").hide();
         }
         $("#div1").hide();

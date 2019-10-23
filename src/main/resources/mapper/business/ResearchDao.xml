@@ -6,13 +6,25 @@
             parameterType="com.goisan.research.bean.Research"
             resultType="com.goisan.research.bean.Research">
         select
-        t1.id,t1.personid,t1.grade,t1.givenname,t1.issuer,t1.getdate,t1.topicnature,t1.subjectclassification,t1.subjectname,t1.horizontaltopic,t1.subjectgrade,t1.projectdate,t1.sourceoffunding,t1.completororder,t1.money,t1.num,t1.highestgrade,t1.cooperation,t1.expertise,t2.name
+        t1.id,t1.personid,t1.grade,t1.givenname,
+        t1.issuer,t1.getdate,t1.topicnature,
+        t1.subjectclassification,t1.subjectname,
+        t1.horizontaltopic,t1.subjectgrade,
+        t1.projectdate,t1.sourceoffunding,
+        t1.completororder,t1.money,
+        t1.num,
+        func_get_dicvalue(t1.GRADE,'ZYDJ') gradeShow,
+        t1.highestgrade,
+        t1.cooperation,
+        t1.expertise,t2.name
         from T_TAB_RESEARCH t1 ,T_RS_EMPLOYEE t2 where 1=1
       and t1.personid = t2.person_id
       <if test="groupNameSel!=null and groupNameSel!=''">
           and t1.GIVENNAME like #{groupNameSel}
       </if>
-
+        <if test="personid!=null and personid!=''">
+            and t1.personid = #{personid}
+        </if>
 
     </select>
     <insert id="saveResearch" parameterType="com.goisan.research.bean.Research">
@@ -35,6 +47,18 @@
     </delete>
 
     <select id="selectResearchById" parameterType="java.lang.String" resultType="com.goisan.research.bean.Research">
-        select * from  T_TAB_RESEARCH where id = #{id}
+        select
+        t1.id,t1.personid,t1.grade,t1.givenname,
+        t1.issuer,t1.getdate,t1.topicnature,
+        t1.subjectclassification,t1.subjectname,
+        t1.horizontaltopic,t1.subjectgrade,
+        t1.projectdate,t1.sourceoffunding,
+        t1.completororder,t1.money,
+        t1.num,
+        func_get_dicvalue(t1.GRADE,'ZYDJ') gradeShow,
+        t1.highestgrade,
+        t1.cooperation,
+        t1.expertise
+        from  T_TAB_RESEARCH t1 where t1.id = #{id}
     </select>
 </mapper>

@@ -162,6 +162,13 @@
                         <div class="col-md-4">
                             <select id="springAutumnFlag" name="springAutumnFlag" class="js-example-basic-single"></select>
                         </div>
+
+                        <div class="col-md-2 tar">
+                            <span class="iconBtx">*</span>是否师范专业
+                        </div>
+                        <div class="col-md-4">
+                            <select id="normalMajor" name="normalMajor" class="js-example-basic-single"></select>
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
@@ -243,7 +250,10 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=TSZY", function (data) {
             addOption(data, 'uniqueCourseType', '${major.uniqueCourseType}');
         });
-
+        //是否师范专业
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, 'normalMajor', '${major.normalMajor}');
+        });
         if (null != $("#majorId").val() && $("#majorId").val() != "") {
             $("#majorCode").attr("readonly", "readonly");
             $("#majorName").attr("readonly", "readonly");
@@ -472,6 +482,15 @@
             });
             return;
         }
+
+        if ($("#normalMajor option:selected").val() == "" || $("#normalMajor option:selected").val() == null) {
+            swal({
+                title: "请选择是否师范专业！",
+                type: "info"
+            });
+            return;
+        }
+
         if ($("#professionCharact").val() == "") {
             swal({
                 title: "请填写专业特点！",

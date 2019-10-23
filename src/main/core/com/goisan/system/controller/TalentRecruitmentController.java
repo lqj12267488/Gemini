@@ -316,7 +316,9 @@ public class TalentRecruitmentController {
         if (!"".equals(talentRecruitment.getRequestDate())) {
             talentRecruitment.setRequestDate(talentRecruitment.getRequestDate().split("T")[0].split("-")[0] + "年" + talentRecruitment.getRequestDate().split("T")[0].split("-")[1] + "月" + talentRecruitment.getRequestDate().split("T")[0].split("-")[2] + "日");
         }
-        if (!"".equals(talentRecruitment.getStationDate())) {
+        if ("".equals(talentRecruitment.getStationDate()) || null==talentRecruitment.getStationDate()) {
+            talentRecruitment.setStationDate("");
+        }else{
             talentRecruitment.setStationDate(talentRecruitment.getStationDate().split("T")[0].split("-")[0] + "年" + talentRecruitment.getStationDate().split("T")[0].split("-")[1] + "月" + talentRecruitment.getStationDate().split("T")[0].split("-")[2] + "日");
         }
 

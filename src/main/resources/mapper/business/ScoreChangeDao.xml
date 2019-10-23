@@ -22,7 +22,6 @@
         decode(makeup_score,'',FUNC_GET_DICVALUE(t.examination_status,'KSZT'),FUNC_GET_DICVALUE(t.examination_status,'BKZT'))
         examinationStatus,
         t.original_score originalScore,
-        t.examination_results examinationResults,
         t.SCORE score,
         t.reason reason,
         t.request_flag,
@@ -185,7 +184,6 @@
         FUNC_GET_TABLEVALUE(t.student_id,'T_XG_STUDENT','STUDENT_ID','student_number') studentNumber,
         FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
         FUNC_GET_DICVALUE(t.term,'XQ') term,
-        t.examination_results examinationResults,
         t.original_score originalScore,
         t.SCORE score,
         t.reason reason,
@@ -237,7 +235,7 @@
         FUNC_GET_TABLEVALUE(t.COURSE_ID, 'T_JW_COURSE', 'COURSE_ID', 'COURSE_NAME') courseId,
         FUNC_GET_DICVALUE(t.term,'XQ') term,
         t.original_score originalScore,
-        t.examination_results examinationResults,
+
         t.SCORE score,
         t.reason reason,
         FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,

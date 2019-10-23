@@ -2424,6 +2424,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         }
     }
 
+
     /**
      * modify by lizhipeng end
      */

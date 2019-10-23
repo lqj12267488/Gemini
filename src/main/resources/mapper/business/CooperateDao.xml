@@ -5,7 +5,13 @@
     <select id="getCooperateList"
             parameterType="com.goisan.table.bean.Cooperate"
             resultType="com.goisan.table.bean.Cooperate">
-        select id,MAJORNAME,developmentcoursenum,developmentteachingnum,parttimeteachernum,traineenum,equipmentmoney,quasidonationmoney,employmentnumber,annualincome,employeesnum,business1starttime,business2starttime,business3starttime,business4starttime,business5starttime,apprenticeship from T_TAB_COOPERATE where 1=1
+        select id,MAJORNAME,developmentcoursenum,
+        developmentteachingnum,parttimeteachernum,
+        traineenum,equipmentmoney,
+        quasidonationmoney,employmentnumber,
+        annualincome,employeesnum,business1starttime,
+        business2starttime,business3starttime,business4starttime,
+        business5starttime,apprenticeship from T_TAB_COOPERATE where 1=1
         <if test="groupNameSel!=null and groupNameSel!=''">
             and MAJORNAME like #{groupNameSel}
         </if>

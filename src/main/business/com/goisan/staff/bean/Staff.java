@@ -15,7 +15,7 @@ public class Staff extends BaseBean {
 
     /**等级*/
     private String grade;
-
+    private String gradeShow;
     /**名称*/
     private String givenname;
 
@@ -212,6 +212,13 @@ public class Staff extends BaseBean {
 
     public void setWorkinghours(String workinghours) {
         this.workinghours = workinghours;
+    }
+    public String getGradeShow() {
+        return gradeShow;
+    }
+
+    public void setGradeShow(String gradeShow) {
+        this.gradeShow = gradeShow;
     }
 
 }

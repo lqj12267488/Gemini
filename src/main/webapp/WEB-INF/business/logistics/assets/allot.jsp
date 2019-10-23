@@ -68,7 +68,7 @@
                     <div class="form-row">
                         <div class="col-md-3">
                             <span class="iconBtx">*</span>
-                            使用时间：
+                            分配时间：
                         </div>
                         <div class="col-md-6">
                             <input id="useTime" name="useTime" type="date">

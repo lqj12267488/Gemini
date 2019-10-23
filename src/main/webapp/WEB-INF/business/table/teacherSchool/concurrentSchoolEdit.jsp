@@ -20,13 +20,24 @@
         <div class="modal-body clearfix">
             <div class="controls">
                 <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>教职工
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>教职工姓名
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <input id="personidEdit" value="${data.person}"/>
                         <input id="perId" type="hidden" value="${data.person}"/>
                     </div>
+                    <div class="col-md-2 tar">
+                        教职工号：
+                    </div>
+                    <div class="col-md-4">
+                        <input id="personNumber" class="validate[required,maxSize[20]] form-control"
+                               readonly="readonly" value="${data.personNumber}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    获奖项目（包括行政性奖励）：
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
@@ -41,6 +52,9 @@
                     </div>
                 </div>
                 <div class="form-row">
+                    获技术专利（技术发明）项目：
+                </div>
+                <div class="form-row">
                     <div class="col-md-3 tar">
                         <span class="iconBtx">*</span>技术专利(发明)编号
                     </div>
@@ -49,10 +63,13 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col-md-3 tar">
+                    在研课题：
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>课题性质
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <%--<input id="topicnatureEdit" value="${data.topicnature}"/>--%>
                         <select id="topicnatureEdit">
                             <option value="教学改革">教学改革</option>
@@ -60,40 +77,38 @@
                             <option value="其他">其他</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-3 tar">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>课题分类
                     </div>
-                    <div class="col-md-9">
-                        <input id="subjectclassificationEdit" value="${data.subjectclassification}"/>
+                    <div class="col-md-4">
+                        <select id="subjectclassificationEdit"/>
                     </div>
                 </div>
+
                 <div class="form-row">
-                    <div class="col-md-3 tar">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>课题名称
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <input id="subjectnameEdit" value="${data.subjectname}"/>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-3 tar">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>是否横向课题
                     </div>
-                    <div class="col-md-9">
-                       <%-- <input id="horizontaltopicEdit" value="${data.horizontaltopic}"/>--%>
+                    <div class="col-md-4">
+                        <%-- <input id="horizontaltopicEdit" value="${data.horizontaltopic}"/>--%>
                         <select id="horizontaltopicEdit">
                             <option value="1">是</option>
                             <option value="0">否</option>
                         </select>
                     </div>
                 </div>
+
                 <div class="form-row">
-                    <div class="col-md-3 tar">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>课题级别
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <%--<input id="subjectgradeEdit" value="${data.subjectgrade}"/>--%>
                         <select id="subjectgradeEdit">
                             <option value="国家级">国家级</option>
@@ -102,36 +117,34 @@
                             <option value="校级">校级</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-3 tar">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>立项日期
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <input type="date" id="projectdateEdit" value="${data.projectdateStr}"/>
                     </div>
                 </div>
+
                 <div class="form-row">
-                    <div class="col-md-3 tar">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>经费来源
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <input id="sourceoffundingEdit" value="${data.sourceoffunding}"/>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>到款金额 
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>到款金额
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <input id="moneyEdit" value="${data.money}"/>
                     </div>
                 </div>
+
                 <div class="form-row">
-                    <div class="col-md-3 tar">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>完成人顺序 
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <%--<input id="completororderEdit" value="${data.completororder}"/>--%>
                         <select id="completororderEdit">
                             <option value="第一">第一</option>
@@ -144,22 +157,23 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col-md-3 tar">
+                    公开出版著作与公开发表论文：
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>著作与论文分类 
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <%--<input id="classificationEdit" value="${data.classification}"/>--%>
                         <select id="classificationEdit">
                             <option value="自然科学与技术">自然科学与技术</option>
                             <option value="人文与社会科学">人文与社会科学</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>作者顺序 
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>作者顺序
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-4">
                         <%--<input id="authororderEdit" value="${data.authororder}"/>--%>
                         <select id="authororderEdit">
                             <option value="独立">独立</option>
@@ -171,6 +185,7 @@
                         </select>
                     </div>
                 </div>
+
 
             </div>
         </div>
@@ -223,8 +238,26 @@
                     .appendTo(ul);
             };
         })
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=KTFL", function (data) {
+            addOption(data, 'subjectclassificationEdit', '${data.subjectclassification}');
+        });
     });
-
+    $("#personidEdit").change(function () {
+        var perIdNames = "";
+        if ($("#perId").val() != "") {
+            if ($("#perId").val().split(",").length == 1) {
+                perIdNames = $("#perId").val();
+            } else {
+                perIdNames = $("#perId").val().split(",")[1];
+            }
+            $.get("<%=request.getContextPath()%>/contactinformation/getPersonByPersonId?personId=" + perIdNames,
+                function (data) {
+                    if (data != null) {
+                        $("#personNumber").val(data.areaContactsStaff);
+                    }
+                })
+        }
+    })
     function save() {
         if ($("#personidEdit").val() == "" || $("#personidEdit").val() == undefined || $("#personidEdit").val() == null) {
             swal({
@@ -340,6 +373,7 @@
             sourceoffunding: $("#sourceoffundingEdit").val(),
             money: $("#moneyEdit").val(),
             completororder: $("#completororderEdit").val(),
+            personNumber: $("#personNumber").val(),
             classification: $("#classificationEdit").val(),
             authororder: $("#authororderEdit").val(),
             type: '2',

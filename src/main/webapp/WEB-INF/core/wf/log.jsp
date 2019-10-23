@@ -16,7 +16,9 @@
 <div class="container">
     <div class="content">
         <button onclick="back()" class="btn btn-default btn-clean">返回</button>
-        <button onclick="doPrint()" class="btn btn-default btn-clean" id="dayin">打印</button>
+        <c:if test="${2== states}">
+            <button onclick="doPrint()" class="btn btn-default btn-clean" id="dayin">打印</button>
+        </c:if>
         <div id="business"></div>
         <div id="file" class="form-row">
             <div class="col-md-3 tar">
@@ -39,7 +41,7 @@
                     </c:if>
                 </c:forEach>
             </div>
-            <div id="logPrint"  class="form-row">
+            <div id="logPrint" class="form-row">
                 <div id="log" style="text-align: center">
                     <br>
                     <h4>流程日志</h4>
@@ -67,10 +69,7 @@
 <input id="tableName" hidden value="${tableName}">
 <script>
     $(document).ready(function () {
-
-        if("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}'){
-            $("#dayin").hide();
-        }else if ("T_DT_REPORT_MANAGEMENT" == '${tableName}'){
+        if ("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}' || "T_DT_REPORT_MANAGEMENT" == '${tableName}') {
             $("#dayin").hide();
         }
         $("#div1").hide();
@@ -90,7 +89,7 @@
                     $("#file").append('<div class="form-row">' +
                         '<div class="col-md-3 tar"></div>' +
                         '<div class="col-md-9">' +
-                        '<a href="' + '<%=request.getContextPath()%>/files/downloadFiles?id='+val.fileId + '" target="_blank">' + val.fileName + '</a>' +
+                        '<a href="' + '<%=request.getContextPath()%>/files/downloadFiles?id=' + val.fileId + '" target="_blank">' + val.fileName + '</a>' +
                         '</div>' +
                         '</div>');
                 })
@@ -100,15 +99,15 @@
 
     function doPrint() {
 
-      /*  var bdhtml = window.document.body.innerHTML;
-        $("#logPrint div").attr("style", "text-align:center; padding-left: 20%;padding-top:8%;");
-        $.get($("#printFunds").val(), function (html) {
-            window.document.body.innerHTML = html;
-            window.print();
-            window.document.body.innerHTML = bdhtml;
-        })*/
-        var iframe=document.getElementById("print-iframe");
-        if(!iframe){
+        /*  var bdhtml = window.document.body.innerHTML;
+          $("#logPrint div").attr("style", "text-align:center; padding-left: 20%;padding-top:8%;");
+          $.get($("#printFunds").val(), function (html) {
+              window.document.body.innerHTML = html;
+              window.print();
+              window.document.body.innerHTML = bdhtml;
+          })*/
+        var iframe = document.getElementById("print-iframe");
+        if (!iframe) {
             //var el = document.getElementById("printcontent");
 
             iframe = document.createElement('IFRAME');

@@ -122,18 +122,18 @@
         </td>
         <td align="center" class="left1" style="padding-left: 2%;text-align:left;" colspan="5">
             <div>
-                <c:if test="${talentRecruitment.boyNumber == ''}">
+                <c:if test="${talentRecruitment.boyNumber == null}">
                     <span style="float: left">性别：▢男</span>
                 </c:if>
-                <c:if test="${talentRecruitment.boyNumber != ''}">
+                <c:if test="${talentRecruitment.boyNumber != '' and null != talentRecruitment.boyNumber}">
                     <span style="float: left">性别：☑男</span>
                 </c:if>
                 <span class="right" style="width:60px; float: left">${talentRecruitment.boyNumber}</span>
                 <span style="float: left">名&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <c:if test="${talentRecruitment.girlNumber == ''}">
+                <c:if test="${talentRecruitment.girlNumber == null}">
                     <span style="float: left">▢女</span>
                 </c:if>
-                <c:if test="${talentRecruitment.girlNumber != ''}">
+                <c:if test="${talentRecruitment.girlNumber != '' and null != talentRecruitment.girlNumber}">
                     <span style="float: left">☑女</span>
                 </c:if>
                 <span class="right" style="width:60px; float: left">${talentRecruitment.girlNumber}</span>
@@ -242,24 +242,28 @@
         </c:if>
     </tr>
     <tr>
-        <c:if test="${talentRecruitment.professionalRestrictions == '' || null == talentRecruitment.professionalRestrictions}">
-
+        <c:if test="${talentRecruitment.workingLife == '' || null == talentRecruitment.workingLife}">
+            <td align="center" class="left1" style="padding-left: 2%;text-align:left;" colspan="5">
+                工作年限：▢1-3年 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ▢3-5年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                ▢5年以上
+            </td>
         </c:if>
-        <c:if test="${talentRecruitment.professionalRestrictions == 1}">
+        <c:if test="${talentRecruitment.workingLife == 1}">
             <td align="center" class="left1" style="padding-left: 2%;text-align:left;" colspan="5">
                 工作年限：☑1-3年 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 ▢3-5年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 ▢5年以上
             </td>
         </c:if>
-        <c:if test="${talentRecruitment.professionalRestrictions == 2}">
+        <c:if test="${talentRecruitment.workingLife == 2}">
             <td align="center" class="left1" style="padding-left: 2%;text-align:left;" colspan="5">
                 工作年限：▢1-3年 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 ☑3-5年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 ▢5年以上
             </td>
         </c:if>
-        <c:if test="${talentRecruitment.professionalRestrictions == 3}">
+        <c:if test="${talentRecruitment.workingLife == 3}">
             <td align="center" class="left1" style="padding-left: 2%;text-align:left;" colspan="5">
                 工作年限：▢1-3年 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 ▢3-5年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

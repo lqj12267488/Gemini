@@ -557,6 +557,7 @@ public class WorkflowController {
         mv.addObject("workflowLog", workflowLog);
         mv.addObject("cuurentNodeId", cuurentNodeId);
         mv.addObject("nodes", nodes);
+        mv.addObject("states", start.getState());
         //mv.addObject("size", nodes.size());
         mv.addObject("url", url);
         mv.addObject("backUrl", backUrl);

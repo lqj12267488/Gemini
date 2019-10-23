@@ -17,6 +17,13 @@
                             <input id="givennameSel">
                         </div>
 
+                       <div class="col-md-1 tar">
+                           姓名
+                       </div>
+                       <div class="col-md-2">
+                           <input id="perIdSel"/>
+                       </div>
+
                        <div class="col-md-2 tar">
                            <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                            <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
@@ -47,7 +54,20 @@
 <script>
     $(document).ready(function () {
 
-
+        $.get("<%=request.getContextPath()%>/common/getPersonDept", function (data) {
+            $("#perIdSel").autocomplete({
+                source: data,
+                select: function (event, ui) {
+                    $("#perIdSel").val(ui.item.label);
+                    $("#perIdSel").attr("keycode", ui.item.value);
+                    return false;
+                }
+            }).data("ui-autocomplete")._renderItem = function (ul, item) {
+                return $("<li>")
+                    .append("<a>" + item.label + "</a>")
+                    .appendTo(ul);
+            };
+        })
         search();
     })
 
@@ -57,6 +77,15 @@
             groupNameSel = '%' + groupNameSel + '%';
         }
 
+        var headT = $("#perIdSel").attr("keycode");
+        var person = "";
+        if (null == headT){
+        } else {
+            var personList = headT.split(",");
+            person = personList[1];
+            var dept = personList[0];
+        }
+
         $("#table").DataTable({
              "processing": true,
              "serverSide": true,
@@ -64,7 +93,8 @@
                 "type": "post",
                 "url": '<%=request.getContextPath()%>/Research/getResearchList',
                 "data": {
-                    groupNameSel:groupNameSel
+                    groupNameSel:groupNameSel,
+                    personid:person
                 }
             },
             "destroy": true,
@@ -72,7 +102,7 @@
                  {"data": "id", "title": "主键id", "visible": false},
                  {"data": "personid", "title": "教职工id","visible": false},
                 {"data": "name", "title": "教职工"},
-                 {"data": "grade", "title": "等级"},
+                 {"data": "gradeShow", "title": "等级"},
                  {"data": "givenname", "title": "名称"},
                  {"data": "issuer", "title": "发证单位"},
                  {"data": "getdate", "title": "获取日期"},
@@ -105,6 +135,7 @@
 
     function searchClear() {
         $(".form-row div input,.form-row div select").val("");
+        $("#perIdSel").removeAttr("keycode");
         search();
     }
 

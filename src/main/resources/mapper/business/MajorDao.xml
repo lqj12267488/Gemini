@@ -35,6 +35,7 @@
         t.CLASS_NUM classNum,
         t.ORDERS_CLASS_NUM ordersClassnum,
         t.MAJOR_DIRECTION_CODE majorDirectionCode,
+        t.NORMAL_MAJOR normalMajor,
         t.NOW_MAJOR majorNow,
         to_char(t.APPROVAL_TIME ,'yyyy-mm-dd') approvalTime,
         to_char(t.first_recruit_time,'yyyy-mm-dd') firstRecruitTime,
@@ -52,6 +53,7 @@
         FUNC_GET_TABLEVALUE(t.NOW_MAJOR,'T_RS_EMPLOYEE','person_id','name') majorNowShow,
         FUNC_GET_DICVALUE(t.FOCUS_COURSE_TYPE, 'ZDZY') as focusTypeShow,
         FUNC_GET_DICVALUE(t.UNIQUE_COURSE_TYPE, 'TSZY') as uniqueTypeShow,
+        FUNC_GET_DICVALUE(t.NORMAL_MAJOR, 'SF') as normalMajorShow,
         remark,
         FILE_URL,
         PROFESSION_CHARACT,
@@ -148,6 +150,7 @@
         FUNC_GET_TABLEVALUE(t.NOW_MAJOR,'T_RS_EMPLOYEE','person_id','name') majorNowShow,
         FUNC_GET_DICVALUE(t.FOCUS_COURSE_TYPE, 'ZDZY') as focusTypeShow,
         FUNC_GET_DICVALUE(t.UNIQUE_COURSE_TYPE, 'TSZY') as uniqueTypeShow,
+        FUNC_GET_DICVALUE(t.NORMAL_MAJOR, 'SF') as normalMajorShow,
         remark,
         FILE_URL,
         PROFESSION_CHARACT,
@@ -189,6 +192,8 @@
                t.FOCUS_COURSE_TYPE                      focusCourseType,
                t.UNIQUE_COURSE_TYPE                     uniqueCourseType,
                t.max_year                               maxYear,
+               t.normal_major                           normalMajor,
+
                --         FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
                --         FUNC_GET_DICVALUE(t.ORDERS_STUDENT_NUM, 'ZXZYLX') as StudentnumShow,
                --         FUNC_GET_DICVALUE(t.school_system, 'ZXZYXZ') as schoolSystemShow,
@@ -232,7 +237,7 @@
         (valid_flag, major_id, major_name, major_code, MAJOR_SCHOOL, major_direction, ORDERS_STUDENT_NUM,
         school_system, departments_id, training_level, CLASS_NUM, ORDERS_CLASS_NUM, spring_autumn_flag,
         MAJOR_DIRECTION_CODE, NOW_MAJOR, approval_time, first_recruit_time, FOCUS_COURSE_TYPE,
-        MAX_YEAR, GLOBAL_MAJOR, UNIQUE_COURSE_TYPE, END_RECRUIT_TIME,
+        MAX_YEAR, GLOBAL_MAJOR, UNIQUE_COURSE_TYPE, END_RECRUIT_TIME,NORMAL_MAJOR,
         creator, create_time, create_dept, remark, profession_Charact<if test="fileUrl != null and fileUrl != ''">
         ,file_url</if>)
         VALUES
@@ -243,7 +248,7 @@
         '${majorDirectionCode}', '${majorNow}', to_date('${approvalTime}', 'yyyy-mm'), to_date('${firstRecruitTime}',
         'yyyy-mm'),
         '${focusCourseType}', '${maxYear}', '${majorGlobal}', '${uniqueCourseType}', to_date('${endRecruittime}',
-        'yyyy-mm'),
+        'yyyy-mm'),'${normalMajor}',
         '${creator}', sysdate, '${createDept}', '${remark}', '${professionCharact}'<if
             test="fileUrl != null and fileUrl != ''">,#{fileUrl}</if>)
     </insert>
@@ -306,6 +311,7 @@
         MAX_YEAR = #{maxYear},
         GLOBAL_MAJOR = #{majorGlobal},
         PROFESSION_CHARACT = #{professionCharact},
+        normal_major = #{normalMajor},
         TRAINING_LEVEL = #{trainingLevel},
         <if test="approvalTime != null ">
             approval_time = to_date('${approvalTime}','yyyy-mm'),

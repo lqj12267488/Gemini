@@ -21,7 +21,7 @@
             <div class="controls">
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>教职工
+                        <span class="iconBtx">*</span>姓名
                     </div>
                     <div class="col-md-9">
                         <input id="personidEdit" value="${data.person}"/>
@@ -33,7 +33,7 @@
                         <span class="iconBtx">*</span>等级
                     </div>
                     <div class="col-md-9">
-                        <input id="gradeEdit" value="${data.grade}"/>
+                        <select id="gradeEdit" />
                     </div>
                 </div>
                 <div class="form-row">
@@ -213,6 +213,9 @@
                     .appendTo(ul);
             };
         })
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZYDJ", function (data) {
+            addOption(data, 'gradeEdit', '${data.grade}');
+        });
     });
 
     function save() {

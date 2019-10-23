@@ -26,6 +26,8 @@ public class TeacherSchool extends BaseBean {
     /**课题分类*/
     private String subjectclassification;
 
+    private String subjectclassificationShow;
+
     /**课题名称*/
     private String subjectname;
 
@@ -67,6 +69,18 @@ public class TeacherSchool extends BaseBean {
     private String groupNameSel;
 
     private String name;
+
+    private String personNumber;
+
+    public String getPersonNumber() {
+        return personNumber;
+    }
+
+    public void setPersonNumber(String personNumber) {
+        this.personNumber = personNumber;
+    }
+
+
 
     public String getName() {
         return name;
@@ -235,6 +249,14 @@ public class TeacherSchool extends BaseBean {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getSubjectclassificationShow() {
+        return subjectclassificationShow;
+    }
+
+    public void setSubjectclassificationShow(String subjectclassificationShow) {
+        this.subjectclassificationShow = subjectclassificationShow;
     }
 
 }

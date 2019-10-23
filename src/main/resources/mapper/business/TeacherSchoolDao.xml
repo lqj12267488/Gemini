@@ -5,15 +5,29 @@
     <select id="getTeacherSchoolList"
             parameterType="com.goisan.table.bean.TeacherSchool"
             resultType="com.goisan.table.bean.TeacherSchool">
-        select t1.id,t1.personid,t1.whetherhost,t1.inventnumber,t1.topicnature,t1.subjectclassification,t1.subjectname,t1.horizontaltopic,t1.subjectgrade,t1.projectdate,t1.sourceoffunding,t1.money,t1.completororder,t1.classification,t1.authororder,t1.type,t2.name from T_TAB_TEACHERSCHOOL t1,T_RS_EMPLOYEE t2 where 1=1
+        select t1.id,t1.personid,
+        t1.whetherhost,t1.inventnumber,
+        t1.topicnature,t1.subjectclassification,
+        t1.subjectname,t1.horizontaltopic,
+        t1.subjectgrade,t1.projectdate,t1.sourceoffunding,
+        t1.money,t1.completororder,t1.classification,
+        func_get_dicvalue(t1.subjectclassification,'KTFL') subjectclassificationShow,
+        t1.authororder,t1.type,t2.name from T_TAB_TEACHERSCHOOL t1,T_RS_EMPLOYEE t2 where 1=1
 and t1.personid = t2.person_id and t1.type = #{type}
         <if test="groupNameSel!=null and groupNameSel!=''">
             and t1.SUBJECTNAME like #{groupNameSel}
         </if>
+        <if test="personid!=null and personid!=''">
+            and t1.personid = #{personid}
+        </if>
 
     </select>
     <insert id="saveTeacherSchool" parameterType="com.goisan.table.bean.TeacherSchool">
-        insert into t_tab_teacherschool (id,personid,whetherhost,inventnumber,topicnature,subjectclassification,subjectname,horizontaltopic,subjectgrade,projectdate,sourceoffunding,money,completororder,classification,authororder,type) values (#{id} ,#{personid},#{whetherhost},#{inventnumber},#{topicnature},#{subjectclassification},#{subjectname},#{horizontaltopic},#{subjectgrade},#{projectdate},#{sourceoffunding},#{money},#{completororder},#{classification},#{authororder},#{type})
+        insert into t_tab_teacherschool (id,personid,whetherhost,
+        inventnumber,topicnature,subjectclassification,subjectname,
+        horizontaltopic,subjectgrade,projectdate,sourceoffunding,
+        money,completororder,classification,authororder,person_number,type)
+        values (#{id} ,#{personid},#{whetherhost},#{inventnumber},#{topicnature},#{subjectclassification},#{subjectname},#{horizontaltopic},#{subjectgrade},#{projectdate},#{sourceoffunding},#{money},#{completororder},#{classification},#{authororder},#{personNumber},#{type})
     </insert>
     <select id="getTeacherSchoolById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.TeacherSchool">
@@ -25,12 +39,20 @@ and t1.personid = t2.person_id and t1.type = #{type}
             PERSONID = #{personidvalue} ,
         </if>
 
-        whetherhost=#{whetherhost},inventnumber=#{inventnumber},topicnature=#{topicnature},subjectclassification=#{subjectclassification},subjectname=#{subjectname},horizontaltopic=#{horizontaltopic},subjectgrade=#{subjectgrade},projectdate=#{projectdate},sourceoffunding=#{sourceoffunding},money=#{money},completororder=#{completororder},classification=#{classification},authororder=#{authororder},type=#{type} where id = #{id}
+        whetherhost=#{whetherhost},inventnumber=#{inventnumber},topicnature=#{topicnature},subjectclassification=#{subjectclassification},subjectname=#{subjectname},horizontaltopic=#{horizontaltopic},subjectgrade=#{subjectgrade},projectdate=#{projectdate},sourceoffunding=#{sourceoffunding},money=#{money},completororder=#{completororder},classification=#{classification},authororder=#{authororder},person_number=#{personNumber},type=#{type} where id = #{id}
     </update>
     <delete id="delTeacherSchool" parameterType="java.lang.String">
         delete from T_TAB_TEACHERSCHOOL where id = #{id}
     </delete>
     <select id="selectTeacherById" parameterType="java.lang.String" resultType="com.goisan.table.bean.TeacherSchool">
-        select * from T_TAB_TEACHERSCHOOL where id = #{id}
+        select t1.id,t1.personid,
+        t1.whetherhost,t1.inventnumber,
+        t1.topicnature,t1.subjectclassification,
+        t1.subjectname,t1.horizontaltopic,
+        t1.subjectgrade,t1.projectdate,t1.sourceoffunding,
+        t1.money,t1.completororder,t1.classification,
+        func_get_dicvalue(t1.subjectclassification,'KTFL') subjectclassificationShow,
+        t1.person_number personNumber,
+        t1.authororder,t1.type from T_TAB_TEACHERSCHOOL t1 where t1.id = #{id}
     </select>
 </mapper>
