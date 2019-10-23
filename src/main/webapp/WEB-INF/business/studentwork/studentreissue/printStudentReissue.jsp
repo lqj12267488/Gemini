@@ -120,8 +120,8 @@
         <td align="center" class="left1" style="text-align:center;" colspan="6">${studentReissue.requestProject}</td>
     </tr>
     <tr>
-        <td class="left" align="center" style="text-align:center;width:140px;">申请理由：</td>
-        <td align="center" class="left1" style="text-align:center;" colspan="6">
+        <td class="left" align="center" style="text-align:center;width:130px;height:90px">申请理由：</td>
+        <td align="center" class="left1" style="text-align:center; height:90px;" colspan="6">
             ${studentReissue.requestReason}
             <br>
             我承诺以上理由均属实；若有不实，本人甘愿接受任何处罚。
@@ -131,11 +131,11 @@
         </td>
     </tr>
     <tr>
-        <td class="left" align="center" style="text-align:center;width: 140px;">
+        <td class="left" align="center" style="text-align:center;width: 140px;height:80px;">
             辅导员<br>
             意 见：
         </td>
-        <td align="center" class="left1" style="text-align:center;" colspan="6">
+        <td align="center" class="left1" style="text-align:center;height:80px;" colspan="6">
             ${departmentName}
             <br>
             辅导员签名：${departmentNames}
@@ -143,22 +143,22 @@
         </td>
     </tr>
     <tr>
-        <td class="left" align="center" style="text-align:center;width: 140px;">
+        <td class="left" align="center" style="text-align:center;width: 140px;height:80px;">
             年级组长<br>
             意 见：
         </td>
-        <td align="center" class="left1" style="text-align:center;" colspan="6">
+        <td align="center" class="left1" style="text-align:center;height:80px;" colspan="6">
             ${agent}
             <br>
             年级组长签名：${agentNames} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日期：${agentRequestDate}
         </td>
     </tr>
     <tr>
-        <td class="left" align="center" style="text-align:center;width:140px;">
+        <td class="left" align="center" style="text-align:center;width:140px;height:80px;">
             学生处<br>
             意 见：
         </td>
-        <td align="center" class="left1" style="text-align:center;" colspan="6">
+        <td align="center" class="left1" style="text-align:center;height:80px;" colspan="6">
             ${departmentNameStudent}
             <br>
             学生处签名：${departmentStudentNames}

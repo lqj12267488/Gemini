@@ -63,10 +63,16 @@ public class ResearchController {
             researchService.updateResearch(research);
             return new Message(0, "修改成功！", null);
         } else {
-            CommonUtil.save(research);
-            research.setPersonid(research.getPersonidvalue());
-            researchService.saveResearch(research);
-            return new Message(0, "添加成功！", null);
+            try {
+                CommonUtil.save(research);
+                research.setPersonid(research.getPersonidvalue());
+                researchService.saveResearch(research);
+                return new Message(1, "添加成功！", "success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Message(0, "教职工填写不合法！", "error");
+            }
+
         }
     }
 

@@ -96,10 +96,16 @@ public class StaffController {
             staffService.updateStaff(staff);
             return new Message(0, "修改成功！", null);
         } else {
-            CommonUtil.save(staff);
-            staff.setPersonid(staff.getPersonidvalue());
-            staffService.saveStaff(staff);
-            return new Message(0, "添加成功！", null);
+            try {
+                CommonUtil.save(staff);
+                staff.setPersonid(staff.getPersonidvalue());
+                staffService.saveStaff(staff);
+                return new Message(1, "添加成功！", "success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new Message(0, "教职工添加不合理！", "error");
+            }
+
         }
     }
 

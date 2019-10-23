@@ -274,11 +274,12 @@
         }, function (msg) {
             swal({
                 title: msg.msg,
-                type: "success"
+                type: msg.result
             }, function () {
                 $("#dialog").modal('hide');
                 $('#table').DataTable().ajax.reload();
             });
+
         })
     }
 </script>
