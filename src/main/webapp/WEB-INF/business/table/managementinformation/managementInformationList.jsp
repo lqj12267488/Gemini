@@ -32,6 +32,14 @@
                             <div class="col-md-2">
                                 <input id="unitNameSel">
                             </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col-md-1 tar">
+                                年份：
+                            </div>
+                            <div class="col-md-2">
+                                <select id="yeara"/>
+                            </div>
                             <div class="col-md-2">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                                 <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
@@ -66,6 +74,9 @@
             $.get("<%=request.getContextPath()%>/common/getSysDict?name=GLXXXTLY", function (data) {
                 addOption(data,'sourcesSel');
             });
+            $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+                addOption(data,'yeara');
+            });
 
         search();
     })
@@ -82,6 +93,7 @@
                     systemName: $("#systemNameSel").val(),
                     sources: $("#sourcesSel").val(),
                     unitName: $("#unitNameSel").val(),
+                    year:$("#yeara").val(),
                 }
             },
             "destroy": true,
@@ -91,7 +103,8 @@
                  {"data": "systemName", "title": "系统名称(全称)"},
                  {"data": "sourcesShow", "title": "来源"},
                  {"data": "unitName", "title": "开发单位名称(全称)"},
-                {
+                 {"data": "year", "title": "年份"},
+              {
                     "title": "操作",
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '")></span>&ensp;&ensp;' +

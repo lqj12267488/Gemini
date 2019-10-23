@@ -21,30 +21,10 @@
                                 <input id="organizationNameSel">
                             </div>
                             <div class="col-md-1 tar">
-                                负责人教工号：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="personStaffSel">
-                            </div>
-                            <div class="col-md-1 tar">
                                 负责人姓名：
                             </div>
                             <div class="col-md-2">
                                 <input id="personNameSel">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-1 tar">
-                                专职人员数（个）：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="staffNumberSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                兼职人员数（个）：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="employeNumberSel">
                             </div>
                             <div class="col-md-2">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>

@@ -8,37 +8,11 @@
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
                         <div class="form-row">
-                                                    <div class="col-md-1 tar">
-                                总册数：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="totalNumberSel">
-                            </div>
                             <div class="col-md-1 tar">
-                                本学年新增数：
+                                年份：
                             </div>
                             <div class="col-md-2">
-                                <input id="schoolYearAddSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                中文纸质专业期刊：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="chinesePaperJournalSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                外文纸质专业期刊：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="foreignPaperJournalsSel">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-1 tar">
-                                电子专业期刊：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="electronicJournalSel">
+                                <select id="year"/>
                             </div>
                             <div class="col-md-2">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
@@ -67,7 +41,9 @@
 </div>
 <script>
     $(document).ready(function () {
-
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'year');
+        });
 
         search();
     })
@@ -85,6 +61,7 @@
                     chinesePaperJournal: $("#chinesePaperJournalSel").val(),
                     foreignPaperJournals: $("#foreignPaperJournalsSel").val(),
                     electronicJournal: $("#electronicJournalSel").val(),
+                    year:$("#year").val(),
                 }
             },
             "destroy": true,

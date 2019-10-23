@@ -8,23 +8,11 @@
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
                         <div class="form-row">
-                                                    <div class="col-md-1 tar">
-                                全校总值：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="totalSchoolValueSel">
-                            </div>
                             <div class="col-md-1 tar">
-                                资产总值：
+                                年份：
                             </div>
                             <div class="col-md-2">
-                                <input id="totalAssetsSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                当年新增资产值：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="assetsAddSel">
+                                <select id="yeara"/>
                             </div>
                             <div class="col-md-2">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
@@ -53,7 +41,9 @@
 </div>
 <script>
     $(document).ready(function () {
-
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'yeara');
+        });
 
         search();
     })
@@ -69,6 +59,7 @@
                     totalSchoolValue: $("#totalSchoolValueSel").val(),
                     totalAssets: $("#totalAssetsSel").val(),
                     assetsAdd: $("#assetsAddSel").val(),
+                    year:$("#yeara").val(),
                 }
             },
             "destroy": true,
@@ -77,6 +68,7 @@
                  {"data": "totalSchoolValue", "title": "全校总值"},
                  {"data": "totalAssets", "title": "资产总值"},
                  {"data": "assetsAdd", "title": "当年新增资产值"},
+                {"data": "year", "title": "年份"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {

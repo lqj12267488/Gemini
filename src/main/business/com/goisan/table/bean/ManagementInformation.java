@@ -23,6 +23,17 @@ public class ManagementInformation extends BaseBean {
     /**开发单位名称(全称)*/
     private String unitName;
 
+    /**年份*/
+    private String year;
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     public String getId() {
         return id;
     }

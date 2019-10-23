@@ -61,9 +61,15 @@ public class GeneralConstructionController {
     }
 
     @RequestMapping("/generalconstruction/toGeneralConstructionEdit")
-    public String toEditGeneralConstruction(String id, Model model) {
+    public String toEditGeneralConstruction(String id, Model model,String flag) {
         model.addAttribute("data", generalConstructionService.getGeneralConstructionById(id));
         model.addAttribute("head", "修改");
+        if (flag!=null){
+            if (flag.equals("on")||flag=="on"){
+                model.addAttribute("head","详情信息");
+                model.addAttribute("flag",flag);
+            }
+        }
         return "/business/table/generalconstruction/generalConstructionEdit";
     }
 

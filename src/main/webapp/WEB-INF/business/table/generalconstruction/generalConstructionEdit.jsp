@@ -16,6 +16,7 @@
             </button>
             <span style="font-size: 14px;">${head}&nbsp;</span>
             <input id="id" hidden value="${data.id}"/>
+            <input id="flag" hidden value="${flag}"/>
         </div>
         <div class="modal-body clearfix">
             <div class="controls">
@@ -99,10 +100,18 @@
                         <input id="electronicsBookEdit" value="${data.electronicsBook}"/>
                     </div>
                 </div>
-            </div>
+                <div class="form-row">
+                 <div class="col-md-3 tar">
+                    <span class="iconBtx">*</span>年份
+                 </div>
+                <div class="col-md-9">
+                    <select id="yeara" />
+                </div>
+             </div>
+           </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success btn-clean" onclick="save()">保存
+            <button id="save" type="button" class="btn btn-success btn-clean" onclick="save()">保存
             </button>
             <button type="button" class="btn btn-default btn-clean" data-dismiss="modal">关闭
             </button>
@@ -118,6 +127,14 @@
             $.get("<%=request.getContextPath()%>/common/getSysDict?name=WXFGQK", function (data) {
                 addOption(data, 'wirelessCoverageEdit','${data.wirelessCoverage}');
             });
+            $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+                addOption(data,'yeara','${data.year}');
+            });
+            if ($("#flag").val()=='on'){
+                $("#save").hide();
+                $("input").attr("readonly","readonly");
+                $("select").attr("disabled","disabled");
+            }
     });
 
     function save() {
@@ -191,6 +208,13 @@
             });
             return;
         }
+        if ($("#yeara").val() == "" || $("#yeara").val() == undefined || $("#yeara").val() == null) {
+            swal({
+                title: "请选择年份",
+                type: "warning"
+            });
+            return;
+        }
         $.post("<%=request.getContextPath()%>/generalconstruction/saveGeneralConstruction", {
             id: "${data.id}",
             internetBandwidth: $("#internetBandwidthEdit").val(),
@@ -203,6 +227,7 @@
             onlineCourses: $("#onlineCoursesEdit").val(),
             digitalResources: $("#digitalResourcesEdit").val(),
             electronicsBook: $("#electronicsBookEdit").val(),
+            year:$("#yeara").val(),
         }, function (msg) {
             swal({
                 title: msg.msg,

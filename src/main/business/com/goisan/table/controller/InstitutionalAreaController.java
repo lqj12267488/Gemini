@@ -61,9 +61,15 @@ public class InstitutionalAreaController {
     }
 
     @RequestMapping("/institutionalarea/toInstitutionalAreaEdit")
-    public String toEditInstitutionalArea(String id, Model model) {
+    public String toEditInstitutionalArea(String id, Model model,String flag) {
         model.addAttribute("data", institutionalAreaService.getInstitutionalAreaById(id));
         model.addAttribute("head", "修改");
+        if (flag != null) {
+            if (flag.equals("on") || flag == "on") {
+                model.addAttribute("head", "详情信息");
+                model.addAttribute("flag", flag);
+            }
+        }
         return "/business/table/institutionalarea/institutionalAreaEdit";
     }
 

@@ -16,6 +16,17 @@ public class FixedAssets extends BaseBean {
     /**当年新增资产值*/
     private String assetsAdd;
 
+    /**年份*/
+    private String year;
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     public String getId() {
         return id;
     }

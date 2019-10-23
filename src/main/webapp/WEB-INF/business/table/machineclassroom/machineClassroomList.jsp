@@ -8,58 +8,14 @@
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
                         <div class="form-row">
-                                                    <div class="col-md-1 tar">
-                                阅览室座位数（个）：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="readingRoomSeatSel">
-                            </div>
                             <div class="col-md-1 tar">
-                                计算机数合计：
+                                年份：
                             </div>
                             <div class="col-md-2">
-                                <input id="computerNumberSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                教学用计算机：
+                                <select id="years"/>
                             </div>
                             <div class="col-md-2">
-                                <input id="teachingComputerSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                平板电脑：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="tabletPcSel">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-1 tar">
-                                公共机房：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="publicComputerRoomSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                专业机房：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="professionalComputerSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                教室（间）：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="classroomSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                网络多媒体教室：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="multimediaClassroomSel">
-                            </div>
-                            <div class="col-md-2">
-                                <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
+                                <button id="saves" type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                                 <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
                             </div>
                         </div>
@@ -85,7 +41,9 @@
 </div>
 <script>
     $(document).ready(function () {
-
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'years');
+        });
 
         search();
     })
@@ -106,6 +64,7 @@
                     professionalComputer: $("#professionalComputerSel").val(),
                     classroom: $("#classroomSel").val(),
                     multimediaClassroom: $("#multimediaClassroomSel").val(),
+                    year:$("#years").val(),
                 }
             },
             "destroy": true,
@@ -119,6 +78,7 @@
                  {"data": "professionalComputer", "title": "专业机房"},
                  {"data": "classroom", "title": "教室（间）"},
                  {"data": "multimediaClassroom", "title": "网络多媒体教室"},
+                {"data": "year", "title": "年份"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {

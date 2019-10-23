@@ -22,6 +22,17 @@ public class BookCollection extends BaseBean {
     /**电子专业期刊*/
     private String electronicJournal;
 
+    /**年份*/
+    private String year;
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     public String getId() {
         return id;
     }

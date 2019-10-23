@@ -8,69 +8,11 @@
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
                         <div class="form-row">
-                                                    <div class="col-md-1 tar">
-                                接入互联网出口带宽(mbps)：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="internetBandwidthSel">
-                            </div>
                             <div class="col-md-1 tar">
-                                校园网主干最大带宽（mbps）：
+                                年份：
                             </div>
                             <div class="col-md-2">
-                                <input id="networkBandwidthSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                一卡通使用：
-                            </div>
-                            <div class="col-md-2">
-                                <select id="oneCardUseSel"></select>
-                            </div>
-                            <div class="col-md-1 tar">
-                                无线覆盖情况：
-                            </div>
-                            <div class="col-md-2">
-                                <select id="wirelessCoverageSel"></select>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-1 tar">
-                                网络信息点数（个）：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="networkInformationSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                管理信息系统数据总量：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="managementInformationSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                电子邮件系统用户数（个）：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="systemMailNumberSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                上网课程数（门）：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="onlineCoursesSel">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col-md-1 tar">
-                                数字资源量：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="digitalResourcesSel">
-                            </div>
-                            <div class="col-md-1 tar">
-                                电子图书（册）：
-                            </div>
-                            <div class="col-md-2">
-                                <input id="electronicsBookSel">
+                                <select id="years"/>
                             </div>
                             <div class="col-md-2">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
@@ -100,11 +42,8 @@
 <script>
     $(document).ready(function () {
 
-            $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
-                addOption(data,'oneCardUseSel');
-            });
-            $.get("<%=request.getContextPath()%>/common/getSysDict?name=WXFGQK", function (data) {
-                addOption(data,'wirelessCoverageSel');
+            $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+                addOption(data,'years');
             });
 
         search();
@@ -128,6 +67,7 @@
                     onlineCourses: $("#onlineCoursesSel").val(),
                     digitalResources: $("#digitalResourcesSel").val(),
                     electronicsBook: $("#electronicsBookSel").val(),
+                    year:$("#years").val(),
                 }
             },
             "destroy": true,
@@ -137,16 +77,13 @@
                  {"data": "networkBandwidth", "title": "校园网主干最大带宽（mbps）"},
                  {"data": "oneCardUseShow", "title": "一卡通使用"},
                  {"data": "wirelessCoverageShow", "title": "无线覆盖情况"},
-                 {"data": "networkInformation", "title": "网络信息点数（个）"},
-                 {"data": "managementInformation", "title": "管理信息系统数据总量"},
-                 {"data": "systemMailNumber", "title": "电子邮件系统用户数（个）"},
-                 {"data": "onlineCourses", "title": "上网课程数（门）"},
                  {"data": "digitalResources", "title": "数字资源量"},
-                 {"data": "electronicsBook", "title": "电子图书（册）"},
+                 {"data": "year", "title": "年份"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '")></span>&ensp;&ensp;' +
+                                '<span class="icon-eye-open" title="查看" onclick=see("' + row.id + '")></span>&ensp;&ensp;' +
                                 '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
                     }
                 }
@@ -169,6 +106,10 @@
 
     function edit(id) {
         $("#dialog").load("<%=request.getContextPath()%>/generalconstruction/toGeneralConstructionEdit?id=" + id)
+        $("#dialog").modal("show")
+    }
+    function see(id) {
+        $("#dialog").load("<%=request.getContextPath()%>/generalconstruction/toGeneralConstructionEdit?id=" + id+"&flag=on")
         $("#dialog").modal("show")
     }
 

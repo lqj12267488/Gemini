@@ -41,6 +41,17 @@ public class GeneralConstruction extends BaseBean {
     /**电子图书（册）*/
     private String electronicsBook;
 
+    /**年份*/
+    private  String year;
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     public String getId() {
         return id;
     }

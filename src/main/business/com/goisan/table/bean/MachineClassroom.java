@@ -31,6 +31,17 @@ public class MachineClassroom extends BaseBean {
     /**网络多媒体教室*/
     private String multimediaClassroom;
 
+    /**年份*/
+    private String year;
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     public String getId() {
         return id;
     }

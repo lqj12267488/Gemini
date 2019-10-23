@@ -5,22 +5,18 @@
     <select id="getManagementInformationList"
             parameterType="com.goisan.table.bean.ManagementInformation"
             resultType="com.goisan.table.bean.ManagementInformation">
-        select id,type,func_get_dicvalue(type,'GLXXXTLX') typeShow,system_name,sources,func_get_dicvalue(sources,'GLXXXTLY') sourcesShow,unit_name,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_MANAGEMENT_INFORMATION where 1=1 
-<if test='type != "" and type != null'> AND type = #{type} </if> 
-<if test='systemName != "" and systemName != null'> AND system_name like '%'||#{systemName}||'%' </if> 
-<if test='sources != "" and sources != null'> AND sources = #{sources} </if> 
-<if test='unitName != "" and unitName != null'> AND unit_name like '%'||#{unitName}||'%' </if> 
-
+        select id,type,func_get_dicvalue(type,'GLXXXTLX') typeShow,func_get_dicvalue(PARTICULAR_YEAR,'ND') year,system_name,sources,func_get_dicvalue(sources,'GLXXXTLY') sourcesShow,unit_name,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_MANAGEMENT_INFORMATION where 1=1
+        <if test='year != "" and year != null'> AND PARTICULAR_YEAR like '${year}' </if>
     </select>
     <insert id="saveManagementInformation" parameterType="com.goisan.table.bean.ManagementInformation">
-        insert into t_tab_management_information (id,type,system_name,sources,unit_name,creator,create_time,create_dept) values (func_get_uuid ,#{type},#{systemName},#{sources},#{unitName},#{creator},sysdate ,#{createDept})
+        insert into t_tab_management_information (id,type,particular_year,system_name,sources,unit_name,creator,create_time,create_dept) values (func_get_uuid ,#{type},#{year},#{systemName},#{sources},#{unitName},#{creator},sysdate ,#{createDept})
     </insert>
     <select id="getManagementInformationById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.ManagementInformation">
         select * from T_TAB_MANAGEMENT_INFORMATION where id = #{id}
     </select>
     <update id="updateManagementInformation" parameterType="com.goisan.table.bean.ManagementInformation">
-        update t_tab_management_information set type=#{type},system_name=#{systemName},sources=#{sources},unit_name=#{unitName},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+        update t_tab_management_information set type=#{type},system_name=#{systemName},sources=#{sources},particular_year=#{year},unit_name=#{unitName},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
     </update>
     <delete id="delManagementInformation" parameterType="java.lang.String">
         delete from T_TAB_MANAGEMENT_INFORMATION where id = #{id}

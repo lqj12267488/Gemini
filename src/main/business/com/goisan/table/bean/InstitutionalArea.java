@@ -73,6 +73,17 @@ public class InstitutionalArea extends BaseBean {
     /**其他用房*/
     private String otherRooms;
 
+    /**年份*/
+    private String year;
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
     public String getId() {
         return id;
     }

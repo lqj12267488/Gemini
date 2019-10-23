@@ -43,6 +43,14 @@
                         <input id="assetsAddEdit" value="${data.assetsAdd}"/>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>年份
+                    </div>
+                    <div class="col-md-9">
+                        <select id="year" />
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -56,6 +64,9 @@
 
 <script>
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'year');
+        });
     });
 
     function save() {
@@ -80,11 +91,19 @@
             });
             return;
         }
+        if ($("#year").val() == "" || $("#year").val() == undefined || $("#year").val() == null) {
+            swal({
+                title: "请选择年份",
+                type: "warning"
+            });
+            return;
+        }
         $.post("<%=request.getContextPath()%>/fixedassets/saveFixedAssets", {
             id: "${data.id}",
             totalSchoolValue: $("#totalSchoolValueEdit").val(),
             totalAssets: $("#totalAssetsEdit").val(),
             assetsAdd: $("#assetsAddEdit").val(),
+            year:$("#year").val(),
         }, function (msg) {
             swal({
                 title: msg.msg,

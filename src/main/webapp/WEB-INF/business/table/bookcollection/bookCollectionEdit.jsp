@@ -59,6 +59,14 @@
                         <input id="electronicJournalEdit" value="${data.electronicJournal}"/>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>年份
+                    </div>
+                    <div class="col-md-9">
+                        <select id="years" value="${data.year}"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -72,6 +80,9 @@
 
 <script>
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'years','${data.year}');
+        });
     });
 
     function save() {
@@ -110,6 +121,13 @@
             });
             return;
         }
+        if ($("#years").val() == "" || $("#years").val() == undefined || $("#years").val() == null) {
+            swal({
+                title: "请选择年份！",
+                type: "warning"
+            });
+            return;
+        }
         $.post("<%=request.getContextPath()%>/bookcollection/saveBookCollection", {
             id: "${data.id}",
             totalNumber: $("#totalNumberEdit").val(),
@@ -117,6 +135,7 @@
             chinesePaperJournal: $("#chinesePaperJournalEdit").val(),
             foreignPaperJournals: $("#foreignPaperJournalsEdit").val(),
             electronicJournal: $("#electronicJournalEdit").val(),
+            year:$("#years").val(),
         }, function (msg) {
             swal({
                 title: msg.msg,
