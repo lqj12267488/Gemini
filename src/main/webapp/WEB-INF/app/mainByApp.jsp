@@ -131,27 +131,27 @@
                         </a>
                     </li>
                 </c:if>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-                    <%--<a href="/evaluationApp/result/listEmpsMenmbers">--%>
+                <%--<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                    &lt;%&ndash;<a href="/evaluationApp/result/listEmpsMenmbers">&ndash;%&gt;
                     <a href="<%=request.getContextPath()%>/evaluationApp/result/listTask?evaluationType=0">
 									<span class="mui-icon mui-icon-loop">
 										<span style="display: none" id="emCountSpan" class="mui-badge">${emCount}</span>
 									</span>
                         <div class="mui-media-body">教师考核</div>
                     </a>
-                </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+                </li>--%>
+               <%-- <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                     <a href="<%=request.getContextPath()%>/evaluationApp/result/listTask?evaluationType=1">
 									<span class="mui-icon mui-icon-spinner mui-spin">
 										<span style="display: none" id="smCountSpan" class="mui-badge">${smCount}</span>
 									</span>
                         <div class="mui-media-body">学生考核</div>
                     </a>
-                </li>
+                </li>--%>
 
                 <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                     <a href="<%=request.getContextPath()%>/repair/toAddRepairApp">
-							<span class="mui-icon mui-icon-phone">
+							<span class="mui-icon mui-icon-gear">
 								<span style="display: none" class="mui-badge"></span>
 							</span>
                         <div class="mui-media-body">设备报修</div>
@@ -209,14 +209,14 @@
                         <div class="mui-media-body">签到</div>
                     </a>
                 </li>
-                <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
+               <%-- <li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
                     <a href="<%=request.getContextPath()%>/archives/appArchivesList">
                         <span class="mui-icon mui-icon-chatbubble">
                             <span style="display: none" id="archivesCountSpan" class="mui-badge">${archivesCount}</span>
                         </span>
                         <div class="mui-media-body">电子档案</div>
                     </a>
-                </li>
+                </li>--%>
             </ul>
         </div>
     </div>
