@@ -500,12 +500,12 @@ select   *
          WHERE 1 = 1
            AND valid_flag = '1'
            and t.publish_flag = '1'
-           and t.DEPT_ID LIKE FUNC_GET_SCHOOL_RANGE('001007', '10')
+           and t.DEPT_ID LIKE FUNC_GET_SCHOOL_RANGE('${deptId}','${level}')
            and t.title is not null
            and t.ID IN
                (SELECT ll.notice_id
                   FROM T_SYS_NOTICE_LOG ll
-                 WHERE ll.CREATOR = 'aa18204b-6421-48c8-a236-b74e52ca6da5')
+                 WHERE ll.CREATOR = '${loginID}')
         UNION
         SELECT '2' abc,
                tt.id,
@@ -524,18 +524,18 @@ select   *
            and tt.request_flag = '2'
            and tt.publish_flag = '1'
            and (tt.emp_id LIKE
-               '%' || 'aa18204b-6421-48c8-a236-b74e52ca6da5' || '%' OR
-               tt.creator = 'aa18204b-6421-48c8-a236-b74e52ca6da5' OR
-               tt.dept_id LIKE '%' || '001007' || '%')
+               '%' || '${loginID}' || '%' OR
+               tt.creator = '${loginID}' OR
+               tt.dept_id LIKE '%' || '${deptId}' || '%')
            and tt.id in
                (select message_id
                   from T_SYS_MESSAGE_LOG l
-                 where l.creator = 'aa18204b-6421-48c8-a236-b74e52ca6da5')
+                 where l.creator = '${loginID}')
            and tt.title is not null
            and tt.valid_flag = '1'
         UNION
         SELECT   '3' abc,
-               tt.id,
+               t.id,
                '【' || FUNC_GET_DICVALUE(t.MEETING_REQUEST, 'HYSQ') || '】' ||
                to_char(t.start_time, 'yyyy') || '年' ||
                to_char(t.start_time, 'MM') || '月' ||
@@ -554,13 +554,10 @@ select   *
                t.create_dept deptId,
                FUNC_GET_USERNAME(t.creator) requester,
                t.creator
-          FROM T_BG_HALLUSE_WF t ,T_BG_HALLUSE_WF tt
+          FROM T_BG_HALLUSE_WF t
          WHERE t.valid_flag = '1'
            and t.request_flag = '2'
-           and t.ID IN
-               (SELECT ll.notice_id
-                  FROM T_SYS_NOTICE_LOG ll
-                 WHERE ll.CREATOR = 'aa18204b-6421-48c8-a236-b74e52ca6da5')) a
+           ) a
  ORDER BY createTime DESC
     </select>
     <select id="getProcessList" resultType="com.goisan.synergy.notice.bean.Notice"
