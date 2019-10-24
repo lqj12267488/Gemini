@@ -69,7 +69,7 @@
     </tr>
     <tr>
         <td class="left1" align="center" colspan="2" style="padding-left: 2%;text-align:center;  width: 140px;">
-            吉水电院${document.symbol}号
+            新现代${document.symbol}号
         </td>
         <td class="left1" align="center" style="padding-left: 2%;text-align:center;  width: 140px;">${handleTime}印发</td>
         <td class="left1" align="center" style="padding-left: 2%;text-align:center;  width: 140px;">

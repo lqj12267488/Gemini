@@ -257,7 +257,7 @@ public class ParentController {
         sheet.setDefaultColumnWidth(25);
         sheet.createRow(0).createCell(0).setCellStyle(headStyle);
         //sheet.getRow(0).getCell(0).setCellValue("");
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 10));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 11));
         sheet.getRow(0).getCell(0).setCellValue("高等教育学生父母或监护人信息录取表");
         sheet.getRow(0).createCell(1).setCellStyle(headStyle);
 
@@ -300,6 +300,8 @@ public class ParentController {
         sheet.getRow(1).getCell(9).setCellValue("父母或监护人2身份证件号码");
         sheet.getRow(1).createCell(10).setCellStyle(cellStyle);
         sheet.getRow(1).getCell(10).setCellValue("父母或监护人2联系方式");
+        sheet.getRow(1).createCell(11).setCellStyle(cellStyle);
+        sheet.getRow(1).getCell(11).setCellValue("学生户籍地址(与身份证一致)");
 
         HSSFCellStyle textS = wb.createCellStyle();
         HSSFDataFormat form = wb.createDataFormat();
@@ -321,6 +323,7 @@ public class ParentController {
         setHSSFPrompt(sheet, "", "", 1, 65535, 8, 8);
         setHSSFPrompt(sheet, "", "", 1, 65535, 9, 9);
         setHSSFPrompt(sheet, "", "", 1, 65535, 10, 10);
+        setHSSFPrompt(sheet, "", "", 1, 65535, 11, 11);
         List<Select2> list5 = assetsService.getUserDictName("JZZJLX");
         String[] major = new String[list5.size()];
         for (int i = 0; i < list5.size(); i++) {
