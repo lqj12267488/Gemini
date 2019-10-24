@@ -79,7 +79,7 @@
                         </div>
                       <div id="jzxy">
                          <div class="form-row">
-                            法人代表信息
+                             联系人信息
                         </div>
                         <div class="form-row">
                             <div class="col-md-2 tar">
