@@ -5,10 +5,11 @@
     <select id="getClubRewardList"
             parameterType="com.goisan.table.bean.ClubReward"
             resultType="com.goisan.table.bean.ClubReward">
-        select creator,create_time,create_dept,changer,change_time,change_dept,id,name,reward_level,func_get_dicvalue(reward_level,'HJJB') rewardLevelShow,reward_date,award_unit,guidance_teacher, project_name
-        from t_tab_club_reward where 1=1
+        select a.communityname name,c.reward_level,creator,create_time,create_dept,changer,change_time,change_dept,
+        c.id,func_get_dicvalue(reward_level,'HJJB') rewardLevelShow,reward_date,award_unit,guidance_teacher,
+        project_name from  t_tab_club_reward c left join T_TAB_ASSOCIATIONS a on  a.id=c.name where 1=1
         <if test='name != "" and name != null'>
-            AND name like '%'||#{name}||'%'
+            AND a.communityname like '%'||#{name}||'%'
         </if>
         <if test='rewardLevel != "" and rewardLevel != null'>
             AND reward_level = #{rewardLevel}
@@ -28,4 +29,8 @@
     <delete id="delClubReward" parameterType="java.lang.String">
         delete from t_tab_club_reward where id = #{id}
     </delete>
+    <select id="getCommunityname" parameterType="java.lang.String" resultType="com.goisan.table.bean.ClubReward">
+        select COMMUNITYNAME from T_TAB_ASSOCIATIONS
+    </select>
+
 </mapper>

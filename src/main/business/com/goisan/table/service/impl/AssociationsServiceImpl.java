@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.system.bean.AutoComplete;
 import com.goisan.table.bean.Associations;
 import com.goisan.table.dao.AssociationsDao;
 import com.goisan.table.service.AssociationsService;
@@ -44,4 +45,6 @@ public class AssociationsServiceImpl implements AssociationsService {
     public void delAssociations(String id) {
         associationsDao.delAssociations(id);
     }
+
+
 }

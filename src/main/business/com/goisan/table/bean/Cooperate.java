@@ -80,6 +80,27 @@ public class Cooperate extends BaseBean {
     private String apprenticeship;
 
     private String groupNameSel;
+//    产学合作企业总数(个)
+    private String centerprisenum;
+
+//    订单培养总数（人）
+    private String culturenum;
+
+    public String getCenterprisenum() {
+        return centerprisenum;
+    }
+
+    public void setCenterprisenum(String centerprisenum) {
+        this.centerprisenum = centerprisenum;
+    }
+
+    public String getCulturenum() {
+        return culturenum;
+    }
+
+    public void setCulturenum(String culturenum) {
+        this.culturenum = culturenum;
+    }
 
     public String getMojorName() {
         return MAJORNAME;

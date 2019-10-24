@@ -15,5 +15,4 @@ public interface ClubRewardService {
     void updateClubReward(BaseBean baseBean);
 
     void delClubReward(String id);
-
 }

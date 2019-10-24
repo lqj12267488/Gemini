@@ -12,7 +12,7 @@
                                 社团名称：
                             </div>
                             <div class="col-md-2">
-                                <input id="nameSel">
+                                <input id="nameSel"/>
                             </div>
                             <div class="col-md-1 tar">
                                 获奖级别：
@@ -68,11 +68,11 @@
             "destroy": true,
             "columns": [
                  {"data": "id", "title": "主键id", "visible": false},
-                 {"data": "name", "title": "社团名称"},
-                 {"data": "projectName", "title": "项目名称"},
-                 {"data": "rewardLevelShow", "title": "获奖级别"},
-                 {"data": "rewardDate", "title": "获奖日期"},
-                 {"data": "awardUnit", "title": "颁奖单位"},
+                 {"width":"10%","data": "name", "title": "社团名称"},
+                 {"width":"10%","data": "projectName", "title": "项目名称"},
+                 {"width":"10%","data": "rewardLevelShow", "title": "获奖级别"},
+                 {"width":"10%","data": "rewardDate", "title": "获奖日期"},
+                 {"width":"10%","data": "awardUnit", "title": "颁奖单位"},
                  {"data": "guidanceTeacher", "title": "指导教师名单"},
                 {
                     "title": "操作",

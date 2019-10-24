@@ -24,4 +24,5 @@
     <delete id="delAssociations" parameterType="java.lang.String">
         delete from T_TAB_ASSOCIATIONS where id = #{id}
     </delete>
+
 </mapper>

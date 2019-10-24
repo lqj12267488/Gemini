@@ -1,5 +1,6 @@
 package com.goisan.table.controller;
 
+import com.goisan.system.bean.AutoComplete;
 import com.goisan.table.bean.Associations;
 import com.goisan.table.service.AssociationsService;
 import com.goisan.system.tools.CommonUtil;
@@ -76,5 +77,6 @@ public class AssociationsController {
         associationsService.delAssociations(id);
         return new Message(0, "删除成功！", null);
     }
+
 
 }

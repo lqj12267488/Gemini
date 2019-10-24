@@ -1,5 +1,6 @@
 package com.goisan.table.service;
 
+import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.BaseBean;
 import com.goisan.table.bean.Associations;
 
@@ -16,5 +17,4 @@ public interface AssociationsService {
     void updateAssociations(BaseBean baseBean);
 
     void delAssociations(String id);
-
 }

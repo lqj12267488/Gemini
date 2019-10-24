@@ -94,7 +94,7 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>学校为企业年培训员工数（人天28）
+                        <span class="iconBtx">*</span>学校为企业年培训员工数（人天）
                     </div>
                     <div class="col-md-9">
                         <input id="employeesnumEdit" value="${data.employeesnum}"/>
@@ -152,6 +152,22 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>产学合作企业总数(个)
+                    </div>
+                    <div class="col-md-9">
+                        <input id="centerprisenumEdit" value="${data.centerprisenum}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>订单培养总数（人）
+                    </div>
+                    <div class="col-md-9">
+                        <input id="culturenumEdit" value="${data.culturenum}"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -186,6 +202,13 @@
     });
 
     function save() {
+        if ($("#mojorNameEdit").val() == "" || $("#mojorNameEdit").val() == undefined || $("#mojorNameEdit").val() == null) {
+            swal({
+                title: "请选择专业名称！",
+                type: "warning"
+            });
+            return;
+        }
         if ($("#developmentcoursenumEdit").val() == "" || $("#developmentcoursenumEdit").val() == undefined || $("#developmentcoursenumEdit").val() == null) {
             swal({
                 title: "请填写共同开发课程数（门）！",
@@ -244,7 +267,7 @@
         }
         if ($("#employeesnumEdit").val() == "" || $("#employeesnumEdit").val() == undefined || $("#employeesnumEdit").val() == null) {
             swal({
-                title: "请填写学校为企业年培训员工数（人天28）！",
+                title: "请填写学校为企业年培训员工数（人天）！",
                 type: "warning"
             });
             return;
@@ -291,6 +314,20 @@
             });
             return;
         }
+        if ($("#centerprisenumEdit").val() == "" || $("#centerprisenumEdit").val() == undefined || $("#centerprisenumEdit").val() == null) {
+            swal({
+                title: "请填写产学合作企业总数(个)！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#culturenumEdit").val() == "" || $("#culturenumEdit").val() == undefined || $("#culturenumEdit").val() == null) {
+            swal({
+                title: "请填写订单培养总数（人）！",
+                type: "warning"
+            });
+            return;
+        }
         $.post("<%=request.getContextPath()%>/cooperate/saveCooperate", {
             id: "${data.id}",
             MAJORNAME:$("#mojorNameEdit").val(),
@@ -309,6 +346,8 @@
             business4starttime: $("#business4starttimeEdit").val(),
             business5starttime: $("#business5starttimeEdit").val(),
             apprenticeship: $("#apprenticeshipEdit").val(),
+            centerprisenum: $("#centerprisenumEdit").val(),
+            culturenum: $("#culturenumEdit").val(),
         }, function (msg) {
             swal({
                 title: msg.msg,

@@ -24,7 +24,7 @@
                         <span class="iconBtx">*</span>社团名称
                     </div>
                     <div class="col-md-9">
-                        <input id="nameEdit" value="${data.name}"/>
+                        <select id="nameEdit" class="js-example-basic-single" ></select>
                     </div>
                 </div>
                 <div class="form-row">
@@ -85,7 +85,19 @@
             $.get("<%=request.getContextPath()%>/common/getSysDict?name=HJJB", function (data) {
                 addOption(data, 'rewardLevelEdit','${data.rewardLevel}');
             });
-    });
+
+        var nameEdit=  $("#nameEdit option:selected").val();
+        $.get("<%=request.getContextPath()%>/common/getTableDict",{
+                id: "id",
+                text: " communityname ",
+                tableName: "T_TAB_ASSOCIATIONS",
+                orderby: "  "
+            },
+            function (data) {
+                addOption(data, "nameEdit", "${data.name}");
+            });
+    })
+    ;
 
     function save() {
         if ($("#nameEdit").val() == "" || $("#nameEdit").val() == undefined || $("#nameEdit").val() == null) {
@@ -130,6 +142,13 @@
             });
             return;
         }
+        if ($("#guidanceTeacherEdit").val() == "" || $("#guidanceTeacherEdit").val() == undefined || $("#guidanceTeacherEdit").val() == null) {
+            swal({
+                title: "请填写指导教师名单！",
+                type: "warning"
+            });
+            return;
+        }
         $.post("<%=request.getContextPath()%>/clubreward/saveClubReward", {
             id: "${data.id}",
             name: $("#nameEdit").val(),
@@ -147,6 +166,7 @@
                 $('#table').DataTable().ajax.reload();
             });
         })
+
     }
 </script>
 

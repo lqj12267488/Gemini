@@ -90,4 +90,5 @@ public class ClubReward extends BaseBean {
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }
+
 }
