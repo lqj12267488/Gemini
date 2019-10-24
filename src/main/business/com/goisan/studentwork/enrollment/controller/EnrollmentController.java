@@ -474,7 +474,7 @@ public class EnrollmentController {
 //                enrollmentStudentList.put("data", enrollmentService.getEnrollmentStudentList(enrollmentStudent));
                 list = enrollmentService.getEnrollmentStudentList(enrollmentStudent);
             } else {
-                enrollmentStudent.setDepartmentsId(CommonUtil.getDefaultDept());
+                //enrollmentStudent.setDepartmentsId(CommonUtil.getDefaultDept());
                 enrollmentStudent.setCreator(CommonUtil.getPersonId());
                 enrollmentStudent.setCreateDept(CommonUtil.getDefaultDept());
 //                enrollmentStudentList.put("data", enrollmentService.getEnrollmentStudentList(enrollmentStudent));

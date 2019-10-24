@@ -121,10 +121,10 @@
         var did=  $("#did option:selected").val();
         var mid=  $("#mid option:selected").val();
         if(did == null || did==undefined){
-            $("#mid").html("<option value=''>请选择系部</option>");
+            $("#mid").html("<option value=''>请先选择系部</option>");
         }
         if(mid == null || mid==undefined){
-            $("#cid").html("<option value=''>请选择专业</option>");
+            $("#cid").html("<option value=''>请先选择专业</option>");
         }
         //系部
         $.get("<%=request.getContextPath()%>/common/getTableDict",{

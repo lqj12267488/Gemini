@@ -24,6 +24,26 @@
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
                         <div class="form-row">
+                            <div class="col-md-1 tar">
+                                系部:
+                            </div>
+                            <div class="col-md-2">
+                                <select id="didSel"></select>
+                            </div>
+                            <div class="col-md-1 tar">
+                                专业:
+                            </div>
+                            <div class="col-md-2">
+                                <select id="midSel" ></select>
+                            </div>
+                            <div class="col-md-1 tar">
+                                班级:
+                            </div>
+                            <div class="col-md-2">
+                                <select id="cidSel" ></select>
+                            </div>
+                        </div>
+                        <div class="form-row">
                             <div class="form-row">
                             <div class="col-md-1 tar">
                                 学生姓名：
@@ -79,7 +99,87 @@
 <script>
     var enrollmentTable;
     $(document).ready(function () {
+        var didSel=  $("#didSel option:selected").val();
+        var midSel=  $("#midSel option:selected").val();
+        if(didSel == null || didSel==undefined){
+            $("#midSel").html("<option value=''>请选择系部</option>");
+        }
+        if(midSel == null || midSel==undefined){
+            $("#cidSel").html("<option value=''>请选择专业</option>");
+        }
+        //系部
+        $.get("<%=request.getContextPath()%>/common/getTableDict",{
+                id: " dept_id",
+                text: " dept_name ",
+                tableName: "T_SYS_DEPT",
+                where: " WHERE DEPT_TYPE =8 ",
+                orderby: " "
+            },
+            function (data) {
+                addOption(data, "didSel");
+            });
+        //系部联动专业、班级
+        $("#didSel").change(function(){
+            //系部联动专业
+            var didSel= $("#didSel option:selected").val();
+            var major_sql = "(select distinct major_code || ',' || major_direction  || ',' || training_level code,major_name ||  '--' || FUNC_GET_DICVALUE(major_direction, 'ZXZYFX')  ||  '--' || FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') value from t_xg_major where 1=1  and valid_flag = 1";
+            if(didSel!=null) {
+                major_sql+= " and departments_id ='"+didSel+"' ";
+                major_sql+=")";
+                $.get("<%=request.getContextPath()%>/common/getTableDict",{
+                        id: " code ",
+                        text: " value ",
+                        tableName: major_sql,
+                        where: " ",
+                        orderby: " "
+                    },
+                    function (data) {
+                        addOption(data, "midSel");
+                    })
+            }
+            //系部切换重新加载班级
+            var class_sql = "(select class_id  code,class_name value from T_XG_CLASS where 1 = 1  and valid_flag = 1";
+            if(didSel !=null && didSel!="" ) {
+                class_sql+= " and departments_id ='"+didSel+"' ";
+                class_sql+=")";
+                $.get("<%=request.getContextPath()%>/common/getTableDict",{
+                        id: " code ",
+                        text: " value ",
+                        tableName: class_sql,
+                        where: " ",
+                        orderby: " "
+                    },
+                    function (data) {
+                        addOption(data, "cidSel");
+                    })
+            }
 
+        });
+        //专业联动班级
+        $("#midSel").change(function(){
+            var midSel= $("#midSel option:selected").val();
+            var didSel= $("#didSel option:selected").val();
+            var class_sql = "(select class_id  code,class_name value from T_XG_CLASS where 1 = 1  and valid_flag = 1";
+            if(didSel !=null && didSel!="" && midSel!=null && midSel!="") {
+                var midSel=$("#midSel option:selected").val();
+                var majorCode=midSel.split(",")[0];
+                var majorDirection=midSel.split(",")[1];
+                var trainingLevel=midSel.split(",")[2];
+                class_sql+= " and major_code ='"+majorCode+"' and major_direction='"+majorDirection+"' and training_level='"+trainingLevel+"' ";
+                class_sql+=")";
+                $.get("<%=request.getContextPath()%>/common/getTableDict",{
+                        id: " code ",
+                        text: " value ",
+                        tableName: class_sql,
+                        where: " ",
+                        orderby: " "
+                    },
+                    function (data) {
+                        addOption(data, "cidSel");
+                    })
+            }
+
+        });
         enrollmentTable = $("#studentEnrollmentGrid").DataTable({
             "processing": true,
             "serverSide": true,
@@ -93,18 +193,19 @@
                 {"data": "majorCode", "visible": false},
                 {"data": "trainingLevel", "visible": false},
                 {"data": "majorDirection", "visible": false},
-                {"width": "10%", "data": "name", "title": "学生姓名"},
-                {"width": "7%", "data": "sexShow", "title": "性别"},
-                {"width": "10%", "data": "idcard", "title": "身份证号"},
-                {"width": "10%", "data": "nationShow", "title": "民族"},
-                {"width": "10%", "data": "departmentShow", "title": "系部"},
-                {"width": "10%", "data": "majorShow", "title": "专业"},
-                {"width": "10%", "data": "programDurationShow", "title": "学制"},
-                {"width": "10%", "data": "gradationShow", "title": "层次"},
-                {"width": "10%", "data": "reportStatusShow", "title": "报到状态"},
+                {"width": "9%", "data": "name", "title": "学生姓名"},
+                {"width": "9%", "data": "sexShow", "title": "性别"},
+                {"width": "9%", "data": "idcard", "title": "身份证号"},
+                {"width": "9%", "data": "nationShow", "title": "民族"},
+                {"width": "9%", "data": "departmentShow", "title": "系部"},
+                {"width": "9%", "data": "majorShow", "title": "专业"},
+                {"width": "9%", "data": "classId", "title": "班级"},
+                {"width": "9%", "data": "programDurationShow", "title": "学制"},
+                {"width": "9%", "data": "gradationShow", "title": "层次"},
+                {"width": "9%", "data": "reportStatusShow", "title": "报到状态"},
                 {
 
-                    "width": "10%",
+                    "width": "9%",
                     "title": "操作",
                     "render": function () {
                         return "<a id='editEnrollmentStudent' class='icon-edit' title='修改'></a>&nbsp;&nbsp;&nbsp;" +
@@ -185,13 +286,25 @@
     function searchclear() {
         $("#nameSel").val("");
         $("#idcardSel").val("");
+        $("#didSel option:selected").val("");
+        $("#midSel option:selected").val("");
+        $("#cidSel option:selected").val("");
+        $("#didSel").val("");
+        $("#midSel").val("");
+        $("#cidSel").val("");
+
+        $("#midSel").html("<option value=''>请先选择系部</option>");
+        $("#cidSel").html("<option value=''>请先选择专业</option>");
         enrollmentTable.ajax.url("<%=request.getContextPath()%>/enrollment/getEnrollmentStudentList").load();
     }
 
     function search() {
         var nameSel = $("#nameSel").val();
         var idcardSel = $("#idcardSel").val();
-        enrollmentTable.ajax.url("<%=request.getContextPath()%>/enrollment/getEnrollmentStudentList?name="+nameSel+"&idcard="+idcardSel).load();
+        var majorCode = $("#midSel").val().split(",")[0];
+        var classId = $("#cidSel").val();
+        var departmentsId = $("#didSel").val();
+        enrollmentTable.ajax.url("<%=request.getContextPath()%>/enrollment/getEnrollmentStudentList?name="+nameSel+"&idcard="+idcardSel+"&majorCode="+majorCode+"&classId="+classId+"&departmentsId="+departmentsId).load();
 
     }
     

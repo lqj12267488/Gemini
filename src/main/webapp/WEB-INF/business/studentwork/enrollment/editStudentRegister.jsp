@@ -58,6 +58,14 @@
                                 <select id="mid"/>
                             </div>
                         </div>
+                        <div class="form-row">
+                            <div class="col-md-4 tar">
+                                <span class="iconBtx">*</span>班级
+                            </div>
+                            <div class="col-md-8">
+                                <select id="cid"/>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6" style="float: right;width: 354px;height: 150px;">
                         <div style="width: 218px;height: 150px;margin-top: -4px;">
@@ -382,6 +390,7 @@
 <input id="houseCityValue" type="hidden" value="${enrollmentstudent.houseCity}"/>
 <input id="houseCountyValue" type="hidden" value="${enrollmentstudent.houseCounty}"/>
 <input id="departmentsIdValue" type="hidden" value="${enrollmentstudent.departmentsId}"/>
+<input id="dept" value="${enrollmentstudent.departmentsId}" type="hidden" >
 <input id="politicalStatusSHOW" type="hidden" value="${enrollmentstudent.politicalStatus}"/>
 <input id="studentCategory" type="text" value="${enrollmentstudent.studentCategory}"/>
 <input id="studentKind" type="hidden" value="${enrollmentstudent.studentKind}"/>
@@ -399,6 +408,7 @@
 <input id="orderTraining" type="hidden" value="${student.orderTraining}"/>
 <input id="documentaryLikaPoorFamilie" type="hidden" value="${student.documentaryLikaPoorFamilie}"/>
 <input id="studentSource" type="hidden" value="${student.studentSource}"/>
+<input id="major" type="hidden" value="${enrollmentstudent.majorShow}"/>
 <object id="plugin0" type="application/x-syncard" width="0" height="0">
     <param name="onload" value="pluginLoaded"/>
 </object>
@@ -600,7 +610,8 @@
         var did = $("#did option:selected").val();
         var studentId = $("#studentId").val()
         if (did == null || did == undefined) {
-            $("#mid").html("<option value=''>请选择系部</option>");
+            $("#mid").html("<option value=''>请先选择系部</option>");
+            $("#cid").html("<option value=''>请先选择专业</option>");
         }
         //系部
         $.get("<%=request.getContextPath()%>/common/getTableDict", {
@@ -613,52 +624,26 @@
             function (data) {
                 addOption(data, "did", $("#departmentsIdValue").val());
             });
-        if (studentId != null) {
-            //专业回显
-            $.get("<%=request.getContextPath()%>/common/getTableDict", {
-                    id: " code ",
-                    text: " value ",
-                    tableName: "(select distinct major_code || ',' || major_direction  || ',' || training_level code,major_name ||  '--' || FUNC_GET_DICVALUE(major_direction, 'ZXZYFX')  ||  '--' || FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') value from t_xg_major where 1=1  and valid_flag = 1)",
-                    where: " ",
-                    orderby: " "
-                },
-                function (data) {
-                    var up_major = $("#majorCodeShow").val() + "," + $("#majorDirectionShow").val() + "," + $("#trainingLevelShow").val();
-                    addOption(data, "mid", up_major);
-                });
-        }
-
-     /*   $("#did").change(function () {
-            if ($("#did").val() != null) {
-                $.get("<%=request.getContextPath()%>/common/getTableDict", {
-                    id: "major_code",
-                    text: "major_name",
-                    tableName: "T_XG_MAJOR",
-                    where: "WHERE departments_id = '" + $("#did").val() + "' ",
-                    orderBy: ""
-                }, function (data) {
-                    addOption(data, 'mid');
-                });
-            }
-        })*/
-        $("#did").change(function () {
-            var major_sql = "(select distinct major_code || ',' || major_direction  || ',' || training_level code,major_name ||  '--' || FUNC_GET_DICVALUE(major_direction, 'ZXZYFX')  ||  '--' || FUNC_GET_DICVALUE(training_level, 'ZXZYPYCC') value from t_xg_major where 1=1  and valid_flag = 1";
-            if ($("#did option:selected").val() != "") {
-                major_sql += " and departments_id ='" + $("#did option:selected").val() + "' ";
-            }
-            major_sql += ")";
-            $.get("<%=request.getContextPath()%>/common/getTableDict", {
-                    id: " code ",
-                    text: " value ",
-                    tableName: major_sql,
-                    where: " ",
-                    orderby: " order by value "
-
-                },
-                function (data) {
+        if("" == $("#major").val()){
+            $("#did").change(function(){
+                $.get("<%=request.getContextPath()%>/common/getMajorShowByDeptId?deptId="+$("#did").val(),function (data) {
                     addOption(data, "mid");
                 })
+            });
+        }else{
+            $.get("<%=request.getContextPath()%>/common/getMajorShowByDeptId?deptId="+$("#dept").val(),function (data) {
+                addOption(data, "mid",$("#major").val());
+            })
+        }
+        $("#mid").change(function(){
+            $.get("<%=request.getContextPath()%>/common/getClassByMajorShow?majorShow="+$("#mid").val(), function (data) {
+                addOption(data, "cid");
+            })
         });
+        $.get("<%=request.getContextPath()%>/common/getClassByMajorShow?majorShow="+$("#major").val(), function (data) {
+            addOption(data, "cid", '${enrollmentstudent.classId}');
+        })
+
         var path = "<%=request.getContextPath()%>";
         //性别 sex
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=XB", function (data) {
@@ -732,6 +717,7 @@
         var ticketCard = $("#ticketCard").val();
         var did = $("#did option:selected").val();
         var mid = $("#mid option:selected").val();
+        var cid = $("#cid option:selected").val();
         var name = $("#name").val();
         var sex = $("#sex option:selected").val();
         var idcard = $("#idcard").val();
@@ -798,6 +784,13 @@
         if (mid == "") {
             swal({
                 title: "请选择专业!",
+                type: "info"
+            });
+            return;
+        }
+        if (cid == "") {
+            swal({
+                title: "请选择班级!",
                 type: "info"
             });
             return;
@@ -979,7 +972,8 @@
             ruralHouseholdRegistratio: ruralHouseholdRegistratio,
             orderTraining: orderTraining,
             documentaryLikaPoorFamilie: documentaryLikaPoorFamilie,
-            studentSource: studentSource
+            studentSource: studentSource,
+            classId: $("#cid").val()
         }, function (msg) {
             hideSaveLoading();
             if (msg.status == 1) {
