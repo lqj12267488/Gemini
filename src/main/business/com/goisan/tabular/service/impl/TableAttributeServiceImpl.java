@@ -3583,55 +3583,101 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     }
 
     /**
-     * 例子
+     * 高级表
      */
-    //    private void  AnalysisExcelUtil (File file,HttpServletResponse response){
-//        OutputStream os = null;
-//        List<EmploymentManage> employmentManages = employmentManageService.EmploymentManageAction(new EmploymentManage());
-//        try {
-//            //        读入文件
-//            FileInputStream in  = new FileInputStream(file);
-////            判断文件后缀名是xls,还是xlsx
-////            如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
-//            String fileName = file.getName();
-//            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
-//            Workbook wb = null;
-//            if ("xls".equals(suffix)) {
-//                wb = new HSSFWorkbook(in);
-//            }
-//            if ("xlsx".equals(suffix)) {
-//                wb = new XSSFWorkbook(in);
-//            }
-//                Sheet sheet = wb.getSheetAt(0);
-//                String sheetName = sheet.getSheetName();
-//                int rowIndex = 10 ;
-//                int end = 2+employmentManages.size();
-//                int count = 1;
-//                for (int i = 0; i < employmentManages.size(); i++) {
-//                    Row row = sheet.getRow(rowIndex+i);
-//                    row.getCell(1).setCellValue(count);
-//                    row.getCell(2).setCellValue(employmentManages.get(i).getEmploymentUnitIdShow());
-//                    row.getCell(3).setCellValue("1");
-//                    row.getCell(4).setCellValue(employmentManages.get(i).getStudentIdShow());
-//                    row.getCell(5).setCellValue(employmentManages.get(i).getEmploymentPositions());
-//                    row.getCell(6).setCellValue(employmentManages.get(i).getTel());
-//                    count++;
-//                }
-//                response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName+".xlsx",
-//                        "utf-8"));
-//                os = response.getOutputStream();
-//                wb.write(os);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (os != null) {
-//                    os.flush();
-//                    os.close();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+
+    @Override
+    public void expertExcel_GJ_311(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_313(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_321(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_322(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_331(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_332(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_341(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_411(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_421(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_422(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_423(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_424(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_431(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_461(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_511(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_521(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_811(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_812(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
+
+    @Override
+    public void expertExcel_GJ_931(HttpServletResponse response, TabularFile tabularFile) {
+
+    }
 }
