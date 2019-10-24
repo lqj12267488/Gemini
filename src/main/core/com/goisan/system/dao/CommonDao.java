@@ -41,6 +41,8 @@ public interface CommonDao {
 
     List<Tree> getStuTreeNotClass();
 
+    List<Tree> getStuTreeGrad();
+
     List<Tree> getParentTree();
 
     List<AutoComplete> getStudentClass();

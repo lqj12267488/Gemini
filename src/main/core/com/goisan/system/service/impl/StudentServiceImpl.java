@@ -792,4 +792,9 @@ public class StudentServiceImpl implements StudentService {
     public void updateUser(@Param("studentId") String studentId, @Param("classId") String classId){
         studentDao.updateUser(studentId,classId);
     }
+
+    @Override
+    public List<Tree> getDeptMajorGradClassTree(String level) {
+        return studentDao.getDeptMajorGradClassTree(level);
+    }
 }

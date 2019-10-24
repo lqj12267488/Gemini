@@ -89,6 +89,7 @@
             "destroy": true,
             "columns": [
                 {"data":"id","visible": false},
+                {"data": "studentId","visible": false},
                 {"data": "studentName", "title": "姓名","width":"10%"},
                 {"data": "arcadProvinceShow", "title": "省","width":"10%"},
                 {"data": "arcadCityShow", "title": "市","width":"10%"},
@@ -97,7 +98,7 @@
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
-                        return '<span class="icon-edit" title="修改学生" onclick=edit("' + row.id + '")/>'
+                        return '<span class="icon-edit" title="修改学生" onclick=edit("' + row.id + '","'+row.studentId+'")/>'
 
                     },
                     "width":"7%"
@@ -111,8 +112,8 @@
 
     }
 
-    function edit(id) {
-        $("#dialog").load("<%=request.getContextPath()%>/stuArcad/editQueryStuArcad?id="+id);
+    function edit(id,studentId) {
+        $("#dialog").load("<%=request.getContextPath()%>/stuArcad/editQueryStuArcad?id="+id+"&studentId="+studentId);
         $("#dialog").modal("show");
     }
 

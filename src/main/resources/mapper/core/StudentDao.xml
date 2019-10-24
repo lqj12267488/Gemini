@@ -622,6 +622,32 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
          order by name
     </select>
 
+    <!--获取系部专业,毕业,待毕业班级树-->
+    <select id="getDeptMajorGradClassTree" resultType="com.goisan.system.bean.Tree" parameterType="string">
+        SELECT id, name, pId,type
+          FROM (SELECT t.dept_id id, t.dept_name name, t.parent_dept_id pId ,1 as type
+                  FROM T_SYS_DEPT t
+                 WHERE t.dept_type = 8
+                UNION ALL
+                SELECT DISTINCT d.major_code id,
+                                d.major_name || ' -- ' ||
+                                FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,
+                                d.departments_id pId,
+                                2 as type
+                  FROM T_XG_MAJOR d
+                 WHERE d.valid_flag = 1
+                   and d.training_level in (1, 2, 3)
+                UNION ALL
+                SELECT e.class_id id, e.class_name name, e.major_code pId,3 as type
+                  FROM T_XG_CLASS e
+                 WHERE e.valid_flag = 1  and e.GRADUATION_FLAG in ('2','3')
+                   AND E.MAJOR_CODE in
+                       (SELECT m.major_code
+                          from T_XG_MAJOR m
+                         where m.training_level in (${level})))
+         order by name
+    </select>
+
     <insert id="addRelation" parameterType="com.goisan.system.bean.ClassStudentRelation">
         INSERT INTO T_XG_STUDENT_CLASS
         (id, student_id, class_id, student_order,

@@ -39,6 +39,9 @@ public interface StudentDao {
 
     List<Tree> getMajorClassTreeByLevel(@Param("level") String level);
 
+    List<Tree> getDeptMajorGradClassTree(@Param("level") String level);
+
+
     void addRelation(ClassStudentRelation relation);
 
     List<ClassStudentRelation> getClassStudentRelation(String studentId);

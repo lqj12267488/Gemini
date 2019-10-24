@@ -12,6 +12,7 @@ import java.util.Map;
  */
 @Service
 public interface CommonService {
+    List<Tree> getStuTreeGrad();
     List<AutoComplete> getIdCard();
     List<AutoComplete> getDorm();
     List<Select2> getClassByPlan( String majorCode, String trainingLevel, String majorDirection,String term);

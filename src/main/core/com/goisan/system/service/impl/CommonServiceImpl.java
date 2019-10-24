@@ -20,6 +20,11 @@ public class CommonServiceImpl implements CommonService {
     private CommonDao commonDao;
 
     @Override
+    public List<Tree> getStuTreeGrad() {
+        return commonDao.getStuTreeGrad();
+    }
+
+    @Override
     public List<AutoComplete> getIdCard() {
         return commonDao.getIdCard();
     }

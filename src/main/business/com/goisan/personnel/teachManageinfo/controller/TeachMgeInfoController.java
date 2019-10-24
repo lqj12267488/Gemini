@@ -177,7 +177,7 @@ public class TeachMgeInfoController {
                 if (null==idcard || "".equals(idcard)||null == bankId || "".equals(bankId) || (bankId.length()!=19 && bankId.length()!=16)){
                     sb.append("第");
                     sb.append(count);
-                    sb.append("行 ");
+                    sb.append("行证件号不能为空 ");
                     errCount++;
                 }else {
                  /** 根据idcard 查询personId*/
@@ -185,7 +185,7 @@ public class TeachMgeInfoController {
                     if (null==emp){
                         sb.append("第");
                         sb.append(count);
-                        sb.append("行 ");
+                        sb.append("行证件号信息有误 ");
                         errCount++;
                     }else {
                         String personId = emp.getPersonId();

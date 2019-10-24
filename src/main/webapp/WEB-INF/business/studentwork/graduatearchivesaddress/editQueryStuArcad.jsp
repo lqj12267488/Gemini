@@ -108,10 +108,47 @@
             });
     })
 
+    function arcadProvinceChange() {
+
+        $.get("<%=request.getContextPath()%>/common/getDistinctTableDict", {
+                id: " t.arcad_city ",
+                text: "  FUNC_GET_TABLEVALUE(t.arcad_city,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')",
+                tableName: "  T_XG_ARCHIVESADDR t ",
+                where:" where  t.valid_flag = '1' and t.arcad_province = '"+$("#arcadProvinceEdit").val()+"'"
+            },
+            function (data) {
+                addOption(data, "arcadCityEdit",'${data.arcadCityEdit}');
+            });
+    }
+
+    function arcadCityChange() {
+        $.get("<%=request.getContextPath()%>/common/getDistinctTableDict", {
+                id: " t.arcad_county ",
+                text: "  FUNC_GET_TABLEVALUE(t.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')",
+                tableName: "  T_XG_ARCHIVESADDR t ",
+                where:" where  t.valid_flag = '1' and t.arcad_province = '"+$("#arcadProvinceEdit").val()+"' and t.arcad_city= '"+$("#arcadCityEdit").val()+"'"
+            },
+            function (data) {
+                addOption(data, "arcadCountyEdit",'${data.arcadCountyEdit}');
+            });
+    }
+    function arcadCountyChange() {
+        $.get("<%=request.getContextPath()%>/common/getTableDict", {
+                id: " t.arcad_detail ",
+                text: " t.arcad_detail ",
+                tableName: "  T_XG_ARCHIVESADDR t ",
+                where: "  WHERE t.arcad_province = '"+$("#arcadProvinceEdit").val()+"' and t.arcad_city= '"+$("#arcadCityEdit").val()+"'and  t.arcad_county ='"+$("#arcadCountyEdit").val()+"' and t.valid_flag = '1'",
+            },
+            function (data) {
+                addOption(data, "arcadDetailEdit",'${data.arcadDetailEdit}');
+            });
+    }
+
 
     function save() {
         $.post("<%=request.getContextPath()%>/stuArcad/saveQueryStuArcad", {
             id:'${stuArcadEdit.id}',
+            studentId:'${studentId}',
             arcadProvince: $("#arcadProvinceEdit").val(),
             arcadCity:$("#arcadCityEdit").val(),
             arcadCounty:$("#arcadCountyEdit").val(),

@@ -136,7 +136,7 @@ public class EmpServiceImpl implements EmpService {
             String[] roles = ids.split(",");
             String [] personIds = personId.split(",");
             for (String pi:personIds) {
-                empDao.deleteRoleByPersonIdAndDeptId(personId, deptId);
+                empDao.deleteRoleByPersonIdAndDeptId(pi, deptId);
             }
             for (String id : roles) {
                 for (String person : personIds) {

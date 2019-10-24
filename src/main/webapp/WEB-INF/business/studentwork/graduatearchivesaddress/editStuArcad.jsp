@@ -151,7 +151,7 @@
                 $("#arcadDetailEdit").attr("disabled","disabled");
              }
 
-        $.get("<%=request.getContextPath()%>/competitionRequest/getStuTree", function (data) {
+        $.get("<%=request.getContextPath()%>/competitionRequest/getStuTreeGrad", function (data) {
             makeClassTree = $.fn.zTree.init($("#makeTree"), selectTreeMakeSetting, data);
             //根据或取到的honorMember进行初始化
             var classIds = '${stuArcadEdit.studentIds}';
@@ -164,9 +164,11 @@
                 }
             }
         })
-
     })
+
+
     function arcadProvinceChange() {
+
         $.get("<%=request.getContextPath()%>/common/getDistinctTableDict", {
                 id: " t.arcad_city ",
                 text: "  FUNC_GET_TABLEVALUE(t.arcad_city,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')",
@@ -177,6 +179,7 @@
                 addOption(data, "arcadCityEdit",'${data.arcadCityEdit}');
             });
     }
+
     function arcadCityChange() {
         $.get("<%=request.getContextPath()%>/common/getDistinctTableDict", {
                 id: " t.arcad_county ",

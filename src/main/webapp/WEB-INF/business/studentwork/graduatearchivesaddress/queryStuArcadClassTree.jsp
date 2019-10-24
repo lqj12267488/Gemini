@@ -55,7 +55,7 @@
     }
 
     $(document).ready(function () {
-        $.get("<%=request.getContextPath()%>/student/getMajorClassTreeByLevel?level=1,2,3", function (data) {
+        $.get("<%=request.getContextPath()%>/student/getDeptMajorGradClassTree?level=1,2,3", function (data) {
             majorClassTree = $.fn.zTree.init($("#majorClassTree"), setting, data);
             majorClassTree.expandAll(true);
         })

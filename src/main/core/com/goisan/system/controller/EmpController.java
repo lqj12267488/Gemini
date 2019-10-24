@@ -584,6 +584,8 @@ public class EmpController {
         mv.addObject("data", roleTree);
         mv.addObject("personId", personId);
         mv.addObject("deptId", deptId);
+        /***/
+        mv.addObject("flag","1");
         return mv;
 
     }

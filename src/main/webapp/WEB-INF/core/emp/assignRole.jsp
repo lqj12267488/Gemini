@@ -65,36 +65,61 @@
         }
         id = id.substring(0, id.length - 1)
         showSaveLoading();
-        swal({
-            title: "批量授权后原有授权将进行更改，是否继续授权？",
-            type: "warning",
-            showCancelButton: true,
-            cancelButtonText: "取消",
-            confirmButtonColor: "green",
-            confirmButtonText: "确定",
-            closeOnConfirm: false
-        }, function () {
-            $.post("<%=request.getContextPath()%>/changeEmpRole", {
-                deptId: $("#deptId").val(),
-                personId: $("#personId").val(),
-                ids: id
-            }, function (msg) {
-                if (msg.status == 1) {
-                    hideSaveLoading()
-                    swal({
-                        title: msg.msg,
-                        type: "success"
-                    });
-                    //alert(msg.msg);
-                    $("#dialog").modal('hide');
-                }
-                $("#empGrid").DataTable().ajax.reload();
+        if ('${flag}'!='1') {
+            swal({
+                title: "批量授权后原有授权将进行更改，是否继续授权？",
+                type: "warning",
+                showCancelButton: true,
+                cancelButtonText: "取消",
+                confirmButtonColor: "green",
+                confirmButtonText: "确定",
+                closeOnConfirm: false
+            }, function () {
+                $.post("<%=request.getContextPath()%>/changeEmpRole", {
+                    deptId: $("#deptId").val(),
+                    personId: $("#personId").val(),
+                    ids: id
+                }, function (msg) {
+                    if (msg.status == 1) {
+                        hideSaveLoading()
+                        swal({
+                            title: msg.msg,
+                            type: "success"
+                        });
+                        //alert(msg.msg);
+                        $("#dialog").modal('hide');
+                    }
+                    $("#empGrid").DataTable().ajax.reload();
+                })
             })
-        })
-
-
-
-
+        }else {
+            swal({
+                title: "请确认更改授权！",
+                type: "warning",
+                showCancelButton: true,
+                cancelButtonText: "取消",
+                confirmButtonColor: "green",
+                confirmButtonText: "确定",
+                closeOnConfirm: false
+            }, function () {
+                $.post("<%=request.getContextPath()%>/changeEmpRole", {
+                    deptId: $("#deptId").val(),
+                    personId: $("#personId").val(),
+                    ids: id
+                }, function (msg) {
+                    if (msg.status == 1) {
+                        hideSaveLoading()
+                        swal({
+                            title: msg.msg,
+                            type: "success"
+                        });
+                        //alert(msg.msg);
+                        $("#dialog").modal('hide');
+                    }
+                    $("#empGrid").DataTable().ajax.reload();
+                })
+            })
+        }
     }
 </script>
 <style>
@@ -107,7 +132,6 @@
         width: 5px;
         background-color: #474D52;
     }
-
     #style-4::-webkit-scrollbar-thumb {
         background-color: #ffffff;
         border: 1px solid #474D52;

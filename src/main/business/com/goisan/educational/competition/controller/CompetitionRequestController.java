@@ -708,4 +708,21 @@ public class CompetitionRequestController {
         trees.add(root);
         return trees;
     }
+
+
+    /**
+     * 毕业班级,待毕业班级学生多选下拉内容查询
+     */
+    @ResponseBody
+    @RequestMapping("/competitionRequest/getStuTreeGrad")
+    public List<Tree> getStuTreeGrad() {
+        List<Tree> trees = commonService.getStuTreeGrad();
+        Tree root = new Tree();
+        root.setId("0");
+        root.setName("组织机构");
+        root.setpId("root");
+        root.setOpen(true);
+        trees.add(root);
+        return trees;
+    }
 }

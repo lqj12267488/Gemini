@@ -95,6 +95,15 @@ public class StudentController {
         return a;
     }
 
+
+
+    @ResponseBody
+    @RequestMapping("/student/getDeptMajorGradClassTree")
+    public List<Tree> getDeptMajorGradClassTree(String level) {
+        List<Tree> a = studentService.getDeptMajorGradClassTree(level);
+        return a;
+    }
+
     @RequestMapping("/student/studentGrid")
     public ModelAndView studentGrid(String id) {
         ModelAndView mv = new ModelAndView();

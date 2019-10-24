@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.goisan.studentwork.graduatearchivesaddress.bean.Arcad;
 import com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad;
+import com.goisan.studentwork.graduatearchivesaddress.dao.ArcadDao;
+import com.goisan.studentwork.graduatearchivesaddress.dao.StuArcadDao;
 import com.goisan.studentwork.graduatearchivesaddress.service.ArcadServcie;
 import com.goisan.studentwork.graduatearchivesaddress.service.StuArcadService;
 import com.goisan.system.bean.Student;
@@ -11,6 +13,7 @@ import com.goisan.system.tools.Message;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,6 +34,11 @@ public class StuArcadController {
     @Autowired
     private  ArcadServcie arcadServcie;
 
+    @Autowired
+    private ArcadDao arcadDao;
+
+    @Autowired
+    private StuArcadDao stuArcadDao;
 
     @RequestMapping("/stuArcad/stuArcadList")
     public String stuArcadList(){
@@ -161,7 +169,12 @@ public class StuArcadController {
     public ModelAndView editQueryStuArcad(StuArcad stuArcad){
         ModelAndView modelAndView = new ModelAndView();
         StuArcad stuArcadEdit = stuArcadService.getStuArcadById(stuArcad);
-        modelAndView.addObject("head", "修改");
+        if (StringUtils.isEmpty(stuArcad.getArcadId())){
+            modelAndView.addObject("head", "新增");
+        }else {
+            modelAndView.addObject("head", "修改");
+        }
+        modelAndView.addObject("studentId", stuArcad.getStudentId());
         modelAndView.addObject("stuArcadEdit", stuArcadEdit);
 //            editFlag 1不让改
         modelAndView.addObject("editFlag", 1);
@@ -173,7 +186,29 @@ public class StuArcadController {
     @ResponseBody
     @RequestMapping("/stuArcad/saveQueryStuArcad")
     public Message saveQueryStuArcad(StuArcad stuArcad) {
-        stuArcadService.updQueryStuArcad(stuArcad);
-        return new Message(0,"修改成功",null);
+        if (StringUtils.isEmpty(stuArcad.getId())){
+            /**
+             * 1. 获取stdentId
+             * 2. 获取地址Id
+             * 3. 新增
+             */
+            Arcad arcad = new Arcad();
+            arcad.setArcadProvince(stuArcad.getArcadProvince());
+            arcad.setArcadCity(stuArcad.getArcadCity());
+            arcad.setArcadProvince(stuArcad.getArcadProvince());
+            arcad.setArcadCounty(stuArcad.getArcadCounty());
+            arcad.setArcadDetail(stuArcad.getArcadDetail());
+            Arcad checkArcad = arcadDao.checkArcad(arcad);
+            if (checkArcad!= null) {
+                stuArcad.setArcadId(checkArcad.getArcadId());
+                stuArcadDao.insertStuArcad(stuArcad);
+                return new Message(0, "新增成功", null);
+            }else {
+                return new Message(0, "新增失败,不存在该地址", null);
+            }
+        }else {
+            stuArcadService.updQueryStuArcad(stuArcad);
+            return new Message(0, "修改成功", null);
+        }
     }
 }

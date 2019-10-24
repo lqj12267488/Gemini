@@ -199,6 +199,29 @@
         and sc.class_id in (select tt.class_id from T_XG_CLASS tt where tt.VALID_FLAG = '1')
           AND s.valid_flag = 1
     </select>
+    
+    <!--获取毕业，将毕业学生树-->
+    <select id="getStuTreeGrad" resultType="com.goisan.system.bean.Tree">
+        SELECT dept_id id, dept_name name, parent_dept_id pid
+          FROM t_sys_dept
+         WHERE dept_type  = 8 or dept_type  = 5
+           AND valid_flag = 1
+        UNION
+        SELECT d.major_code id, d.major_name name, d.departments_id pId
+          FROM T_XG_MAJOR d
+         WHERE d.valid_flag = 1
+        UNION
+        SELECT class_id id, class_name name, major_code pid
+          FROM t_xg_class
+         WHERE valid_flag = 1 and GRADUATION_FLAG in ('2','3')
+        UNION
+        SELECT s.student_id id, s.name, sc.class_id pid
+          FROM T_XG_STUDENT s, T_XG_STUDENT_CLASS sc
+         WHERE sc.student_id = s.student_id
+           and sc.class_id in
+               (select tt.class_id from T_XG_CLASS tt where tt.VALID_FLAG = '1' and  GRADUATION_FLAG in ('2','3') )
+           AND s.valid_flag = 1
+    </select>
 
     <select id="getParentTree" resultType="com.goisan.system.bean.Tree">
         SELECT

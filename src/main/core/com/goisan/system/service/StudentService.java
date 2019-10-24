@@ -37,6 +37,7 @@ public interface StudentService {
 
     List<Tree> getMajorClassTree();
 
+
     List<Tree> getMajorClassTreeByLevel(String level);
 
     void addRelation(ClassStudentRelation relation);
@@ -84,4 +85,7 @@ public interface StudentService {
     String getStudentNumByClassId(String classId);
 
     void updateUser(@Param("studentId") String studentId,@Param("classId") String classId);
+
+    /**获取系部专业，毕业班级，待毕业班级*/
+    List<Tree> getDeptMajorGradClassTree(String level);
 }
