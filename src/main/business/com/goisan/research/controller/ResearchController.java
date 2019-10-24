@@ -42,6 +42,7 @@ public class ResearchController {
         for (Research res : list) {
            res.setHorizontaltopic("0".equals(res.getHorizontaltopic())?"否":"是");
         }
+
          map.put("draw", draw);
          map.put("recordsTotal", info.getTotal());
          map.put("recordsFiltered", info.getTotal());

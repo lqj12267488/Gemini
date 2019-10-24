@@ -65,7 +65,9 @@
                         <span class="iconBtx">*</span>课题性质
                     </div>
                     <div class="col-md-9">
-                        <input id="topicnatureEdit" value="${data.topicnature}"/>
+                        <%--<input id="topicnatureEdit" value="${data.topicnature}"/>--%>
+                            <select id="topicnatureEdit" class="validate[required,maxSize[20]] form-control"/>
+
                     </div>
                 </div>
                 <div class="form-row">
@@ -73,7 +75,8 @@
                         <span class="iconBtx">*</span>课题分类
                     </div>
                     <div class="col-md-9">
-                        <input id="subjectclassificationEdit" value="${data.subjectclassification}"/>
+                        <%--<input id="subjectclassificationEdit" value="${data.subjectclassification}"/>--%>
+                            <select id="subjectclassificationEdit" class="validate[required,maxSize[20]] form-control"/>
                     </div>
                 </div>
                 <div class="form-row">
@@ -90,7 +93,7 @@
                     </div>
                     <div class="col-md-9">
                         <%--<input id="horizontaltopicEdit" value="${data.horizontaltopic}"/>--%>
-                        <select id="horizontaltopicEdit">
+                        <select id="horizontaltopicEdit" value="${data.horizontaltopic}">
                             <option value="1">是</option>
                             <option value="0">否</option>
                         </select>
@@ -101,7 +104,9 @@
                         <span class="iconBtx">*</span>课题级别
                     </div>
                     <div class="col-md-9">
-                        <input id="subjectgradeEdit" value="${data.subjectgrade}"/>
+                        <%--<input id="subjectgradeEdit" value="${data.subjectgrade}"/>--%>
+                            <select id="subjectgradeEdit" class="validate[required,maxSize[20]] form-control"/>
+
                     </div>
                 </div>
                 <div class="form-row">
@@ -125,7 +130,9 @@
                         <span class="iconBtx">*</span>完成人顺序 
                     </div>
                     <div class="col-md-9">
-                        <input id="completororderEdit" value="${data.completororder}"/>
+                        <%--<input id="completororderEdit" value="${data.completororder}"/>--%>
+                            <select id="completororderEdit" class="validate[required,maxSize[20]] form-control"/>
+
                     </div>
                 </div>
                 <div class="form-row">
@@ -157,7 +164,9 @@
                         <span class="iconBtx">*</span>合作情况 
                     </div>
                     <div class="col-md-9">
-                        <input id="cooperationEdit" value="${data.cooperation}"/>
+                        <%--<input id="cooperationEdit" value="${data.cooperation}"/>--%>
+                            <select id="cooperationEdit" class="validate[required,maxSize[20]] form-control"/>
+
                     </div>
                 </div>
                 <div class="form-row">
@@ -181,8 +190,28 @@
 
 <script>
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=KTFL", function (data) {
+            addOption(data, 'subjectclassificationEdit', '${data.subjectclassification}');
+            $("#horizontaltopicEdit").val("${data.horizontaltopic}");
+            $("#topicnatureEdit").val("${data.topicnature}");
+            $("#subjectclassificationEdit").val("${data.subjectclassification}");
+            $("#subjectgradeEdit").val("${data.subjectgrade}");
+            $("#completororderEdit").val("${data.completororder}");
+            $("#cooperationEdit").val("${data.cooperation}");
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=WCRSX", function (data) {
+            addOption(data, 'completororderEdit', '${data.completororder}');
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=KTJB", function (data) {
+            addOption(data, 'subjectgradeEdit', '${data.subjectgrade}');
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=HZQK", function (data) {
+            addOption(data, 'cooperationEdit', '${data.cooperation}');
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=KTXZ", function (data) {
+            addOption(data, 'topicnatureEdit', '${data.topicnature}');
+        });
 
-        $("#horizontaltopicEdit").val(${data.horizontaltopic})
 
         //部门多选树，初始化
         $.get("<%=request.getContextPath()%>/getDeptTree", function (data) {

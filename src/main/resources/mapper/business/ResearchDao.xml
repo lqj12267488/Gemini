@@ -7,15 +7,19 @@
             resultType="com.goisan.research.bean.Research">
         select
         t1.id,t1.personid,t1.grade,t1.givenname,
-        t1.issuer,t1.getdate,t1.topicnature,
-        t1.subjectclassification,t1.subjectname,
-        t1.horizontaltopic,t1.subjectgrade,
+        t1.issuer,t1.getdate,
+        t1.subjectname,
+        t1.horizontaltopic,
         t1.projectdate,t1.sourceoffunding,
-        t1.completororder,t1.money,
+        t1.money,
         t1.num,
+        FUNC_GET_DICVALUE(t1.subjectclassification, 'KTFL') as subjectclassification,
+        FUNC_GET_DICVALUE(t1.completororder, 'WCRSX') as completororder,
+        FUNC_GET_DICVALUE(t1.subjectgrade, 'KTJB') as subjectgrade,
+        FUNC_GET_DICVALUE(t1.cooperation, 'HZQK') as cooperation,
+        FUNC_GET_DICVALUE(t1.topicnature, 'KTXZ') as topicnature,
         func_get_dicvalue(t1.GRADE,'ZYDJ') gradeShow,
         t1.highestgrade,
-        t1.cooperation,
         t1.expertise,t2.name
         from T_TAB_RESEARCH t1 ,T_RS_EMPLOYEE t2 where 1=1
       and t1.personid = t2.person_id
