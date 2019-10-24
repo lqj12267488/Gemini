@@ -126,7 +126,6 @@
             var table = document.body.querySelector('.mui-table-view');
             var cells = document.body.querySelectorAll('.mui-table-view-cell');
             //1.第一次正常加载
-            debugger;
             if(page == 1){
                 createEmlist('${emJson}');
                 //2.以后加载，后台根据page过滤数据返回前台

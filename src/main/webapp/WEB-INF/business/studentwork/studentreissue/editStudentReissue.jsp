@@ -248,7 +248,7 @@
     function save() {
         var date = $("#f_requestDate").val();
         date = date.replace('T', '');
-        if ($("#imgFile").val() == "" || $("#imgFile").val() == undefined) {
+        if (($("#imgFile").val() == "" || $("#imgFile").val() == undefined) && $("#studentReissueid").val() == "") {
             swal({
                 title: "请上传头像",
                 type: "info"

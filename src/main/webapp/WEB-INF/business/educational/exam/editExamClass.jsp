@@ -158,7 +158,6 @@
     }
 
     function changeCourse() {
-        debugger;
         var courseId = $("#courseId").val();
         $.get("<%=request.getContextPath()%>/exam/getExamMethod?courseId="+courseId+"&termId="+"${term}",
             function (data) {
