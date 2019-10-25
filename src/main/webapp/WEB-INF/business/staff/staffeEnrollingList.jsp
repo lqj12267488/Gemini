@@ -104,6 +104,8 @@
                  {"data": "politicalcounselor", "title": "是否专职政治辅导员"},
                  {"data": "psychologicalconsultant", "title": "是否专职心理咨询师"},*/
                  {"data": "employmentoffice", "title": "从事招生就业工作年限"},
+                 {"data": "postfunction", "title": "岗位职能"},
+                 {"data": "workingyears", "title": "本岗位工作年限"},
                 /*
                  {"data": "expertise", "title": "专业领域"},
                  {"data": "workinghours", "title": "周工作小时数"},*/

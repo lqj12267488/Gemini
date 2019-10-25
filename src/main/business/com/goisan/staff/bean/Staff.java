@@ -52,6 +52,28 @@ public class Staff extends BaseBean {
     /**周工作小时数*/
     private String workinghours;
 
+    /**岗位职能*/
+    private String postfunction;
+
+    /**本岗位工作年限*/
+    private String workingyears;
+
+    public String getPostfunction() {
+        return postfunction;
+    }
+
+    public void setPostfunction(String postfunction) {
+        this.postfunction = postfunction;
+    }
+
+    public String getWorkingyears() {
+        return workingyears;
+    }
+
+    public void setWorkingyears(String workingyears) {
+        this.workingyears = workingyears;
+    }
+
     private String personidvalue;
 
     private String person;
@@ -61,6 +83,27 @@ public class Staff extends BaseBean {
     private String type;
 
     private String name;
+
+    private String post;
+
+    private String deptName;
+
+    public String getPost() {
+        return post;
+    }
+
+    public void setPost(String post) {
+        this.post = post;
+    }
+
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
 
     private String groupNameSel;
 

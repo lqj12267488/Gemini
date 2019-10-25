@@ -127,6 +127,22 @@
                         <input id="workinghoursEdit" value="${data.workinghours}"/>
                     </div>
                 </div>--%>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>岗位职能
+                    </div>
+                    <div class="col-md-9">
+                        <input id="postfunction" value="${data.postfunction}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>本岗位工作年限
+                    </div>
+                    <div class="col-md-9">
+                        <input id="workingyears" value="${data.workingyears}"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -241,6 +257,20 @@
             });
             return;
         }
+        if ($("#postfunction").val() == "" || $("#postfunction").val() == undefined || $("#postfunction").val() == null) {
+            swal({
+                title: "请填写岗位职能！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#workingyears").val() == "" || $("#workingyears").val() == undefined || $("#workingyears").val() == null) {
+            swal({
+                title: "请填写本岗位工作年限！",
+                type: "warning"
+            });
+            return;
+        }
         /*
         if ($("#expertiseEdit").val() == "" || $("#expertiseEdit").val() == undefined || $("#expertiseEdit").val() == null) {
             swal({
@@ -264,6 +294,8 @@
             givenname: $("#givennameEdit").val(),
             issuer: $("#issuerEdit").val(),
             getdate: $("#getdateEdit").val(),
+            postfunction:$("#postfunction").val(),
+            workingyears:$("#workingyears").val(),
             type:"3",
             /*teachingmanagement: $("#teachingmanagementEdit").val()*/
             /*studentmanagement: $("#studentmanagementEdit").val(),

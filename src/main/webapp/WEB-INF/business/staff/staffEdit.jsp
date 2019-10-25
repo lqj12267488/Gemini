@@ -62,11 +62,27 @@
                     </div>
                 </div>
                 <div class="form-row">
+                <div class="col-md-3 tar">
+                    <span class="iconBtx">*</span>从事教学管理年限
+                </div>
+                <div class="col-md-9">
+                    <input id="teachingmanagementEdit" value="${data.teachingmanagement}"/>
+                </div>
+            </div>
+                <div class="form-row">
                     <div class="col-md-3 tar">
-                        <span class="iconBtx">*</span>从事教学管理年限
+                        <span class="iconBtx">*</span>岗位职能
                     </div>
                     <div class="col-md-9">
-                        <input id="teachingmanagementEdit" value="${data.teachingmanagement}"/>
+                        <input id="postfunction" value="${data.postfunction}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>本岗位工作年限
+                    </div>
+                    <div class="col-md-9">
+                        <input id="workingyears" value="${data.workingyears}"/>
                     </div>
                 </div>
                 <input id="id" value="${data.id}" hidden>
@@ -213,6 +229,20 @@
             });
             return;
         }
+        if ($("#postfunction").val() == "" || $("#postfunction").val() == undefined || $("#postfunction").val() == null) {
+            swal({
+                title: "请填写岗位职能！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#workingyears").val() == "" || $("#workingyears").val() == undefined || $("#workingyears").val() == null) {
+            swal({
+                title: "请填写本岗位工作年限！",
+                type: "warning"
+            });
+            return;
+        }
         /*if ($("#studentmanagementEdit").val() == "" || $("#studentmanagementEdit").val() == undefined || $("#studentmanagementEdit").val() == null) {
             swal({
                 title: "请填写从事学生管理年限！",
@@ -263,6 +293,8 @@
             givenname: $("#givennameEdit").val(),
             issuer: $("#issuerEdit").val(),
             getdate: $("#getdateEdit").val(),
+            postfunction:$("#postfunction").val(),
+            workingyears:$("#workingyears").val(),
             type:"1",
             teachingmanagement: $("#teachingmanagementEdit").val()
             /*studentmanagement: $("#studentmanagementEdit").val(),

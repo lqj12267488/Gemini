@@ -20,8 +20,14 @@
         t1.employmentoffice,
         t1.expertise,
         t1.workinghours,
-        t2.name  from T_TAB_STAFF t1 ,T_RS_EMPLOYEE t2 where 1=1
-      and t1.personid = t2.person_id and t1.type = #{type}
+        t1.postfunction,
+        t1.workingyears,
+        t2.name,
+        t2.post,
+        t3.dept_id,
+        FUNC_GET_DEPTNAME(t3.dept_id) deptName
+        from T_TAB_STAFF t1 ,T_RS_EMPLOYEE t2，t_rs_employee_dept t3 where 1=1
+      and t1.personid = t2.person_id and t2.person_id=t3.person_id and t1.type = #{type}
       <if test="groupNameSel!=null and groupNameSel!=''">
           and t1.GIVENNAME like #{groupNameSel}
       </if>
@@ -31,7 +37,7 @@
     </select>
     <insert id="saveStaff" parameterType="com.goisan.staff.bean.Staff">
         insert into T_TAB_STAFF (
-        id,personid,grade,givenname,issuer,getdate
+        id,personid,grade,givenname,issuer,getdate,postfunction,workingyears
         <if test="type == 1">
         ,teachingmanagement
         </if>
@@ -47,7 +53,7 @@
         </if>
 
         ,type) values (
-        #{id},#{personid},#{grade},#{givenname},#{issuer},#{getdate}
+        #{id},#{personid},#{grade},#{givenname},#{issuer},#{getdate},#{postfunction},#{workingyears}
 
         <if test="type == 1">
             ,#{teachingmanagement}
@@ -83,6 +89,8 @@
         t1.psychologicalconsultant,
         t1.employmentoffice,
         t1.expertise,
+        t1.postfunction,
+        t1.workingyears,
         t1.workinghours from T_TAB_STAFF t1 where t1.id = #{id}
     </select>
     <update id="updateStaff" parameterType="com.goisan.staff.bean.Staff">
@@ -91,7 +99,7 @@
             PERSONID = #{personidvalue} ,
         </if>
 
-        grade=#{grade},givenname=#{givenname},issuer=#{issuer},getdate=#{getdate}
+        grade=#{grade},givenname=#{givenname},issuer=#{issuer},getdate=#{getdate},postfunction=#{postfunction},workingyears=#{workingyears}
 
         <if test="type == 1">
             ,teachingmanagement=#{teachingmanagement}

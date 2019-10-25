@@ -111,6 +111,11 @@ public class Emp extends BaseBean {
     private String EMPLOYMENTOFFICE;
     private String WORKINGHOURS;
     private String EXPERTISE;
+    /**岗位职能*/
+    private String postfunction;
+
+    /**本岗位工作年限*/
+    private String workingyears;
 
 
     private String TOPICNATURE;
@@ -126,8 +131,25 @@ public class Emp extends BaseBean {
     private String HIGHESTGRADE;
     private String COOPERATION;
 
+    public String getPostfunction() {
+        return postfunction;
+    }
+
+    public void setPostfunction(String postfunction) {
+        this.postfunction = postfunction;
+    }
+
+    public String getWorkingyears() {
+        return workingyears;
+    }
+
+    public void setWorkingyears(String workingyears) {
+        this.workingyears = workingyears;
+    }
+
     public String getTOPICNATURE() {
         return TOPICNATURE;
+
     }
 
     public void setTOPICNATURE(String TOPICNATURE) {

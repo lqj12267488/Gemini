@@ -255,35 +255,35 @@ public class FilesController extends HttpServlet {
     }
 
 
-    @ResponseBody
-    @RequestMapping("/files/downloadFiles")
-    public void downLoadFiles(String id, HttpServletResponse response) {
-        COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
-                .getParentFile().getPath();
-        Files files = filesService.getFilesById(id);
-        String filePath = COM_REPORT_PATH + files.getFileUrl();
-        File file = FileUtils.getFile(filePath);
-        OutputStream os = null;
-        try {
-            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(files.getFileName(),
-                    "utf-8"));
-            os = response.getOutputStream();
-            os.write(FileUtils.readFileToByteArray(file));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        @ResponseBody
+        @RequestMapping("/files/downloadFiles")
+        public void downLoadFiles(String id, HttpServletResponse response) {
+            COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
+                    .getParentFile().getPath();
+            Files files = filesService.getFilesById(id);
+            String filePath = COM_REPORT_PATH + files.getFileUrl();
+            File file = FileUtils.getFile(filePath);
+            OutputStream os = null;
             try {
-                if (os != null) {
-                    os.flush();
-                    os.close();
-                }
+                response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(files.getFileName(),
+                        "utf-8"));
+                os = response.getOutputStream();
+                os.write(FileUtils.readFileToByteArray(file));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (os != null) {
+                        os.flush();
+                        os.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-    }
 
     /**
      * 查看文件跳转

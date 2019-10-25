@@ -960,8 +960,8 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(12).setCellValue(list.get(i).getISSUER());
                 row.getCell(13).setCellValue(list.get(i).getGetDateShow());
                 row.getCell(14).setCellValue(list.get(i).getPost());
-                row.getCell(15).setCellValue("");
-                row.getCell(16).setCellValue("");
+                row.getCell(15).setCellValue(list.get(i).getPostfunction());
+                row.getCell(16).setCellValue(list.get(i).getWorkingyears());
                 row.getCell(17).setCellValue(list.get(i).getTEACHINGMANAGEMENT());
                 count++;
             }
@@ -1025,9 +1025,9 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(11).setCellValue(list.get(i).getGIVENNAME());
                 row.getCell(12).setCellValue(list.get(i).getISSUER());
                 row.getCell(13).setCellValue(list.get(i).getGetDateShow());
-                row.getCell(14).setCellValue("");
-                row.getCell(15).setCellValue("");
-                row.getCell(16).setCellValue("");
+                row.getCell(14).setCellValue(list.get(i).getStaffSource());
+                row.getCell(15).setCellValue(list.get(i).getPostfunction());
+                row.getCell(16).setCellValue(list.get(i).getWorkingyears());
                 row.getCell(17).setCellValue(list.get(i).getSTUDENTMANAGEMENT());
 
                 row.getCell(18).setCellValue("0".equals(list.get(i).getPOLITICALCOUNSELOR())?"否":"是");
@@ -1094,9 +1094,9 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(11).setCellValue(list.get(i).getGIVENNAME());
                 row.getCell(12).setCellValue(list.get(i).getISSUER());
                 row.getCell(13).setCellValue(list.get(i).getGetDateShow());
-                row.getCell(14).setCellValue(list.get(i).getPost());
-                row.getCell(15).setCellValue("");
-                row.getCell(16).setCellValue("");
+                row.getCell(14).setCellValue(list.get(i).getStaffSource());
+                row.getCell(15).setCellValue(list.get(i).getPostfunction());
+                row.getCell(16).setCellValue(list.get(i).getWorkingyears());
                 row.getCell(17).setCellValue(list.get(i).getEMPLOYMENTOFFICE());
                 count++;
             }
@@ -1160,7 +1160,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(10).setCellValue(list.get(i).getGIVENNAME());
                 row.getCell(11).setCellValue(list.get(i).getISSUER());
                 row.getCell(12).setCellValue(list.get(i).getGetDateShow());
-                row.getCell(13).setCellValue("");
+                row.getCell(13).setCellValue(list.get(i).getStaffSourceShow());
                 row.getCell(14).setCellValue(list.get(i).getWORKINGHOURS());
                 count++;
             }

@@ -11,6 +11,7 @@ public class Tabular extends BaseBean {
     private String serialNumber;
     private String tableAttribute;
 
+
     public String getId() {
         return id;
     }

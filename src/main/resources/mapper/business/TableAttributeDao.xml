@@ -308,10 +308,17 @@
                t1.GIVENNAME,
                t1.ISSUER,
                to_char(t1.getdate, 'yyyyMMdd')                getDateShow,
-               t1.TEACHINGMANAGEMENT
+               t1.TEACHINGMANAGEMENT,
+               t1.postfunction,
+               t1.workingyears,
+               t.post,
+               t2.dept_id,
+               FUNC_GET_DEPTNAME(t2.dept_id) deptName
         from T_RS_EMPLOYEE t,
-             t_tab_staff t1
+             t_tab_staff t1,
+             t_rs_employee_dept t2
         where t.person_id = t1.personid
+          and t.person_id=t2.person_id
           and t1.type = 1
 
     </select>
@@ -343,16 +350,23 @@
                t.POSITIONAL_TITLES                            positionalTitles,
                func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB')  positionalLevel,
                func_get_dicvalue(t.WORK_YEAR, 'QYGZSC')       workYear,
+               func_get_dicvalue(t.STAFF_SOURCE,'JZGLY')      staffSource,
                t1.GRADE,
                t1.GIVENNAME,
                t1.ISSUER,
                to_char(t1.getdate, 'yyyyMMdd')                getDateShow,
                t1.STUDENTMANAGEMENT,
                t1.POLITICALCOUNSELOR,
-               t1.PSYCHOLOGICALCONSULTANT
+               t1.PSYCHOLOGICALCONSULTANT,
+               t1.postfunction,
+               t1.workingyears,
+               t2.dept_id,
+               FUNC_GET_DEPTNAME(t2.dept_id) deptName
         from T_RS_EMPLOYEE t,
-             t_tab_staff t1
+             t_tab_staff t1,
+             t_rs_employee_dept t2
         where t.person_id = t1.personid
+          and t.person_id=t2.person_id
           and t1.type = 2
     </select>
     <select id="getExpertExcel_A8_4" resultType="com.goisan.system.bean.Emp">
@@ -383,14 +397,21 @@
                t.POSITIONAL_TITLES                            positionalTitles,
                func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB')  positionalLevel,
                func_get_dicvalue(t.WORK_YEAR, 'QYGZSC')       workYear,
+               func_get_dicvalue(t.STAFF_SOURCE,'JZGLY')      staffSource,
                t1.GRADE,
                t1.GIVENNAME,
                t1.ISSUER,
                to_char(t1.getdate, 'yyyyMMdd')                getDateShow,
-               t1.EMPLOYMENTOFFICE
+               t1.EMPLOYMENTOFFICE,
+               t1.postfunction,
+               t1.workingyears,
+               t2.dept_id,
+               FUNC_GET_DEPTNAME(t2.dept_id) deptName
         from T_RS_EMPLOYEE t,
-             t_tab_staff t1
+             t_tab_staff t1,
+             t_rs_employee_dept t2
         where t.person_id = t1.personid
+          and t.person_id=t2.person_id
           and t1.type = 3
     </select>
     <select id="getExpertExcel_A8_5" resultType="com.goisan.system.bean.Emp">
@@ -422,6 +443,7 @@
                t.POSITIONAL_TITLES                            positionalTitles,
                func_get_dicvalue(t.POSITIONAL_LEVEL, 'ZCJB')  positionalLevel,
                func_get_dicvalue(t.WORK_YEAR, 'QYGZSC')       workYear,
+               func_get_dicvalue(t.STAFF_SOURCE,'JZGLY')      staffSourceShow,
                t1.GRADE,
                t1.GIVENNAME,
                t1.ISSUER,
