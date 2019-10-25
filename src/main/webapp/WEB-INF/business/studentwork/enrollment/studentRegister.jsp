@@ -76,8 +76,8 @@
                     <div class="content">
                         <div class="form-row">
                             <div class="form-row" id="addbutton">
-                                <button class="btn btn-default btn-clean" type="button"
-                                        onclick="addStudentRegister()">添加</button>
+                                <%--<button class="btn btn-default btn-clean" type="button"
+                                        onclick="addStudentRegister()">添加</button>--%>
                                 <a id="expdata" class="btn btn-info btn-clean" >导出</a>
                             <button class="btn btn-info btn-clean" onclick="showEmpDialog()">导入</button>
                             </div>
