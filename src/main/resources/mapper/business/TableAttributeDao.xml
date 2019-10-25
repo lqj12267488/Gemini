@@ -148,7 +148,8 @@
                change_dept,
                valid_flag
         from T_TAB_INSTITUTIONAL_AREA
-        where 1 = 1
+        where 1 = 1  and  FUNC_GET_DICVALUE(particular_year, 'ND')=
+        （select extract(year from sysdate) from dual）
     </select>
     <select id="getBookCollectionList" resultType="com.goisan.table.bean.BookCollection">
         select id,
@@ -165,7 +166,8 @@
                change_dept,
                valid_flag
         from T_TAB_BOOK_COLLECTION
-        where 1 = 1
+        where 1 = 1  and  FUNC_GET_DICVALUE(particular_year, 'ND')=
+        （select extract(year from sysdate) from dual）
     </select>
     <select id="getMachineClassroomList" resultType="com.goisan.table.bean.MachineClassroom">
         select id,
@@ -185,7 +187,8 @@
                change_dept,
                valid_flag
         from T_TAB_MACHINE_CLASSROOM
-        where 1 = 1
+        where 1 = 1  and  FUNC_GET_DICVALUE(particular_year, 'ND')=
+        （select extract(year from sysdate) from dual）
     </select>
     <select id="getGeneralConstructionList" resultType="com.goisan.table.bean.GeneralConstruction">
         select creator,
@@ -209,7 +212,8 @@
                digital_resources,
                electronics_book
         from T_TAB_GENERAL_CONSTRUCTION
-        where 1 = 1
+        where 1 = 1  and  FUNC_GET_DICVALUE(particular_year, 'ND')=
+        （select extract(year from sysdate) from dual）
     </select>
     <select id="getManagementInformationList" resultType="com.goisan.table.bean.ManagementInformation">
         select id,
@@ -245,7 +249,8 @@
                change_dept,
                valid_flag
         from T_TAB_INFORMATION_PERSONNEL
-        where 1 = 1
+        where 1 = 1 and  FUNC_GET_DICVALUE(particular_year, 'ND')=
+        （select extract(year from sysdate) from dual）
     </select>
     <select id="getFixedAssetsList" resultType="com.goisan.table.bean.FixedAssets">
         select id,
@@ -260,7 +265,8 @@
                change_dept,
                valid_flag
         from T_TAB_FIXED_ASSETS
-        where 1 = 1
+        where 1 = 1 and  FUNC_GET_DICVALUE(particular_year, 'ND')=
+        （select extract(year from sysdate) from dual）
     </select>
     <select id="getExpertExcel_A4_3" resultType="com.goisan.educational.skillappraisal.bean.SkillAppraisal">
         select ISSUING_OFFICE,
