@@ -958,7 +958,7 @@
             var telNum = /^0\d{2,3}-[1-9]\d{6,7}$/;  ///^1\d{10}$/;
             if (telNum.test($("#homePhone").val()) === false) {
                 swal({
-                    title: "家庭电话不正确!",
+                    title: "家庭电话不正确（例：0410-1234567）!",
                     type: "info"
                 });
                 return;
