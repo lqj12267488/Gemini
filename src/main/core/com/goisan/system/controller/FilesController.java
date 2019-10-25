@@ -161,8 +161,8 @@ public class FilesController extends HttpServlet {
             String fileName = file.getOriginalFilename();
             String path = String.format(urlParten, request.getParameter("tableName"),
                     sdf.format(new Date()));
-            final String url = path + "/" + CommonUtil.getUUID()
-                    + fileName.substring(fileName.indexOf("."));
+            final String url = path + "/" + fileName;
+
             FileOutputStream fos = null;
             try {
                 File f = new File(COM_REPORT_PATH + path);
