@@ -205,23 +205,5 @@ public interface TableAttributeService {
     /**
      * 高级表
      */
-    void expertExcel_GJ_311(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_313(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_321(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_322(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_331(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_332(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_341(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_411(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_421(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_422(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_423(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_424(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_431(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_461(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_511(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_521(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_811(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_812(HttpServletResponse response, TabularFile tabularFile);
-    void expertExcel_GJ_931(HttpServletResponse response, TabularFile tabularFile);
+    void expertExcel_GJ(HttpServletResponse response, TabularFile tabularFile);
 }

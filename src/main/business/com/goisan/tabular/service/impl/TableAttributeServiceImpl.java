@@ -3587,97 +3587,121 @@ public class TableAttributeServiceImpl implements TableAttributeService {
      */
 
     @Override
-    public void expertExcel_GJ_311(HttpServletResponse response, TabularFile tabularFile) {
+    public void expertExcel_GJ(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+
+            this.expertExcel_GJ_311(sheet);
+
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void expertExcel_GJ_311(Sheet sheet) {
+//        List<BaseBean> list = clubRewardDao.getClubRewardList(new ClubReward());
+//        int rowIndex = 10;
+//        int end = 2 + majorList.size();
+//
+//        int count = 1;
+//        for (int i = 0; i < majorList.size(); i++) {
+//            Row row = sheet.getRow(rowIndex + i);
+//            row.getCell(1).setCellValue(count);
+//            row.getCell(2).setCellValue(majorList.get(i).getDepartmentsId());
+//            row.getCell(3).setCellValue(majorList.get(i).getMajorCode());
+//            row.getCell(4).setCellValue(majorList.get(i).getMajorName());
+//            row.getCell(5).setCellValue(majorList.get(i).getMajorDirectionCode());
+//            row.getCell(6).setCellValue(majorList.get(i).getMajorDirection());
+//            row.getCell(17).setCellValue(majorList.get(i).getInternshipPositions());
+//            row.getCell(18).setCellValue(majorList.get(i).getInternshipUnitIdShow());
+//            row.getCell(20).setCellValue(majorList.get(i).getPostsTime());
+//            count++;
+//        }
 
     }
 
-    @Override
-    public void expertExcel_GJ_313(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_313(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_321(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_321(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_322(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_322(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_331(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_331(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_332(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_332(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_341(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_341(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_411(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_411(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_421(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_421(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_422(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_422(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_423(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_423(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_424(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_424(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_431(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_461(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_461(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_811(Sheet sheet) {
 
     }
 
-    @Override
-    public void expertExcel_GJ_511(HttpServletResponse response, TabularFile tabularFile) {
-
-    }
-
-    @Override
-    public void expertExcel_GJ_521(HttpServletResponse response, TabularFile tabularFile) {
-
-    }
-
-    @Override
-    public void expertExcel_GJ_811(HttpServletResponse response, TabularFile tabularFile) {
-
-    }
-
-    @Override
-    public void expertExcel_GJ_812(HttpServletResponse response, TabularFile tabularFile) {
-
-    }
-
-    @Override
-    public void expertExcel_GJ_931(HttpServletResponse response, TabularFile tabularFile) {
+    private void expertExcel_GJ_812(Sheet sheet) {
 
     }
 }
