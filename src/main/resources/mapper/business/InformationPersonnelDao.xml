@@ -5,26 +5,33 @@
     <select id="getInformationPersonnelList"
             parameterType="com.goisan.table.bean.InformationPersonnel"
             resultType="com.goisan.table.bean.InformationPersonnel">
-        select id,organization_code,organization_name,person_staff,person_name,staff_number,employe_number,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_INFORMATION_PERSONNEL where 1=1 
+        select id,organization_code,organization_name,person_staff,person_name,staff_number,employe_number,creator,create_time,create_dept,changer,change_time,change_dept,func_get_dicvalue(PARTICULAR_YEAR,'ND') year,valid_flag from T_TAB_INFORMATION_PERSONNEL where 1=1
 <if test='organizationCode != "" and organizationCode != null'> AND organization_code like '%'||#{organizationCode}||'%' </if> 
 <if test='organizationName != "" and organizationName != null'> AND organization_name like '%'||#{organizationName}||'%' </if> 
 <if test='personStaff != "" and personStaff != null'> AND person_staff like '%'||#{personStaff}||'%' </if> 
 <if test='personName != "" and personName != null'> AND person_name like '%'||#{personName}||'%' </if> 
 <if test='staffNumber != "" and staffNumber != null'> AND staff_number like '%'||#{staffNumber}||'%' </if> 
-<if test='employeNumber != "" and employeNumber != null'> AND employe_number like '%'||#{employeNumber}||'%' </if> 
-
+<if test='employeNumber != "" and employeNumber != null'> AND employe_number like '%'||#{employeNumber}||'%' </if>
+<if test='year != "" and year != null'> AND PARTICULAR_YEAR like '${year}' </if>
     </select>
     <insert id="saveInformationPersonnel" parameterType="com.goisan.table.bean.InformationPersonnel">
-        insert into t_tab_information_personnel (id,organization_code,organization_name,person_staff,person_name,staff_number,employe_number,creator,create_time,create_dept) values (func_get_uuid ,#{organizationCode},#{organizationName},#{personStaff},#{personName},#{staffNumber},#{employeNumber},#{creator},sysdate ,#{createDept})
+        insert into t_tab_information_personnel (id,particular_year,organization_code,organization_name,person_staff,person_name,staff_number,employe_number,creator,create_time,create_dept) values (func_get_uuid ,#{year},#{organizationCode},#{organizationName},#{personStaff},#{personName},#{staffNumber},#{employeNumber},#{creator},sysdate ,#{createDept})
     </insert>
     <select id="getInformationPersonnelById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.InformationPersonnel">
-        select * from T_TAB_INFORMATION_PERSONNEL where id = #{id}
+        select id,organization_code,organization_name,person_staff,person_name,staff_number,employe_number,creator,create_time,create_dept,changer,change_time,change_dept,func_get_dicvalue(PARTICULAR_YEAR,'ND') year,valid_flag from T_TAB_INFORMATION_PERSONNEL where id = #{id}
     </select>
     <update id="updateInformationPersonnel" parameterType="com.goisan.table.bean.InformationPersonnel">
-        update t_tab_information_personnel set organization_code=#{organizationCode},organization_name=#{organizationName},person_staff=#{personStaff},person_name=#{personName},staff_number=#{staffNumber},employe_number=#{employeNumber},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
+        update t_tab_information_personnel set organization_code=#{organizationCode},particular_year=#{year},organization_name=#{organizationName},person_staff=#{personStaff},person_name=#{personName},staff_number=#{staffNumber},employe_number=#{employeNumber},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
     </update>
     <delete id="delInformationPersonnel" parameterType="java.lang.String">
         delete from T_TAB_INFORMATION_PERSONNEL where id = #{id}
     </delete>
+    <select id="checkYear" parameterType="java.lang.String" resultType="com.goisan.table.bean.InformationPersonnel">
+        select *
+        from T_TAB_INFORMATION_PERSONNEL
+        where func_get_dicvalue(PARTICULAR_YEAR,'ND') = #{year}
+        <if test="id != null and id !='' ">AND  id != #{id}</if>
+        AND VALID_FLAG = '1'
+    </select>
 </mapper>

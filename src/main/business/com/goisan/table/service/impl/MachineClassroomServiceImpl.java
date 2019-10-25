@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.table.bean.MachineClassroom;
 import com.goisan.table.dao.MachineClassroomDao;
 import com.goisan.table.service.MachineClassroomService;
 import com.goisan.system.bean.BaseBean;
@@ -42,5 +43,10 @@ public class MachineClassroomServiceImpl implements MachineClassroomService {
     @Override
     public void delMachineClassroom(String id) {
         machineClassroomDao.delMachineClassroom(id);
+    }
+
+    @Override
+    public List<MachineClassroom> checkYear(MachineClassroom machineClassroom) {
+        return machineClassroomDao.checkYear(machineClassroom);
     }
 }

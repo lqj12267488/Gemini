@@ -14,7 +14,7 @@
     </insert>
     <select id="getInstitutionalAreaById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.InstitutionalArea">
-        select * from T_TAB_INSTITUTIONAL_AREA where id = #{id}
+        select id,area_covered,green_land_area,building_area,school_property_area,school_building,wrong_school_property,scientific_auxiliary,classroom,library,laboratories_places,research_room,gymnasium,hall,administrative_office,college_area_room,student_dormitory,student_canteen,teaching_dormitory,staff_can,life_welfare,faculty_housing,other_rooms,func_get_dicvalue(PARTICULAR_YEAR,'ND') year,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_INSTITUTIONAL_AREA where id = #{id}
     </select>
     <update id="updateInstitutionalArea" parameterType="com.goisan.table.bean.InstitutionalArea">
         update t_tab_institutional_area set area_covered=#{areaCovered},green_land_area=#{greenLandArea},building_area=#{buildingArea},school_property_area=#{schoolPropertyArea},school_building=#{schoolBuilding},wrong_school_property=#{wrongSchoolProperty},scientific_auxiliary=#{scientificAuxiliary},classroom=#{classroom},library=#{library},laboratories_places=#{laboratoriesPlaces},research_room=#{researchRoom},gymnasium=#{gymnasium},hall=#{hall},administrative_office=#{administrativeOffice},college_area_room=#{collegeAreaRoom},student_dormitory=#{studentDormitory},student_canteen=#{studentCanteen},teaching_dormitory=#{teachingDormitory},staff_can=#{staffCan},life_welfare=#{lifeWelfare},faculty_housing=#{facultyHousing},other_rooms=#{otherRooms},particular_year=#{year},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
@@ -22,4 +22,11 @@
     <delete id="delInstitutionalArea" parameterType="java.lang.String">
         delete from T_TAB_INSTITUTIONAL_AREA where id = #{id}
     </delete>
+    <select id="checkYear" parameterType="java.lang.String" resultType="com.goisan.table.bean.InstitutionalArea">
+        select *
+        from T_TAB_INSTITUTIONAL_AREA
+        where func_get_dicvalue(PARTICULAR_YEAR,'ND') = #{year}
+        <if test="id != null and id !='' ">AND  id != #{id}</if>
+        AND VALID_FLAG = '1'
+    </select>
 </mapper>

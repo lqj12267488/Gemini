@@ -105,7 +105,7 @@
                     <span class="iconBtx">*</span>年份
                  </div>
                 <div class="col-md-9">
-                    <select id="yeara" />
+                    <select id="yeara" data-value="${data.year}" />
                 </div>
              </div>
            </div>
@@ -213,6 +213,17 @@
                 title: "请选择年份",
                 type: "warning"
             });
+            return;
+        }
+        if ($("#yeara").val() != '${data.year}') {
+            $.post("<%=request.getContextPath()%>/generalconstruction/checkYear", {
+                    id: '${id}',
+                    year: $("#years").val(),
+                }, function (msg) {
+                    if (msg.status == 1) {
+                        swal({title: "年份重复，请重新填写！", type: "error"});
+                    }}
+            )
             return;
         }
         $.post("<%=request.getContextPath()%>/generalconstruction/saveGeneralConstruction", {

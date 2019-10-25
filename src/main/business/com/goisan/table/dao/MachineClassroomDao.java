@@ -1,6 +1,7 @@
 package com.goisan.table.dao;
 
 import com.goisan.system.bean.BaseBean;
+import com.goisan.table.bean.MachineClassroom;
 
 import java.util.List;
 
@@ -15,5 +16,7 @@ public interface MachineClassroomDao {
     void updateMachineClassroom(BaseBean baseBean);
 
     void delMachineClassroom(String id);
+
+    List<MachineClassroom> checkYear(MachineClassroom machineClassroom);
 
 }

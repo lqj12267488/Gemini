@@ -13,7 +13,7 @@
     </insert>
     <select id="getFixedAssetsById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.FixedAssets">
-        select * from T_TAB_FIXED_ASSETS where id = #{id}
+        select id,total_school_value,total_assets,assets_add,func_get_dicvalue(PARTICULAR_YEAR,'ND') year,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_FIXED_ASSETS where id = #{id}
     </select>
     <update id="updateFixedAssets" parameterType="com.goisan.table.bean.FixedAssets">
         update t_tab_fixed_assets set total_school_value=#{totalSchoolValue},particular_year=#{year},total_assets=#{totalAssets},assets_add=#{assetsAdd},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
@@ -21,4 +21,11 @@
     <delete id="delFixedAssets" parameterType="java.lang.String">
         delete from T_TAB_FIXED_ASSETS where id = #{id}
     </delete>
+    <select id="checkYear" parameterType="java.lang.String" resultType="com.goisan.table.bean.FixedAssets">
+        select *
+        from T_TAB_FIXED_ASSETS
+        where func_get_dicvalue(PARTICULAR_YEAR,'ND') = #{year}
+        <if test="id != null and id !='' ">AND  id != #{id}</if>
+        AND VALID_FLAG = '1'
+    </select>
 </mapper>

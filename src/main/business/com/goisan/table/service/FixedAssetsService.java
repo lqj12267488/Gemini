@@ -1,6 +1,7 @@
 package com.goisan.table.service;
 
 import com.goisan.system.bean.BaseBean;
+import com.goisan.table.bean.FixedAssets;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ public interface FixedAssetsService {
     void updateFixedAssets(BaseBean baseBean);
 
     void delFixedAssets(String id);
-
+    List<FixedAssets> checkYear(FixedAssets fixedAssets);
 }

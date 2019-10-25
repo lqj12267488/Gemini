@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.table.bean.InstitutionalArea;
 import com.goisan.table.dao.InstitutionalAreaDao;
 import com.goisan.table.service.InstitutionalAreaService;
 import com.goisan.system.bean.BaseBean;
@@ -42,5 +43,10 @@ public class InstitutionalAreaServiceImpl implements InstitutionalAreaService {
     @Override
     public void delInstitutionalArea(String id) {
         institutionalAreaDao.delInstitutionalArea(id);
+    }
+
+    @Override
+    public List<InstitutionalArea> checkYear(InstitutionalArea institutionalArea) {
+        return institutionalAreaDao.checkYear(institutionalArea);
     }
 }

@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.table.bean.BookCollection;
 import com.goisan.table.dao.BookCollectionDao;
 import com.goisan.table.service.BookCollectionService;
 import com.goisan.system.bean.BaseBean;
@@ -43,4 +44,11 @@ public class BookCollectionServiceImpl implements BookCollectionService {
     public void delBookCollection(String id) {
         bookCollectionDao.delBookCollection(id);
     }
+
+    @Override
+    public List<BookCollection> checkYear(BookCollection bookCollection) {
+        return bookCollectionDao.checkYear(bookCollection);
+    }
+
+
 }

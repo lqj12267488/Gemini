@@ -201,7 +201,7 @@
                         <span class="iconBtx">*</span>年份
                     </div>
                     <div class="col-md-9">
-                        <select id="years" value="${data.year}"/>
+                        <select id="years"/>
                     </div>
                 </div>
             </div>
@@ -218,7 +218,7 @@
 <script>
     $(document).ready(function () {
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
-            addOption(data, 'years');
+            addOption(data, 'years','${data.year}');
         });
         if($("#flag").val()=='on'){
             $("#save").hide();
@@ -389,6 +389,17 @@
             });
             return;
         }
+        if ($("#years").val() != '${data.year}') {
+            $.post("<%=request.getContextPath()%>/institutionalarea/checkYear", {
+                    id: '${id}',
+                    year: $("#years").val(),
+                }, function (msg) {
+                    if (msg.status == 1) {
+                        swal({title: "年份重复，请重新填写！", type: "error"});
+                    }}
+            )
+            return;
+        }
         $.post("<%=request.getContextPath()%>/institutionalarea/saveInstitutionalArea", {
             id: "${data.id}",
             areaCovered: $("#areaCoveredEdit").val(),
@@ -423,7 +434,7 @@
                 $('#table').DataTable().ajax.reload();
             });
         })
-    }
+}
 </script>
 
 

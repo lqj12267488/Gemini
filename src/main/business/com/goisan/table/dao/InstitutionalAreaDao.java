@@ -1,6 +1,7 @@
 package com.goisan.table.dao;
 
 import com.goisan.system.bean.BaseBean;
+import com.goisan.table.bean.InstitutionalArea;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ public interface InstitutionalAreaDao {
     void updateInstitutionalArea(BaseBean baseBean);
 
     void delInstitutionalArea(String id);
-
+    List<InstitutionalArea> checkYear(InstitutionalArea institutionalArea);
 }

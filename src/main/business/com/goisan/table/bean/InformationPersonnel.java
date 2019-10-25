@@ -25,6 +25,18 @@ public class InformationPersonnel extends BaseBean {
     /**兼职人员数（个）*/
     private String employeNumber;
 
+    /*年度 使用ND字典*/
+    private String year ;
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+
     public String getId() {
         return id;
     }

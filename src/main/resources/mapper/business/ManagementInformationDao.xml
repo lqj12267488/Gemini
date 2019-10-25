@@ -13,7 +13,7 @@
     </insert>
     <select id="getManagementInformationById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.ManagementInformation">
-        select * from T_TAB_MANAGEMENT_INFORMATION where id = #{id}
+        select id,type,func_get_dicvalue(type,'GLXXXTLX') typeShow,func_get_dicvalue(PARTICULAR_YEAR,'ND') year,system_name,sources,func_get_dicvalue(sources,'GLXXXTLY') sourcesShow,unit_name,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_MANAGEMENT_INFORMATION where id = #{id}
     </select>
     <update id="updateManagementInformation" parameterType="com.goisan.table.bean.ManagementInformation">
         update t_tab_management_information set type=#{type},system_name=#{systemName},sources=#{sources},particular_year=#{year},unit_name=#{unitName},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
@@ -21,4 +21,11 @@
     <delete id="delManagementInformation" parameterType="java.lang.String">
         delete from T_TAB_MANAGEMENT_INFORMATION where id = #{id}
     </delete>
+    <select id="checkYear" parameterType="java.lang.String" resultType="com.goisan.table.bean.ManagementInformation">
+        select *
+        from T_TAB_MANAGEMENT_INFORMATION
+        where func_get_dicvalue(PARTICULAR_YEAR,'ND') = #{year}
+        <if test="id != null and id !='' ">AND  id != #{id}</if>
+        AND VALID_FLAG = '1'
+    </select>
 </mapper>

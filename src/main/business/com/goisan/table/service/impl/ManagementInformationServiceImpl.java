@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.table.bean.ManagementInformation;
 import com.goisan.table.dao.ManagementInformationDao;
 import com.goisan.table.service.ManagementInformationService;
 import com.goisan.system.bean.BaseBean;
@@ -42,5 +43,10 @@ public class ManagementInformationServiceImpl implements ManagementInformationSe
     @Override
     public void delManagementInformation(String id) {
         managementInformationDao.delManagementInformation(id);
+    }
+
+    @Override
+    public List<ManagementInformation> checkYear(ManagementInformation managementInformation) {
+        return managementInformationDao.checkYear(managementInformation);
     }
 }

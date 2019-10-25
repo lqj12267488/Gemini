@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.table.bean.FixedAssets;
 import com.goisan.table.dao.FixedAssetsDao;
 import com.goisan.table.service.FixedAssetsService;
 import com.goisan.system.bean.BaseBean;
@@ -42,5 +43,10 @@ public class FixedAssetsServiceImpl implements FixedAssetsService {
     @Override
     public void delFixedAssets(String id) {
         fixedAssetsDao.delFixedAssets(id);
+    }
+
+    @Override
+    public List<FixedAssets> checkYear(FixedAssets fixedAssets) {
+        return fixedAssetsDao.checkYear(fixedAssets);
     }
 }

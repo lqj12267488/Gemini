@@ -1,6 +1,8 @@
 package com.goisan.table.dao;
 
 import com.goisan.system.bean.BaseBean;
+import com.goisan.table.bean.InstitutionalArea;
+import com.goisan.table.bean.ManagementInformation;
 
 import java.util.List;
 
@@ -15,5 +17,6 @@ public interface ManagementInformationDao {
     void updateManagementInformation(BaseBean baseBean);
 
     void delManagementInformation(String id);
+    List<ManagementInformation> checkYear(ManagementInformation managementInformation);
 
 }

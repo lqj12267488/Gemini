@@ -1,6 +1,7 @@
 package com.goisan.table.controller;
 
 import com.goisan.table.bean.BookCollection;
+import com.goisan.table.bean.FixedAssets;
 import com.goisan.table.service.BookCollectionService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
@@ -64,6 +65,7 @@ public class BookCollectionController {
     public String toEditBookCollection(String id, Model model) {
         model.addAttribute("data", bookCollectionService.getBookCollectionById(id));
         model.addAttribute("head", "修改");
+
         return "/business/table/bookcollection/bookCollectionEdit";
     }
 
@@ -74,4 +76,14 @@ public class BookCollectionController {
         return new Message(0, "删除成功！", null);
     }
 
+    @ResponseBody
+    @RequestMapping("/bookcollection/checkYear")
+    public Message bookCollectionCheckYear(BookCollection bookCollection){
+        List size = bookCollectionService.checkYear(bookCollection);
+        if(size.size()>0){
+            return new Message(1, "年份重复，请重新选择！", null);
+        }else{
+            return new Message(0, "", null);
+        }
+    }
 }

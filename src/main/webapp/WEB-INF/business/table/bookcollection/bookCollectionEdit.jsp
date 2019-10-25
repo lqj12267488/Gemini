@@ -64,7 +64,7 @@
                         <span class="iconBtx">*</span>年份
                     </div>
                     <div class="col-md-9">
-                        <select id="years" value="${data.year}"/>
+                        <select id="years"/>
                     </div>
                 </div>
             </div>
@@ -128,6 +128,14 @@
             });
             return;
         }
+
+        $.post("<%=request.getContextPath()%>/bookcollection/checkYear", {
+            id: '${data.id}',
+            year: $("#years").val(),
+        }, function (msg) {
+            if (msg.status == 1) {
+                swal({title: "年份重复，请重新填写！", type: "error"});
+            }else {
         $.post("<%=request.getContextPath()%>/bookcollection/saveBookCollection", {
             id: "${data.id}",
             totalNumber: $("#totalNumberEdit").val(),
@@ -144,6 +152,8 @@
                 $("#dialog").modal('hide');
                 $('#table').DataTable().ajax.reload();
             });
+        })
+    }
         })
     }
 </script>

@@ -119,6 +119,17 @@
             });
             return;
         }
+        if ($("#years").val() != '${data.year}') {
+            $.post("<%=request.getContextPath()%>/managementinformation/checkYear", {
+                    id: '${id}',
+                    year: $("#years").val(),
+                }, function (msg) {
+                    if (msg.status == 1) {
+                        swal({title: "年份重复，请重新填写！", type: "error"});
+                    }}
+            )
+            return;
+        }
         $.post("<%=request.getContextPath()%>/managementinformation/saveManagementInformation", {
             id: "${data.id}",
             type: $("#typeEdit").val(),

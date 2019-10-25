@@ -74,4 +74,14 @@ public class InformationPersonnelController {
         return new Message(0, "删除成功！", null);
     }
 
+    @ResponseBody
+    @RequestMapping("/informationpersonnel/checkYear")
+    public Message informationpersonnelChecYear(InformationPersonnel informationPersonnel){
+        List size = informationPersonnelService.checkYear(informationPersonnel);
+        if(size.size()>0){
+            return new Message(1, "年份重复，请重新选择！", null);
+        }else{
+            return new Message(0, "", null);
+        }
+    }
 }

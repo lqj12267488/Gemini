@@ -8,7 +8,7 @@
                 <div class="block block-drop-shadow">
                     <div class="content block-fill-white">
                         <div class="form-row">
-                                                    <div class="col-md-1 tar">
+                            <div class="col-md-1 tar">
                                 机构代码：
                             </div>
                             <div class="col-md-2">
@@ -26,6 +26,13 @@
                             <div class="col-md-2">
                                 <input id="personNameSel">
                             </div>
+                            <div class="col-md-1 tar">
+                                年份：
+                            </div>
+                            <div class="col-md-2">
+                                <select id="yearss"></select>
+                            </div>
+                            <br>
                             <div class="col-md-2">
                                 <button  type="button" class="btn btn-default btn-clean" onclick="search()">查询</button>
                                 <button  type="button" class="btn btn-default btn-clean" onclick="searchClear()">清空</button>
@@ -53,15 +60,17 @@
 </div>
 <script>
     $(document).ready(function () {
-
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'yearss');
+        });
 
         search();
     })
 
     function search() {
         $("#table").DataTable({
-             "processing": true,
-             "serverSide": true,
+            "processing": true,
+            "serverSide": true,
             "ajax": {
                 "type": "post",
                 "url": '<%=request.getContextPath()%>/informationpersonnel/getInformationPersonnelList',
@@ -72,22 +81,26 @@
                     personName: $("#personNameSel").val(),
                     staffNumber: $("#staffNumberSel").val(),
                     employeNumber: $("#employeNumberSel").val(),
+                    year:$("#yearss").val(),
+
                 }
             },
             "destroy": true,
             "columns": [
-                 {"data": "id", "title": "主键id", "visible": false},
-                 {"data": "organizationCode", "title": "机构代码"},
-                 {"data": "organizationName", "title": "机构名称(全称)"},
-                 {"data": "personStaff", "title": "负责人教工号"},
-                 {"data": "personName", "title": "负责人姓名"},
-                 {"data": "staffNumber", "title": "专职人员数（个）"},
-                 {"data": "employeNumber", "title": "兼职人员数（个）"},
+                {"data": "id", "title": "主键id", "visible": false},
+                {"data": "organizationCode", "title": "机构代码"},
+                {"data": "organizationName", "title": "机构名称(全称)"},
+                {"data": "personStaff", "title": "负责人教工号"},
+                {"data": "personName", "title": "负责人姓名"},
+                {"data": "staffNumber", "title": "专职人员数（个）"},
+                {"data": "employeNumber", "title": "兼职人员数（个）"},
+                {"data": "year", "title": "年份"},
+
                 {
                     "title": "操作",
                     "render": function (data, type, row) {
                         return '<span class="icon-edit" title="修改" onclick=edit("' + row.id + '")></span>&ensp;&ensp;' +
-                                '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
+                            '<span class="icon-trash" title="删除" onclick=del("' + row.id + '")></span>';
                     }
                 }
             ],

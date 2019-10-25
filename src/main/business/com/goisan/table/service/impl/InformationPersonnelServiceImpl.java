@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.table.bean.InformationPersonnel;
 import com.goisan.table.dao.InformationPersonnelDao;
 import com.goisan.table.service.InformationPersonnelService;
 import com.goisan.system.bean.BaseBean;
@@ -42,5 +43,10 @@ public class InformationPersonnelServiceImpl implements InformationPersonnelServ
     @Override
     public void delInformationPersonnel(String id) {
         informationPersonnelDao.delInformationPersonnel(id);
+    }
+
+    @Override
+    public List<InformationPersonnel> checkYear(InformationPersonnel informationPersonnel) {
+        return informationPersonnelDao.checkYear(informationPersonnel);
     }
 }

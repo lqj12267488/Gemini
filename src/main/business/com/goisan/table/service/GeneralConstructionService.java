@@ -1,6 +1,8 @@
 package com.goisan.table.service;
 
 import com.goisan.system.bean.BaseBean;
+import com.goisan.table.bean.GeneralConstruction;
+import com.goisan.table.bean.InformationPersonnel;
 
 import java.util.List;
 
@@ -15,5 +17,6 @@ public interface GeneralConstructionService {
     void updateGeneralConstruction(BaseBean baseBean);
 
     void delGeneralConstruction(String id);
+    List<GeneralConstruction> checkYear(GeneralConstruction generalConstruction);
 
 }

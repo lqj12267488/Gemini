@@ -73,5 +73,14 @@ public class FixedAssetsController {
         fixedAssetsService.delFixedAssets(id);
         return new Message(0, "删除成功！", null);
     }
-
+    @ResponseBody
+    @RequestMapping("/fixedassets/checkYear")
+    public Message fixedAssetsCheckYear(FixedAssets fixedAssets){
+        List size = fixedAssetsService.checkYear(fixedAssets);
+        if(size.size()>0){
+            return new Message(1, "年份重复，请重新选择！", null);
+        }else{
+            return new Message(0, "", null);
+        }
+    }
 }

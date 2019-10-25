@@ -1,6 +1,7 @@
 package com.goisan.table.controller;
 
 import com.goisan.table.bean.GeneralConstruction;
+import com.goisan.table.bean.InformationPersonnel;
 import com.goisan.table.service.GeneralConstructionService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
@@ -80,4 +81,14 @@ public class GeneralConstructionController {
         return new Message(0, "删除成功！", null);
     }
 
+    @ResponseBody
+    @RequestMapping("/generalconstruction/checkYear")
+    public Message generalconstructionCheckYear(GeneralConstruction generalConstruction){
+        List size = generalConstructionService.checkYear(generalConstruction);
+        if(size.size()>0){
+            return new Message(1, "年份重复，请重新选择！", null);
+        }else{
+            return new Message(0, "", null);
+        }
+    }
 }

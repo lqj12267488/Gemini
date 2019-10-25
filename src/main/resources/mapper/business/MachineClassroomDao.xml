@@ -13,7 +13,7 @@
     </insert>
     <select id="getMachineClassroomById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.MachineClassroom">
-        select * from T_TAB_MACHINE_CLASSROOM where id = #{id}
+        select id,reading_room_seat,func_get_dicvalue(PARTICULAR_YEAR,'ND') year,computer_number,teaching_computer,tablet_pc,public_computer_room,professional_computer,classroom,multimedia_classroom,creator,create_time,create_dept,changer,change_time,change_dept,valid_flag from T_TAB_MACHINE_CLASSROOM where id = #{id}
     </select>
     <update id="updateMachineClassroom" parameterType="com.goisan.table.bean.MachineClassroom">
         update t_tab_machine_classroom set reading_room_seat=#{readingRoomSeat},PARTICULAR_YEAR=#{year},computer_number=#{computerNumber},teaching_computer=#{teachingComputer},tablet_pc=#{tabletPc},public_computer_room=#{publicComputerRoom},professional_computer=#{professionalComputer},classroom=#{classroom},multimedia_classroom=#{multimediaClassroom},changer=#{changer},change_time= sysdate,change_dept=#{changeDept} where id = #{id}
@@ -21,4 +21,11 @@
     <delete id="delMachineClassroom" parameterType="java.lang.String">
         delete from T_TAB_MACHINE_CLASSROOM where id = #{id}
     </delete>
+    <select id="checkYear" parameterType="java.lang.String" resultType="com.goisan.table.bean.MachineClassroom">
+        select *
+        from T_TAB_MACHINE_CLASSROOM
+        where func_get_dicvalue(PARTICULAR_YEAR,'ND') = #{year}
+        <if test="id != null and id !='' ">AND  id != #{id}</if>
+        AND VALID_FLAG = '1'
+    </select>
 </mapper>

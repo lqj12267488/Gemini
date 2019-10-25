@@ -88,7 +88,7 @@
                         <span class="iconBtx">*</span>年份
                     </div>
                     <div class="col-md-9">
-                        <select id="yeara" value="${data.year}"/>
+                        <select id="yeara"/>
                     </div>
                 </div>
             </div>
@@ -105,7 +105,7 @@
 <script>
     $(document).ready(function () {
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
-            addOption(data,'yeara');
+            addOption(data,'yeara','${data.year}');
         });
     });
 
@@ -171,6 +171,17 @@
                 title: "请选择年份！",
                 type: "warning"
             });
+            return;
+        }
+        if ($("#yeara").val() != '${data.year}') {
+            $.post("<%=request.getContextPath()%>/machineclassroom/checkYear", {
+                    id: '${id}',
+                    year: $("#years").val(),
+                }, function (msg) {
+                    if (msg.status == 1) {
+                        swal({title: "年份重复，请重新填写！", type: "error"});
+                    }}
+            )
             return;
         }
         $.post("<%=request.getContextPath()%>/machineclassroom/saveMachineClassroom", {

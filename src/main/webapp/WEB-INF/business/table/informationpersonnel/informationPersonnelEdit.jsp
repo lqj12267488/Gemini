@@ -67,6 +67,14 @@
                         <input id="employeNumberEdit" value="${data.employeNumber}"/>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="col-md-3 tar">
+                        <span class="iconBtx">*</span>年份
+                    </div>
+                    <div class="col-md-9">
+                        <select id="years"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -80,6 +88,14 @@
 
 <script>
     $(document).ready(function () {
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
+            addOption(data, 'years','${data.year}');
+        });
+        if($("#flag").val()=='on'){
+            $("#save").hide();
+            $("input").attr('readonly','readonly');
+            $("select").attr('disabled','disabled');
+        }
     });
 
     function save() {
@@ -125,23 +141,42 @@
             });
             return;
         }
-        $.post("<%=request.getContextPath()%>/informationpersonnel/saveInformationPersonnel", {
-            id: "${data.id}",
-            organizationCode: $("#organizationCodeEdit").val(),
-            organizationName: $("#organizationNameEdit").val(),
-            personStaff: $("#personStaffEdit").val(),
-            personName: $("#personNameEdit").val(),
-            staffNumber: $("#staffNumberEdit").val(),
-            employeNumber: $("#employeNumberEdit").val(),
-        }, function (msg) {
-            swal({
-                title: msg.msg,
-                type: "success"
-            }, function () {
-                $("#dialog").modal('hide');
-                $('#table').DataTable().ajax.reload();
-            });
-        })
+        if ($("#years").val() == "" || $("#years").val() == undefined || $("#years").val() == null) {
+                swal({
+                    title: "请选择年份！",
+                    type: "warning"
+                });
+            return;
+        }
+        if ($("#years").val() != '${data.year}') {
+            $.post("<%=request.getContextPath()%>/informationpersonnel/checkYear", {
+                    id: '${id}',
+                    year: $("#years").val(),
+                }, function (msg) {
+                    if (msg.status == 1) {
+                        swal({title: "年份重复，请重新填写！", type: "error"});
+                    }}
+            )
+            return;
+        }
+                $.post("<%=request.getContextPath()%>/informationpersonnel/saveInformationPersonnel", {
+                    id: "${data.id}",
+                    organizationCode: $("#organizationCodeEdit").val(),
+                    organizationName: $("#organizationNameEdit").val(),
+                    personStaff: $("#personStaffEdit").val(),
+                    personName: $("#personNameEdit").val(),
+                    staffNumber: $("#staffNumberEdit").val(),
+                    employeNumber: $("#employeNumberEdit").val(),
+                    year:$("#years").val(),
+                }, function (msg) {
+                    swal({
+                        title: msg.msg,
+                        type: "success"
+                    }, function () {
+                        $("#dialog").modal('hide');
+                        $('#table').DataTable().ajax.reload();
+                    });
+                })
     }
 </script>
 

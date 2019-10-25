@@ -1,5 +1,6 @@
 package com.goisan.table.service.impl;
 
+import com.goisan.table.bean.GeneralConstruction;
 import com.goisan.table.dao.GeneralConstructionDao;
 import com.goisan.table.service.GeneralConstructionService;
 import com.goisan.system.bean.BaseBean;
@@ -42,5 +43,10 @@ public class GeneralConstructionServiceImpl implements GeneralConstructionServic
     @Override
     public void delGeneralConstruction(String id) {
         generalConstructionDao.delGeneralConstruction(id);
+    }
+
+    @Override
+    public List<GeneralConstruction> checkYear(GeneralConstruction generalConstruction) {
+        return generalConstructionDao.checkYear(generalConstruction);
     }
 }

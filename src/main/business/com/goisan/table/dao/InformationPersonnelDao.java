@@ -1,6 +1,7 @@
 package com.goisan.table.dao;
 
 import com.goisan.system.bean.BaseBean;
+import com.goisan.table.bean.InformationPersonnel;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ public interface InformationPersonnelDao {
     void updateInformationPersonnel(BaseBean baseBean);
 
     void delInformationPersonnel(String id);
-
+    List<InformationPersonnel> checkYear(InformationPersonnel informationPersonnel);
 }

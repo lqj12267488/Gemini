@@ -1,5 +1,6 @@
 package com.goisan.table.controller;
 
+import com.goisan.table.bean.MachineClassroom;
 import com.goisan.table.bean.ManagementInformation;
 import com.goisan.table.service.ManagementInformationService;
 import com.goisan.system.tools.CommonUtil;
@@ -73,5 +74,14 @@ public class ManagementInformationController {
         managementInformationService.delManagementInformation(id);
         return new Message(0, "删除成功！", null);
     }
-
+    @ResponseBody
+    @RequestMapping("/managementinformation/checkYear")
+    public Message managementinformationCheckYear(ManagementInformation managementInformation){
+        List size = managementInformationService.checkYear(managementInformation);
+        if(size.size()>0){
+            return new Message(1, "年份重复，请重新选择！", null);
+        }else{
+            return new Message(0, "", null);
+        }
+    }
 }

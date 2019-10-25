@@ -42,7 +42,7 @@
 <script>
     $(document).ready(function () {
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
-            addOption(data, 'year');
+            addOption(data, 'year','${data.year}');
         });
 
         search();
@@ -72,6 +72,7 @@
                  {"data": "chinesePaperJournal", "title": "中文纸质专业期刊"},
                  {"data": "foreignPaperJournals", "title": "外文纸质专业期刊"},
                  {"data": "electronicJournal", "title": "电子专业期刊"},
+                 {"data": "year", "title": "年份"},
                 {
                     "title": "操作",
                     "render": function (data, type, row) {

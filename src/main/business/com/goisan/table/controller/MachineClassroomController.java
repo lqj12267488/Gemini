@@ -1,6 +1,7 @@
 package com.goisan.table.controller;
 
 import com.goisan.table.bean.MachineClassroom;
+import com.goisan.table.bean.ManagementInformation;
 import com.goisan.table.service.MachineClassroomService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
@@ -74,4 +75,14 @@ public class MachineClassroomController {
         return new Message(0, "删除成功！", null);
     }
 
+    @ResponseBody
+    @RequestMapping("/machineclassroom/checkYear")
+    public Message machineClassroomCheckYear(MachineClassroom machineClassroom){
+        List size = machineClassroomService.checkYear(machineClassroom);
+        if(size.size()>0){
+            return new Message(1, "年份重复，请重新选择！", null);
+        }else{
+            return new Message(0, "", null);
+        }
+    }
 }
