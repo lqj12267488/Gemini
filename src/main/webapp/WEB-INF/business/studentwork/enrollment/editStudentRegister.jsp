@@ -47,7 +47,7 @@
                                 <span class="iconBtx">*</span>系部
                             </div>
                             <div class="col-md-8">
-                                <select id="did"></select>
+                                <select id="did" class="validate[required,maxSize[100]] form-control"></select>
                             </div>
                         </div>
                         <div class="form-row">
@@ -55,7 +55,7 @@
                                 <span class="iconBtx">*</span>专业
                             </div>
                             <div class="col-md-8">
-                                <select id="mid"/>
+                                <select id="mid" class="validate[required,maxSize[100]] form-control"/>
                             </div>
                         </div>
                         <div class="form-row">
@@ -63,7 +63,7 @@
                                 <span class="iconBtx">*</span>班级
                             </div>
                             <div class="col-md-8">
-                                <select id="cid"/>
+                                <select id="cid" class="validate[required,maxSize[100]] form-control"/>
                             </div>
                         </div>
                     </div>
@@ -549,6 +549,9 @@
 
         } else {
             $("#idcard").attr("readonly", "readonly");
+            $("#did").attr("disabled", "disabled");
+            $("#mid").attr("disabled", "disabled");
+            $("#cid").attr("disabled", "disabled");
         }
 
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZZMM", function (data) {
