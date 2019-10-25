@@ -6,6 +6,8 @@ import com.goisan.educational.major.bean.*;
 import com.goisan.educational.major.service.MajorLeaderService;
 import com.goisan.educational.major.service.MajorService;
 import com.goisan.educational.skillappraisal.bean.SkillAppraisal;
+import com.goisan.educational.teacher.bean.TeacherCondition;
+import com.goisan.educational.teacher.dao.TeacherInfoDao;
 import com.goisan.evaluation.bean.EvaluationTask;
 import com.goisan.studentwork.employments.bean.EmploymentManage;
 import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
@@ -82,6 +84,8 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     private ContactInformationDao contactInformationDao;
     @Resource
     private InstitutionalAreaDao institutionalAreaDao;
+    @Resource
+    private TeacherInfoDao teacherInfoDao;
     /**
      * 导出带有数据得表格 命名expertExcel_A加上数字
      * 例
@@ -2432,13 +2436,14 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     /**
      * modify by hanjie start
      */
-    @Override
+@Override
     public void expertExcel_A6_1_1(HttpServletResponse response, TabularFile tabularFile) {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
         Workbook wb = null;
-        List<Emp> empList = empDao.getEmpList(new Emp());
+        String teacherType="1";
+        List<TeacherCondition> teacherConditionsList = teacherInfoDao.getTeacherTypeToExp(teacherType);
         try {
             FileInputStream in = new FileInputStream(file);
             String fileName = file.getName();
@@ -2451,18 +2456,39 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             int rowIndex = 10;
-            for (int i = 0; i < empList.size(); i++) {
+            for (int i = 0; i < teacherConditionsList.size(); i++) {
                 Row row = sheet.getRow(rowIndex + i);
-                row.getCell(1).setCellValue(empList.get(i).getDeptName());
-                row.getCell(2).setCellValue(empList.get(i).getPersonId());
-                row.getCell(3).setCellValue(empList.get(i).getName());
-                row.getCell(4).setCellValue(empList.get(i).getSexShow());
-                String idCard = empList.get(i).getIdCard();
-                String birthday = idCard.substring(6, 14);
-                row.getCell(5).setCellValue(birthday);
-                row.getCell(6).setCellValue(empList.get(i).getNationShow());
-                row.getCell(7).setCellValue(empList.get(i).getEducationalLevelShow());
-                row.getCell(8).setCellValue(empList.get(i).getAcademicDegreeShow());
+                row.getCell(1).setCellValue(teacherConditionsList.get(i).getDepartmentId());//教师所属系部
+                row.getCell(2).setCellValue(teacherConditionsList.get(i).getTeacherNum());//教工号
+                row.getCell(3).setCellValue(teacherConditionsList.get(i).getTeacherName());//姓名
+                row.getCell(4).setCellValue(teacherConditionsList.get(i).getTeacherSex());//性别
+                row.getCell(5).setCellValue( teacherConditionsList.get(i).getBirthday());//出生日期
+                row.getCell(6).setCellValue(teacherConditionsList.get(i).getNationShow());//民族
+                row.getCell(7).setCellValue(teacherConditionsList.get(i).getFinalEducation());//学历
+                row.getCell(8).setCellValue(teacherConditionsList.get(i).getDegee());//学位
+                row.getCell(9).setCellValue(teacherConditionsList.get(i).getMajorField());//专业领域
+                row.getCell(10).setCellValue(teacherConditionsList.get(i).getMajorSpecialty());//专业特长
+                row.getCell(11).setCellValue(teacherConditionsList.get(i).getLicence());//高校教资发证单位
+                row.getCell(12).setCellValue(teacherConditionsList.get(i).getGetTime());//高校教资获取日期
+                row.getCell(13).setCellValue( teacherConditionsList.get(i).getQiyeYear());//一线工作历年!
+                row.getCell(14).setCellValue(teacherConditionsList.get(i).getQiyeDate());//一线工作本学年!  天
+                row.getCell(15).setCellValue(teacherConditionsList.get(i).getMajorGrade());//专业技术职务等级
+                row.getCell(16).setCellValue(teacherConditionsList.get(i).getMajorName());//专业技术职务名称
+
+                row.getCell(17).setCellValue(teacherConditionsList.get(i).getMajorDept());//专业技术职务发证单位全称
+                row.getCell(18).setCellValue(teacherConditionsList.get(i).getMajorYear());//专业技术职务获取日期年月
+                row.getCell(19).setCellValue(teacherConditionsList.get(i).getCareerGrade());//职业资格证书等级
+                row.getCell(20).setCellValue( teacherConditionsList.get(i).getCareerName());//职业资格证书名称
+                row.getCell(21).setCellValue(teacherConditionsList.get(i).getCareerDept());//职业资格证书发证单位全称
+                row.getCell(22).setCellValue(teacherConditionsList.get(i).getCareerGettime());//职业资格证书获取日期年月
+                row.getCell(23).setCellValue(teacherConditionsList.get(i).getSfzyTeacher());//是否专业教师
+                row.getCell(24).setCellValue( teacherConditionsList.get(i).getSfggTeacher());//是否骨干教师
+                row.getCell(25).setCellValue(teacherConditionsList.get(i).getSfssTeacher());//是否双师素质教师
+                row.getCell(26).setCellValue(teacherConditionsList.get(i).getSfmsTeacher());//教学名师
+                row.getCell(27).setCellValue(teacherConditionsList.get(i).getPoliticsMajorCode());//行政所属专业专业代码
+                row.getCell(28).setCellValue( teacherConditionsList.get(i).getPoliticsMajorName());//行政所属专业专业名称
+
+
 
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
@@ -2608,7 +2634,8 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
         Workbook wb = null;
-        List<Export> list = tableAttributeDao.expertExcel_A6_2_1();
+        String teacherType="4";
+        List<TeacherCondition> teacherConditionsList = teacherInfoDao.getTeacherTypeToExp(teacherType);
         try {
             FileInputStream in = new FileInputStream(file);
             String fileName = file.getName();
@@ -2621,32 +2648,32 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             int rowIndex = 10;
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < teacherConditionsList.size(); i++) {
                 Row row = sheet.getRow(rowIndex + i);
-                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
-                row.getCell(2).setCellValue(list.get(i).getStaffId());
-                row.getCell(3).setCellValue(list.get(i).getTeacherName());
-                row.getCell(4).setCellValue(list.get(i).getTeacherSex());
-                row.getCell(5).setCellValue(list.get(i).getBirthday());
-                row.getCell(6).setCellValue(list.get(i).getNationShow());
-                row.getCell(7).setCellValue(list.get(i).getFinalEducation());
-                row.getCell(8).setCellValue(list.get(i).getDegee());
-                row.getCell(9).setCellValue(list.get(i).getMajorField());
-                row.getCell(10).setCellValue(list.get(i).getMajorSpecialty());
-                row.getCell(11).setCellValue(list.get(i).getWorkYear());
-                row.getCell(12).setCellValue(list.get(i).getMajorYear());
-                row.getCell(13).setCellValue(list.get(i).getMajorGrade());
-                row.getCell(14).setCellValue(list.get(i).getMajorName2());
-                row.getCell(15).setCellValue(list.get(i).getMajorDept());
-                row.getCell(16).setCellValue(list.get(i).getMajorDate());
-                row.getCell(17).setCellValue(list.get(i).getLicence());
-                row.getCell(18).setCellValue(list.get(i).getGetTime());
-                row.getCell(19).setCellValue(list.get(i).getExpertWork());
-                row.getCell(19).setCellValue(list.get(i).getSfggTeacher());
-                row.getCell(20).setCellValue(list.get(i).getSfssTeacher());
-                row.getCell(21).setCellValue(list.get(i).getSfmsTeacher());
-                row.getCell(22).setCellValue(list.get(i).getPoliticsMajorCode());
-                row.getCell(23).setCellValue(list.get(i).getPoliticsMajorName());
+                row.getCell(1).setCellValue(teacherConditionsList.get(i).getWorkDept());//任职部门
+                row.getCell(2).setCellValue(teacherConditionsList.get(i).getTeacherNum());//教工号
+                row.getCell(3).setCellValue(teacherConditionsList.get(i).getTeacherName());//姓名
+                row.getCell(4).setCellValue(teacherConditionsList.get(i).getTeacherSex());//性别
+                row.getCell(5).setCellValue( teacherConditionsList.get(i).getBirthday());//出生日期
+                row.getCell(6).setCellValue(teacherConditionsList.get(i).getNationShow());//民族
+                row.getCell(7).setCellValue(teacherConditionsList.get(i).getFinalEducation());//学历
+                row.getCell(8).setCellValue(teacherConditionsList.get(i).getDegee());//学位
+                row.getCell(9).setCellValue(teacherConditionsList.get(i).getMajorField());//专业领域
+                row.getCell(10).setCellValue(teacherConditionsList.get(i).getMajorSpecialty());//专业特长
+                row.getCell(11).setCellValue( teacherConditionsList.get(i).getQiyeYear());//一线工作历年
+                row.getCell(12).setCellValue(teacherConditionsList.get(i).getQiyeDate());//一线工作本学年  天
+                row.getCell(13).setCellValue(teacherConditionsList.get(i).getMajorGrade());//专业技术职务等级
+                row.getCell(14).setCellValue(teacherConditionsList.get(i).getMajorName());//专业技术职务名称
+                row.getCell(15).setCellValue(teacherConditionsList.get(i).getMajorDept());//专业技术职务发证单位全称
+                row.getCell(16).setCellValue(teacherConditionsList.get(i).getMajorYear());//专业技术职务获取日期年月
+                row.getCell(17).setCellValue(teacherConditionsList.get(i).getLicence());//高校教资发证单位
+                row.getCell(18).setCellValue(teacherConditionsList.get(i).getGetTime());//高校教资获取日期
+                row.getCell(19).setCellValue(teacherConditionsList.get(i).getSrPosition());//所任职务
+                row.getCell(20).setCellValue( teacherConditionsList.get(i).getSfggTeacher());//是否骨干教师
+                row.getCell(21).setCellValue(teacherConditionsList.get(i).getSfssTeacher());//是否双师素质教师
+                row.getCell(22).setCellValue(teacherConditionsList.get(i).getSfmsTeacher());//教学名师
+                row.getCell(23).setCellValue(teacherConditionsList.get(i).getPoliticsMajorCode());//行政所属专业专业代码
+                row.getCell(24).setCellValue( teacherConditionsList.get(i).getPoliticsMajorName());//行政所属专业专业名称
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));
@@ -2791,7 +2818,8 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
         Workbook wb = null;
-        List<Export> list = tableAttributeDao.expertExcel_A6_3_1();
+        String teacherType="3";
+        List<TeacherCondition> teacherConditionsList = teacherInfoDao.getTeacherTypeToExp(teacherType);
         try {
             FileInputStream in = new FileInputStream(file);
             String fileName = file.getName();
@@ -2804,39 +2832,40 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             int rowIndex = 10;
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < teacherConditionsList.size(); i++) {
                 Row row = sheet.getRow(rowIndex + i);
-                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
-                row.getCell(2).setCellValue(list.get(i).getStaffId());
-                row.getCell(3).setCellValue(list.get(i).getTeacherName());
-                row.getCell(4).setCellValue(list.get(i).getTeacherSex());
-                row.getCell(5).setCellValue(list.get(i).getBirthday());
-                row.getCell(6).setCellValue(list.get(i).getNationShow());
-                row.getCell(7).setCellValue(list.get(i).getWorkDate());
-                row.getCell(8).setCellValue(list.get(i).getFinalEducation());
-                row.getCell(9).setCellValue(list.get(i).getDegee());
-                row.getCell(10).setCellValue(list.get(i).getSinging());
+                row.getCell(1).setCellValue(teacherConditionsList.get(i).getDepartmentId());//聘职系部
+                row.getCell(2).setCellValue(teacherConditionsList.get(i).getTeacherNum());//教工号
+                row.getCell(3).setCellValue(teacherConditionsList.get(i).getTeacherName());//姓名
+                row.getCell(4).setCellValue(teacherConditionsList.get(i).getTeacherSex());//性别
+                row.getCell(5).setCellValue( teacherConditionsList.get(i).getBirthday());//出生日期
+                row.getCell(6).setCellValue(teacherConditionsList.get(i).getNationShow());//民族
+                row.getCell(7).setCellValue(teacherConditionsList.get(i).getWorkDate());//参加工作日期
+                row.getCell(8).setCellValue(teacherConditionsList.get(i).getFinalEducation());//学历
+                row.getCell(9).setCellValue(teacherConditionsList.get(i).getDegee());//学位
+                row.getCell(10).setCellValue(teacherConditionsList.get(i).getSigning());//签约情况
 
-                row.getCell(11).setCellValue(list.get(i).getMajorGrade());
-                row.getCell(12).setCellValue(list.get(i).getMajorName2());
-                row.getCell(13).setCellValue(list.get(i).getMajorDept());
-                row.getCell(14).setCellValue(list.get(i).getMajorDate());
+                row.getCell(11).setCellValue(teacherConditionsList.get(i).getMajorGrade());//专业技术职务等级
+                row.getCell(12).setCellValue(teacherConditionsList.get(i).getMajorName());//专业技术职务名称
+                row.getCell(13).setCellValue(teacherConditionsList.get(i).getMajorDept());//专业技术职务发证单位全称
+                row.getCell(14).setCellValue(teacherConditionsList.get(i).getMajorYear());//专业技术职务获取日期年月
 
-                row.getCell(15).setCellValue(list.get(i).getCareerGrade());
-                row.getCell(16).setCellValue(list.get(i).getCareerName());
-                row.getCell(17).setCellValue(list.get(i).getCareerDept());
-                row.getCell(18).setCellValue(list.get(i).getCareerGettime());
+                row.getCell(15).setCellValue(teacherConditionsList.get(i).getCareerGrade());//职业资格证书等级
+                row.getCell(16).setCellValue( teacherConditionsList.get(i).getCareerName());//职业资格证书名称
+                row.getCell(17).setCellValue(teacherConditionsList.get(i).getCareerDept());//职业资格证书发证单位全称
+                row.getCell(18).setCellValue(teacherConditionsList.get(i).getCareerGettime());//职业资格证书获取日期年月
 
-                row.getCell(19).setCellValue(list.get(i).getExpertDept());
-                row.getCell(20).setCellValue(list.get(i).getExpertWork());
-                row.getCell(21).setCellValue(list.get(i).getExpertDate());
+                row.getCell(19).setCellValue(teacherConditionsList.get(i).getExpertDept());//当前专职工作背景 单位名称
+                row.getCell(20).setCellValue(teacherConditionsList.get(i).getExpertWork());//当前专职工作背景 职务
+                row.getCell(21).setCellValue(teacherConditionsList.get(i).getExpertDate());//当前专职工作背景 任职日期
 
-                row.getCell(22).setCellValue(list.get(i).getTrainingName());
-                row.getCell(23).setCellValue(list.get(i).getTrainingDay());
-                row.getCell(24).setCellValue(list.get(i).getTrainingPlace());
+                row.getCell(22).setCellValue( teacherConditionsList.get(i).getTrainingName());//教学进修 项目名称
+                row.getCell(23).setCellValue(teacherConditionsList.get(i).getTrainingDay());//教学进修 时间
+                row.getCell(24).setCellValue(teacherConditionsList.get(i).getTrainingPlace());//教学进修 地点
+                row.getCell(25).setCellValue(teacherConditionsList.get(i).getSendDept());//教学进修 派出部门
 
-                row.getCell(25).setCellValue(list.get(i).getPoliticsMajorCode());
-                row.getCell(26).setCellValue(list.get(i).getPoliticsMajorName());
+                row.getCell(26).setCellValue(teacherConditionsList.get(i).getPoliticsMajorCode());//行政所属专业专业代码
+                row.getCell(27).setCellValue( teacherConditionsList.get(i).getPoliticsMajorName());//行政所属专业专业名称
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));
@@ -2917,7 +2946,8 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;
         Workbook wb = null;
-        List<Export> list = tableAttributeDao.expertExcel_A6_4_1();
+        String teacherType="2";
+        List<TeacherCondition> teacherConditionsList = teacherInfoDao.getTeacherTypeToExp(teacherType);
         try {
             FileInputStream in = new FileInputStream(file);
             String fileName = file.getName();
@@ -2930,39 +2960,41 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
             int rowIndex = 10;
-            for (int i = 0; i < list.size(); i++) {
+            for (int i = 0; i < teacherConditionsList.size(); i++) {
                 Row row = sheet.getRow(rowIndex + i);
-                row.getCell(1).setCellValue(list.get(i).getDepartmentName());
-                row.getCell(2).setCellValue(list.get(i).getStaffId());
-                row.getCell(3).setCellValue(list.get(i).getTeacherName());
-                row.getCell(4).setCellValue(list.get(i).getTeacherSex());
-                row.getCell(5).setCellValue(list.get(i).getBirthday());
-                row.getCell(6).setCellValue(list.get(i).getNationShow());
-                row.getCell(7).setCellValue(list.get(i).getWorkDate());
-                row.getCell(8).setCellValue(list.get(i).getFinalEducation());
-                row.getCell(9).setCellValue(list.get(i).getDegee());
-                row.getCell(10).setCellValue(list.get(i).getSinging());
+                row.getCell(1).setCellValue(teacherConditionsList.get(i).getDepartmentId());//聘职系部!
+                row.getCell(2).setCellValue(teacherConditionsList.get(i).getTeacherNum());//教工号
+                row.getCell(3).setCellValue(teacherConditionsList.get(i).getTeacherName());//姓名
+                row.getCell(4).setCellValue(teacherConditionsList.get(i).getTeacherSex());//性别
+                row.getCell(5).setCellValue( teacherConditionsList.get(i).getBirthday());//出生日期
+                row.getCell(6).setCellValue(teacherConditionsList.get(i).getNationShow());//民族
+                row.getCell(7).setCellValue(teacherConditionsList.get(i).getWorkDate());//参加工作日期
+                row.getCell(8).setCellValue(teacherConditionsList.get(i).getFinalEducation());//学历
+                row.getCell(9).setCellValue(teacherConditionsList.get(i).getDegee());//学位
+                row.getCell(10).setCellValue(teacherConditionsList.get(i).getSigning());//签约情况
 
-                row.getCell(11).setCellValue(list.get(i).getMajorGrade());
-                row.getCell(12).setCellValue(list.get(i).getMajorName2());
-                row.getCell(13).setCellValue(list.get(i).getMajorDept());
-                row.getCell(14).setCellValue(list.get(i).getMajorDate());
+                row.getCell(11).setCellValue(teacherConditionsList.get(i).getMajorGrade());//专业技术职务等级
+                row.getCell(12).setCellValue(teacherConditionsList.get(i).getMajorName());//专业技术职务名称
+                row.getCell(13).setCellValue(teacherConditionsList.get(i).getMajorDept());//专业技术职务发证单位全称
+                row.getCell(14).setCellValue(teacherConditionsList.get(i).getMajorYear());//专业技术职务获取日期年月
 
-                row.getCell(15).setCellValue(list.get(i).getCareerGrade());
-                row.getCell(16).setCellValue(list.get(i).getCareerName());
-                row.getCell(17).setCellValue(list.get(i).getCareerDept());
-                row.getCell(18).setCellValue(list.get(i).getCareerGettime());
+                row.getCell(15).setCellValue(teacherConditionsList.get(i).getCareerGrade());//职业资格证书等级
+                row.getCell(16).setCellValue( teacherConditionsList.get(i).getCareerName());//职业资格证书名称
+                row.getCell(17).setCellValue(teacherConditionsList.get(i).getCareerDept());//职业资格证书发证单位全称
+                row.getCell(18).setCellValue(teacherConditionsList.get(i).getCareerGettime());//职业资格证书获取日期年月
 
-                row.getCell(19).setCellValue(list.get(i).getExpertDept());
-                row.getCell(20).setCellValue(list.get(i).getExpertWork());
-                row.getCell(21).setCellValue(list.get(i).getExpertDate());
+                row.getCell(19).setCellValue(teacherConditionsList.get(i).getExpertDept());//当前专职工作背景 单位名称
+                row.getCell(20).setCellValue(teacherConditionsList.get(i).getExpertWork());//当前专职工作背景 职务
+                row.getCell(21).setCellValue(teacherConditionsList.get(i).getExpertDate());//当前专职工作背景 任职日期
 
-                row.getCell(22).setCellValue(list.get(i).getTrainingName());
-                row.getCell(23).setCellValue(list.get(i).getTrainingDay());
-                row.getCell(24).setCellValue(list.get(i).getTrainingPlace());
+                row.getCell(22).setCellValue( teacherConditionsList.get(i).getTrainingName());//教学进修 项目名称
+                row.getCell(23).setCellValue(teacherConditionsList.get(i).getTrainingDay());//教学进修 时间
+                row.getCell(24).setCellValue(teacherConditionsList.get(i).getTrainingPlace());//教学进修 地点
+                row.getCell(25).setCellValue(teacherConditionsList.get(i).getSendDept());//教学进修 派出部门
 
-                row.getCell(25).setCellValue(list.get(i).getPoliticsMajorCode());
-                row.getCell(26).setCellValue(list.get(i).getPoliticsMajorName());
+                row.getCell(26).setCellValue(teacherConditionsList.get(i).getPoliticsMajorCode());//行政所属专业专业代码
+                row.getCell(27).setCellValue( teacherConditionsList.get(i).getPoliticsMajorName());//行政所属专业专业名称
+
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));
