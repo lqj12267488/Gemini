@@ -304,7 +304,7 @@
                         <input id="titlethesis" value="${data.titlethesis}"/>
                     </div>
                     <div class="col-md-2 tar">
-                        <span class="iconBtx">*</span>技术专利（发明）名称
+                        <span class="iconBtx">*</span>出版社或杂志社
                     </div>
                     <div class="col-md-4">
                         <input id="press" value="${data.press}"/>
