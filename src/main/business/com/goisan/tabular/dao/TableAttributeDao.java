@@ -13,6 +13,7 @@ import com.goisan.system.bean.Student;
 import com.goisan.table.bean.*;
 import com.goisan.tabular.bean.TabularFile;
 import com.goisan.tabular.bean.export.Export;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.servlet.http.HttpServletResponse;
@@ -207,5 +208,10 @@ public interface TableAttributeDao {
     /**
      * modify by wangxue end
      */
+
+
+    List<Map> expertExcel_GJ_812(@Param("type") String type);//高基812
+    List<Map> expertExcel_GJ_812_zc();//高基812 按职称分组
+    List<Map> expertExcel_GJ_812_xl();//高基812 按学历分组
 
 }

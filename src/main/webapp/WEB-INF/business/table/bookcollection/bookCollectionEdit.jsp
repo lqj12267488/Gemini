@@ -80,6 +80,7 @@
 
 <script>
     $(document).ready(function () {
+        debugger;
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ND", function (data) {
             addOption(data, 'years','${data.year}');
         });

@@ -304,7 +304,7 @@
                             <span class="iconBtx">*</span>已聘职称：
                         </div>
                         <div class="col-md-4">
-                            <input id="teacherTitle" type="text" value="${teacherCondition.title}"/>
+                            <select id="teacherTitle"/>
                         </div>
                     </div>
                 </div>
@@ -477,6 +477,9 @@
         });
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZZMM", function (data) {
             addOption(data, 'politicalStatusShow', '${teacherCondition.politicalStatus}');
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZCJB", function (data) {
+            addOption(data, 'teacherTitle', '${teacherCondition.title}');
         });
         tlb();
     })

@@ -1175,4 +1175,94 @@
 
     <!--modify by wangxue end-->
 
+
+    <select id="expertExcel_GJ_812" parameterType="java.lang.String" resultType="java.util.Map" >
+        select temp.*, (wwe+hsk+hui+zzbk+kekz+xb+man+mg+dwe+tte+tjk+els+qt) xj from
+        (SELECT count(teacher_id) total,
+        COUNT(CASE WHEN NATION='01' THEN 1 ELSE NULL END) han,
+        COUNT (CASE WHEN NATION='05' THEN 1 ELSE NULL END) wwe,
+        COUNT (CASE WHEN NATION='17' THEN 1 ELSE NULL END) hsk,
+        COUNT (CASE WHEN NATION='03' THEN 1 ELSE NULL END) hui,
+        COUNT (CASE WHEN NATION='43' THEN 1 ELSE NULL END) zzbk,
+        COUNT (CASE WHEN NATION='29' THEN 1 ELSE NULL END) kekz,
+        COUNT (CASE WHEN NATION='38' THEN 1 ELSE NULL END) xb,
+        COUNT (CASE WHEN NATION='11' THEN 1 ELSE NULL END) man,
+        COUNT (CASE WHEN NATION='02' THEN 1 ELSE NULL END) mg,
+        COUNT (CASE WHEN NATION='31' THEN 1 ELSE NULL END) dwe,
+        COUNT (CASE WHEN NATION='50' THEN 1 ELSE NULL END) tte,
+        COUNT (CASE WHEN NATION='41' THEN 1 ELSE NULL END) tjk,
+        COUNT (CASE WHEN NATION='44' THEN 1 ELSE NULL END) els,
+        COUNT (CASE WHEN NATION='57' THEN 1 ELSE NULL END) qt
+        FROM T_JW_TEACHER_CONDITION
+        <if test="type != null and type != ''">
+            where TEACHER_CATEGORY = #{type}
+        </if>
+        ) temp
+    </select>
+
+    <select id="expertExcel_GJ_812_zc" resultType="java.util.Map" >
+        select temp.*, (wwe+hsk+hui+zzbk+kekz+xb+man+mg+dwe+tte+tjk+els+qt) xj from
+        (SELECT dic_code, count(teacher_id) total,
+        COUNT(CASE WHEN NATION='01' THEN 1 ELSE NULL END) han,
+        COUNT (CASE WHEN NATION='05' THEN 1 ELSE NULL END) wwe,
+        COUNT (CASE WHEN NATION='17' THEN 1 ELSE NULL END) hsk,
+        COUNT (CASE WHEN NATION='03' THEN 1 ELSE NULL END) hui,
+        COUNT (CASE WHEN NATION='43' THEN 1 ELSE NULL END) zzbk,
+        COUNT (CASE WHEN NATION='29' THEN 1 ELSE NULL END) kekz,
+        COUNT (CASE WHEN NATION='38' THEN 1 ELSE NULL END) xb,
+        COUNT (CASE WHEN NATION='11' THEN 1 ELSE NULL END) man,
+        COUNT (CASE WHEN NATION='02' THEN 1 ELSE NULL END) mg,
+        COUNT (CASE WHEN NATION='31' THEN 1 ELSE NULL END) dwe,
+        COUNT (CASE WHEN NATION='50' THEN 1 ELSE NULL END) tte,
+        COUNT (CASE WHEN NATION='41' THEN 1 ELSE NULL END) tjk,
+        COUNT (CASE WHEN NATION='44' THEN 1 ELSE NULL END) els,
+        COUNT (CASE WHEN NATION='57' THEN 1 ELSE NULL END) qt
+        FROM (select dic_name, dic_code from t_sys_dic where parent_id=(select id from t_sys_dic where dic_code='ZCJB')) d
+        left join T_JW_TEACHER_CONDITION tc  on tc.title=d.dic_code and TEACHER_CATEGORY=1
+        group by dic_code) temp
+        order by dic_code
+    </select>
+
+    <select id="expertExcel_GJ_812_xl" resultType="java.util.Map" >
+        select temp.*, (wwe+hsk+hui+zzbk+kekz+xb+man+mg+dwe+tte+tjk+els+qt) xj from
+        (SELECT dic_code, count(teacher_id) total,
+        COUNT(CASE WHEN NATION='01' THEN 1 ELSE NULL END) han,
+        COUNT (CASE WHEN NATION='05' THEN 1 ELSE NULL END) wwe,
+        COUNT (CASE WHEN NATION='17' THEN 1 ELSE NULL END) hsk,
+        COUNT (CASE WHEN NATION='03' THEN 1 ELSE NULL END) hui,
+        COUNT (CASE WHEN NATION='43' THEN 1 ELSE NULL END) zzbk,
+        COUNT (CASE WHEN NATION='29' THEN 1 ELSE NULL END) kekz,
+        COUNT (CASE WHEN NATION='38' THEN 1 ELSE NULL END) xb,
+        COUNT (CASE WHEN NATION='11' THEN 1 ELSE NULL END) man,
+        COUNT (CASE WHEN NATION='02' THEN 1 ELSE NULL END) mg,
+        COUNT (CASE WHEN NATION='31' THEN 1 ELSE NULL END) dwe,
+        COUNT (CASE WHEN NATION='50' THEN 1 ELSE NULL END) tte,
+        COUNT (CASE WHEN NATION='41' THEN 1 ELSE NULL END) tjk,
+        COUNT (CASE WHEN NATION='44' THEN 1 ELSE NULL END) els,
+        COUNT (CASE WHEN NATION='57' THEN 1 ELSE NULL END) qt
+        FROM (select dic_name, dic_code from t_sys_dic where parent_id=(select id from t_sys_dic where dic_code='XL') and dic_order>=6) d
+        left join T_JW_TEACHER_CONDITION tc on tc.final_education=d.dic_code and TEACHER_CATEGORY=1 and tc.final_education>=6
+        group by dic_code
+        union all
+        SELECT '5' dic_code, count(teacher_id) total,
+        COUNT(CASE WHEN NATION='01' THEN 1 ELSE NULL END) han,
+        COUNT (CASE WHEN NATION='05' THEN 1 ELSE NULL END) wwe,
+        COUNT (CASE WHEN NATION='17' THEN 1 ELSE NULL END) hsk,
+        COUNT (CASE WHEN NATION='03' THEN 1 ELSE NULL END) hui,
+        COUNT (CASE WHEN NATION='43' THEN 1 ELSE NULL END) zzbk,
+        COUNT (CASE WHEN NATION='29' THEN 1 ELSE NULL END) kekz,
+        COUNT (CASE WHEN NATION='38' THEN 1 ELSE NULL END) xb,
+        COUNT (CASE WHEN NATION='11' THEN 1 ELSE NULL END) man,
+        COUNT (CASE WHEN NATION='02' THEN 1 ELSE NULL END) mg,
+        COUNT (CASE WHEN NATION='31' THEN 1 ELSE NULL END) dwe,
+        COUNT (CASE WHEN NATION='50' THEN 1 ELSE NULL END) tte,
+        COUNT (CASE WHEN NATION='41' THEN 1 ELSE NULL END) tjk,
+        COUNT (CASE WHEN NATION='44' THEN 1 ELSE NULL END) els,
+        COUNT (CASE WHEN NATION='57' THEN 1 ELSE NULL END) qt
+        FROM T_JW_TEACHER_CONDITION tc
+        where TEACHER_CATEGORY=1 and tc.final_education<![CDATA[<]]>6
+        ) temp order by dic_code desc
+    </select>
+
+
 </mapper>

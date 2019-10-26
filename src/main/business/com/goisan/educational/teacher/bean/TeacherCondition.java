@@ -46,6 +46,7 @@ public class TeacherCondition extends BaseBean {
     private String workDate,signing,sendDept,srPosition,workDept;
     //参加工作日期，签约情况,派出部门,所任职务,工作单位
 
+    private String titleShow;//已聘职称
 
     public String getPersonId() {
         return personId;
@@ -560,5 +561,13 @@ public class TeacherCondition extends BaseBean {
 
     public void setWorkDept(String workDept) {
         this.workDept = workDept;
+    }
+
+    public String getTitleShow() {
+        return titleShow;
+    }
+
+    public void setTitleShow(String titleShow) {
+        this.titleShow = titleShow;
     }
 }

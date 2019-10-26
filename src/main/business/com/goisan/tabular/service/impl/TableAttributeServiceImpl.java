@@ -3637,7 +3637,10 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
 
-            this.expertExcel_GJ_311(sheet);
+            sheet = wb.getSheet("高基811");
+            this.expertExcel_GJ_811(sheet);
+            sheet = wb.getSheet("高基812");
+            this.expertExcel_GJ_812(sheet);
 
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));
@@ -3734,6 +3737,45 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     }
 
     private void expertExcel_GJ_812(Sheet sheet) {
+        String[] column = {"TOTAL","HAN","XJ","WWE","HSK","HUI","ZZBK","KEKZ","XB","MAN","MG","DWE","TTE","TJK","ELS","QT"};
+        List<Map> list = tableAttributeDao.expertExcel_GJ_812("");
+        this.excel_build(sheet, column, null, list.get(0), 6, 3);
+        list = tableAttributeDao.expertExcel_GJ_812("1");
+        this.excel_build(sheet, column, null, list.get(0), 7, 3);
+        List<Map> list_zc = tableAttributeDao.expertExcel_GJ_812_zc();
+        int index = 7;
+        for (Map m : list_zc){
+            index++;
+            this.excel_build(sheet, column, null, m, index, 3);
+        }
+        List<Map> list_xl = tableAttributeDao.expertExcel_GJ_812_xl();
+        for (Map m : list_xl){
+            index++;
+            this.excel_build(sheet, column, null, m, index, 3);
+        }
+
+    }
+
+    private void excel_build(Sheet sheet, String[] column, int[] column_index, Map map, int row_num, int col_num){
+        Row row = sheet.getRow(row_num);
+        if (row == null) sheet.createRow(row_num);
+        Cell cell;
+        int index;
+        if (col_num != -1){
+            for(int i=0,len=column.length; i<len; i++){
+                index = i+col_num;
+                cell = row.getCell(index);
+                if (cell==null) cell = row.createCell(index);
+                cell.setCellValue(map.get(column[i]).toString());
+            }
+        }else {
+            for(int i=0,len=column.length; i<len; i++){
+                index = column_index[i];
+                cell = row.getCell(index);
+                if (cell==null) cell = row.createCell(index);
+                cell.setCellValue(map.get(column[i]).toString());
+            }
+        }
 
     }
 }
