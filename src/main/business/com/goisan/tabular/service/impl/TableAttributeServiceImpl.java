@@ -2591,13 +2591,23 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(list.get(i).getStaffId());
                 row.getCell(2).setCellValue(list.get(i).getTeacherName());
-                row.getCell(3).setCellValue(list.get(i).getTrainingContent());
-                row.getCell(4).setCellValue(list.get(i).getTrainingDay());
-                row.getCell(5).setCellValue(list.get(i).getTrainingPlace());
+                row.getCell(3).setCellValue(list.get(i).getEntryname());
+                row.getCell(4).setCellValue(list.get(i).getTimes());
+                row.getCell(5).setCellValue(list.get(i).getPlace());
+                row.getCell(6).setCellValue(list.get(i).getDisdepartment());
+                row.getCell(7).setCellValue(list.get(i).getUnitname());
+                row.getCell(8).setCellValue(list.get(i).getPostpost());
+                row.getCell(9).setCellValue(list.get(i).getAppointmenttime());
+                row.getCell(10).setCellValue(list.get(i).getDisdepartments());
+                row.getCell(11).setCellValue(list.get(i).getParttimename());
+                row.getCell(12).setCellValue(list.get(i).getParttime());
                 row.getCell(13).setCellValue(list.get(i).getRewordTime());
                 row.getCell(14).setCellValue(list.get(i).getRewordName());
                 row.getCell(15).setCellValue(list.get(i).getRewordLevel());
+                row.getCell(16).setCellValue(list.get(i).getAwardingunit());
                 row.getCell(17).setCellValue("0".equals(list.get(i).getWHETHERHOST())?"否":"是");
+                row.getCell(18).setCellValue(list.get(i).getDateacquisition());
+                row.getCell(19).setCellValue(list.get(i).getTechnologypatent());
                 row.getCell(20).setCellValue(list.get(i).getINVENTNUMBER());
                 row.getCell(21).setCellValue("0".equals(list.get(i).getWHETHERHOST())?"否":"是");
                 row.getCell(22).setCellValue(list.get(i).getTOPICNATURE());
@@ -2609,7 +2619,10 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(28).setCellValue(list.get(i).getSOURCEOFFUNDING());
                 row.getCell(29).setCellValue(list.get(i).getMONEY());
                 row.getCell(30).setCellValue(list.get(i).getCOMPLETORORDER());
-                row.getCell(32).setCellValue(list.get(i).getCLASSIFICATION());
+                row.getCell(31).setCellValue(list.get(i).getTitlethesis());
+                row.getCell(32).setCellValue(list.get(i).getPress());
+                row.getCell(33).setCellValue(list.get(i).getPresstime());
+                row.getCell(34).setCellValue(list.get(i).getCOMPLETORORDER());
                 row.getCell(35).setCellValue(list.get(i).getAUTHORORDER());
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
@@ -2780,13 +2793,23 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(list.get(i).getStaffId());
                 row.getCell(2).setCellValue(list.get(i).getTeacherName());
-                row.getCell(3).setCellValue(list.get(i).getTrainingContent());
-                row.getCell(4).setCellValue(list.get(i).getTrainingDay());
-                row.getCell(5).setCellValue(list.get(i).getTrainingPlace());
+                row.getCell(3).setCellValue(list.get(i).getEntryname());
+                row.getCell(4).setCellValue(list.get(i).getTimes());
+                row.getCell(5).setCellValue(list.get(i).getPlace());
+                row.getCell(6).setCellValue(list.get(i).getDisdepartment());
+                row.getCell(7).setCellValue(list.get(i).getUnitname());
+                row.getCell(8).setCellValue(list.get(i).getPostpost());
+                row.getCell(9).setCellValue(list.get(i).getAppointmenttime());
+                row.getCell(10).setCellValue(list.get(i).getDisdepartments());
+                row.getCell(11).setCellValue(list.get(i).getParttimename());
+                row.getCell(12).setCellValue(list.get(i).getParttime());
                 row.getCell(13).setCellValue(list.get(i).getRewordTime());
                 row.getCell(14).setCellValue(list.get(i).getRewordName());
                 row.getCell(15).setCellValue(list.get(i).getRewordLevel());
+                row.getCell(16).setCellValue(list.get(i).getAwardingunit());
                 row.getCell(17).setCellValue("0".equals(list.get(i).getWHETHERHOST())?"否":"是");
+                row.getCell(18).setCellValue(list.get(i).getDateacquisition());
+                row.getCell(19).setCellValue(list.get(i).getTechnologypatent());
                 row.getCell(20).setCellValue(list.get(i).getINVENTNUMBER());
                 row.getCell(21).setCellValue("0".equals(list.get(i).getWHETHERHOST())?"否":"是");
                 row.getCell(22).setCellValue(list.get(i).getTOPICNATURE());
@@ -2798,7 +2821,10 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(28).setCellValue(list.get(i).getSOURCEOFFUNDING());
                 row.getCell(29).setCellValue(list.get(i).getMONEY());
                 row.getCell(30).setCellValue(list.get(i).getCOMPLETORORDER());
-                row.getCell(32).setCellValue(list.get(i).getCLASSIFICATION());
+                row.getCell(31).setCellValue(list.get(i).getTitlethesis());
+                row.getCell(32).setCellValue(list.get(i).getPress());
+                row.getCell(33).setCellValue(list.get(i).getPresstime());
+                row.getCell(34).setCellValue(list.get(i).getCOMPLETORORDER());
                 row.getCell(35).setCellValue(list.get(i).getAUTHORORDER());
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),

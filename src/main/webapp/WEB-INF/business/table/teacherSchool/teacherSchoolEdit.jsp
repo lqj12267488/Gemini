@@ -186,7 +186,138 @@
                         </select>
                     </div>
                 </div>
-
+                <div class="form-row">
+                    培训进修：
+                </div>
+                <div class="form-row">
+                <div class="col-md-2 tar">
+                    <span class="iconBtx">*</span>项目名称（全称）
+                </div>
+                <div class="col-md-4">
+                    <input id="entryname" value="${data.entryname}"/>
+                </div>
+                <div class="col-md-2 tar">
+                    <span class="iconBtx">*</span>时间（天）
+                </div>
+                <div class="col-md-4">
+                    <input id="times" value="${data.times}"/>
+                </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>地点
+                    </div>
+                    <div class="col-md-4">
+                        <input id="place" value="${data.place}"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx" >*</span>派出部门
+                    </div>
+                    <div class="col-md-4">
+                        <input id="disdepartment" value="${data.disdepartment}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    挂职锻炼（顶岗实践）：
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>单位名称（全称）
+                    </div>
+                    <div class="col-md-4">
+                        <input id="unitname" value="${data.unitname}"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>岗位
+                    </div>
+                    <div class="col-md-4">
+                        <input id="postpost" value="${data.postpost}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>时间（天）
+                    </div>
+                    <div class="col-md-4">
+                        <input id="appointmenttime" value="${data.appointmenttime}"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>派出部门
+                    </div>
+                    <div class="col-md-4">
+                        <input id="disdepartments" value="${data.disdepartments}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    社会兼职：
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>单位名称（全称）
+                    </div>
+                    <div class="col-md-4">
+                        <input id="parttimename" value="${data.parttimename}"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>时间（天）
+                    </div>
+                    <div class="col-md-4">
+                        <input id="parttime" value="${data.parttime}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    获奖项目（包括行政性奖励）：
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>颁奖单位
+                    </div>
+                    <div class="col-md-4">
+                        <input id="awardingunit" value="${data.awardingunit}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    获技术专利（技术发明）项目：
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>获得日期
+                    </div>
+                    <div class="col-md-4">
+                        <input type="month" id="dateacquisition" value="${data.dateacquisition}"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>技术专利（发明）名称
+                    </div>
+                    <div class="col-md-4">
+                        <input id="technologypatent" value="${data.technologypatent}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    公开出版著作与公开发表论文：
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>名称
+                    </div>
+                    <div class="col-md-4">
+                        <input id="titlethesis" value="${data.titlethesis}"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>技术专利（发明）名称
+                    </div>
+                    <div class="col-md-4">
+                        <input id="press" value="${data.press}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>出版或发表日期
+                    </div>
+                    <div class="col-md-4">
+                        <input id="presstime" type="month"  value="${data.presstime}"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -360,6 +491,118 @@
             });
             return;
         }
+        if ($("#entryname").val() == "" || $("#entryname").val() == undefined || $("#entryname").val() == null) {
+            swal({
+                title: "请填项目名称（培训） ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#times").val() == "" || $("#times").val() == undefined || $("#times").val() == null) {
+            swal({
+                title: "请填时间（培训） ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#place").val() == "" || $("#place").val() == undefined || $("#place").val() == null) {
+            swal({
+                title: "请填地点（培训） ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#unitname").val() == "" || $("#unitname").val() == undefined || $("#unitname").val() == null) {
+            swal({
+                title: "请填单位名称（挂职） ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#postpost").val() == "" || $("#postpost").val() == undefined || $("#postpost").val() == null) {
+            swal({
+                title: "请填岗位（挂职） ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#appointmenttime").val() == "" || $("#appointmenttime").val() == undefined || $("#appointmenttime").val() == null) {
+            swal({
+                title: "请填时间（挂职） ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#parttimename").val() == "" || $("#parttimename").val() == undefined || $("#parttimename").val() == null) {
+            swal({
+                title: "请填单位名称(兼职) ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#parttime").val() == "" || $("#parttime").val() == undefined || $("#parttime").val() == null) {
+            swal({
+                title: "请填时间（兼职） ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#awardingunit").val() == "" || $("#awardingunit").val() == undefined || $("#awardingunit").val() == null) {
+            swal({
+                title: "请填颁奖单位 ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#dateacquisition").val() == "" || $("#dateacquisition").val() == undefined || $("#dateacquisition").val() == null) {
+            swal({
+                title: "请选择获得日期 ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#technologypatent").val() == "" || $("#technologypatent").val() == undefined || $("#technologypatent").val() == null) {
+            swal({
+                title: "请填技术专利（发明）名称 ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#titlethesis").val() == "" || $("#titlethesis").val() == undefined || $("#titlethesis").val() == null) {
+            swal({
+                title: "请填著作或论文名称 ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#press").val() == "" || $("#press").val() == undefined || $("#press").val() == null) {
+            swal({
+                title: "请填出版社 ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#presstime").val() == "" || $("#presstime").val() == undefined || $("#presstime").val() == null) {
+            swal({
+                title: "请填出版和发表日期 ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#disdepartment").val() == "" || $("#disdepartment").val() == undefined || $("#disdepartment").val() == null) {
+            swal({
+                title: "请填培训派出部门 ！",
+                type: "warning"
+            });
+            return;
+        }
+        if ($("#disdepartments").val() == "" || $("#disdepartments").val() == undefined || $("#disdepartments").val() == null) {
+            swal({
+                title: "请填挂职派出部门 ！",
+                type: "warning"
+            });
+            return;
+        }
 
         $.post("<%=request.getContextPath()%>/TeacherSchool/saveTeacherSchool", {
             id: "${data.id}",
@@ -379,6 +622,22 @@
             classification: $("#classificationEdit").val(),
             personNumber: $("#personNumber").val(),
             authororder: $("#authororderEdit").val(),
+            entryname: $("#entryname").val(),
+            times: $("#times").val(),
+            place: $("#place").val(),
+            unitname: $("#unitname").val(),
+            postpost: $("#postpost").val(),
+            appointmenttime: $("#appointmenttime").val(),
+            parttimename: $("#parttimename").val(),
+            parttime: $("#parttime").val(),
+            awardingunit: $("#awardingunit").val(),
+            dateacquisition: $("#dateacquisition").val(),
+            technologypatent: $("#technologypatent").val(),
+            titlethesis: $("#titlethesis").val(),
+            press: $("#press").val(),
+            presstime: $("#presstime").val(),
+            disdepartment: $("#disdepartment").val(),
+            disdepartments: $("#disdepartments").val(),
             type: '1',
         }, function (msg) {
             swal({

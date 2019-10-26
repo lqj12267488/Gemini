@@ -60,6 +60,178 @@ public class TeacherSchool extends BaseBean {
     /**类型 1专任教师其他情况  2兼课人员其他情况 */
     private String type;
 
+    private String deptname;
+
+    /**项目名称（培训） */
+    private String entryname;
+    /**时间（培训） */
+    private String times;
+    /**地点（培训） */
+    private String place;
+    /**单位名称（挂职） */
+    private String unitname;
+    /**岗位（挂职） */
+    private String postpost;
+    /**时间（挂职） */
+    private String appointmenttime;
+    /**单位名称(兼职) */
+    private String parttimename;
+    /**时间（兼职） */
+    private String parttime;
+    /**颁奖单位 */
+    private String awardingunit;
+    /**获得日期 */
+    private String dateacquisition;
+    /**技术专利（发明）名称 */
+    private String technologypatent;
+    /**著作或论文名称 */
+    private String titlethesis;
+    /**出版社*/
+    private String press;
+    /**出版时间*/
+    private String presstime;
+    /**培训派出部门*/
+    private String disdepartment;
+    /**挂职派出部门*/
+    private String disdepartments;
+
+    public String getDisdepartment() {
+        return disdepartment;
+    }
+
+    public void setDisdepartment(String disdepartment) {
+        this.disdepartment = disdepartment;
+    }
+
+    public String getDisdepartments() {
+        return disdepartments;
+    }
+
+    public void setDisdepartments(String disdepartments) {
+        this.disdepartments = disdepartments;
+    }
+
+    public String getDeptname() {
+        return deptname;
+    }
+
+    public void setDeptname(String deptname) {
+        this.deptname = deptname;
+    }
+
+    public String getEntryname() {
+        return entryname;
+    }
+
+    public void setEntryname(String entryname) {
+        this.entryname = entryname;
+    }
+
+    public String getTimes() {
+        return times;
+    }
+
+    public void setTimes(String times) {
+        this.times = times;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public String getUnitname() {
+        return unitname;
+    }
+
+    public void setUnitname(String unitname) {
+        this.unitname = unitname;
+    }
+
+
+    public String getPostpost() {
+        return postpost;
+    }
+
+    public void setPostpost(String postpost) {
+        this.postpost = postpost;
+    }
+
+    public String getAppointmenttime() {
+        return appointmenttime;
+    }
+
+    public void setAppointmenttime(String appointmenttime) {
+        this.appointmenttime = appointmenttime;
+    }
+
+    public String getParttimename() {
+        return parttimename;
+    }
+
+    public void setParttimename(String parttimename) {
+        this.parttimename = parttimename;
+    }
+
+    public String getParttime() {
+        return parttime;
+    }
+
+    public void setParttime(String parttime) {
+        this.parttime = parttime;
+    }
+
+    public String getAwardingunit() {
+        return awardingunit;
+    }
+
+    public void setAwardingunit(String awardingunit) {
+        this.awardingunit = awardingunit;
+    }
+
+    public String getDateacquisition() {
+        return dateacquisition;
+    }
+
+    public void setDateacquisition(String dateacquisition) {
+        this.dateacquisition = dateacquisition;
+    }
+
+    public String getTechnologypatent() {
+        return technologypatent;
+    }
+
+    public void setTechnologypatent(String technologypatent) {
+        this.technologypatent = technologypatent;
+    }
+
+    public String getTitlethesis() {
+        return titlethesis;
+    }
+
+    public void setTitlethesis(String titlethesis) {
+        this.titlethesis = titlethesis;
+    }
+
+    public String getPress() {
+        return press;
+    }
+
+    public void setPress(String press) {
+        this.press = press;
+    }
+
+    public String getPresstime() {
+        return presstime;
+    }
+
+    public void setPresstime(String presstime) {
+        this.presstime = presstime;
+    }
+
     private String personidvalue;
 
     private String person;

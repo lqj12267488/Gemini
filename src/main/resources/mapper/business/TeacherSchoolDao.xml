@@ -12,8 +12,14 @@
         t1.subjectgrade,t1.projectdate,t1.sourceoffunding,
         t1.money,t1.completororder,t1.classification,
         func_get_dicvalue(t1.subjectclassification,'KTFL') subjectclassificationShow,
-        t1.authororder,t1.type,t2.name from T_TAB_TEACHERSCHOOL t1,T_RS_EMPLOYEE t2 where 1=1
-and t1.personid = t2.person_id and t1.type = #{type}
+        t1.authororder,t1.type,t2.name,
+        t3.dept_id,
+        func_get_deptname(t3.dept_id) deptname,
+        t1.ENTRYNAME,t1.APPOINTMENTTIME,t1.TIMES,t1.PLACE,t1.UNITNAME,t1.PARTTIMENAME,t1.PARTTIME,
+        t1.AWARDINGUNIT,to_char(t1.DATEACQUISITION,'yyyy-MM') dateacquisition,t1.TECHNOLOGYPATENT,
+        t1.TITLETHESIS,t1.PRESS,to_char(t1.PRESSTIME,'yyyy-MM') presstime,t1.post_post,t1.DISDEPARTMENT,t1.DISDEPARTMENTS
+        from T_TAB_TEACHERSCHOOL t1,T_RS_EMPLOYEE t2,T_RS_EMPLOYEE_DEPT t3 where 1=1
+         and t1.personid = t2.person_id and t2.person_id=t3.person_id and t1.type = #{type}
         <if test="groupNameSel!=null and groupNameSel!=''">
             and t1.SUBJECTNAME like #{groupNameSel}
         </if>
@@ -26,8 +32,12 @@ and t1.personid = t2.person_id and t1.type = #{type}
         insert into t_tab_teacherschool (id,personid,whetherhost,
         inventnumber,topicnature,subjectclassification,subjectname,
         horizontaltopic,subjectgrade,projectdate,sourceoffunding,
-        money,completororder,classification,authororder,person_number,type)
-        values (#{id} ,#{personid},#{whetherhost},#{inventnumber},#{topicnature},#{subjectclassification},#{subjectname},#{horizontaltopic},#{subjectgrade},#{projectdate},#{sourceoffunding},#{money},#{completororder},#{classification},#{authororder},#{personNumber},#{type})
+        money,completororder,classification,authororder,person_number,type,
+        appointmenttime,entryname,times,place,unitname,parttimename,parttime,awardingunit,dateacquisition,technologypatent,
+        titlethesis,press,presstime,post_post,disdepartment,disdepartments)
+        values (#{id} ,#{personid},#{whetherhost},#{inventnumber},#{topicnature},#{subjectclassification},#{subjectname},#{horizontaltopic},#{subjectgrade},#{projectdate},#{sourceoffunding},#{money},#{completororder},#{classification},#{authororder},#{personNumber},#{type},
+        #{appointmenttime},#{entryname},#{times},#{place},#{unitname},#{parttimename},#{parttime},#{awardingunit},to_date('${dateacquisition}','yyyy-MM'),#{technologypatent},
+        #{titlethesis},#{press},to_date('${presstime}','yyyy-MM'),#{postpost},#{disdepartment},#{disdepartments})
     </insert>
     <select id="getTeacherSchoolById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.TeacherSchool">
@@ -38,8 +48,10 @@ and t1.personid = t2.person_id and t1.type = #{type}
         <if test="personidvalue != null and personidvalue!=''">
             PERSONID = #{personidvalue} ,
         </if>
-
-        whetherhost=#{whetherhost},inventnumber=#{inventnumber},topicnature=#{topicnature},subjectclassification=#{subjectclassification},subjectname=#{subjectname},horizontaltopic=#{horizontaltopic},subjectgrade=#{subjectgrade},projectdate=#{projectdate},sourceoffunding=#{sourceoffunding},money=#{money},completororder=#{completororder},classification=#{classification},authororder=#{authororder},person_number=#{personNumber},type=#{type} where id = #{id}
+        whetherhost=#{whetherhost},inventnumber=#{inventnumber},topicnature=#{topicnature},subjectclassification=#{subjectclassification},subjectname=#{subjectname},horizontaltopic=#{horizontaltopic},subjectgrade=#{subjectgrade},projectdate=#{projectdate},sourceoffunding=#{sourceoffunding},money=#{money},completororder=#{completororder},classification=#{classification},authororder=#{authororder},person_number=#{personNumber},type=#{type},
+        appointmenttime=#{appointmenttime},entryname=#{entryname},times=#{times},place=#{place},unitname=#{unitname},parttimename=#{parttimename},parttime=#{parttime},awardingunit=#{awardingunit},dateacquisition=to_date('${dateacquisition}','yyyy-MM'),technologypatent=#{technologypatent},
+        titlethesis=#{titlethesis},press=#{press},presstime=to_date('${presstime}','yyyy-MM'),post_post=#{postpost},DISDEPARTMENT=#{disdepartment},DISDEPARTMENTS=#{disdepartments}
+        where id = #{id}
     </update>
     <delete id="delTeacherSchool" parameterType="java.lang.String">
         delete from T_TAB_TEACHERSCHOOL where id = #{id}
@@ -53,6 +65,9 @@ and t1.personid = t2.person_id and t1.type = #{type}
         t1.money,t1.completororder,t1.classification,
         func_get_dicvalue(t1.subjectclassification,'KTFL') subjectclassificationShow,
         t1.person_number personNumber,
+        t1.ENTRYNAME,t1.APPOINTMENTTIME,t1.TIMES,t1.PLACE,t1.UNITNAME,t1.PARTTIMENAME,t1.PARTTIME,
+        t1.AWARDINGUNIT,to_char(t1.DATEACQUISITION,'yyyy-MM') dateacquisition,t1.TECHNOLOGYPATENT,
+        t1.TITLETHESIS,t1.PRESS,to_char(t1.PRESSTIME,'yyyy-MM') presstime,t1.post_post,t1.DISDEPARTMENT,t1.DISDEPARTMENTS,
         t1.authororder,t1.type from T_TAB_TEACHERSCHOOL t1 where t1.id = #{id}
     </select>
 </mapper>

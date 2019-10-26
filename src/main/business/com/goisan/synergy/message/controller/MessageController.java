@@ -69,10 +69,10 @@ public class MessageController {
         message.setCreateDept(CommonUtil.getDefaultDept());
         List<Message> messageList = null;
         if(messageType.equals("1")){
-            messageList = messageService.getMessageList(message);
+            messageList = messageService.getMessageList(message);// <!--主页查询-->
         }
         else {
-            messageList = messageService.getMessageListes(message);
+            messageList = messageService.getMessageListes(message);//<!--通知查看-->
         }
         PageInfo<List<Message>> info = new PageInfo(messageList);
         messages.put("draw", draw);

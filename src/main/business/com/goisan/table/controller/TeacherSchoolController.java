@@ -66,7 +66,7 @@ public class TeacherSchoolController {
         model.addAttribute("head", "新增");
         return "/business/table/teacherSchool/concurrentSchoolEdit";
     }
-
+    
     @ResponseBody
     @RequestMapping("/TeacherSchool/saveTeacherSchool")
     public Message saveTeacherSchool(TeacherSchool teacherSchool) {
