@@ -214,4 +214,21 @@ public interface TableAttributeDao {
     List<Map> expertExcel_GJ_812_zc();//高基812 按职称分组
     List<Map> expertExcel_GJ_812_xl();//高基812 按学历分组
 
+
+    /**
+     * expertExcel_GJ_311
+     */
+    List<Export> expertExcel_GJ_311();
+
+    /**
+     * expertExcel_GJ_321
+     * @return
+     */
+    List<Export> expertExcel_GJ_321();
+
+    /**
+     * expertExcel_GJ_321
+     * @return
+     */
+    Export expertExcel_GJ_322();
 }

@@ -332,6 +332,15 @@
                         <input id="totalEnrollmentScore" class="js-example-basic-single" value="${student.totalEnrollmentScore}"></input>
                     </div>
                 </div>
+
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        入学形式
+                    </div>
+                    <div class="col-md-4">
+                        <select id="enSchType" class="js-example-basic-single" value=""></select>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -505,6 +514,12 @@
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     $(document).ready(function () {
+
+        //入学形式
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=RXXS", function (data) {
+            addOption(data, "enSchType", '${student.enSchType}');
+        });
+
         //政治面貌
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZZMM", function (data) {
             addOption(data, "politicalStatus", $("#politicalStatusSHOW").val());
@@ -831,6 +846,7 @@
             documentaryLikaPoorFamilie: documentaryLikaPoorFamilie,
             duringEmployment: duringEmployment,
             totalEnrollmentScore: totalEnrollmentScore,
+            enSchType:$("#enSchType").val()
         }, function (msg) {
             hideSaveLoading();
             if (msg.status == 1) {

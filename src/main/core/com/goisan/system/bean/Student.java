@@ -91,6 +91,28 @@ public class Student extends BaseBean {
     private String totalEnrollmentScore;
     private String fromArmy;
     private String schoolSystem;
+
+    /**入学形式*/
+    private String enSchType;
+
+    private String enSchTypeShow;
+
+    public String getEnSchTypeShow() {
+        return enSchTypeShow;
+    }
+
+    public void setEnSchTypeShow(String enSchTypeShow) {
+        this.enSchTypeShow = enSchTypeShow;
+    }
+
+    public String getEnSchType() {
+        return enSchType;
+    }
+
+    public void setEnSchType(String enSchType) {
+        this.enSchType = enSchType;
+    }
+
     public String getRuralHouseholdRegistratio() {
         return ruralHouseholdRegistratio;
     }

@@ -3663,36 +3663,181 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     }
 
     private void expertExcel_GJ_311(Sheet sheet) {
-//        List<BaseBean> list = clubRewardDao.getClubRewardList(new ClubReward());
-//        int rowIndex = 10;
-//        int end = 2 + majorList.size();
-//
-//        int count = 1;
-//        for (int i = 0; i < majorList.size(); i++) {
-//            Row row = sheet.getRow(rowIndex + i);
-//            row.getCell(1).setCellValue(count);
-//            row.getCell(2).setCellValue(majorList.get(i).getDepartmentsId());
-//            row.getCell(3).setCellValue(majorList.get(i).getMajorCode());
-//            row.getCell(4).setCellValue(majorList.get(i).getMajorName());
-//            row.getCell(5).setCellValue(majorList.get(i).getMajorDirectionCode());
-//            row.getCell(6).setCellValue(majorList.get(i).getMajorDirection());
-//            row.getCell(17).setCellValue(majorList.get(i).getInternshipPositions());
-//            row.getCell(18).setCellValue(majorList.get(i).getInternshipUnitIdShow());
-//            row.getCell(20).setCellValue(majorList.get(i).getPostsTime());
-//            count++;
-//        }
 
+        List<Export> list = tableAttributeDao.expertExcel_GJ_311();
+        int rowIndex = 7;
+        for (int i = 0; i < list.size(); i++) {
+            Row row = sheet.getRow(rowIndex + i);
+            row.getCell(2).setCellValue(list.get(i).getMajorName());
+            row.getCell(4).setCellValue(list.get(i).getMajorCode());
+            row.getCell(5).setCellValue(list.get(i).getNormalMajorShow());
+            row.getCell(6).setCellValue(list.get(i).getMaxYearShow());
+            row.getCell(7).setCellValue(list.get(i).getGradeNum());
+            row.getCell(8).setCellValue(list.get(i).getEnrollNum());
+            row.getCell(9).setCellValue(list.get(i).getEnrollGraNum());
+            row.getCell(10).setCellValue(list.get(i).getEnrollSpringNum());
+            row.getCell(11).setCellValue(list.get(i).getEnrollWillNum());
+            row.getCell(12).setCellValue(list.get(i).getSchollTotal());
+            row.getCell(13).setCellValue(list.get(i).getFirstGrade());
+            row.getCell(14).setCellValue(list.get(i).getSecondGrade());
+            row.getCell(15).setCellValue(list.get(i).getThirdGrade());
+            row.getCell(16).setCellValue(list.get(i).getForGrade());
+            row.getCell(17).setCellValue(list.get(i).getWillGrade());
+        }
     }
+
 
     private void expertExcel_GJ_313(Sheet sheet) {
 
     }
 
     private void expertExcel_GJ_321(Sheet sheet) {
-
+        List<Export> list = tableAttributeDao.expertExcel_GJ_321();
+        int rowIndex = 8;
+        for (int i = 0; i < list.size(); i=i+2) {
+            Row row = sheet.getRow(rowIndex + i);
+            Row row2 = sheet.getRow(rowIndex + i+1);
+            row.getCell(3).setCellValue(list.get(i).getAge17());
+            row2.getCell(3).setCellValue(list.get(i).getGirl17());
+            row.getCell(4).setCellValue(list.get(i).getAge18());
+            row2.getCell(4).setCellValue(list.get(i).getGirl18());
+            row.getCell(5).setCellValue(list.get(i).getAge19());
+            row2.getCell(5).setCellValue(list.get(i).getGirl19());
+            row.getCell(6).setCellValue(list.get(i).getAge20());
+            row2.getCell(6).setCellValue(list.get(i).getGirl20());
+            row.getCell(7).setCellValue(list.get(i).getAge21());
+            row2.getCell(7).setCellValue(list.get(i).getGirl21());
+            row.getCell(8).setCellValue(list.get(i).getAge22());
+            row2.getCell(8).setCellValue(list.get(i).getGirl22());
+            row.getCell(9).setCellValue(list.get(i).getAge23());
+            row2.getCell(9).setCellValue(list.get(i).getGirl23());
+            row.getCell(10).setCellValue(list.get(i).getAge24());
+            row2.getCell(10).setCellValue(list.get(i).getGirl24());
+            row.getCell(11).setCellValue(list.get(i).getAge25());
+            row2.getCell(11).setCellValue(list.get(i).getGirl25());
+            row.getCell(12).setCellValue(list.get(i).getAge26());
+            row2.getCell(12).setCellValue(list.get(i).getGirl26());
+            row.getCell(13).setCellValue(list.get(i).getAge27());
+            row2.getCell(13).setCellValue(list.get(i).getGirl27());
+            row.getCell(14).setCellValue(list.get(i).getAge28());
+            row2.getCell(14).setCellValue(list.get(i).getGirl28());
+            row.getCell(15).setCellValue(list.get(i).getAge29());
+            row2.getCell(15).setCellValue(list.get(i).getGirl29());
+            row.getCell(16).setCellValue(list.get(i).getAge30());
+            row2.getCell(16).setCellValue(list.get(i).getGirl30());
+            row.getCell(17).setCellValue(list.get(i).getAge31());
+            row2.getCell(17).setCellValue(list.get(i).getGirl31());
+        }
     }
 
     private void expertExcel_GJ_322(Sheet sheet) {
+        Export e  = tableAttributeDao.expertExcel_GJ_322();
+        Row row7 = sheet.getRow(7);
+        row7.getCell(3).setCellValue(e.getBeijingEn());
+        row7.getCell(6).setCellValue(e.getBeijingSch());
+        Row row8 = sheet.getRow(8);
+        row8.getCell(3).setCellValue(e.getTianjingEn());
+        row8.getCell(6).setCellValue(e.getTianjingSch());
+        Row row9 = sheet.getRow(9);
+        row9.getCell(3).setCellValue(e.getHebeiEn());
+        row9.getCell(6).setCellValue(e.getHebeiSch());
+        Row row10 = sheet.getRow(10);
+        row10.getCell(3).setCellValue(e.getShanxiEn());
+        row10.getCell(6).setCellValue(e.getShanxiSch());
+        Row row11 = sheet.getRow(11);
+        row11.getCell(3).setCellValue(e.getNmgEn());
+        row11.getCell(6).setCellValue(e.getNmgSch());
+        Row row12 = sheet.getRow(12);
+        row12.getCell(3).setCellValue(e.getLiaolinEn());
+        row12.getCell(6).setCellValue(e.getLiaolinSch());
+        Row row13 = sheet.getRow(13);
+        row13.getCell(3).setCellValue(e.getJilinEn());
+        row13.getCell(6).setCellValue(e.getJilinSch());
+        Row row14 = sheet.getRow(14);
+        row14.getCell(3).setCellValue(e.getHljEn());
+        row14.getCell(6).setCellValue(e.getHljSch());
+        Row row15 = sheet.getRow(15);
+        row15.getCell(3).setCellValue(e.getShanghaiEn());
+        row15.getCell(6).setCellValue(e.getShanghaiSch());
+        Row row16 = sheet.getRow(16);
+        row16.getCell(3).setCellValue(e.getJiangsuEn());
+        row16.getCell(6).setCellValue(e.getJiangsuSch());
+        Row row17 = sheet.getRow(17);
+        row17.getCell(3).setCellValue(e.getZejiangEn());
+        row17.getCell(6).setCellValue(e.getZejiangSch());
+        Row row18 = sheet.getRow(18);
+        row18.getCell(3).setCellValue(e.getAnhuiEn());
+        row18.getCell(6).setCellValue(e.getAnhuiSch());
+
+        Row row19 = sheet.getRow(19);
+        row19.getCell(3).setCellValue(e.getFujianEn());
+        row19.getCell(6).setCellValue(e.getFujianSch());
+        Row row20 = sheet.getRow(20);
+        row20.getCell(3).setCellValue(e.getJiangxiEn());
+        row20.getCell(6).setCellValue(e.getJiangxiSch());
+        Row row21 = sheet.getRow(21);
+        row21.getCell(3).setCellValue(e.getShandongEn());
+        row21.getCell(6).setCellValue(e.getShanghaiSch());
+        Row row22 = sheet.getRow(22);
+        row22.getCell(3).setCellValue(e.getHenanEn());
+        row22.getCell(6).setCellValue(e.getHenanSch());
+        Row row23 = sheet.getRow(23);
+        row23.getCell(3).setCellValue(e.getHubeiEn());
+        row23.getCell(6).setCellValue(e.getHubeiSch());
+        Row row24 = sheet.getRow(24);
+        row24.getCell(3).setCellValue(e.getHenanEn());
+        row24.getCell(6).setCellValue(e.getHenanSch());
+        Row row25 = sheet.getRow(25);
+        row25.getCell(3).setCellValue(e.getGuangdongEn());
+        row25.getCell(6).setCellValue(e.getGuangdongSch());
+        Row row26 = sheet.getRow(26);
+        row26.getCell(3).setCellValue(e.getGuangxiEn());
+        row26.getCell(6).setCellValue(e.getGuangxiSch());
+        Row row27 = sheet.getRow(27);
+        row27.getCell(3).setCellValue(e.getHainanEn());
+        row27.getCell(6).setCellValue(e.getHainanSch());
+        Row row28 = sheet.getRow(28);
+        row28.getCell(3).setCellValue(e.getChongqingEn());
+        row28.getCell(6).setCellValue(e.getChongqingSch());
+        Row row29 = sheet.getRow(29);
+        row29.getCell(3).setCellValue(e.getSichuanEn());
+        row29.getCell(6).setCellValue(e.getSichuanSch());
+        Row row30 = sheet.getRow(30);
+        row30.getCell(3).setCellValue(e.getGuizhouEn());
+        row30.getCell(6).setCellValue(e.getGuizhouSch());
+        Row row31 = sheet.getRow(31);
+        row31.getCell(3).setCellValue(e.getYunnanEn());
+        row31.getCell(6).setCellValue(e.getYunnanSch());
+        Row row32 = sheet.getRow(32);
+        row32.getCell(3).setCellValue(e.getXizangEn());
+        row32.getCell(6).setCellValue(e.getXizangSch());
+        Row row33 = sheet.getRow(33);
+        row33.getCell(3).setCellValue(e.getSxEn());
+        row33.getCell(6).setCellValue(e.getSxSch());
+        Row row34 = sheet.getRow(34);
+        row34.getCell(3).setCellValue(e.getGansuEn());
+        row34.getCell(6).setCellValue(e.getGansuSch());
+        Row row35 = sheet.getRow(35);
+        row35.getCell(3).setCellValue(e.getQinhaiEn());
+        row35.getCell(6).setCellValue(e.getQinhaiaSch());
+        Row row36 = sheet.getRow(36);
+        row36.getCell(3).setCellValue(e.getLingxiaEn());
+        row36.getCell(6).setCellValue(e.getLingxiaSch());
+        Row row37 = sheet.getRow(37);
+        row37.getCell(3).setCellValue(e.getXinjiangEn());
+        row37.getCell(6).setCellValue(e.getXinjiangSch());
+        Row row38 = sheet.getRow(38);
+        row38.getCell(3).setCellValue(e.getXianggangEn());
+        row38.getCell(6).setCellValue(e.getXianggangSch());
+        Row row39 = sheet.getRow(39);
+        row39.getCell(3).setCellValue(e.getAomenEn());
+        row39.getCell(6).setCellValue(e.getAomenSch());
+        Row row40 = sheet.getRow(40);
+        row40.getCell(3).setCellValue(e.getXinjiangEn());
+        row40.getCell(6).setCellValue(e.getXinjiangSch());
+        Row row41 = sheet.getRow(41);
+        row41.getCell(3).setCellValue(e.getTaiwanEn());
+        row41.getCell(6).setCellValue(e.getTaiwanSch());
 
     }
 

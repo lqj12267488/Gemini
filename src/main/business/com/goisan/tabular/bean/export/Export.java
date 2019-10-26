@@ -104,6 +104,947 @@ public class Export {
     private Date BUSINESS5STARTTIME;
     private String APPRENTICESHIP;
 
+    /**
+     *expertExcel_GJ_311
+     */
+
+    private String maxYear;
+    private String maxYearShow;
+    private String normalMajor;
+    private String normalMajorShow;
+    private String gradeNum;
+    private String enrollNum;
+    private String enrollGraNum;
+    private String enrollSpringNum;
+    private String enrollWillNum;
+    private String schollTotal;
+    private String firstGrade;
+    private String secondGrade;
+    private String thirdGrade;
+    private String forGrade;
+    private String willGrade;
+
+    /**
+     * 年龄分布
+     */
+
+    private String age17,girl17,age18 ,girl18 ,age19 ,girl19 ,age20 ,girl20  ,age21 ,girl21  ,age22 ,girl22, age23 ,girl23 ,age24 ,girl24
+            ,age25 ,girl25 ,age26,girl26 ,age27,girl27 ,age28 ,girl28 ,age29 ,girl29 ,age30 ,girl30 ,age31 ,girl31;
+
+    /**
+     *招生，在校生来源
+     */
+    private String beijingEn,beijingSch,tianjingEn,tianjingSch,hebeiEn,hebeiSch,shanxiEn,shanxiSch,nmgEn,nmgSch,liaolinEn,liaolinSch,hljEn,
+            hljSch,shanghaiEn,shanghaiSch,jiangsuEn,jiangsuSch,zejiangEn,zejiangSch,anhuiEn,anhuiSch,fujianEn,fujianSch,jiangxiEn,jiangxiSch,
+            shandongEn,shandongSch,henanEn,henanSch,hubeiEn,hubeiSch,hunanEn,hunanSch,guangdongEn,guangdongSch,guangxiEn,guangxiSch,hainanEn,
+            hainanSch,chongqingEn,chongqingSch,sichuanEn,sichuanSch,guizhouEn,guizhouSch,yunnanEn,yunnanSch,xizangEn,xizangSch,sxEn,sxSch,
+            gansuEn,gansuSch,qinhaiEn,qinhaiaSch,xinjiangEn,xinjiangSch,xianggangEn,xianggangSch,aomenEn,aomenSch,taiwanEn,taiwanSch,
+            jilinEn,jilinSch,lingxiaEn,lingxiaSch;
+
+    public String getLingxiaEn() {
+        return lingxiaEn;
+    }
+
+    public void setLingxiaEn(String lingxiaEn) {
+        this.lingxiaEn = lingxiaEn;
+    }
+
+    public String getLingxiaSch() {
+        return lingxiaSch;
+    }
+
+    public void setLingxiaSch(String lingxiaSch) {
+        this.lingxiaSch = lingxiaSch;
+    }
+
+    public String getJilinEn() {
+        return jilinEn;
+    }
+
+    public void setJilinEn(String jilinEn) {
+        this.jilinEn = jilinEn;
+    }
+
+    public String getJilinSch() {
+        return jilinSch;
+    }
+
+    public void setJilinSch(String jilinSch) {
+        this.jilinSch = jilinSch;
+    }
+
+    public String getBeijingEn() {
+        return beijingEn;
+    }
+
+    public void setBeijingEn(String beijingEn) {
+        this.beijingEn = beijingEn;
+    }
+
+    public String getBeijingSch() {
+        return beijingSch;
+    }
+
+    public void setBeijingSch(String beijingSch) {
+        this.beijingSch = beijingSch;
+    }
+
+    public String getTianjingEn() {
+        return tianjingEn;
+    }
+
+    public void setTianjingEn(String tianjingEn) {
+        this.tianjingEn = tianjingEn;
+    }
+
+    public String getTianjingSch() {
+        return tianjingSch;
+    }
+
+    public void setTianjingSch(String tianjingSch) {
+        this.tianjingSch = tianjingSch;
+    }
+
+    public String getHebeiEn() {
+        return hebeiEn;
+    }
+
+    public void setHebeiEn(String hebeiEn) {
+        this.hebeiEn = hebeiEn;
+    }
+
+    public String getHebeiSch() {
+        return hebeiSch;
+    }
+
+    public void setHebeiSch(String hebeiSch) {
+        this.hebeiSch = hebeiSch;
+    }
+
+    public String getShanxiEn() {
+        return shanxiEn;
+    }
+
+    public void setShanxiEn(String shanxiEn) {
+        this.shanxiEn = shanxiEn;
+    }
+
+    public String getShanxiSch() {
+        return shanxiSch;
+    }
+
+    public void setShanxiSch(String shanxiSch) {
+        this.shanxiSch = shanxiSch;
+    }
+
+    public String getNmgEn() {
+        return nmgEn;
+    }
+
+    public void setNmgEn(String nmgEn) {
+        this.nmgEn = nmgEn;
+    }
+
+    public String getNmgSch() {
+        return nmgSch;
+    }
+
+    public void setNmgSch(String nmgSch) {
+        this.nmgSch = nmgSch;
+    }
+
+    public String getLiaolinEn() {
+        return liaolinEn;
+    }
+
+    public void setLiaolinEn(String liaolinEn) {
+        this.liaolinEn = liaolinEn;
+    }
+
+    public String getLiaolinSch() {
+        return liaolinSch;
+    }
+
+    public void setLiaolinSch(String liaolinSch) {
+        this.liaolinSch = liaolinSch;
+    }
+
+    public String getHljEn() {
+        return hljEn;
+    }
+
+    public void setHljEn(String hljEn) {
+        this.hljEn = hljEn;
+    }
+
+    public String getHljSch() {
+        return hljSch;
+    }
+
+    public void setHljSch(String hljSch) {
+        this.hljSch = hljSch;
+    }
+
+    public String getShanghaiEn() {
+        return shanghaiEn;
+    }
+
+    public void setShanghaiEn(String shanghaiEn) {
+        this.shanghaiEn = shanghaiEn;
+    }
+
+    public String getShanghaiSch() {
+        return shanghaiSch;
+    }
+
+    public void setShanghaiSch(String shanghaiSch) {
+        this.shanghaiSch = shanghaiSch;
+    }
+
+    public String getJiangsuEn() {
+        return jiangsuEn;
+    }
+
+    public void setJiangsuEn(String jiangsuEn) {
+        this.jiangsuEn = jiangsuEn;
+    }
+
+    public String getJiangsuSch() {
+        return jiangsuSch;
+    }
+
+    public void setJiangsuSch(String jiangsuSch) {
+        this.jiangsuSch = jiangsuSch;
+    }
+
+    public String getZejiangEn() {
+        return zejiangEn;
+    }
+
+    public void setZejiangEn(String zejiangEn) {
+        this.zejiangEn = zejiangEn;
+    }
+
+    public String getZejiangSch() {
+        return zejiangSch;
+    }
+
+    public void setZejiangSch(String zejiangSch) {
+        this.zejiangSch = zejiangSch;
+    }
+
+    public String getAnhuiEn() {
+        return anhuiEn;
+    }
+
+    public void setAnhuiEn(String anhuiEn) {
+        this.anhuiEn = anhuiEn;
+    }
+
+    public String getAnhuiSch() {
+        return anhuiSch;
+    }
+
+    public void setAnhuiSch(String anhuiSch) {
+        this.anhuiSch = anhuiSch;
+    }
+
+    public String getFujianEn() {
+        return fujianEn;
+    }
+
+    public void setFujianEn(String fujianEn) {
+        this.fujianEn = fujianEn;
+    }
+
+    public String getFujianSch() {
+        return fujianSch;
+    }
+
+    public void setFujianSch(String fujianSch) {
+        this.fujianSch = fujianSch;
+    }
+
+    public String getJiangxiEn() {
+        return jiangxiEn;
+    }
+
+    public void setJiangxiEn(String jiangxiEn) {
+        this.jiangxiEn = jiangxiEn;
+    }
+
+    public String getJiangxiSch() {
+        return jiangxiSch;
+    }
+
+    public void setJiangxiSch(String jiangxiSch) {
+        this.jiangxiSch = jiangxiSch;
+    }
+
+    public String getShandongEn() {
+        return shandongEn;
+    }
+
+    public void setShandongEn(String shandongEn) {
+        this.shandongEn = shandongEn;
+    }
+
+    public String getShandongSch() {
+        return shandongSch;
+    }
+
+    public void setShandongSch(String shandongSch) {
+        this.shandongSch = shandongSch;
+    }
+
+    public String getHenanEn() {
+        return henanEn;
+    }
+
+    public void setHenanEn(String henanEn) {
+        this.henanEn = henanEn;
+    }
+
+    public String getHenanSch() {
+        return henanSch;
+    }
+
+    public void setHenanSch(String henanSch) {
+        this.henanSch = henanSch;
+    }
+
+    public String getHubeiEn() {
+        return hubeiEn;
+    }
+
+    public void setHubeiEn(String hubeiEn) {
+        this.hubeiEn = hubeiEn;
+    }
+
+    public String getHubeiSch() {
+        return hubeiSch;
+    }
+
+    public void setHubeiSch(String hubeiSch) {
+        this.hubeiSch = hubeiSch;
+    }
+
+    public String getHunanEn() {
+        return hunanEn;
+    }
+
+    public void setHunanEn(String hunanEn) {
+        this.hunanEn = hunanEn;
+    }
+
+    public String getHunanSch() {
+        return hunanSch;
+    }
+
+    public void setHunanSch(String hunanSch) {
+        this.hunanSch = hunanSch;
+    }
+
+    public String getGuangdongEn() {
+        return guangdongEn;
+    }
+
+    public void setGuangdongEn(String guangdongEn) {
+        this.guangdongEn = guangdongEn;
+    }
+
+    public String getGuangdongSch() {
+        return guangdongSch;
+    }
+
+    public void setGuangdongSch(String guangdongSch) {
+        this.guangdongSch = guangdongSch;
+    }
+
+    public String getGuangxiEn() {
+        return guangxiEn;
+    }
+
+    public void setGuangxiEn(String guangxiEn) {
+        this.guangxiEn = guangxiEn;
+    }
+
+    public String getGuangxiSch() {
+        return guangxiSch;
+    }
+
+    public void setGuangxiSch(String guangxiSch) {
+        this.guangxiSch = guangxiSch;
+    }
+
+    public String getHainanEn() {
+        return hainanEn;
+    }
+
+    public void setHainanEn(String hainanEn) {
+        this.hainanEn = hainanEn;
+    }
+
+    public String getHainanSch() {
+        return hainanSch;
+    }
+
+    public void setHainanSch(String hainanSch) {
+        this.hainanSch = hainanSch;
+    }
+
+    public String getChongqingEn() {
+        return chongqingEn;
+    }
+
+    public void setChongqingEn(String chongqingEn) {
+        this.chongqingEn = chongqingEn;
+    }
+
+    public String getChongqingSch() {
+        return chongqingSch;
+    }
+
+    public void setChongqingSch(String chongqingSch) {
+        this.chongqingSch = chongqingSch;
+    }
+
+    public String getSichuanEn() {
+        return sichuanEn;
+    }
+
+    public void setSichuanEn(String sichuanEn) {
+        this.sichuanEn = sichuanEn;
+    }
+
+    public String getSichuanSch() {
+        return sichuanSch;
+    }
+
+    public void setSichuanSch(String sichuanSch) {
+        this.sichuanSch = sichuanSch;
+    }
+
+    public String getGuizhouEn() {
+        return guizhouEn;
+    }
+
+    public void setGuizhouEn(String guizhouEn) {
+        this.guizhouEn = guizhouEn;
+    }
+
+    public String getGuizhouSch() {
+        return guizhouSch;
+    }
+
+    public void setGuizhouSch(String guizhouSch) {
+        this.guizhouSch = guizhouSch;
+    }
+
+    public String getYunnanEn() {
+        return yunnanEn;
+    }
+
+    public void setYunnanEn(String yunnanEn) {
+        this.yunnanEn = yunnanEn;
+    }
+
+    public String getYunnanSch() {
+        return yunnanSch;
+    }
+
+    public void setYunnanSch(String yunnanSch) {
+        this.yunnanSch = yunnanSch;
+    }
+
+    public String getXizangEn() {
+        return xizangEn;
+    }
+
+    public void setXizangEn(String xizangEn) {
+        this.xizangEn = xizangEn;
+    }
+
+    public String getXizangSch() {
+        return xizangSch;
+    }
+
+    public void setXizangSch(String xizangSch) {
+        this.xizangSch = xizangSch;
+    }
+
+    public String getSxEn() {
+        return sxEn;
+    }
+
+    public void setSxEn(String sxEn) {
+        this.sxEn = sxEn;
+    }
+
+    public String getSxSch() {
+        return sxSch;
+    }
+
+    public void setSxSch(String sxSch) {
+        this.sxSch = sxSch;
+    }
+
+    public String getGansuEn() {
+        return gansuEn;
+    }
+
+    public void setGansuEn(String gansuEn) {
+        this.gansuEn = gansuEn;
+    }
+
+    public String getGansuSch() {
+        return gansuSch;
+    }
+
+    public void setGansuSch(String gansuSch) {
+        this.gansuSch = gansuSch;
+    }
+
+    public String getQinhaiEn() {
+        return qinhaiEn;
+    }
+
+    public void setQinhaiEn(String qinhaiEn) {
+        this.qinhaiEn = qinhaiEn;
+    }
+
+    public String getQinhaiaSch() {
+        return qinhaiaSch;
+    }
+
+    public void setQinhaiaSch(String qinhaiaSch) {
+        this.qinhaiaSch = qinhaiaSch;
+    }
+
+    public String getXinjiangEn() {
+        return xinjiangEn;
+    }
+
+    public void setXinjiangEn(String xinjiangEn) {
+        this.xinjiangEn = xinjiangEn;
+    }
+
+    public String getXinjiangSch() {
+        return xinjiangSch;
+    }
+
+    public void setXinjiangSch(String xinjiangSch) {
+        this.xinjiangSch = xinjiangSch;
+    }
+
+    public String getXianggangEn() {
+        return xianggangEn;
+    }
+
+    public void setXianggangEn(String xianggangEn) {
+        this.xianggangEn = xianggangEn;
+    }
+
+    public String getXianggangSch() {
+        return xianggangSch;
+    }
+
+    public void setXianggangSch(String xianggangSch) {
+        this.xianggangSch = xianggangSch;
+    }
+
+    public String getAomenEn() {
+        return aomenEn;
+    }
+
+    public void setAomenEn(String aomenEn) {
+        this.aomenEn = aomenEn;
+    }
+
+    public String getAomenSch() {
+        return aomenSch;
+    }
+
+    public void setAomenSch(String aomenSch) {
+        this.aomenSch = aomenSch;
+    }
+
+    public String getTaiwanEn() {
+        return taiwanEn;
+    }
+
+    public void setTaiwanEn(String taiwanEn) {
+        this.taiwanEn = taiwanEn;
+    }
+
+    public String getTaiwanSch() {
+        return taiwanSch;
+    }
+
+    public void setTaiwanSch(String taiwanSch) {
+        this.taiwanSch = taiwanSch;
+    }
+
+    public String getAge17() {
+        return age17;
+    }
+
+    public void setAge17(String age17) {
+        this.age17 = age17;
+    }
+
+    public String getGirl17() {
+        return girl17;
+    }
+
+    public void setGirl17(String girl17) {
+        this.girl17 = girl17;
+    }
+
+    public String getAge18() {
+        return age18;
+    }
+
+    public void setAge18(String age18) {
+        this.age18 = age18;
+    }
+
+    public String getGirl18() {
+        return girl18;
+    }
+
+    public void setGirl18(String girl18) {
+        this.girl18 = girl18;
+    }
+
+    public String getAge19() {
+        return age19;
+    }
+
+    public void setAge19(String age19) {
+        this.age19 = age19;
+    }
+
+    public String getGirl19() {
+        return girl19;
+    }
+
+    public void setGirl19(String girl19) {
+        this.girl19 = girl19;
+    }
+
+    public String getAge20() {
+        return age20;
+    }
+
+    public void setAge20(String age20) {
+        this.age20 = age20;
+    }
+
+    public String getGirl20() {
+        return girl20;
+    }
+
+    public void setGirl20(String girl20) {
+        this.girl20 = girl20;
+    }
+
+    public String getAge21() {
+        return age21;
+    }
+
+    public void setAge21(String age21) {
+        this.age21 = age21;
+    }
+
+    public String getGirl21() {
+        return girl21;
+    }
+
+    public void setGirl21(String girl21) {
+        this.girl21 = girl21;
+    }
+
+    public String getAge22() {
+        return age22;
+    }
+
+    public void setAge22(String age22) {
+        this.age22 = age22;
+    }
+
+    public String getGirl22() {
+        return girl22;
+    }
+
+    public void setGirl22(String girl22) {
+        this.girl22 = girl22;
+    }
+
+    public String getAge23() {
+        return age23;
+    }
+
+    public void setAge23(String age23) {
+        this.age23 = age23;
+    }
+
+    public String getGirl23() {
+        return girl23;
+    }
+
+    public void setGirl23(String girl23) {
+        this.girl23 = girl23;
+    }
+
+    public String getAge24() {
+        return age24;
+    }
+
+    public void setAge24(String age24) {
+        this.age24 = age24;
+    }
+
+    public String getGirl24() {
+        return girl24;
+    }
+
+    public void setGirl24(String girl24) {
+        this.girl24 = girl24;
+    }
+
+    public String getAge25() {
+        return age25;
+    }
+
+    public void setAge25(String age25) {
+        this.age25 = age25;
+    }
+
+    public String getGirl25() {
+        return girl25;
+    }
+
+    public void setGirl25(String girl25) {
+        this.girl25 = girl25;
+    }
+
+    public String getAge26() {
+        return age26;
+    }
+
+    public void setAge26(String age26) {
+        this.age26 = age26;
+    }
+
+    public String getGirl26() {
+        return girl26;
+    }
+
+    public void setGirl26(String girl26) {
+        this.girl26 = girl26;
+    }
+
+    public String getAge27() {
+        return age27;
+    }
+
+    public void setAge27(String age27) {
+        this.age27 = age27;
+    }
+
+    public String getGirl27() {
+        return girl27;
+    }
+
+    public void setGirl27(String girl27) {
+        this.girl27 = girl27;
+    }
+
+    public String getAge28() {
+        return age28;
+    }
+
+    public void setAge28(String age28) {
+        this.age28 = age28;
+    }
+
+    public String getGirl28() {
+        return girl28;
+    }
+
+    public void setGirl28(String girl28) {
+        this.girl28 = girl28;
+    }
+
+    public String getAge29() {
+        return age29;
+    }
+
+    public void setAge29(String age29) {
+        this.age29 = age29;
+    }
+
+    public String getGirl29() {
+        return girl29;
+    }
+
+    public void setGirl29(String girl29) {
+        this.girl29 = girl29;
+    }
+
+    public String getAge30() {
+        return age30;
+    }
+
+    public void setAge30(String age30) {
+        this.age30 = age30;
+    }
+
+    public String getGirl30() {
+        return girl30;
+    }
+
+    public void setGirl30(String girl30) {
+        this.girl30 = girl30;
+    }
+
+    public String getAge31() {
+        return age31;
+    }
+
+    public void setAge31(String age31) {
+        this.age31 = age31;
+    }
+
+    public String getGirl31() {
+        return girl31;
+    }
+
+    public void setGirl31(String girl31) {
+        this.girl31 = girl31;
+    }
+
+    public String getForGrade() {
+        return forGrade;
+    }
+
+    public void setForGrade(String forGrade) {
+        this.forGrade = forGrade;
+    }
+
+    public String getMaxYear() {
+        return maxYear;
+    }
+
+    public void setMaxYear(String maxYear) {
+        this.maxYear = maxYear;
+    }
+
+    public String getMaxYearShow() {
+        return maxYearShow;
+    }
+
+    public void setMaxYearShow(String maxYearShow) {
+        this.maxYearShow = maxYearShow;
+    }
+
+    public String getNormalMajor() {
+        return normalMajor;
+    }
+
+    public void setNormalMajor(String normalMajor) {
+        this.normalMajor = normalMajor;
+    }
+
+    public String getNormalMajorShow() {
+        return normalMajorShow;
+    }
+
+    public void setNormalMajorShow(String normalMajorShow) {
+        this.normalMajorShow = normalMajorShow;
+    }
+
+    public String getGradeNum() {
+        return gradeNum;
+    }
+
+    public void setGradeNum(String gradeNum) {
+        this.gradeNum = gradeNum;
+    }
+
+    public String getEnrollNum() {
+        return enrollNum;
+    }
+
+    public void setEnrollNum(String enrollNum) {
+        this.enrollNum = enrollNum;
+    }
+
+    public String getEnrollGraNum() {
+        return enrollGraNum;
+    }
+
+    public void setEnrollGraNum(String enrollGraNum) {
+        this.enrollGraNum = enrollGraNum;
+    }
+
+    public String getEnrollSpringNum() {
+        return enrollSpringNum;
+    }
+
+    public void setEnrollSpringNum(String enrollSpringNum) {
+        this.enrollSpringNum = enrollSpringNum;
+    }
+
+    public String getEnrollWillNum() {
+        return enrollWillNum;
+    }
+
+    public void setEnrollWillNum(String enrollWillNum) {
+        this.enrollWillNum = enrollWillNum;
+    }
+
+    public String getSchollTotal() {
+        return schollTotal;
+    }
+
+    public void setSchollTotal(String schollTotal) {
+        this.schollTotal = schollTotal;
+    }
+
+    public String getFirstGrade() {
+        return firstGrade;
+    }
+
+    public void setFirstGrade(String firstGrade) {
+        this.firstGrade = firstGrade;
+    }
+
+    public String getSecondGrade() {
+        return secondGrade;
+    }
+
+    public void setSecondGrade(String secondGrade) {
+        this.secondGrade = secondGrade;
+    }
+
+    public String getThirdGrade() {
+        return thirdGrade;
+    }
+
+    public void setThirdGrade(String thirdGrade) {
+        this.thirdGrade = thirdGrade;
+    }
+
+
+    public String getWillGrade() {
+        return willGrade;
+    }
+
+    public void setWillGrade(String willGrade) {
+        this.willGrade = willGrade;
+    }
 
     public String getDEVELOPMENTCOURSENUM() {
         return DEVELOPMENTCOURSENUM;

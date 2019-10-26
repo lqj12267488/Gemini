@@ -1176,6 +1176,156 @@
     <!--modify by wangxue end-->
 
 
+    <select id="expertExcel_GJ_311" resultType="com.goisan.tabular.bean.export.Export">
+           select  m.major_name,m.major_code,FUNC_GET_DICVALUE(m.max_year, 'XYNX') as maxYearShow,m.max_year,FUNC_GET_DICVALUE(m.NORMAL_MAJOR, 'SF') as normalMajorShow,
+m.NORMAL_MAJOR ,gradeNum,em.enrollNum,enrollGraNum,enrollSpringNum,enrollWillNum,schollTotal ,firstGrade ,secondGrade,thirdGrade,forGrade,willGrade
+ from T_XG_MAJOR m  left join
+ (select t1.major_code,count(t3.student_id) gradeNum   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id  and t1.graduation_flag = '3'and t3.Student_Status='1'
+group by t1.major_code ) gm on gm.major_code = m.major_code left join
+(select t1.major_code,count(t3.student_id) enrollNum   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id
+group by t1.major_code ) em on em.major_code = m.major_code left join
+ (select t1.major_code,count(t3.student_id) enrollGraNum   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id and t3.en_sch_type = '1'
+group by t1.major_code) egm on m.major_code = egm.major_code left join
+(select t1.major_code,count(t3.student_id) enrollSpringNum   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id and t3.en_sch_type = '2'
+group by t1.major_code ) esn on m.major_code = esn.major_code left join
+(select t1.major_code,count(t3.student_id) enrollWillNum   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id and t3.en_sch_type = '3'
+group by t1.major_code )ewn  on m.major_code = ewn.major_code left join
+(select t1.major_code,count(t3.student_id) schollTotal   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id  and t3.Student_Status='1'
+group by t1.major_code ) stl on m.major_code = stl.major_code left join
+(select t1.major_code,count(t3.student_id) firstGrade  from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id and  ceil(to_number(to_char(sysdate,'yyyy')) - t1.year) = 1 and t3.Student_Status='1'
+group by t1.major_code ) fg on  m.major_code = fg.major_code  left join
+(select t1.major_code,count(t3.student_id) secondGrade  from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id and  ceil(to_number(to_char(sysdate,'yyyy')) - t1.year) = 2 and t3.Student_Status='1'
+group by t1.major_code ) sg on  m.major_code = sg.major_code  left join
+(select t1.major_code,count(t3.student_id) thirdGrade   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id and  ceil(to_number(to_char(sysdate,'yyyy')) - t1.year) = 3 and t3.Student_Status='1'
+group by t1.major_code ) tg on  m.major_code = tg.major_code  left join
+(select t1.major_code,count(t3.student_id) forGrade   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id and  ceil(to_number(to_char(sysdate,'yyyy')) - t1.year) &gt;3 and t3.Student_Status='1'
+group by t1.major_code ) fog on  m.major_code = fog.major_code  left join
+(select t1.major_code,count(t3.student_id) willGrade   from T_XG_CLASS t1,T_XG_STUDENT_CLASS t2,T_XG_STUDENT t3
+where t1.class_id = t2.class_id and t2.student_id = t3.student_id  and t1.graduation_flag = '3'
+group by t1.major_code ) wg on  m.major_code = wg.major_code
+    </select>
+
+    <select id="expertExcel_GJ_321" resultType="com.goisan.tabular.bean.export.Export">
+        select age17,girl17,age18 ,girl18 ,age19 ,girl19 ,age20 ,girl20  ,age21 ,girl21  ,age22 ,girl22, age23 ,girl23 ,age24 ,girl24
+        ,age25 ,girl25 ,age26,girl26 ,age27,girl27 ,age28 ,girl28 ,age29 ,girl29 ,age30 ,girl30 ,age31 ,girl31 from
+        (select count(t.student_id )age17 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) &lt;18)a17,
+        (select count(t.student_id )girl17 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) &lt;18 and t.sex = '2')g17,
+        (select count(t.student_id )age18 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 18) a18,
+        (select count(t.student_id )girl18 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 18 and t.sex = '2')g18,
+        (select count(t.student_id )age19 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 19) a19,
+        (select count(t.student_id )girl19 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 19 and t.sex = '2')g19,
+        (select count(t.student_id )age20 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 20) a20,
+        (select count(t.student_id )girl20 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 20 and t.sex = '2')g20,
+        (select count(t.student_id )age21 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 21) a21,
+        (select count(t.student_id )girl21 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 21 and t.sex = '2')g21,
+        (select count(t.student_id )age22 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 22) a22,
+        (select count(t.student_id )girl22 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 22 and t.sex = '2')g22,
+        (select count(t.student_id )age23 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 23) a23,
+        (select count(t.student_id )girl23 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 23 and t.sex = '2')g23,
+        (select count(t.student_id )age24 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 24) a24,
+        (select count(t.student_id )girl24 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 24 and t.sex = '2')g24,
+        (select count(t.student_id )age25 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 25) a25,
+        (select count(t.student_id )girl25 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 25 and t.sex = '2')g25,
+        (select count(t.student_id )age26 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 26) a26,
+        (select count(t.student_id )girl26 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 26 and t.sex = '2')a26,
+        (select count(t.student_id )age27 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 27) a27,
+        (select count(t.student_id )girl27 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 27 and t.sex = '2')g27,
+        (select count(t.student_id )age28 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 28) a28,
+        (select count(t.student_id )girl28 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 28 and t.sex = '2')g28,
+        (select count(t.student_id )age29 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 29) a29,
+        (select count(t.student_id )girl29 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 29 and t.sex = '2')g29,
+        (select count(t.student_id )age30 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 30) a30,
+        (select count(t.student_id )girl30 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) = 30 and t.sex = '2')g30,
+        (select count(t.student_id )age31 from T_XG_STUDENT t where  t.STUDENT_STATUS='1' and ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) &gt;30) a31,
+        (select count(t.student_id )girl31 from T_XG_STUDENT t where t.STUDENT_STATUS='1' and  ceil(to_number(to_char(sysdate,'yyyy')) - to_char(BIRTHDAY,'yyyy')) &gt; 30 and t.sex = '2')g31
+    </select>
+
+    <select id="expertExcel_GJ_322" resultType="com.goisan.tabular.bean.export.Export">
+        select beijingEn,beijingSch,tianjingEn,tianjingSch,hebeiEn,hebeiSch,shanxiEn,shanxiSch,nmgEn,nmgSch,liaolinEn,liaolinSch,hljEn,
+hljSch,shanghaiEn,shanghaiSch,jiangsuEn,jiangsuSch,zejiangEn,zejiangSch,anhuiEn,anhuiSch,fujianEn,fujianSch,jiangxiEn,jiangxiSch,
+shandongEn,shandongSch,henanEn,henanSch,hubeiEn,hubeiSch,hunanEn,hunanSch,guangdongEn,guangdongSch,guangxiEn,guangxiSch,hainanEn,
+hainanSch,chongqingEn,chongqingSch,sichuanEn,sichuanSch,guizhouEn,guizhouSch,yunnanEn,yunnanSch,xizangEn,xizangSch,sxEn,sxSch,
+gansuEn,gansuSch,qinhaiEn,qinhaiaSch,xinjiangEn,xinjiangSch,xianggangEn,xianggangSch,aomenEn,aomenSch,taiwanEn,taiwanSch,jilinEn,jilinSch,
+lingxiaEn,lingxiaSch
+from (
+select count(t.student_id) beijingEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='110000'),
+(select count(t.student_id) beijingSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='110000' and t.student_status = '1'),
+(select count(t.student_id) tianjingEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='120000'),
+(select count(t.student_id) tianjingSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='120000' and t.student_status = '1'),
+(select count(t.student_id) hebeiEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='130000'),
+(select count(t.student_id) hebeiSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='130000' and t.student_status = '1'),
+(select count(t.student_id) shanxiEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='140000'),
+(select count(t.student_id) shanxiSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='140000' and t.student_status = '1'),
+(select count(t.student_id) nmgEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='150000'),
+(select count(t.student_id) nmgSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='150000' and t.student_status = '1'),
+(select count(t.student_id) liaolinEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='210000'),
+(select count(t.student_id) liaolinSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='210000' and t.student_status = '1'),
+(select count(t.student_id) hljEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='220000'),
+(select count(t.student_id) hljSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='220000' and t.student_status = '1'),
+(select count(t.student_id) shanghaiEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='310000'),
+(select count(t.student_id) shanghaiSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='310000' and t.student_status = '1'),
+(select count(t.student_id) jiangsuEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='320000'),
+(select count(t.student_id) jiangsuSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='320000' and t.student_status = '1'),
+(select count(t.student_id) zejiangEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='330000'),
+(select count(t.student_id) zejiangSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='330000' and t.student_status = '1'),
+(select count(t.student_id) anhuiEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='340000'),
+(select count(t.student_id) anhuiSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='340000' and t.student_status = '1'),
+(select count(t.student_id) fujianEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='350000'),
+(select count(t.student_id) fujianSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='350000' and t.student_status = '1'),
+(select count(t.student_id) jiangxiEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='360000'),
+(select count(t.student_id) jiangxiSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='360000' and t.student_status = '1'),
+(select count(t.student_id) shandongEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='370000'),
+(select count(t.student_id) shandongSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='370000' and t.student_status = '1'),
+(select count(t.student_id) henanEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='410000'),
+(select count(t.student_id) henanSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='410000' and t.student_status = '1'),
+(select count(t.student_id) hubeiEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='420000'),
+(select count(t.student_id) hubeiSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='420000' and t.student_status = '1'),
+(select count(t.student_id) hunanEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='430000'),
+(select count(t.student_id) hunanSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='430000' and t.student_status = '1'),
+(select count(t.student_id) guangdongEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='440000'),
+(select count(t.student_id) guangdongSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='440000' and t.student_status = '1'),
+(select count(t.student_id) guangxiEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='450000'),
+(select count(t.student_id) guangxiSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='450000' and t.student_status = '1'),
+(select count(t.student_id) hainanEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='460000'),
+(select count(t.student_id) hainanSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='460000' and t.student_status = '1'),
+(select count(t.student_id) chongqingEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='500000'),
+(select count(t.student_id) chongqingSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='500000' and t.student_status = '1'),
+(select count(t.student_id) sichuanEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='510000'),
+(select count(t.student_id) sichuanSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='510000' and t.student_status = '1'),
+(select count(t.student_id) guizhouEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='520000'),
+(select count(t.student_id) guizhouSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='520000' and t.student_status = '1'),
+(select count(t.student_id) yunnanEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='530000'),
+(select count(t.student_id) yunnanSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='530000' and t.student_status = '1'),
+(select count(t.student_id) xizangEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='540000'),
+(select count(t.student_id) xizangSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='540000' and t.student_status = '1'),
+(select count(t.student_id) sxEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='610000'),
+(select count(t.student_id) sxSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='610000' and t.student_status = '1'),
+(select count(t.student_id) gansuEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='620000'),
+(select count(t.student_id) gansuSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='620000' and t.student_status = '1'),
+(select count(t.student_id) qinhaiEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='630000'),
+(select count(t.student_id) qinhaiaSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='630000' and t.student_status = '1'),
+(select count(t.student_id) lingxiaEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='640000'),
+(select count(t.student_id) lingxiaSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='640000' and t.student_status = '1'),
+(select count(t.student_id) xinjiangEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='650000'),
+(select count(t.student_id) xinjiangSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='650000' and t.student_status = '1'),
+(select count(t.student_id) xianggangEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='810000'),
+(select count(t.student_id) xianggangSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='810000' and t.student_status = '1'),
+(select count(t.student_id) aomenEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='820000'),
+(select count(t.student_id) aomenSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='820000' and t.student_status = '1'),
+(select count(t.student_id) taiwanEn from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='710000'),
+(select count(t.student_id) taiwanSch from T_XG_STUDENT t where t.HOUSEHOLD_REGISTER_PROVINCE ='710000' and t.student_status = '1')
+    </select>
+
     <select id="expertExcel_GJ_812" parameterType="java.lang.String" resultType="java.util.Map" >
         select temp.*, (wwe+hsk+hui+zzbk+kekz+xb+man+mg+dwe+tte+tjk+els+qt) xj from
         (SELECT count(teacher_id) total,
