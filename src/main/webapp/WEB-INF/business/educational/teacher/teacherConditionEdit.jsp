@@ -304,6 +304,8 @@
                             <span class="iconBtx">*</span>已聘职称：
                         </div>
                         <div class="col-md-4">
+                            <%--<input id="teacherTitle" type="text" value="${teacherCondition.title}"/>--%>
+
                             <select id="teacherTitle"/>
                         </div>
                     </div>
@@ -420,6 +422,7 @@
 <script>
     var aaa;
     $(document).ready(function () {
+
         if('${type}'=='show'){
             $("input").attr('readonly',true);
             $("select").attr("disabled","disabled");

@@ -41,4 +41,8 @@ public interface LoginUserService {
     String getTheme(LoginUser user, String system);
 
     void updateTheme(LoginUser user, String system);
+
+    String selectPersonIdByTel(String username);
+
+    String selectPasswordByPersonId(String personId);
 }

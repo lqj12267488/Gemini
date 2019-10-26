@@ -41,8 +41,9 @@
 
     <delete id="delStuArcadByArcadId" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
           update T_XG_STU_ARCHIVESADDR t set t.valid_flag = '0',changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
-          where t.arcad_id=#{arcadId}
+          where t.arcad_id=#{arcadId} and t.STUDENT_ID = #{studentId}
     </delete>
+
 
     <update id="updStuArcadById" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
         update T_XG_STU_ARCHIVESADDR t set t.arcad_id=#{arcadId},changer=#{changer},change_time=sysdate,change_dept=#{changeDept}

@@ -36,8 +36,10 @@ public class LoginUserRealm extends AuthorizingRealm {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         //从 UsernamePasswordToken 中来获取 username
         String username = upToken.getUsername();
+        //查询用户personId
+       String personId =  loginUserService.selectPersonIdByTel(username);
         //调用数据库的方法, 从数据库中查询 username 对应的用户记录
-        LoginUser user = loginUserService.getLoginUserByLoginId(username);
+        LoginUser user = loginUserService.getLoginUserByLoginId(personId);
         if ("sa".equals(username)) {
             Set<String> roles = new HashSet<>();
             roles.add("SYS");
@@ -62,7 +64,7 @@ public class LoginUserRealm extends AuthorizingRealm {
         if (loginUser != null) {
             user = loginUser;
         }
-
+        user.setName(username);
         SimpleAuthenticationInfo info;
         if (upToken.getPassword() == null) {
             upToken.setPassword("123456".toCharArray());

@@ -8,7 +8,7 @@
             resultType="com.goisan.system.bean.LoginUser">
         SELECT user_account,user_id person_id ,password,question,answer, user_type,default_dept
          default_dept_id ,valid_flag,user_level as "level"
-        FROM t_sys_user WHERE user_account = #{id} AND valid_flag = '1'
+        FROM t_sys_user WHERE user_id = #{id} AND valid_flag = '1'
     </select>
 
     <select id="getLoginUserById" parameterType="String"
@@ -257,5 +257,11 @@
     <delete id="recoveryLoginUser" parameterType="java.lang.String">
         UPDATE t_sys_user SET valid_flag = '1' WHERE user_id = #{personId}
     </delete>
+    <select id="selectPersonIdByTel" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.person_id from T_RS_EMPLOYEE t where t.tel = #{username}
+    </select>
+    <select id="selectPasswordByPersonId" resultType="java.lang.String" parameterType="java.lang.String">
+
+    </select>
 
 </mapper>

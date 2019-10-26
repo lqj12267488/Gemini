@@ -19,4 +19,6 @@ public interface StuArcadDao {
 
     List<StuArcad>  getStuArcadByClass(StuArcad stuArcad);
     void updStuArcadById(StuArcad stuArcad);
+
+    void delStuArcadByArcadId1(StuArcad stuArcad);
 }

@@ -177,7 +177,7 @@
                             <span class="icon-user"></span>个人基本信息管理
                         </a>
                         <a href="#" class="list-group-item" onclick="chengeLoginPwd()">
-                            <span class="icon-key"></span>登录名密码管理
+                            <span class="icon-key"></span>登录密码修改
                         </a>
                         <a href="#" class="list-group-item" onclick="changeDept()"
                            id="loginDeptList">

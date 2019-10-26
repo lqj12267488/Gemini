@@ -26,7 +26,7 @@
                     </div>
                     <div class="col-md-4" id="oldPwdCheck"></div>
                 </div>
-                <div class="form-row">
+<%--                <div class="form-row">
                     <div class="col-md-3 tar">
                         登录账户修改
                     </div>
@@ -34,7 +34,7 @@
                         <input id="username" type="text"/>
                     </div>
                     <div class="col-md-4" id="usernameCheck"></div>
-                </div>
+                </div>--%>
                 <div class="form-row">
                     <div class="col-md-3 tar">
                         请输入新密码

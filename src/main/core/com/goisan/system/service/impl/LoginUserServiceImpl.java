@@ -84,6 +84,16 @@ public class LoginUserServiceImpl implements LoginUserService {
     }
 
     @Override
+    public String selectPersonIdByTel(String username) {
+        return loginUserDao.selectPersonIdByTel(username);
+    }
+
+    @Override
+    public String selectPasswordByPersonId(String personId) {
+        return loginUserDao.selectPasswordByPersonId(personId);
+    }
+
+    @Override
     public String getTheme(LoginUser user, String system) {
         return loginUserDao.getTheme(user, system);
     }

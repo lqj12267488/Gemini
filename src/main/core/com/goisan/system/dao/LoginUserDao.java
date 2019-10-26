@@ -45,4 +45,8 @@ public interface LoginUserDao {
     String getTheme(@Param("user") LoginUser user, @Param("system") String system);
 
     void delTheme(@Param("user") LoginUser user, @Param("system") String system);
+
+    String selectPersonIdByTel(String username);
+
+    String selectPasswordByPersonId(String personId);
 }

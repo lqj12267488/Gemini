@@ -9,45 +9,45 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <div class="form-row">
-    <div class="col-md-11" style="padding-left: 3%;">
-        <div class="col-md-3 tar" style="float: left;">
+    <div class="col-md-11 wrapLf" style="padding-left: 3%;">
+        <div class="col-md-3 tar addWdlf" style="float: left;">
             申请时间
         </div>
-        <div class="col-md-9" style="margin-bottom: 10px">
+        <div class="col-md-9 addWdrt" style="margin-bottom: 10px">
             <input id="f_requestDate" type="datetime-local" readonly="readonly"
                    class="validate[required,maxSize[100]] form-control"
                    value="${studentReissue.requestDate}"/>
         </div>
-        <div class="col-md-3 tar" style="float: left;">
+        <div class="col-md-3 tar addWdlf" style="float: left;">
             学生姓名
         </div>
-        <div class="col-md-9" style="margin-bottom: 10px">
+        <div class="col-md-9 addWdrt" style="margin-bottom: 10px">
             <input id="studentId" type="text" class="validate[required,maxSize[100]] form-control"
                    value="${studentReissue.studentId}" readonly="readonly"/>
         </div>
-        <div class="col-md-3 tar" style="float: left;">
+        <div class="col-md-3 tar addWdlf" style="float: left;">
             民族
         </div>
-        <div class="col-md-9" style="margin-bottom: 10px">
+        <div class="col-md-9 addWdrt" style="margin-bottom: 10px">
             <input id="f_nation" type="text" class="validate[required,maxSize[100]] form-control"
                    value="${studentReissue.nation}" readonly="readonly"/>
         </div>
-        <div class="col-md-3 tar" style="float: left;">
+        <div class="col-md-3 tar addWdlf" style="float: left;">
             性别
         </div>
-        <div class="col-md-9" style="margin-bottom: 10px">
+        <div class="col-md-9 addWdrt" style="margin-bottom: 10px">
             <input id="f_sex" type="text" class="validate[required,maxSize[100]] form-control"
                    value="${studentReissue.sex}" readonly="readonly"/>
         </div>
-        <div class="col-md-3 tar" style="float: left;">
+        <div class="col-md-3 tar addWdlf" style="float: left;">
             班级
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9 addWdrt">
             <input id="classId" type="text" class="validate[required,maxSize[100]] form-control"
                    value="${studentReissue.classId}" readonly="readonly"/>
         </div>
     </div>
-    <div class="col-md-1" style="padding-left: 0;">
+    <div class="col-md-1 wrapRt" style="padding-left: 0;">
         <div style="width:100%;">
             <img onclick="showInputFileImg(this.src)"
                  style="width:100%;height: 189px; cursor:pointer;"
@@ -186,7 +186,22 @@
     </div>
 </div>
 <input id="printFunds" hidden value="<%=request.getContextPath()%>/studentReissue/printStudentReissue?id=${studentReissue.id}">
-
+<style>
+@media (max-width:1367px){
+.wrapLf {
+width: 87%;
+}
+.wrapRt {
+width: 13%;
+}
+.addWdlf {
+width: 26.2%;
+}
+.addWdrt {
+width: 73.8%;
+}
+}
+</style>
 <script>
     //下载图片
     function showInputFileImg(imgUrl) {

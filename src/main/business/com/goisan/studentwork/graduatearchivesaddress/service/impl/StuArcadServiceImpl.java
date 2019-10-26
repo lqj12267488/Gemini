@@ -33,6 +33,7 @@ public class StuArcadServiceImpl implements StuArcadService {
     @Override
     @Transactional
     public Message insertStuArcad(StuArcad stuArcad) {
+
         String studentIds = stuArcad.getStudentIds();
         String[] stuArray = studentIds.split(",");
 
@@ -56,6 +57,7 @@ public class StuArcadServiceImpl implements StuArcadService {
         }
         for (String studentId: stuArray){
             stuArcad.setStudentId(studentId);
+            stuArcadDao.delStuArcadByArcadId(stuArcad);
             stuArcad.setArcadId(arcad.getArcadId());
             stuArcad.setCreator(CommonUtil.getPersonId());
             stuArcad.setCreateDept(CommonUtil.getDefaultDept());
@@ -75,9 +77,8 @@ public class StuArcadServiceImpl implements StuArcadService {
 
         stuArcad.setChanger(CommonUtil.getPersonId());
         stuArcad.setChangeDept(CommonUtil.getDefaultDept());
-        stuArcadDao.delStuArcadByArcadId(stuArcad);
-        this.insertStuArcad(stuArcad);
-        return new Message(0,"更改成功",null);
+
+        return this.insertStuArcad(stuArcad);
     }
 
     @Override

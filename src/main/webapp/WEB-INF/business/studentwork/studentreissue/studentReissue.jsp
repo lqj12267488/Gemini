@@ -218,11 +218,11 @@
                 {"width": "7%", "data": "studentNumber", "title": "学号"},
                 {"width": "7%", "data": "idcard", "title": "身份证号"},
                 {"width": "7%", "data": "rideZone", "title": "乘车区间"},
-                {"width": "7%", "data": "familyAddress", "title": "家庭地址"},
+                {"width": "7%", "data": "familyAddress", "title": "家庭地址", "visible": false},
                 {"width": "7%", "data": "phone", "title": "电话"},
-                {"width": "7%", "data": "nativePlace", "title": "籍贯"},
+                {"width": "7%", "data": "nativePlace", "title": "籍贯", "visible": false},
                 {"width": "7%", "data": "requestProject", "title": "申请项目"},
-                {"width": "7%", "data": "requestReason", "title": "申请理由"},
+                {"width": "7%", "data": "requestReason", "title": "申请理由", "visible": false},
                 {
                     "width": "6%", "title": "操作", "render": function () {
                         return "<a id='editstudentReissue' class='icon-edit' title='修改'></a>&nbsp;&nbsp;&nbsp;" +
