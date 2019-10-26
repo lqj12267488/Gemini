@@ -3326,7 +3326,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(4).setCellValue(list.get(i).getMajorName());
                 row.getCell(5).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(6).setCellValue(list.get(i).getMajorDirectionShow());
-
+                row.getCell(7).setCellValue(list.get(i).getCenterprisenum());
                 row.getCell(8).setCellValue(list.get(i).getOrdersStudentNum());
 
                 row.getCell(9).setCellValue(list.get(i).getDEVELOPMENTCOURSENUM());
@@ -3338,10 +3338,16 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(15).setCellValue(list.get(i).getEMPLOYMENTNUMBER());
                 row.getCell(16).setCellValue(list.get(i).getANNUALINCOME());
                 row.getCell(17).setCellValue(list.get(i).getEMPLOYEESNUM());
+
+                row.getCell(18).setCellValue(list.get(i).getBusiness1name());
                 row.getCell(19).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS1STARTTIME()));
+                row.getCell(20).setCellValue(list.get(i).getBusiness2name());
                 row.getCell(21).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS2STARTTIME()));
+                row.getCell(22).setCellValue(list.get(i).getBusiness3name());
                 row.getCell(23).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS3STARTTIME()));
+                row.getCell(24).setCellValue(list.get(i).getBusiness4name());
                 row.getCell(25).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS4STARTTIME()));
+                row.getCell(26).setCellValue(list.get(i).getBusiness5name());
                 row.getCell(27).setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(list.get(i).getBUSINESS5STARTTIME()));
 
                 row.getCell(28).setCellValue(list.get(i).getAPPRENTICESHIP());

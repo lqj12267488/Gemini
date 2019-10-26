@@ -5,27 +5,42 @@
     <select id="getCooperateList"
             parameterType="com.goisan.table.bean.Cooperate"
             resultType="com.goisan.table.bean.Cooperate">
-        select id,MAJORNAME,developmentcoursenum,
-        developmentteachingnum,parttimeteachernum,
-        traineenum,equipmentmoney,
-        quasidonationmoney,employmentnumber,
-        annualincome,employeesnum,business1starttime,
-        business2starttime,business3starttime,business4starttime,
-	        business5starttime,apprenticeship,centerprisenum,culturenum 
-			from T_TAB_COOPERATE where 1=1
+        select id,MAJORNAME,developmentcoursenum,developmentteachingnum,parttimeteachernum,
+        traineenum,equipmentmoney,quasidonationmoney,employmentnumber,annualincome,employeesnum,
+        business1starttime,business2starttime,business3starttime,business4starttime,business5starttime,
+        apprenticeship,centerprisenum,culturenum,business1name,business2name,business3name,business4name,
+        business5name from T_TAB_COOPERATE where 1=1
         <if test="groupNameSel!=null and groupNameSel!=''">
             and MAJORNAME like #{groupNameSel}
         </if>
     </select>
     <insert id="saveCooperate" parameterType="com.goisan.table.bean.Cooperate">
-        insert into t_tab_cooperate (id,MAJORNAME,developmentcoursenum,developmentteachingnum,parttimeteachernum,traineenum,equipmentmoney,quasidonationmoney,employmentnumber,annualincome,employeesnum,business1starttime,business2starttime,business3starttime,business4starttime,business5starttime,apprenticeship,centerprisenum,culturenum) values (func_get_uuid ,#{MAJORNAME},#{developmentcoursenum},#{developmentteachingnum},#{parttimeteachernum},#{traineenum},#{equipmentmoney},#{quasidonationmoney},#{employmentnumber},#{annualincome},#{employeesnum},#{business1starttime},#{business2starttime},#{business3starttime},#{business4starttime},#{business5starttime},#{apprenticeship},#{centerprisenum},#{culturenum})
+        insert into t_tab_cooperate
+        (id,MAJORNAME,developmentcoursenum,developmentteachingnum,parttimeteachernum,
+        traineenum,equipmentmoney,quasidonationmoney,employmentnumber,annualincome,employeesnum,
+        business1starttime,business2starttime,business3starttime,business4starttime,business5starttime,
+        apprenticeship,centerprisenum,culturenum,business1name,business2name,business3name,business4name,business5name)
+        values (func_get_uuid ,#{MAJORNAME},#{developmentcoursenum},#{developmentteachingnum},#{parttimeteachernum},
+        #{traineenum},#{equipmentmoney},#{quasidonationmoney},#{employmentnumber},#{annualincome},#{employeesnum},
+        #{business1starttime},#{business2starttime},#{business3starttime},#{business4starttime},#{business5starttime},
+        #{apprenticeship},#{centerprisenum},#{culturenum},#{business1name},#{business2name},#{business3name},
+        #{business4name},#{business5name})
     </insert>
     <select id="getCooperateById" parameterType="java.lang.String"
             resultType="com.goisan.table.bean.Cooperate">
         select * from T_TAB_COOPERATE where id = #{id}
     </select>
     <update id="updateCooperate" parameterType="com.goisan.table.bean.Cooperate">
-        update t_tab_cooperate set MAJORNAME = #{MAJORNAME}, developmentcoursenum=#{developmentcoursenum},developmentteachingnum=#{developmentteachingnum},parttimeteachernum=#{parttimeteachernum},traineenum=#{traineenum},equipmentmoney=#{equipmentmoney},quasidonationmoney=#{quasidonationmoney},employmentnumber=#{employmentnumber},annualincome=#{annualincome},employeesnum=#{employeesnum},business1starttime=#{business1starttime},business2starttime=#{business2starttime},business3starttime=#{business3starttime},business4starttime=#{business4starttime},business5starttime=#{business5starttime},apprenticeship=#{apprenticeship},centerprisenum=#{centerprisenum},culturenum=#{culturenum} where id = #{id}
+        update t_tab_cooperate
+        set MAJORNAME = #{MAJORNAME}, developmentcoursenum=#{developmentcoursenum},
+        developmentteachingnum=#{developmentteachingnum},parttimeteachernum=#{parttimeteachernum},
+        traineenum=#{traineenum},equipmentmoney=#{equipmentmoney},quasidonationmoney=#{quasidonationmoney},
+        employmentnumber=#{employmentnumber},annualincome=#{annualincome},employeesnum=#{employeesnum},
+        business1starttime=#{business1starttime},business2starttime=#{business2starttime},business3starttime=#{business3starttime},
+        business4starttime=#{business4starttime},business5starttime=#{business5starttime},apprenticeship=#{apprenticeship},
+        centerprisenum=#{centerprisenum},culturenum=#{culturenum},business1name=#{business1name},business2name=#{business2name},
+        business3name=#{business3name},business4name=#{business4name},business5name=#{business5name}
+         where id = #{id}
     </update>
     <delete id="delCooperate" parameterType="java.lang.String">
         delete from T_TAB_COOPERATE where id = #{id}
