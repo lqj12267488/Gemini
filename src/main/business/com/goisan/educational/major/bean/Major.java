@@ -62,6 +62,15 @@ public class Major extends BaseBean {
     private String postsTime;//实习时间
     private String normalMajor;//是否师范专业
     private String normalMajorShow;
+    private String studentsNum;//新生总人数
+
+    public String getStudentsNum() {
+        return studentsNum;
+    }
+
+    public void setStudentsNum(String studentsNum) {
+        this.studentsNum = studentsNum;
+    }
 
     public String getNormalMajor() {
         return normalMajor;

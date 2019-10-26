@@ -115,7 +115,7 @@
 
     <select id="getMajorListExport" parameterType="com.goisan.educational.major.bean.Major"
             resultType="com.goisan.educational.major.bean.Major">
-        select t.major_id majorId,
+        select  t.major_id majorId,
         t.major_name majorName,
         t.major_code majorCode,
         t.MAJOR_SCHOOL majorSchool,
@@ -154,10 +154,14 @@
         remark,
         FILE_URL,
         PROFESSION_CHARACT,
-        t.create_time createTime
+        t.create_time createTime,g.studentsNum
         from t_xg_major t
-        WHERE 1 = 1
-        and t.valid_flag = '1'
+        left join (select major_code, count(s.student_id) studentsNum from t_xg_student s
+        inner join T_XG_STUDENT_CLASS sc on s.student_id=sc.student_id
+        inner join T_XG_CLASS c on c.class_id=sc.class_id
+        where s.year=to_char(sysdate, 'yyyy')
+        group by c.major_code) g on t.major_code=g.major_code
+        where 1=1 and t.valid_flag = '1'
         <if test="departmentsId != null and departmentsId != '' and departmentsId != 'null'">
             AND departments_id = #{departmentsId}
         </if>

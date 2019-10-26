@@ -2390,7 +2390,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(7).setCellValue(getMajorListExport.get(i).getApprovalTime());
                 row.getCell(8).setCellValue(getMajorListExport.get(i).getFirstRecruitTime());
                 row.getCell(9).setCellValue(getMajorListExport.get(i).getMaxYearShow());
-                row.getCell(10).setCellValue("");
+                row.getCell(10).setCellValue(getMajorListExport.get(i).getStudentsNum());
                 if (major2 != null) {
                     row.getCell(11).setCellValue(major2.getSourceNumberOne());
                     row.getCell(12).setCellValue(major2.getSourceNumberTwo());
