@@ -41,6 +41,13 @@ public class Cooperate extends BaseBean {
     /**学校为企业年培训员工数（人天28）*/
     private String employeesnum;
 
+    /*企业名称*/
+    private String business1name;
+    private String business2name;
+    private String business3name;
+    private String business4name;
+    private String business5name;
+
     /**企业1合作开始日期（年月）*/
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @JsonFormat(pattern="yyyy-MM-dd",timezone = "GMT+8")
@@ -85,6 +92,46 @@ public class Cooperate extends BaseBean {
 
 //    订单培养总数（人）
     private String culturenum;
+
+    public String getBusiness1name() {
+        return business1name;
+    }
+
+    public void setBusiness1name(String business1name) {
+        this.business1name = business1name;
+    }
+
+    public String getBusiness2name() {
+        return business2name;
+    }
+
+    public void setBusiness2name(String business2name) {
+        this.business2name = business2name;
+    }
+
+    public String getBusiness3name() {
+        return business3name;
+    }
+
+    public void setBusiness3name(String business3name) {
+        this.business3name = business3name;
+    }
+
+    public String getBusiness4name() {
+        return business4name;
+    }
+
+    public void setBusiness4name(String business4name) {
+        this.business4name = business4name;
+    }
+
+    public String getBusiness5name() {
+        return business5name;
+    }
+
+    public void setBusiness5name(String business5name) {
+        this.business5name = business5name;
+    }
 
     public String getCenterprisenum() {
         return centerprisenum;
