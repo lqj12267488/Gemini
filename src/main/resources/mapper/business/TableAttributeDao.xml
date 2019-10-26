@@ -701,24 +701,36 @@
 
     <!--modify by hanjie start-->
     <select id="expertExcel_A6_1_2_1" resultType="com.goisan.tabular.bean.export.Export">
-        select FUNC_GET_DEPTNAME(k.DEPARTMENT)                                             departmentName,
-               FUNC_GET_DICVALUE(semester, 'XQ')                                           semester,
+        select s.*, d.real_time realTime
+  from (select FUNC_GET_DEPTNAME(k.DEPARTMENT) departmentName,
+               FUNC_GET_DICVALUE(semester, 'XQ') semester,
                STAFF_ID,
-               e.name                                                                      teacherName,
-               c.YEAR || '级' as                                                            schoolYear,
+               e.name teacherName,
+               c.YEAR || '级' as schoolYear,
                c.MAJOR_CODE,
-               FUNC_GET_TABLEVALUE(c.MAJOR_CODE, 't_xg_major', 'major_code', 'major_name') majorName,
+               FUNC_GET_TABLEVALUE(c.MAJOR_CODE,
+                                   't_xg_major',
+                                   'major_code',
+                                   'major_name') majorName,
                c.MAJOR_DIRECTION,
-               FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX')                              majorDirectionShow,
-               FUNC_GET_DICVALUE(r.COURSE_TYPE, 'KCLX')                                    COURSE_TYPE,
-               r.COURSE_NAME
-        from T_JW_TEACHINGTASK k,
-             t_rs_employee e,
-             T_XG_CLASS c,
-             T_JW_COURSE r
-        where k.teacher_id = e.person_id
-          and c.class_id = k.class_info
-          and k.course_id = r.course_id
+               FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX') majorDirectionShow,
+                 SUBSTR (FUNC_GET_DICVALUE(r.COURSE_TYPE, 'KCJSLX') ,1,2) courseType,
+               FUNC_GET_DICVALUE(r.COURSE_PROPERTIES, 'KCJSSX') courseProperties,
+
+               r.COURSE_NAME,
+               r.course_code courseCode,
+
+               k.teacher_id teacher_id,
+               FUNC_GET_DICVALUE(k.teacher_task,'SKRW') teacherTask
+          from T_JW_TEACHINGTASK k,
+               t_rs_employee     e,
+               T_XG_CLASS        c,
+               T_JW_COURSE       r
+         where k.teacher_id = e.person_id
+           and c.class_id = k.class_info
+           and k.course_id = r.course_id) s
+  left join T_JW_FACULTY_LOAD d
+    on s.teacher_id = d.teacher_id
     </select>
 
     <select id="expertExcel_A6_1_3" resultType="com.goisan.tabular.bean.export.Export">
@@ -792,7 +804,8 @@
     </select>
 
     <select id="expertExcel_A6_2_2_1" resultType="com.goisan.tabular.bean.export.Export">
-        select FUNC_GET_DEPTNAME(k.DEPARTMENT)                                             departmentName,
+              select s.*, d.real_time realTime
+  from (select FUNC_GET_DEPTNAME(k.DEPARTMENT)                                             departmentName,
                FUNC_GET_DICVALUE(semester, 'XQ')                                           semester,
                TEACHER_NUM                                                                 staffId,
                FUNC_GET_USERNAME(e.NAME)                                                   teacherName,
@@ -800,9 +813,12 @@
                c.MAJOR_CODE,
                FUNC_GET_TABLEVALUE(c.MAJOR_CODE, 't_xg_major', 'major_code', 'major_name') majorName,
                c.MAJOR_DIRECTION,
-               FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX')                              majorDirectionShow,
-               FUNC_GET_DICVALUE(r.COURSE_TYPE, 'KCLX')                                    COURSE_TYPE,
-               r.COURSE_NAME
+               FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX')               majorDirectionShow,
+                 SUBSTR (FUNC_GET_DICVALUE(r.COURSE_TYPE, 'KCJSLX') ,1,2) courseType,
+               r.COURSE_NAME,
+               r.course_code courseCode,
+                FUNC_GET_DICVALUE(r.course_properties, 'KCJSSX')   courseProperties,
+               FUNC_GET_DICVALUE(k.teacher_task,'SKRW') teacherTask, k.teacher_id teacher_id
         from T_JW_TEACHINGTASK k,
              T_JW_TEACHER_CONDITION e,
              T_XG_CLASS c,
@@ -810,7 +826,9 @@
         where k.teacher_id = e.name
           and c.class_id = k.class_info
           and k.course_id = r.course_id
-          and e.TEACHER_CATEGORY = 4
+          and e.TEACHER_CATEGORY = 4) s
+  left join T_JW_FACULTY_LOAD d
+    on s.teacher_id = d.teacher_id
     </select>
 
     <select id="expertExcel_A6_2_3" resultType="com.goisan.tabular.bean.export.Export">
@@ -896,7 +914,8 @@
     </select>
 
     <select id="expertExcel_A6_3_2_1" resultType="com.goisan.tabular.bean.export.Export">
-        select FUNC_GET_DEPTNAME(k.DEPARTMENT)                                             departmentName,
+         select s.*, d.real_time realTime
+  from (select FUNC_GET_DEPTNAME(k.DEPARTMENT)                                             departmentName,
                FUNC_GET_DICVALUE(semester, 'XQ')                                           semester,
                TEACHER_NUM                                                                 staffId,
                FUNC_GET_USERNAME(e.NAME)                                                   teacherName,
@@ -905,8 +924,10 @@
                FUNC_GET_TABLEVALUE(c.MAJOR_CODE, 't_xg_major', 'major_code', 'major_name') majorName,
                c.MAJOR_DIRECTION,
                FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX')                              majorDirectionShow,
-               FUNC_GET_DICVALUE(r.COURSE_TYPE, 'KCLX')                                    COURSE_TYPE,
-               r.COURSE_NAME
+                 SUBSTR (FUNC_GET_DICVALUE(r.COURSE_TYPE, 'KCJSLX') ,1,2) courseType,
+               r.COURSE_NAME,r.course_code courseCode,
+                FUNC_GET_DICVALUE(r.course_properties, 'KCJSSX')   courseProperties,
+                FUNC_GET_DICVALUE(k.teacher_task,'SKRW') teacherTask, k.teacher_id teacher_id
         from T_JW_TEACHINGTASK k,
              T_JW_TEACHER_CONDITION e,
              T_XG_CLASS c,
@@ -914,7 +935,9 @@
         where k.teacher_id = e.name
           and c.class_id = k.class_info
           and k.course_id = r.course_id
-          and e.TEACHER_CATEGORY = 3
+          and e.TEACHER_CATEGORY = 3) s
+  left join T_JW_FACULTY_LOAD d
+    on s.teacher_id = d.teacher_id
     </select>
 
     <select id="expertExcel_A6_4_1" resultType="com.goisan.tabular.bean.export.Export">
@@ -961,7 +984,8 @@
     </select>
 
     <select id="expertExcel_A6_4_2_1" resultType="com.goisan.tabular.bean.export.Export">
-        select FUNC_GET_DEPTNAME(k.DEPARTMENT)                                             departmentName,
+          select s.*, d.real_time realTime
+  from (select FUNC_GET_DEPTNAME(k.DEPARTMENT)                                             departmentName,
                FUNC_GET_DICVALUE(semester, 'XQ')                                           semester,
                TEACHER_NUM                                                                 staffId,
                FUNC_GET_USERNAME(e.NAME)                                                   teacherName,
@@ -970,8 +994,10 @@
                FUNC_GET_TABLEVALUE(c.MAJOR_CODE, 't_xg_major', 'major_code', 'major_name') majorName,
                c.MAJOR_DIRECTION,
                FUNC_GET_DICVALUE(c.MAJOR_DIRECTION, 'ZXZYFX')                              majorDirectionShow,
-               FUNC_GET_DICVALUE(r.COURSE_TYPE, 'KCLX')                                    COURSE_TYPE,
-               r.COURSE_NAME
+                SUBSTR (FUNC_GET_DICVALUE(r.COURSE_TYPE, 'KCJSLX') ,1,2) courseType,
+               r.COURSE_NAME, r.course_code courseCode,
+                FUNC_GET_DICVALUE(r.course_properties, 'KCJSSX')   courseProperties,
+                FUNC_GET_DICVALUE(k.teacher_task,'SKRW') teacherTask, k.teacher_id teacher_id
         from T_JW_TEACHINGTASK k,
              T_JW_TEACHER_CONDITION e,
              T_XG_CLASS c,
@@ -979,7 +1005,9 @@
         where k.teacher_id = e.name
           and c.class_id = k.class_info
           and k.course_id = r.course_id
-          and e.TEACHER_CATEGORY = 2
+          and e.TEACHER_CATEGORY = 2) s
+  left join T_JW_FACULTY_LOAD d
+    on s.teacher_id = d.teacher_id
     </select>
 
 

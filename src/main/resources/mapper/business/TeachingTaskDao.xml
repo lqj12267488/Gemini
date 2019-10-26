@@ -125,7 +125,7 @@
                 AND teacher_id = #{teacherId}
             </if>
             <if test="courseId!=null and courseId!=''">
-                AND course_id = #{courseId}
+                AND course_id = #{courseId}h
             </if>
             <if test="semester!=null and semester!=''">
                 AND semester = #{semester}

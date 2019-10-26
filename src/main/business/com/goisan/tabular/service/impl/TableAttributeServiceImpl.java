@@ -2540,9 +2540,13 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(6).setCellValue(list.get(i).getMajorName());
                 row.getCell(7).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(8).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(9).setCellValue(list.get(i).getCourseCode());
                 row.getCell(10).setCellValue(list.get(i).getCourseName());
-                row.getCell(12).setCellValue(list.get(i).getCourseType());
+                row.getCell(11).setCellValue(list.get(i).getCourseType());
+                row.getCell(12).setCellValue(list.get(i).getCourseProperties());
+                row.getCell(13).setCellValue(list.get(i).getTeacherTask());
                 row.getCell(17).setCellValue(list.get(i).getSemester());
+                row.getCell(18).setCellValue(list.get(i).getRealTime());
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));
@@ -2724,9 +2728,14 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(6).setCellValue(list.get(i).getMajorName());
                 row.getCell(7).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(8).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(9).setCellValue(list.get(i).getCourseCode());
                 row.getCell(10).setCellValue(list.get(i).getCourseName());
-                row.getCell(12).setCellValue(list.get(i).getCourseType());
+                row.getCell(11).setCellValue(list.get(i).getCourseType());
+                row.getCell(12).setCellValue(list.get(i).getCourseProperties());
+                row.getCell(13).setCellValue(list.get(i).getTeacherTask());
                 row.getCell(17).setCellValue(list.get(i).getSemester());
+                row.getCell(18).setCellValue(list.get(i).getRealTime());
+
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));
@@ -2916,9 +2925,14 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(6).setCellValue(list.get(i).getMajorName());
                 row.getCell(7).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(8).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(9).setCellValue(list.get(i).getCourseCode());
                 row.getCell(10).setCellValue(list.get(i).getCourseName());
-                row.getCell(12).setCellValue(list.get(i).getCourseType());
+                row.getCell(11).setCellValue(list.get(i).getCourseType());
+                row.getCell(12).setCellValue(list.get(i).getCourseProperties());
+                row.getCell(13).setCellValue(list.get(i).getTeacherTask());
                 row.getCell(17).setCellValue(list.get(i).getSemester());
+                row.getCell(18).setCellValue(list.get(i).getRealTime());
+
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));
@@ -3045,9 +3059,14 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(6).setCellValue(list.get(i).getMajorName());
                 row.getCell(7).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(8).setCellValue(list.get(i).getMajorDirectionShow());
+                row.getCell(9).setCellValue(list.get(i).getCourseCode());
                 row.getCell(10).setCellValue(list.get(i).getCourseName());
-                row.getCell(12).setCellValue(list.get(i).getCourseType());
+                row.getCell(11).setCellValue(list.get(i).getCourseType());
+                row.getCell(12).setCellValue(list.get(i).getCourseProperties());
+
+                row.getCell(13).setCellValue(list.get(i).getTeacherTask());
                 row.getCell(17).setCellValue(list.get(i).getSemester());
+                row.getCell(18).setCellValue(list.get(i).getRealTime());
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
                     "utf-8"));

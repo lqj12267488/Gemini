@@ -1045,6 +1045,42 @@ public class Export {
     public void setWillGrade(String willGrade) {
         this.willGrade = willGrade;
     }
+    private String realTime;//实际课时
+    private String courseCode;//课程代码
+    private String teacherTask;
+    private String courseProperties;//课程类型
+
+    public String getCourseProperties() {
+        return courseProperties;
+    }
+
+    public void setCourseProperties(String courseProperties) {
+        this.courseProperties = courseProperties;
+    }
+
+    public String getRealTime() {
+        return realTime;
+    }
+
+    public void setRealTime(String realTime) {
+        this.realTime = realTime;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
+    }
+
+    public String getTeacherTask() {
+        return teacherTask;
+    }
+
+    public void setTeacherTask(String teacherTask) {
+        this.teacherTask = teacherTask;
+    }
 
     public String getDEVELOPMENTCOURSENUM() {
         return DEVELOPMENTCOURSENUM;

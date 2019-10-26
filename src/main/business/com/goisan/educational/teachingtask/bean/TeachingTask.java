@@ -56,6 +56,16 @@ public class TeachingTask extends BaseBean {
     private String idCard;
 
     private String staffId;
+    
+    private String teacherTask;//授课任务
+
+    public String getTeacherTask() {
+        return teacherTask;
+    }
+
+    public void setTeacherTask(String teacherTask) {
+        this.teacherTask = teacherTask;
+    }
 
     public String getExamMethod() {
         return examMethod;
