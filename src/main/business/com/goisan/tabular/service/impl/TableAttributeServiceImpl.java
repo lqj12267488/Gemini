@@ -2620,7 +2620,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(29).setCellValue(list.get(i).getMONEY());
                 row.getCell(30).setCellValue(list.get(i).getCOMPLETORORDER());
                 row.getCell(31).setCellValue(list.get(i).getTitlethesis());
-                row.getCell(32).setCellValue(list.get(i).getCOMPLETORORDER());
+                row.getCell(32).setCellValue(list.get(i).getCLASSIFICATION());
                 row.getCell(33).setCellValue(list.get(i).getPress());
                 row.getCell(34).setCellValue(list.get(i).getPresstime());
                 row.getCell(35).setCellValue(list.get(i).getAUTHORORDER());
@@ -2822,7 +2822,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(29).setCellValue(list.get(i).getMONEY());
                 row.getCell(30).setCellValue(list.get(i).getCOMPLETORORDER());
                 row.getCell(31).setCellValue(list.get(i).getTitlethesis());
-                row.getCell(32).setCellValue(list.get(i).getCOMPLETORORDER());
+                row.getCell(32).setCellValue(list.get(i).getCLASSIFICATION());
                 row.getCell(33).setCellValue(list.get(i).getPress());
                 row.getCell(34).setCellValue(list.get(i).getPresstime());
                 row.getCell(35).setCellValue(list.get(i).getAUTHORORDER());
