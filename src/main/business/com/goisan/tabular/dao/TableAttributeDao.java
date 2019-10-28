@@ -210,9 +210,23 @@ public interface TableAttributeDao {
      */
 
 
+    List<Map> expertExcel_GJ_422(@Param("category") String category, @Param("category2") String category2, @Param("sex") String sex);//高基422
+    List<Map> expertExcel_GJ_422_zc(@Param("category") String category, @Param("category2") String category2);//高基422 职称分组
+
+
+    List<Map> expertExcel_GJ_423(@Param("sex") String sex, @Param("degee") String degee);//高基423 专任教师年龄
+    List<Map> expertExcel_GJ_423_xl();//高基423 根据学历专任教师年龄
+    List<Map> expertExcel_GJ_423_zc_xw(@Param("code") String code);//高基423 根据职称、学位专任教师年龄
+
+    List<Map> expertExcel_GJ_461_jzg(@Param("sex") String sex);//高基461 教职工
+    List<Map> expertExcel_GJ_zrjs(@Param("sex") String sex);//高基 专任教师
+
+    List<Map> expertExcel_GJ_811(@Param("flag") String flag, @Param("graduationFlag") String graduationFlag);//高基811
+
     List<Map> expertExcel_GJ_812(@Param("type") String type);//高基812
     List<Map> expertExcel_GJ_812_zc();//高基812 按职称分组
     List<Map> expertExcel_GJ_812_xl();//高基812 按学历分组
+
 
 
     /**

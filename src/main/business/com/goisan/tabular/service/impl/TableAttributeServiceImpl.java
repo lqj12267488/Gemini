@@ -3730,6 +3730,32 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
             Sheet sheet = wb.getSheetAt(0);
 
+            sheet = wb.getSheet("高基311");
+            this.expertExcel_GJ_311(sheet);
+            sheet = wb.getSheet("高基313");
+            this.expertExcel_GJ_313(sheet);
+            sheet = wb.getSheet("高基321");
+            this.expertExcel_GJ_321(sheet);
+            sheet = wb.getSheet("高基322");
+            this.expertExcel_GJ_322(sheet);
+            sheet = wb.getSheet("高基331");
+            this.expertExcel_GJ_331(sheet);
+            sheet = wb.getSheet("高基332");
+            this.expertExcel_GJ_332(sheet);
+            sheet = wb.getSheet("高基341");
+            this.expertExcel_GJ_341(sheet);
+            sheet = wb.getSheet("高基411");
+            this.expertExcel_GJ_411(sheet);
+            sheet = wb.getSheet("高基421");
+            this.expertExcel_GJ_421(sheet);
+            sheet = wb.getSheet("高基422");
+            this.expertExcel_GJ_422(sheet);
+            sheet = wb.getSheet("高基423");
+            this.expertExcel_GJ_423(sheet);
+            sheet = wb.getSheet("高基424");
+            this.expertExcel_GJ_424(sheet);
+            sheet = wb.getSheet("高基461");
+            this.expertExcel_GJ_461(sheet);
             sheet = wb.getSheet("高基811");
             this.expertExcel_GJ_811(sheet);
             sheet = wb.getSheet("高基812");
@@ -4006,23 +4032,91 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     }
 
     private void expertExcel_GJ_422(Sheet sheet) {
-
+        String[] column = {"TOTAL","TOTAL_BS","TOTAL_SS","BS","BS_BS","BS_SS","SS","SS_BS","SS_SS","BK","BK_BS","BK_SS","ZK","ZK_BS","ZK_SS"};
+        List<Map> list = tableAttributeDao.expertExcel_GJ_422("1", "", "");
+        this.excel_build(sheet, column, null, list.get(0), 7, 3);
+        list = tableAttributeDao.expertExcel_GJ_422("1", "", "2");
+        this.excel_build(sheet, column, null, list.get(0), 8, 3);
+        list = tableAttributeDao.expertExcel_GJ_422_zc("1", "");
+        int index = 8;
+        for (Map m : list) {
+            index++;
+            this.excel_build(sheet, column, null, m, index, 3);
+        }
+        //校外
+        list = tableAttributeDao.expertExcel_GJ_422("2", "3", "");
+        this.excel_build(sheet, column, null, list.get(0), 14, 3);
+        list = tableAttributeDao.expertExcel_GJ_422("2", "3", "2");
+        this.excel_build(sheet, column, null, list.get(0), 15, 3);
+        list = tableAttributeDao.expertExcel_GJ_422("2", "", "");
+        this.excel_build(sheet, column, null, list.get(0), 17, 3);
+        list = tableAttributeDao.expertExcel_GJ_422_zc("2", "3");
+        index = 17;
+        for (Map m : list) {
+            index++;
+            this.excel_build(sheet, column, null, m, index, 3);
+        }
     }
 
     private void expertExcel_GJ_423(Sheet sheet) {
-
+        String[] column = {"TOTAL","AGE1","AGE2","AGE3","AGE4","AGE5","AGE6","AGE7","AGE8","AGE9"};
+        List<Map> list = tableAttributeDao.expertExcel_GJ_423("", "");
+        this.excel_build(sheet, column, null, list.get(0), 5, 4);
+        list = tableAttributeDao.expertExcel_GJ_423("2", "");
+        this.excel_build(sheet, column, null, list.get(0), 6, 4);
+        list = tableAttributeDao.expertExcel_GJ_423("", "3");
+        this.excel_build(sheet, column, null, list.get(0), 7, 4);
+        list = tableAttributeDao.expertExcel_GJ_423("", "2");
+        this.excel_build(sheet, column, null, list.get(0), 8, 4);
+        //职称分组
+        list = tableAttributeDao.expertExcel_GJ_423_zc_xw("ZCJB");
+        int index = 8;
+        for (Map m : list) {
+            index++;
+            this.excel_build(sheet, column, null, m, index, 4);
+        }
+        //学历
+        List<Map> list_xl = tableAttributeDao.expertExcel_GJ_423_xl();
+        this.excel_build(sheet, column, null, list_xl.get(0), 14, 4);
+        this.excel_build(sheet, column, null, list_xl.get(1), 17, 4);
+        this.excel_build(sheet, column, null, list_xl.get(2), 20, 4);
+        this.excel_build(sheet, column, null, list_xl.get(3), 23, 4);
+        //学位
+        List<Map> list_xw = tableAttributeDao.expertExcel_GJ_423_zc_xw("XW");
+        this.excel_build(sheet, column, null, list_xw.get(0), 22, 4);
+        this.excel_build(sheet, column, null, list_xw.get(1), 19, 4);
+        this.excel_build(sheet, column, null, list_xw.get(2), 15, 4);
+        this.excel_build(sheet, column, null, list_xl.get(3), 25, 4);
     }
 
     private void expertExcel_GJ_424(Sheet sheet) {
-
+        String[] column = {"TOTAL","ZG","FG","ZJ","CJ","WDZJ"};
+        List<Map> list = tableAttributeDao.expertExcel_GJ_zrjs("");
+        this.excel_build(sheet, column, null, list.get(0), 5, 3);
+        list = tableAttributeDao.expertExcel_GJ_zrjs("2");
+        this.excel_build(sheet, column, null, list.get(0), 6, 3);
     }
 
     private void expertExcel_GJ_461(Sheet sheet) {
-
+        String[] column = {"GCDY","GQTY","MZDP","HQ","GAT","SSMZ"};
+        List<Map> list = tableAttributeDao.expertExcel_GJ_461_jzg("");
+        this.excel_build(sheet, column, null, list.get(0), 5, 3);
+        list = tableAttributeDao.expertExcel_GJ_461_jzg("2");
+        this.excel_build(sheet, column, null, list.get(0), 6, 3);
+        list = tableAttributeDao.expertExcel_GJ_zrjs("");
+        this.excel_build(sheet, column, null, list.get(0), 7, 3);
+        list = tableAttributeDao.expertExcel_GJ_zrjs("2");
+        this.excel_build(sheet, column, null, list.get(0), 8, 3);
     }
 
     private void expertExcel_GJ_811(Sheet sheet) {
-
+        String[] column = {"TOTAL","HAN","XJ","WWE","HSK","HUI","ZZBK","KEKZ","XB","MAN","MG","DWE","TTE","TJK","ELS","QT"};
+        List<Map> list = tableAttributeDao.expertExcel_GJ_811("", "3");
+        this.excel_build(sheet, column, null, list.get(0), 6, 3);
+        list = tableAttributeDao.expertExcel_GJ_811("1", "");
+        this.excel_build(sheet, column, null, list.get(0), 7, 3);
+        list = tableAttributeDao.expertExcel_GJ_811("", "1");
+        this.excel_build(sheet, column, null, list.get(0), 8, 3);
     }
 
     private void expertExcel_GJ_812(Sheet sheet) {
@@ -4042,7 +4136,6 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             index++;
             this.excel_build(sheet, column, null, m, index, 3);
         }
-
     }
 
     private void excel_build(Sheet sheet, String[] column, int[] column_index, Map map, int row_num, int col_num){

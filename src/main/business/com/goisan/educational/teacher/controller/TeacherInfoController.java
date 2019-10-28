@@ -835,7 +835,7 @@ public class TeacherInfoController {
                 cells6.setCellStyle(cellStyle0);
 
                 Cell cells7 = row.createCell(7);
-                cells7.setCellValue(teacherCondition.getNativePlace());
+                cells7.setCellValue(teacherCondition.getNativePlaceShow());
                 cells7.setCellStyle(cellStyle0);
 
                 Cell cells8 = row.createCell(8);

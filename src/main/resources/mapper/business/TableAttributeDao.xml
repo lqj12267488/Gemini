@@ -1612,5 +1612,202 @@ and p.code = t.semester and t.course_id = c.course_id and e.POSITIONAL_LEVEL ='5
         ) temp order by dic_code desc
     </select>
 
+    <select id="expertExcel_GJ_811" parameterType="java.lang.String" resultType="java.util.Map" >
+        select temp.*, (wwe+hsk+hui+zzbk+kekz+xb+man+mg+dwe+tte+tjk+els+qt) xj from
+        (SELECT count(s.student_id) total,
+        COUNT(CASE WHEN NATION='01' THEN 1 ELSE NULL END) han,
+        COUNT (CASE WHEN NATION='05' THEN 1 ELSE NULL END) wwe,
+        COUNT (CASE WHEN NATION='17' THEN 1 ELSE NULL END) hsk,
+        COUNT (CASE WHEN NATION='03' THEN 1 ELSE NULL END) hui,
+        COUNT (CASE WHEN NATION='43' THEN 1 ELSE NULL END) zzbk,
+        COUNT (CASE WHEN NATION='29' THEN 1 ELSE NULL END) kekz,
+        COUNT (CASE WHEN NATION='38' THEN 1 ELSE NULL END) xb,
+        COUNT (CASE WHEN NATION='11' THEN 1 ELSE NULL END) man,
+        COUNT (CASE WHEN NATION='02' THEN 1 ELSE NULL END) mg,
+        COUNT (CASE WHEN NATION='31' THEN 1 ELSE NULL END) dwe,
+        COUNT (CASE WHEN NATION='50' THEN 1 ELSE NULL END) tte,
+        COUNT (CASE WHEN NATION='41' THEN 1 ELSE NULL END) tjk,
+        COUNT (CASE WHEN NATION='44' THEN 1 ELSE NULL END) els,
+        COUNT (CASE WHEN NATION='57' THEN 1 ELSE NULL END) qt
+        from t_xg_student s
+        <if test="graduationFlag != null and graduationFlag != ''">
+            inner join t_xg_student_class sc on s.student_id=sc.student_id
+            inner join t_xg_class c on sc.class_id=c.class_id and c.graduation_flag=#{graduationFlag}
+        </if>
+        <if test="flag != null and flag != ''">
+            where s.year=to_char(sysdate, 'yyyy')
+        </if>
+        ) temp
+    </select>
+
+    <select id="expertExcel_GJ_461_jzg" parameterType="java.lang.String" resultType="java.util.Map" >
+        SELECT COUNT (CASE WHEN political_status='01' THEN 1 ELSE NULL END) gcdy,
+        COUNT (CASE WHEN political_status='03' THEN 1 ELSE NULL END) gqty,
+        COUNT (CASE WHEN to_number(political_status)>'3' and to_number(political_status)<![CDATA[<]]>12 THEN 1 ELSE NULL END) mzdp,
+        '0' hq,
+        COUNT(CASE WHEN native_place_province in ('810000','820000','710000') THEN 1 ELSE NULL END) gat,
+        COUNT(CASE WHEN NATION!='01' THEN 1 ELSE NULL END) ssmz
+        FROM t_rs_employee t
+        where 1=1
+        <if test="sex != null and sex != ''">
+            and t.sex=#{sex}
+        </if>
+    </select>
+
+    <select id="expertExcel_GJ_zrjs" parameterType="java.lang.String" resultType="java.util.Map" >
+        SELECT COUNT (CASE WHEN politicalstatus='01' THEN 1 ELSE NULL END) gcdy,
+        COUNT (CASE WHEN politicalstatus='03' THEN 1 ELSE NULL END) gqty,
+        COUNT (CASE WHEN to_number(politicalstatus)>'3' and to_number(politicalstatus)<![CDATA[<]]>12 THEN 1 ELSE NULL END) mzdp,
+        '0' hq,
+        COUNT(CASE WHEN nativeplace in ('810000','820000','710000') THEN 1 ELSE NULL END) gat,
+        COUNT(CASE WHEN NATION!='01' THEN 1 ELSE NULL END) ssmz,
+        count(CASE WHEN title='1' THEN 1 ELSE NULL END) zg,
+        count(CASE WHEN title='2' THEN 1 ELSE NULL END) fg,
+        count(CASE WHEN title='3' THEN 1 ELSE NULL END) zj,
+        count(CASE WHEN title='4' THEN 1 ELSE NULL END) cj,
+        count(CASE WHEN title='5' THEN 1 ELSE NULL END) wdzj,
+        count(t.teacher_id) total
+        FROM T_JW_TEACHER_CONDITION t
+        where TEACHER_CATEGORY=1
+        <if test="sex != null and sex != ''">
+            and t.teacher_sex=#{sex}
+        </if>
+    </select>
+
+    <select id="expertExcel_GJ_423" parameterType="java.lang.String" resultType="java.util.Map" >
+        <![CDATA[
+        SELECT count(t.teacher_id) total,
+        COUNT (CASE WHEN age<=29 THEN 1 ELSE NULL END) age1,
+        COUNT (CASE WHEN age>=30 and age<=34 THEN 1 ELSE NULL END) age2,
+        COUNT (CASE WHEN age>=35 and age<=39 THEN 1 ELSE NULL END) age3,
+        COUNT (CASE WHEN age>=40 and age<=44 THEN 1 ELSE NULL END) age4,
+        COUNT (CASE WHEN age>=45 and age<=49 THEN 1 ELSE NULL END) age5,
+        COUNT (CASE WHEN age>=50 and age<=54 THEN 1 ELSE NULL END) age6,
+        COUNT (CASE WHEN age>=55 and age<=59 THEN 1 ELSE NULL END) age7,
+        COUNT (CASE WHEN age>=60 and age<=64 THEN 1 ELSE NULL END) age8,
+        COUNT (CASE WHEN age>=65 THEN 1 ELSE NULL END) age9
+        FROM (select teacher_id, TRUNC(months_between(sysdate, birthday)/12) AS age, title, teacher_sex, final_education, degee from T_JW_TEACHER_CONDITION c where TEACHER_CATEGORY=1) t
+        ]]>
+        <if test="sex != null and sex != ''">
+            where t.teacher_sex=#{sex}
+        </if>
+        <if test="degee != null and degee != ''">
+            where t.degee=#{degee}
+        </if>
+    </select>
+
+    <select id="expertExcel_GJ_423_zc_xw" parameterType="java.lang.String" resultType="java.util.Map" >
+        <![CDATA[
+        SELECT dic_code, count(t.teacher_id) total,
+        COUNT (CASE WHEN age<=29 THEN 1 ELSE NULL END) age1,
+        COUNT (CASE WHEN age>=30 and age<=34 THEN 1 ELSE NULL END) age2,
+        COUNT (CASE WHEN age>=35 and age<=39 THEN 1 ELSE NULL END) age3,
+        COUNT (CASE WHEN age>=40 and age<=44 THEN 1 ELSE NULL END) age4,
+        COUNT (CASE WHEN age>=45 and age<=49 THEN 1 ELSE NULL END) age5,
+        COUNT (CASE WHEN age>=50 and age<=54 THEN 1 ELSE NULL END) age6,
+        COUNT (CASE WHEN age>=55 and age<=59 THEN 1 ELSE NULL END) age7,
+        COUNT (CASE WHEN age>=60 and age<=64 THEN 1 ELSE NULL END) age8,
+        COUNT (CASE WHEN age>=65 THEN 1 ELSE NULL END) age9
+        FROM (select dic_name, dic_code from t_sys_dic where parent_id=(select id from t_sys_dic where dic_code=#{code})) d
+        left join (select teacher_id, TRUNC(months_between(sysdate, birthday)/12) AS age, title, teacher_sex, final_education, degee from T_JW_TEACHER_CONDITION where TEACHER_CATEGORY=1) t
+        ]]>
+        <if test="code != null and code == 'ZCJB'">
+            on t.title=d.dic_code
+        </if>
+        <if test="code != null and code == 'XW'">
+            on t.degee=d.dic_code
+        </if>
+        group by dic_code
+        order by dic_code
+    </select>
+
+    <select id="expertExcel_GJ_423_xl" parameterType="java.lang.String" resultType="java.util.Map" >
+        <![CDATA[
+        select * from
+        (SELECT dic_code, count(t.teacher_id) total,
+        COUNT (CASE WHEN age<=29 THEN 1 ELSE NULL END) age1,
+        COUNT (CASE WHEN age>=30 and age<=34 THEN 1 ELSE NULL END) age2,
+        COUNT (CASE WHEN age>=35 and age<=39 THEN 1 ELSE NULL END) age3,
+        COUNT (CASE WHEN age>=40 and age<=44 THEN 1 ELSE NULL END) age4,
+        COUNT (CASE WHEN age>=45 and age<=49 THEN 1 ELSE NULL END) age5,
+        COUNT (CASE WHEN age>=50 and age<=54 THEN 1 ELSE NULL END) age6,
+        COUNT (CASE WHEN age>=55 and age<=59 THEN 1 ELSE NULL END) age7,
+        COUNT (CASE WHEN age>=60 and age<=64 THEN 1 ELSE NULL END) age8,
+        COUNT (CASE WHEN age>=65 THEN 1 ELSE NULL END) age9
+        FROM (select dic_name, dic_code from t_sys_dic where parent_id=(select id from t_sys_dic where dic_code='XL') and dic_order>5) d
+        left join (select teacher_id, TRUNC(months_between(sysdate, birthday)/12) AS age, title, teacher_sex, final_education, degee from T_JW_TEACHER_CONDITION where TEACHER_CATEGORY=1) t on t.final_education=d.dic_code
+        group by dic_code
+        union all
+        SELECT '5' dic_code, count(t.teacher_id) total,
+        COUNT (CASE WHEN age<=29 THEN 1 ELSE NULL END) age1,
+        COUNT (CASE WHEN age>=30 and age<=34 THEN 1 ELSE NULL END) age2,
+        COUNT (CASE WHEN age>=35 and age<=39 THEN 1 ELSE NULL END) age3,
+        COUNT (CASE WHEN age>=40 and age<=44 THEN 1 ELSE NULL END) age4,
+        COUNT (CASE WHEN age>=45 and age<=49 THEN 1 ELSE NULL END) age5,
+        COUNT (CASE WHEN age>=50 and age<=54 THEN 1 ELSE NULL END) age6,
+        COUNT (CASE WHEN age>=55 and age<=59 THEN 1 ELSE NULL END) age7,
+        COUNT (CASE WHEN age>=60 and age<=64 THEN 1 ELSE NULL END) age8,
+        COUNT (CASE WHEN age>=65 THEN 1 ELSE NULL END) age9
+        FROM (select teacher_id, TRUNC(months_between(sysdate, birthday)/12) AS age, title, teacher_sex, final_education, degee from T_JW_TEACHER_CONDITION where TEACHER_CATEGORY=1 and final_education<6) t
+        ) order by dic_code desc
+        ]]>
+    </select>
+
+    <select id="expertExcel_GJ_422" parameterType="java.lang.String" resultType="java.util.Map" >
+        <![CDATA[
+        SELECT COUNT(CASE WHEN degee is not null THEN 1 ELSE NULL END) total,
+        COUNT (CASE WHEN degee='3' THEN 1 ELSE NULL END) total_bs,
+        COUNT (CASE WHEN degee='2' THEN 1 ELSE NULL END) total_ss,
+        COUNT (CASE WHEN t.final_education='8' THEN 1 ELSE NULL END) bs,
+        COUNT (CASE WHEN t.final_education='8' and degee='3' THEN 1 ELSE NULL END) bs_bs,
+        COUNT (CASE WHEN t.final_education='8' and degee='2' THEN 1 ELSE NULL END) bs_ss,
+        COUNT (CASE WHEN t.final_education='7' THEN 1 ELSE NULL END) ss,
+        COUNT (CASE WHEN t.final_education='7' and degee='3' THEN 1 ELSE NULL END) ss_bs,
+        COUNT (CASE WHEN t.final_education='7' and degee='2' THEN 1 ELSE NULL END) ss_ss,
+        COUNT (CASE WHEN t.final_education='6' THEN 1 ELSE NULL END) bk,
+        COUNT (CASE WHEN t.final_education='6' and degee='3' THEN 1 ELSE NULL END) bk_bs,
+        COUNT (CASE WHEN t.final_education='6' and degee='1' THEN 1 ELSE NULL END) bk_ss,
+        COUNT (CASE WHEN t.final_education<'6' THEN 1 ELSE NULL END) zk,
+        COUNT (CASE WHEN t.final_education<'6' and degee='3' THEN 1 ELSE NULL END) zk_bs,
+        COUNT (CASE WHEN t.final_education<'6' THEN 1 ELSE NULL END) zk_ss
+        ]]>
+        FROM T_JW_TEACHER_CONDITION t
+        where (TEACHER_CATEGORY=#{category}
+        <if test="category2 != null and category2 != ''">
+            or TEACHER_CATEGORY=#{category2}
+        </if>
+        )
+        <if test="sex != null and sex != ''">
+            and teacher_sex=#{sex}
+        </if>
+    </select>
+
+    <select id="expertExcel_GJ_422_zc" parameterType="java.lang.String" resultType="java.util.Map" >
+        <![CDATA[
+        SELECT dic_code, COUNT(CASE WHEN degee is not null THEN 1 ELSE NULL END) total,
+        COUNT (CASE WHEN degee='3' THEN 1 ELSE NULL END) total_bs,
+        COUNT (CASE WHEN degee='2' THEN 1 ELSE NULL END) total_ss,
+        COUNT (CASE WHEN t.final_education='8' THEN 1 ELSE NULL END) bs,
+        COUNT (CASE WHEN t.final_education='8' and degee='3' THEN 1 ELSE NULL END) bs_bs,
+        COUNT (CASE WHEN t.final_education='8' and degee='2' THEN 1 ELSE NULL END) bs_ss,
+        COUNT (CASE WHEN t.final_education='7' THEN 1 ELSE NULL END) ss,
+        COUNT (CASE WHEN t.final_education='7' and degee='3' THEN 1 ELSE NULL END) ss_bs,
+        COUNT (CASE WHEN t.final_education='7' and degee='2' THEN 1 ELSE NULL END) ss_ss,
+        COUNT (CASE WHEN t.final_education='6' THEN 1 ELSE NULL END) bk,
+        COUNT (CASE WHEN t.final_education='6' and degee='3' THEN 1 ELSE NULL END) bk_bs,
+        COUNT (CASE WHEN t.final_education='6' and degee='1' THEN 1 ELSE NULL END) bk_ss,
+        COUNT (CASE WHEN t.final_education<'6' THEN 1 ELSE NULL END) zk,
+        COUNT (CASE WHEN t.final_education<'6' and degee='3' THEN 1 ELSE NULL END) zk_bs,
+        COUNT (CASE WHEN t.final_education<'6' THEN 1 ELSE NULL END) zk_ss
+        FROM (select dic_name, dic_code from t_sys_dic where parent_id=(select id from t_sys_dic where dic_code='ZCJB')) d
+        ]]>
+        left join T_JW_TEACHER_CONDITION t on t.title=d.dic_code and (TEACHER_CATEGORY=#{category}
+        <if test="category2 != null and category2 != ''">
+            or TEACHER_CATEGORY=#{category2}
+        </if>
+        )
+        group by dic_code
+        order by dic_code
+    </select>
 
 </mapper>

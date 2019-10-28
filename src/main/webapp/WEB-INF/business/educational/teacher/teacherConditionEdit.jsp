@@ -158,7 +158,7 @@
                                 <span class="iconBtx">*</span> 籍贯：
                             </div>
                             <div class="col-md-4">
-                                <input id="nativePlace" type="text" value="${teacherCondition.nativePlace}"/>
+                                <select id="nativePlace" class="js-example-basic-single"/>
                             </div>
                         </div>
                         <div class="form-row">
@@ -417,6 +417,7 @@
         </div>
     </div>
     <input id="teacherId" value="${teacherCondition.teacherId}" type="hidden">
+    <input id="nativePlaceSHOW" value="${teacherCondition.nativePlace}" type="hidden">
 </div>
 
 <script>
@@ -445,6 +446,8 @@
                     .appendTo(ul);
             };
         })
+        var path = '<%=request.getContextPath()%>';
+        addAdministrativeDivisions("nativePlace", $("#nativePlaceSHOW").val(), "", "", "", "", path);
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=XL", function (data) {
             addOption(data, 'firstEducation','${teacherCondition.firstEducation}');
         });

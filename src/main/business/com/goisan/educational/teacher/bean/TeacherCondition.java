@@ -47,6 +47,8 @@ public class TeacherCondition extends BaseBean {
     //参加工作日期，签约情况,派出部门,所任职务,工作单位
 
     private String titleShow;//已聘职称
+    private String nativePlaceShow;//籍贯省
+
 
     public String getPersonId() {
         return personId;
@@ -569,5 +571,13 @@ public class TeacherCondition extends BaseBean {
 
     public void setTitleShow(String titleShow) {
         this.titleShow = titleShow;
+    }
+
+    public String getNativePlaceShow() {
+        return nativePlaceShow;
+    }
+
+    public void setNativePlaceShow(String nativePlaceShow) {
+        this.nativePlaceShow = nativePlaceShow;
     }
 }
