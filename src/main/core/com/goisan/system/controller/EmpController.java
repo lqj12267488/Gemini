@@ -194,7 +194,7 @@ public class EmpController {
             }
             userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
             loginUser.setId(CommonUtil.getUUID());
-            loginUser.setUserAccount(userAccount);
+            loginUser.setUserAccount(emp.getTel());
             loginUser.setPersonId(personId);
             loginUser.setPassword((new SimpleHash("MD5", "123456", null, 1).toString()));
             loginUser.setUserType("0");
