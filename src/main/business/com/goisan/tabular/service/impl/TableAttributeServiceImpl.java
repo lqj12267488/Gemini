@@ -2096,7 +2096,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                     for (Major majorCodeNumber : list2) {
                         if (majorLeader.getMajorCode().equals(majorCodeNumber.getMajorCode())) {
 
-                            row.getCell(11).setCellValue(majorCodeNumber.getMajorNumber());
+                            row.getCell(11).setCellValue(majorCodeNumber.getMajorCode());
 
                         }
                     }
@@ -3180,8 +3180,11 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(count);
                 row.getCell(2).setCellValue(list.get(i).getInternshipUnitName());
+                row.getCell(3).setCellValue(list.get(i).getInvestigation());
                 row.getCell(4).setCellValue(list.get(i).getContactPerson());
+                row.getCell(5).setCellValue(list.get(i).getPersonPost());
                 row.getCell(6).setCellValue(list.get(i).getContactNumber());
+                row.getCell(7).setCellValue(list.get(i).getEmail());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),

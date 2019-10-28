@@ -109,6 +109,33 @@ public class Export {
     private String business3name;
     private String business4name;
     private String business5name;
+    private String personPost;
+    private String email;
+    private String investigation;
+
+    public String getPersonPost() {
+        return personPost;
+    }
+
+    public void setPersonPost(String personPost) {
+        this.personPost = personPost;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getInvestigation() {
+        return investigation;
+    }
+
+    public void setInvestigation(String investigation) {
+        this.investigation = investigation;
+    }
 
     public String getCenterprisenum() {
         return centerprisenum;

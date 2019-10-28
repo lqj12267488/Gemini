@@ -56,6 +56,24 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span> 联系人职务
+                    </div>
+                    <div class="col-md-4">
+                        <input id="personPost" type="text"
+                               class="validate[required,maxSize[20]] form-control"
+                               value="${employments.personPost}"/>
+                    </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>电子邮箱
+                    </div>
+                    <div class="col-md-4">
+                        <input id="email" type="text"
+                               class="validate[required,maxSize[20]] form-control"
+                               value="${employments.email}"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>  联系电话
                     </div>
                     <div class="col-md-4">
@@ -162,6 +180,18 @@
                         <select id="enterpriseScale" disabled="disabled" class="js-example-basic-single"></select>
                     </div>
                 </div>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span> 是否做过雇主调查
+                    </div>
+                    <div class="col-md-4">
+                        <select id="investigation" class="js-example-basic-single">
+                            <option value="">请选择</option>
+                            <option value="是">是</option>
+                            <option value="否">否</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -240,6 +270,7 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=QYGM", function (data) {
             addOption(data, 'enterpriseScale', $("#enterpriseScaleShow").val());
         });
+        $("#investigation").val("${employments.investigation}");
     })
     function add() {
         var reg = new RegExp("^[0-9]*$");
@@ -267,6 +298,20 @@
         if ($("#f_contactPerson").val() == "" || $("#f_contactPerson").val() == "0" || $("#f_contactPerson").val() == undefined){
             swal({
                 title: "请填写联系人！",
+                type: "info"
+            });
+            return;
+        }
+        if ($("#personPost").val() == "" || $("#personPost").val() == "0" || $("#personPost").val() == undefined) {
+            swal({
+                title: "请填写联系人职务！",
+                type: "info"
+            });
+            return;
+        }
+        if (  $("#email").val() == "" || $("#email").val() == "0" || $("#email").val() == undefined) {
+            swal({
+                title: "请填写电子邮箱！",
                 type: "info"
             });
             return;
@@ -390,6 +435,13 @@
             });
             return;
         }
+        if ($("#employmentNature option:selected").val() == "") {
+            swal({
+                title: "请选择是否做过雇主调查！",
+                type: "info"
+            });
+            return;
+        }
 
         var enterpriseScale
         if($("#f_registeredCapital").val()<1000000){
@@ -419,6 +471,9 @@
             employmentChannels: $("#employmentChannels option:selected").val(),
             counterpartProperty: $("#counterpartProperty option:selected").val(),
             employmentNature: $("#employmentNature option:selected").val(),
+            personPost: $("#personPost").val(),
+            email: $("#email").val(),
+            investigation: $("#investigation option:selected").val(),
             internshipUnitFlag: 0,
             enterpriseScale: enterpriseScale
         }, function (msg) {

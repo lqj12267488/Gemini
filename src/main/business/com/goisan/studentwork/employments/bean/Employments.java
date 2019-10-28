@@ -37,6 +37,33 @@ public class Employments extends BaseBean{
     private String employmentChannelsShow;
     private String counterpartPropertyShow;
     private String employmentNatureShow;
+    private String personPost;            //联系人职务
+    private String email;                 //电子邮箱
+    private String investigation;         //是否做过雇主调查
+
+    public String getPersonPost() {
+        return personPost;
+    }
+
+    public void setPersonPost(String personPost) {
+        this.personPost = personPost;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getInvestigation() {
+        return investigation;
+    }
+
+    public void setInvestigation(String investigation) {
+        this.investigation = investigation;
+    }
 
     public String getEnterpriseScaleShow() {
         return enterpriseScaleShow;

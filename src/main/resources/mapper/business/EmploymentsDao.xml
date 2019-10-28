@@ -26,7 +26,7 @@
         FUNC_GET_DICVALUE(employment_channels,'JYQD') employmentChannelsShow,
         FUNC_GET_DICVALUE(counterpart_property,'ZYDKXZ') counterpartPropertyShow,
         FUNC_GET_DICVALUE(employment_nature,'JYXZ')  employmentNatureShow,
-        create_time createTime
+        create_time createTim,PERSON_POST,EMAIL,INVESTIGATION
         FROM
         T_XG_EMPLOYMENT_UNIT
         WHERE  1 = 1 AND valid_flag = 1
@@ -68,7 +68,7 @@
         FUNC_GET_DICVALUE(employment_channels,'JYQD') employmentChannelsShow,
         FUNC_GET_DICVALUE(counterpart_property,'ZYDKXZ') counterpartPropertyShow,
         FUNC_GET_DICVALUE(employment_nature,'JYXZ')  employmentNatureShow,
-        create_time createTime
+        create_time createTime,PERSON_POST,EMAIL,INVESTIGATION
         FROM
         T_XG_EMPLOYMENT_UNIT
         WHERE employment_unit_id = #{employmentUnitId}
@@ -106,7 +106,7 @@
         FUNC_GET_DICVALUE(employment_channels,'JYQD') employmentChannelsShow,
         FUNC_GET_DICVALUE(counterpart_property,'ZYDKXZ') counterpartPropertyShow,
         FUNC_GET_DICVALUE(employment_nature,'JYXZ')  employmentNatureShow,
-        create_time createTime
+        create_time createTime,PERSON_POST,EMAIL,INVESTIGATION
         FROM
         T_XG_EMPLOYMENT_UNIT
         WHERE employment_unit_id = #{employmentUnitId}
@@ -116,24 +116,28 @@
         (employment_unit_id,internship_unit_name,area,address,contact_person,contact_number
         ,internship_unit_flag,unit_encoding,legal_person,registered_capital,person_number,
         unit_property,employment_industry,employment_area,employment_place,enterprise_category,
-        employment_channels,counterpart_property,employment_nature,enterprise_scale,creator,create_time,create_dept,valid_flag)
+        employment_channels,counterpart_property,employment_nature,enterprise_scale,creator,
+        create_time,create_dept,valid_flag,person_post,email,investigation)
         VALUES
         (func_get_uuid,'${internshipUnitName}','${area}','${address}','${contactPerson}','${contactNumber}'
         ,'${internshipUnitFlag}','${unitEncoding}','${legalPerson}','${registeredCapital}','${personNumber}',
         '${unitProperty}','${employmentIndustry}','${employmentArea}','${employmentPlace}','${enterpriseCategory}',
-        '${employmentChannels}','${counterpartProperty}','${employmentNature}','${enterpriseScale}','${creator}',sysdate,'${createDept}',1 )
+        '${employmentChannels}','${counterpartProperty}','${employmentNature}','${enterpriseScale}','${creator}',
+        sysdate,'${createDept}',1,'${personPost}','${email}','${investigation}')
     </insert>
     <insert id="insertEmployments1" parameterType="com.goisan.studentwork.employments.bean.Employments">
         INSERT INTO  T_XG_EMPLOYMENT_UNIT
         (employment_unit_id,internship_unit_name,area,address,contact_person,contact_number
         ,internship_unit_flag,unit_encoding,legal_person,registered_capital,person_number,
         unit_property,employment_industry,employment_area,employment_place,enterprise_category,
-        employment_channels,counterpart_property,employment_nature,enterprise_scale,creator,create_time,create_dept,valid_flag)
+        employment_channels,counterpart_property,employment_nature,enterprise_scale,creator,
+        create_time,create_dept,valid_flag,person_post,email,investigation)
         VALUES
         ('${employmentUnitId}','${internshipUnitName}','${area}','${address}','${contactPerson}','${contactNumber}'
         ,'${internshipUnitFlag}','${unitEncoding}','${legalPerson}','${registeredCapital}','${personNumber}',
         '${unitProperty}','${employmentIndustry}','${employmentArea}','${employmentPlace}','${enterpriseCategory}',
-        '${employmentChannels}','${counterpartProperty}','${employmentNature}','${enterpriseScale}','${creator}',sysdate,'${createDept}',1 )
+        '${employmentChannels}','${counterpartProperty}','${employmentNature}','${enterpriseScale}','${creator}',
+        sysdate,'${createDept}',1,'${personPost}','${email}','${investigation}')
     </insert>
     <update id="updateEmploymentsById" parameterType="com.goisan.studentwork.employments.bean.Employments">
         UPDATE T_XG_EMPLOYMENT_UNIT SET
@@ -155,7 +159,10 @@
         employment_channels = #{employmentChannels},
         counterpart_property = #{counterpartProperty},
         employment_nature = #{employmentNature},
-        enterprise_scale = #{enterpriseScale}
+        enterprise_scale = #{enterpriseScale},
+        person_post=#{personPost},
+        email=#{email},
+        investigation=#{investigation}
         WHERE employment_unit_id = #{employmentUnitId}
     </update>
     <delete id="deleteEmploymentsById" parameterType="java.lang.String">

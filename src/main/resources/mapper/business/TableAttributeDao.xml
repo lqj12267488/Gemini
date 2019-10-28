@@ -1014,7 +1014,10 @@
     <select id="expertExcel_A9_4" resultType="com.goisan.tabular.bean.export.Export">
         select internship_unit_name internshipUnitName,
                contact_person       contactPerson,
-               contact_number       contactNumber
+               contact_number       contactNumber,
+               person_post          personPost,
+               email                email,
+               investigation        investigation
         from T_XG_EMPLOYMENT_UNIT u
     </select>
 
