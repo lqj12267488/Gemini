@@ -80,7 +80,7 @@
                     "width": "40%",
                     "title": "操作",
                     "render": function (data, type, row) {
-                        return '<span class="icon-user" title="添加被评教职人员" onclick="addEmps(\'' +row.groupId + '\',\''+eType+'\')"/>&ensp;&ensp;' +
+                        return '<span class="icon-user" title="面试人员设置" onclick="addEmps(\'' +row.groupId + '\',\''+eType+'\')"/>&ensp;&ensp;' +
                             '<span class="icon-edit" title="修改" onclick="edit(\'' + row.groupId + '\')"/>&ensp;&ensp;' +
                             '<span class="icon-copy" title="复制被评人组" ' + ' onclick="editCopy(\'' + row.groupId + '\')"/>' +
                             '&ensp;&ensp;<span class="icon-trash" title="删除" onclick="del(\'' + row.groupId + '\',\'' + row.groupName + '\')"/>';
