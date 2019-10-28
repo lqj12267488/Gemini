@@ -3618,8 +3618,16 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(4).setCellValue(majorList.get(i).getMajorName());
                 row.getCell(5).setCellValue(majorList.get(i).getMajorDirectionCode());
                 row.getCell(6).setCellValue(majorList.get(i).getMajorDirection());
+                row.getCell(7).setCellValue(majorList.get(i).getNumberGraduates());
+                row.getCell(8).setCellValue(majorList.get(i).getPostPractice());
+                row.getCell(9).setCellValue(majorList.get(i).getEnterpriseHiring());
+                row.getCell(11).setCellValue(majorList.get(i).getNumberTrainees());
+                row.getCell(13).setCellValue(majorList.get(i).getNumberInternships());
+                row.getCell(14).setCellValue(majorList.get(i).getNumberInterns());
+                row.getCell(15).setCellValue(majorList.get(i).getInsuranceNumber());
                 row.getCell(17).setCellValue(majorList.get(i).getInternshipPositions());
                 row.getCell(18).setCellValue(majorList.get(i).getInternshipUnitIdShow());
+                row.getCell(19).setCellValue(majorList.get(i).getTotalNumber());
                 row.getCell(20).setCellValue(majorList.get(i).getPostsTime());
                 count++;
             }

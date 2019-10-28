@@ -1101,18 +1101,54 @@
 
     <select id="expertExcel_A7_4" parameterType="com.goisan.educational.major.bean.Major"
             resultType="com.goisan.educational.major.bean.Major">
-        select t.major_name                                majorName,
-               t.major_code                                majorCode,
-               t.major_direction                           majorDirection,
-               t.departments_id                            departmentsId,
-               t.MAJOR_DIRECTION_CODE                      majorDirectionCode,
-               a.internship_positions                      internshipPositions,
-               a.posts_time                                poststime,
-               FUNC_GET_TABLEVALUE(internship_unit_id, 'T_XG_INTERNSHIP_UNIT', 'INTERNSHIP_UNIT_ID',
-                                   'INTERNSHIP_UNIT_NAME') internshipUnitIdShow
-        from t_xg_major t
-                 left join T_XG_INTERNSHIP_STUDENT a
-                           on t.major_code = a.major_code
+           select t.major_name majorName,
+                   t.major_code majorCode,
+                   t.major_direction majorDirection,
+                   t.departments_id departmentsId,
+                   t.MAJOR_DIRECTION_CODE majorDirectionCode,
+                   a.internship_positions internshipPositions,
+                   a.posts_time poststime,
+                   FUNC_GET_TABLEVALUE(e.internship_unit_id,
+                                       'T_XG_INTERNSHIP_UNIT',
+                                       'INTERNSHIP_UNIT_ID',
+                                       'INTERNSHIP_UNIT_NAME') internshipUnitIdShow,
+                   DECODE(s.STUDENT_STATUS, '6', COUNT(STUDENT_STATUS), 0) numberGraduates,
+                   DECODE(b.GRADUATION_FLAG, '3', COUNT(a.STUDENT_ID), 0) postPractice,
+                   count(c.STUDENT_ID) enterpriseHiring,
+                   DECODE(a.MAJOR_MATCH_FLAG, '1', COUNT(a.STUDENT_ID), 0) numberTrainees,
+                   count(e.INTERNSHIP_UNIT_ID) numberInternships,
+                   count(a.STUDENT_ID) numberInterns,
+                   count(s.id) insuranceNumber,
+                   count(a.INTERNSHIP_ID) totalNumber
+             from t_xg_major t
+                  left join T_XG_INTERNSHIP_STUDENT a
+                    on t.major_code = a.major_code
+                  left join T_XG_CLASS b
+                    on a.class_id = b.class_id
+                  LEFT JOIN T_XG_STUDENT_CLASS SC
+                   ON b.CLASS_ID = SC.CLASS_ID
+                  LEFT JOIN T_XG_STUDENT S
+                   ON SC.STUDENT_ID = S.STUDENT_ID
+                  left join T_XG_EMPLOYMENT_STUDENT c
+                    on s.student_id = c.student_id
+                  left join T_JY_PRACTICE_INSURANCE s
+                    on c.class_id = s.class_id
+                  left join T_XG_INTERNSHIP_UNIT_EXT d
+                    on s.DEPARTMENTS_ID = d.DEPARTMENTS_ID
+                  left join T_XG_INTERNSHIP_UNIT e
+                    on d.INTERNSHIP_UNIT_ID = e.INTERNSHIP_UNIT_ID
+                 group by t.major_name,
+                          t.major_code,
+                          t.major_direction,
+                          t.departments_id,
+                          t.MAJOR_DIRECTION_CODE,
+                          a.internship_positions,
+                          a.posts_time,
+                          b.GRADUATION_FLAG,
+                          e.internship_unit_id,
+                          a.MAJOR_MATCH_FLAG,
+                          s.STUDENT_STATUS
+
     </select>
 
     <select id="getExpertExcel_A8_1" resultType="com.goisan.table.bean.StudentDocuments">

@@ -94,6 +94,79 @@ public class Major extends BaseBean {
     private String graduationNumber;//毕业人数
     private String employmentNumber;//就业人数
 
+    private String numberGraduates;//毕业生总人数
+    private String postPractice;//顶岗实习毕业生总人数
+    private String enterpriseHiring;//企业录用人数
+    private String numberTrainees;//实习对口人数
+    private String numberInternships;//实习单位总数
+    private String numberInterns;//实习学生总数
+    private String insuranceNumber;//参加保险学生数
+    private String totalNumber;//实习总人数
+
+    public String getTotalNumber() {
+        return totalNumber;
+    }
+
+    public void setTotalNumber(String totalNumber) {
+        this.totalNumber = totalNumber;
+    }
+
+    public String getInsuranceNumber() {
+        return insuranceNumber;
+    }
+
+    public void setInsuranceNumber(String insuranceNumber) {
+        this.insuranceNumber = insuranceNumber;
+    }
+
+    public String getNumberInterns() {
+        return numberInterns;
+    }
+
+    public void setNumberInterns(String numberInterns) {
+        this.numberInterns = numberInterns;
+    }
+
+    public String getNumberInternships() {
+        return numberInternships;
+    }
+
+    public void setNumberInternships(String numberInternships) {
+        this.numberInternships = numberInternships;
+    }
+
+    public String getNumberTrainees() {
+        return numberTrainees;
+    }
+
+    public void setNumberTrainees(String numberTrainees) {
+        this.numberTrainees = numberTrainees;
+    }
+
+    public String getEnterpriseHiring() {
+        return enterpriseHiring;
+    }
+
+    public void setEnterpriseHiring(String enterpriseHiring) {
+        this.enterpriseHiring = enterpriseHiring;
+    }
+
+    public String getPostPractice() {
+        return postPractice;
+    }
+
+    public void setPostPractice(String postPractice) {
+        this.postPractice = postPractice;
+    }
+
+    public String getNumberGraduates() {
+        return numberGraduates;
+    }
+
+    public void setNumberGraduates(String numberGraduates) {
+        this.numberGraduates = numberGraduates;
+    }
+
     public void setInternshipUnitId(String internshipUnitId) {
         this.internshipUnitId = internshipUnitId;
     }
