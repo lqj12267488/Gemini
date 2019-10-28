@@ -3972,7 +3972,18 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     }
 
     private void expertExcel_GJ_331(Sheet sheet) {
-
+        String[] column = {"PSN","ZS","FX","ZR","BYE","JY","XX","TXE","KC","SW","ZC"};
+        Map map= tableAttributeDao.expertExcel_GJ_331();
+        Row row = sheet.getRow(9);
+        for (int i = 2; i <=16 ; i++) {
+            if (i==2) {
+                row.getCell(i).setCellValue(map.get(column[0]).toString());
+            }else if (i>3 && i<8){
+                row.getCell(i).setCellValue(map.get(column[i-3]).toString());
+            }else if (i>8 &&i<17){
+                row.getCell(i).setCellValue(map.get(column[i-4]).toString());
+            }
+        }
     }
 
     private void expertExcel_GJ_332(Sheet sheet) {
@@ -4034,7 +4045,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             for (int j=3;i!=7&&i!=8?j<=5:j<=4;j++){
                 row.getCell(j).setCellValue(list.get(i-8).get(column[j - 3]).toString());
             }
-            for (int j=7;i!=7&&i!=8?j<=9:j<=9;j++){
+            for (int j=7;i!=7&&i!=8?j<=9:j<=8;j++){
                 row.getCell(j).setCellValue(list.get(i-8).get(column[j - 4]).toString());
             }
         }

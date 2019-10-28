@@ -250,4 +250,5 @@ public interface TableAttributeDao {
     Map expertExcel_GJ_341();
     List<Map> expertExcel_GJ_411();
     List<Map> expertExcel_GJ_421();
+    Map expertExcel_GJ_331();
 }

@@ -1563,6 +1563,30 @@ from T_RS_EMPLOYEE e , T_JW_TEACHINGTASK t,T_SYS_PARAMETER p ,T_JW_COURSE c wher
 and p.code = t.semester and t.course_id = c.course_id and e.POSITIONAL_LEVEL ='5'
 </select>
 
+    <select id="expertExcel_GJ_331" resultType="java.util.Map" >
+        select (count( case when student_status = '1'then 1 else null end)-
+count( case when student_status = '1' and (year =  (select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(year) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1) then 1 else null end)
++count(case when student_status not in ('1','13','14')and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )
+then 1 else null end ) ) as PSN,
+count( case when student_status = '1' and( year =  (select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(year) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1) then 1 else null end) ZS,
+count(case when student_status ='13' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  FX,
+count(case when student_status ='14' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  ZR,
+count(case when student_status ='6' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  BYE,
+count(case when student_status ='9' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  JY,
+count(case when student_status ='5' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  XX,
+count(case when student_status ='2' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  TXE,
+count(case when student_status ='4' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  KC,
+count(case when student_status ='10' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  SW,
+count(case when student_status ='3' and (logTime =(select value from T_SYS_PARAMETER where code = 'DQXN') or to_number(logTime) = to_number((select value from T_SYS_PARAMETER where code = 'DQXN')) -1 )then 1 else null end)  ZC
+ from (
+ select t2.student_id,student_status,t2.year,cl.new_code,to_char(cl.create_time, 'yyyy') logTime from
+ (select t.student_id,t.student_status,c.year
+ from  T_XG_STUDENT t ,T_XG_CLASS c ,T_XG_STUDENT_CLASS sc
+where  t.student_id = sc.student_id and c.class_id = sc.class_id) t2 left join
+T_XG_STUDENT_CHANGE_LOG cl on cl.student_id = t2.student_id
+)
+    </select>
+
     <select id="expertExcel_GJ_812" parameterType="java.lang.String" resultType="java.util.Map" >
         select temp.*, (wwe+hsk+hui+zzbk+kekz+xb+man+mg+dwe+tte+tjk+els+qt) xj from
         (SELECT count(teacher_id) total,
