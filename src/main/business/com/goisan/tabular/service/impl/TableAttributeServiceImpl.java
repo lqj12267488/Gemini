@@ -40,6 +40,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -86,6 +87,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     private InstitutionalAreaDao institutionalAreaDao;
     @Resource
     private TeacherInfoDao teacherInfoDao;
+
     /**
      * 导出带有数据得表格 命名expertExcel_A加上数字
      * 例
@@ -2040,7 +2042,6 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
         List<Major> getMajorListExport = majorService.getMajorListExport(new Major());
-
         OutputStream os = null;
         try {
             FileInputStream in = new FileInputStream(file);
@@ -2063,8 +2064,9 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             for (int i = 0; i < getMajorListExport.size(); i++) {
                 Major major = new Major();
                 major.setMajorCode(getMajorListExport.get(i).getMajorCode());
-                Major major1 = majorService.getStudentNumberList(major);
+                //     Major major1 = majorService.getStudentNumberList(major);
                 Major major2 = majorService.getSourceTypeList(major);
+
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(count);
                 row.getCell(2).setCellValue(getMajorListExport.get(i).getDepartmentsIdShow());
@@ -2076,17 +2078,56 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(8).setCellValue(getMajorListExport.get(i).getApprovalTime());
                 row.getCell(9).setCellValue(getMajorListExport.get(i).getFirstRecruitTime());
                 row.getCell(10).setCellValue(getMajorListExport.get(i).getMaxYearShow());
-                if (major1 != null) {
-                    row.getCell(11).setCellValue(major1.getStudentNumber());
+                //      if (major1 != null) {
+                //         row.getCell(11).setCellValue(major1.getStudentNumber());
+                //    }
+                Calendar cal = Calendar.getInstance();
+                int month = cal.get(Calendar.MONTH);
+                List<Major> list0;
+                if (month < 8) {
+                    list0 = majorService.getStudentNumber();
+                } else {
+                    list0 = majorService.getStudentNumberOrder();
                 }
-                row.getCell(12).setCellValue("");
-                row.getCell(13).setCellValue("");
-                row.getCell(14).setCellValue("");
+
+                List<Major> list1 = majorService.getSourceType();
+                List<Major> list2 = majorService.getMajorCodeNumber();
+                for (Major majorLeader : getMajorListExport) {
+                    for (Major majorCodeNumber : list2) {
+                        if (majorLeader.getMajorCode().equals(majorCodeNumber.getMajorCode())) {
+
+                            row.getCell(11).setCellValue(majorCodeNumber.getMajorNumber());
+
+                        }
+                    }
+                    for (Major studentNumber : list0) {
+                        switch (studentNumber.getClassNumber()) {
+                            case "1":
+                                row.getCell(12).setCellValue(studentNumber.getStudentNumber());
+
+                                break;
+                            case "2":
+                                row.getCell(13).setCellValue(studentNumber.getStudentNumber());
+
+                                break;
+                            case "3":
+                                row.getCell(14).setCellValue(studentNumber.getStudentNumber());
+
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                //    row.getCell(12).setCellValue("");
+                //    row.getCell(13).setCellValue("");
+                //   row.getCell(14).setCellValue("");
                 if (major2 != null) {
                     row.getCell(15).setCellValue(major2.getSourceNumberOne());
                     row.getCell(16).setCellValue(major2.getSourceNumberTwo());
                     row.getCell(18).setCellValue(major2.getSourceNumberThree());
                 }
+
                 row.getCell(17).setCellValue("");
                 row.getCell(19).setCellValue(getMajorListExport.get(i).getFocusTypeShow());
                 row.getCell(20).setCellValue(getMajorListExport.get(i).getUniqueTypeShow());
@@ -2120,6 +2161,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
         }
     }
+
 
     public void expertExcel_A7_1_2(HttpServletResponse response, TabularFile tabularFile) {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
@@ -2170,11 +2212,11 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(18).setCellValue(list.get(i).getPositionName());
                 row.getCell(19).setCellValue(list.get(i).getOffice());
                 row.getCell(20).setCellValue(list.get(i).getPositionDate());
-                row.getCell(21).setCellValue("");
-                row.getCell(22).setCellValue("");
-                row.getCell(23).setCellValue("");
-                row.getCell(24).setCellValue("");
-                row.getCell(25).setCellValue("");
+                row.getCell(21).setCellValue(list.get(i).getName());
+                row.getCell(22).setCellValue(list.get(i).getDetail());
+                row.getCell(23).setCellValue(list.get(i).getGetPrizeClass());
+                row.getCell(24).setCellValue(list.get(i).getGetDate());
+                row.getCell(25).setCellValue(list.get(i).getCooperationDetail());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",

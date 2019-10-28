@@ -41,40 +41,31 @@
     </select>
     <select id="getMajorLeaderList" parameterType="com.goisan.educational.major.bean.MajorLeader"
             resultType="com.goisan.educational.major.bean.MajorLeader">
-        select id,
-            PERSON_ID,
-            DEPARTMENTS_ID,
-            MAJOR_ID,
-            FUNC_GET_DICVALUE(EDUCATION, 'XL') EDUCATION,
-            FUNC_GET_DICVALUE(DEGREE, 'XW') DEGREE,
-            SEX,
-            BIRTHDAY,
-            MAJOR_CODE,
-            POSITION,
-            POSITION_NAME,
-            POSITION_LEAVE,
-            OFFICE,
-            POSITION_DATE,
-            EMAIL,
-            TEACHERCATEGORY,
-            TEACHER_NUM,
-            WORK_DEPT,
-            GUHUA,
-            ZY_WORKDATE,
-            creator,
-            create_time,
-            create_dept,
-            person_type,
-            FUNC_GET_DEPTNAME(DEPARTMENTS_ID) departmentsIdShow,
-            FUNC_GET_TABLEVALUE(MAJOR_ID, 'T_XG_MAJOR', 'major_ID', 'major_name') majorIdShow,
-            to_char(BIRTHDAY, 'yyyy-mm-dd') birthdayShow,
-            to_char(POSITION_DATE, 'yyyy-mm') positionDate,
-            FUNC_GET_DICVALUE(TEACHERCATEGORY, 'JSLB') teacherCategoryShow,
-            FUNC_GET_USERNAME(PERSON_ID) personIdShow,
-            FUNC_GET_DICVALUE(sex, 'XB') sexShow
-        from T_JW_MAJOR_LEADER
-        WHERE 1 = 1
-        and valid_flag = '1'
+
+        select t.id,t.PERSON_ID,t.DEPARTMENTS_ID,t.MAJOR_ID,
+        FUNC_GET_DICVALUE(EDUCATION, 'XL') EDUCATION,FUNC_GET_DICVALUE(DEGREE, 'XW') DEGREE,
+        t.SEX,t.BIRTHDAY,t.MAJOR_CODE,t.POSITION,t.POSITION_NAME,t.POSITION_LEAVE,t.OFFICE,
+        t.POSITION_DATE,t.EMAIL,t.TEACHERCATEGORY,t.TEACHER_NUM,t.WORK_DEPT,t.GUHUA,
+        t.ZY_WORKDATE,t.creator,t.create_time,t.create_dept,t.person_type,
+        FUNC_GET_DEPTNAME(DEPARTMENTS_ID) departmentsIdShow,FUNC_GET_TABLEVALUE(MAJOR_ID, 'T_XG_MAJOR', 'major_ID', 'major_name') majorIdShow,
+        to_char(BIRTHDAY, 'yyyy-mm-dd') birthdayShow,to_char(POSITION_DATE, 'yyyy-mm') positionDate,
+        FUNC_GET_DICVALUE(TEACHERCATEGORY, 'JSLB') teacherCategoryShow,FUNC_GET_USERNAME(PERSON_ID) personIdShow,FUNC_GET_DICVALUE(sex, 'XB') sexShow,
+        j.id,
+        j.major_leader_id majorLeaderId,
+        j.name,
+        j.get_prize_class getPrizeClass,
+        j.detail,
+        j.get_date getDate,
+        j.cooperation_detail cooperationDetail,
+        j.creator,
+        j.create_dept createDept,
+        j.changer,
+        j.change_time changeTime,
+        j.change_dept changeDept,
+        j.valid_flag calidFlag
+        from T_JW_MAJOR_LEADER t,t_jw_research_result j
+        WHERE 1 = 1 and j.major_leader_id=t.id
+        and t.valid_flag = '1'
         <if test="personIdShow !=null and personIdShow != ''">
             and FUNC_GET_USERNAME(PERSON_ID) like '%' || #{personIdShow} || '%'
         </if>
@@ -85,38 +76,38 @@
             and major_id=#{majorId}
         </if>
         and PERSON_TYPE=#{personType}
-        order by create_time desc
+        order by t.create_time desc
     </select>
     <delete id="deleteResearchResultByMajorLeaderId" parameterType="java.lang.String">
         delete t_jw_research_result t where t.major_leader_id =#{majorLeaderId}
     </delete>
     <select id="getMajorLeaderById" parameterType="java.lang.String"
             resultType="com.goisan.educational.major.bean.MajorLeader">
-        select id,
-               DEPARTMENTS_ID,
-               FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID)                                     departmentsIdShow,
-               MAJOR_ID                                                                majorId,
+        select t.id,
+               t.DEPARTMENTS_ID,
+               t.FUNC_GET_DEPTNAME(t.DEPARTMENTS_ID)                                     departmentsIdShow,
+               t.MAJOR_ID                                                                majorId,
                FUNC_GET_TABLEVALUE(t.MAJOR_ID, 'T_XG_MAJOR', 'major_ID', 'major_name') majorIdShow,
                t.person_id                                                             personId,
                FUNC_GET_USERNAME(t.PERSON_ID)                                          personIdShow,
-               MAJOR_CODE                                                              majorCode,
-               SEX,
+               t.MAJOR_CODE                                                              majorCode,
+               t.SEX,
                FUNC_GET_DICVALUE(t.sex, 'XB')                                          sexShow,
                to_char(t.BIRTHDAY, 'yyyy-mm-dd')                                       birthday,
-               EDUCATION,
-               DEGREE,
+               t.EDUCATION,
+               t.DEGREE,
                t.POSITION,
-               POSITION_NAME                                                           positionName,
-               POSITION_LEAVE                                                          positionLeave,
-               OFFICE,
+               t.POSITION_NAME                                                           positionName,
+               t.POSITION_LEAVE                                                          positionLeave,
+               t.OFFICE,
                to_char(t.POSITION_DATE, 'yyyy-mm')                                     positionDate,
-               EMAIL,
-               TEACHERCATEGORY                                                         TEACHERCATEGORY,
-               FUNC_GET_DICVALUE(t.TEACHERCATEGORY, 'JSLB')                            teacherCategoryShow,
-               TEACHER_NUM                                                             teacherNum,
-               work_dept                                                               workDept,
-               guhua                                                                   guHua,
-               ZY_WORKDATE                                                             zyWorkDate
+               t.EMAIL,
+               t.TEACHERCATEGORY                                                         TEACHERCATEGORY,
+               t.FUNC_GET_DICVALUE(t.TEACHERCATEGORY, 'JSLB')                            teacherCategoryShow,
+               t.TEACHER_NUM                                                             teacherNum,
+               t.work_dept                                                               workDept,
+               t.guhua                                                                  guHua,
+               t.ZY_WORKDATE                                                             zyWorkDate,
         from T_JW_MAJOR_LEADER t
         WHERE id = #{id}
     </select>

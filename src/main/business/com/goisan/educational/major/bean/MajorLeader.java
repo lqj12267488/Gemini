@@ -30,14 +30,56 @@ public class MajorLeader extends BaseBean {
     private String office;//发证单位
     private String positionDate;//专业技术职务名称获得时间
     private String email;//邮箱
-    /*private String researchResult;//科研成果名称
-    private String researchLeave;//科研成果等级
-    private String researchDate,researchInfo;//科研成果获得时间,科研成果简介
-    private String remark;//合作情况*/
+    private String name;//科研成果名称
+    private String detail;//科研成果等级
+    private String getPrizeClass;//科研成果获得时间,科研成果简介
+    private String getDate;//合作情况*/
+    private String cooperationDetail;
     private String personType;//人员类型:1专业带头人 2专业负责人 3专业骨干教师
     private String teacherNum,workDept,guHua,zyWorkDate;//教工号,工作单位名称,区号单位电话, 担任专业带头人工作年限（年）
     private String teacherCategory,teacherCategoryShow;//教师性质
     private String birthdayShow;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public String getGetPrizeClass() {
+        return getPrizeClass;
+    }
+
+    public void setGetPrizeClass(String getPrizeClass) {
+        this.getPrizeClass = getPrizeClass;
+    }
+
+    public String getGetDate() {
+        return getDate;
+    }
+
+    public void setGetDate(String getDate) {
+        this.getDate = getDate;
+    }
+
+    public String getCooperationDetail() {
+        return cooperationDetail;
+    }
+
+    public void setCooperationDetail(String cooperationDetail) {
+        this.cooperationDetail = cooperationDetail;
+    }
+
+
 
     public String getMajorCode() {
         return majorCode;
