@@ -231,4 +231,9 @@ public interface TableAttributeDao {
      * @return
      */
     Export expertExcel_GJ_322();
+
+    Map expertExcel_GJ_332();
+    Map expertExcel_GJ_341();
+    List<Map> expertExcel_GJ_411();
+    List<Map> expertExcel_GJ_421();
 }

@@ -174,6 +174,7 @@ public class EmpController {
 
             empnew.setDeadline(emp.getDeadline());
             empnew.setFilenumber(emp.getFilenumber());
+            empnew.setTeacherType(emp.getTeacherType());
 
             EmpDeptRelation edr = new EmpDeptRelation();
             edr.setId(CommonUtil.getUUID());

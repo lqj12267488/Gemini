@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Admin
@@ -37,8 +38,25 @@
                     <span class="iconBtx">*</span> 人员状态异动：
                 </div>
                 <div class="col-md-3 ">
-                    <select id="studentStatusSelect" />
+                    <select id="studentStatusSelect"  onchange="changeStuStatus(value)"/>
                     <input id="sStatus" value="${student.studentStatus}" hidden >
+                </div>
+            </div>
+
+            <div class="form-row" id="xx">
+                <div class="col-md-3 tar">
+                    <span class="iconBtx">*</span> 休退学主要原因：
+                </div>
+                <div class="col-md-3 ">
+                    <select id="retireReason" class="validate[required,maxSize[100]] form-control"/>
+                </div>
+            </div>
+            <div class="form-row" id="cx">
+                <div class="col-md-3 tar">
+                    <span class="iconBtx">*</span> 辍学原因：
+                </div>
+                <div class="col-md-3 ">
+                    <select id="dropOutReason" />
                 </div>
             </div>
         </div>
@@ -54,10 +72,56 @@
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     $(document).ready(function () {
+
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=XTXYY", function (data) {
+            addOption(data, 'retireReason','${student.retireReason}');
+        });
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=CXYY", function (data) {
+            addOption(data, 'dropOutReason','${student.dropOutReason}');
+        });
+
+        if ('${flag}'=='0'){
+            $("#xx").hide();
+            $("#cx").hide();
+        }
+
+        if ('${flag}' == '1'){
+            $("#xx").show();
+            $("#cx").hide();
+        }
+        if ('${flag}' == '2'){
+            $("#xx").hide();
+            $("#cx").show();
+        }
+        if ('${flag}' == '3'){
+            $("#xx").show();
+            $("#cx").show();
+        }
+
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=XSZT", function (data) {
             addOption(data, 'studentStatusSelect','${student.studentStatus}');
         });
     });
+
+    function changeStuStatus(value){
+    
+        /**
+         * value = 2,5
+         */
+        if (value == 2 || value ==5 ){
+            $("#xx").show();
+            $("#cx").hide();
+        }else if (value == 12 && '${student.studentStatus}'!= 12 && '${student.studentStatus}'!= 2 && '${student.studentStatus}'!= 5){
+            $("#xx").hide();
+            $("#cx").show();
+        }else if(value == 12 && ('${student.studentStatus}' == 12 || '${student.studentStatus}' == 2 || '${student.studentStatus}' == 5)){
+            $("#xx").show();
+            $("#cx").show();
+        } else {
+            $("#xx").hide();
+            $("#cx").hide();
+        }
+    }
 
     function updateStatus() {
         var staffStatus = $("#studentStatusSelect option:selected").val();
@@ -69,24 +133,61 @@
             return;
         }
         if( staffStatus ==$("#sStatus").val()){
+            if (staffStatus == "2" || staffStatus == "5" || staffStatus == "12"){
+                if (staffStatus == "2"|| staffStatus == "5"){
+                    if ($("#retireReason").val() == undefined || '' == $("#retireReason").val()) {
+                        swal({
+                            title: "请选择休退学原因!",
+                            type: "info"
+                        });
+                        return;
+                    }
+                }
+                if (staffStatus == "12") {
+                    if ($("#dropOutReason").val() == undefined || '' == $("#dropOutReason").val()) {
+                        swal({
+                            title: "请选择辍学原因!",
+                            type: "info"
+                        });
+                        return;
+                    }
+                }
+                $.post('<%=request.getContextPath()%>/studentChangeLog/updateReason', {
+                    studentId: $('#studentId').val(),
+                    retireReason: $("#retireReason").val(),
+                    dropOutReason: $("#dropOutReason").val()
+                }, function (msg) {
+                    debugger;
+                    swal({
+                        title: msg.msg,
+                        type: "success"
+                    });
+                    $("#dialog").modal("hide");
+                    $('#studentChangeGrid').DataTable().ajax.reload();
+                })
+            } else {
             swal({
                 title: "请更改人员状态!",
                 type: "info"
             });
             return;
+            }
+        }else {
+            showSaveLoading();
+            $.post('<%=request.getContextPath()%>/studentChangeLog/updateStatus', {
+                studentId: $('#studentId').val(),
+                studentStatus: staffStatus,
+                retireReason: $("#retireReason").val(),
+                dropOutReason: $("#dropOutReason").val()
+            }, function (msg) {
+                hideSaveLoading();
+                swal({
+                    title: msg.msg,
+                    type: "success"
+                });
+                $("#dialog").modal("hide");
+                $('#studentChangeGrid').DataTable().ajax.reload();
+            })
         }
-        showSaveLoading();
-        $.post('<%=request.getContextPath()%>/studentChangeLog/updateStatus', {
-            studentId: $('#studentId').val(),
-            studentStatus: staffStatus
-        }, function (msg) {
-            hideSaveLoading();
-            swal({
-                title: msg.msg,
-                type: "success"
-            });
-            $("#dialog").modal("hide");
-            $('#studentChangeGrid').DataTable().ajax.reload();
-        })
     }
 </script>

@@ -3897,18 +3897,69 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     }
 
     private void expertExcel_GJ_332(Sheet sheet) {
+        String[] column = {"HB","TX","SJ","XXCJBH","CG","OTHER"};
+        Map map= tableAttributeDao.expertExcel_GJ_332();
+        Row row = sheet.getRow(8);
+        for (int i=3;i<8;i++){
+             int index = i-3;
+            row.getCell(i).setCellValue(map.get(column[index]).toString());
+        }
 
     }
 
     private void expertExcel_GJ_341(Sheet sheet) {
-
+        String[] column = {"GCDY","GQTY","XG","AM","TW","HQ","SSMZ","DIS"};
+        Map map= tableAttributeDao.expertExcel_GJ_341();
+        Row row = sheet.getRow(7);
+        for (int i=2;i<=10;i++){
+            if (i<4) {
+                int index = i-2;
+                row.getCell(i).setCellValue(map.get(column[index]).toString());
+            }
+            if (i>4){
+                int index = i-3;
+                row.getCell(i).setCellValue(map.get(column[index]).toString());
+            }
+        }
     }
 
     private void expertExcel_GJ_411(Sheet sheet) {
-
+        String[] column = {"type","ZRJS","XZ","JF","GQ","KYJG","XBQY","QTFS","PQXW","LTX","FSZXX","JTSY"};
+        List<Map> list = tableAttributeDao.expertExcel_GJ_411();
+        for (int i=0;i<5;i++){
+            Map map = list.get(i);
+            for (int j=8;j<14;j++){
+                Row row = sheet.getRow(j);
+                if (j==8) {
+                    for (int k = 4; k <= 14; k++) {
+                        row.getCell(k).setCellValue(map.get(column[k - 3]).toString());
+                    }
+                }else if (j==9 ||j==9 ){
+                    for (int k = 4; k <= 13; k++) {
+                        row.getCell(k).setCellValue(map.get(column[k - 3]).toString());
+                    }
+                }else{
+                    for (int k = 4; k <= 11; k++) {
+                        row.getCell(k).setCellValue(map.get(column[k - 3]).toString());
+                    }
+                }
+            }
+        }
     }
 
     private void expertExcel_GJ_421(Sheet sheet) {
+        String[] column = {"GGKC","ZYALL","ZYSS","XWGG","XWZYALL","XWZYSS","XBQY","QTFS","PQXW","LTX","FSZXX","JTSY"};
+        List<Map> list = tableAttributeDao.expertExcel_GJ_421();
+        for (int i=8;i<=13;i++){
+            Row row = sheet.getRow(i);
+            for (int j=3;i!=7&&i!=8?j<=5:j<=4;j++){
+                row.getCell(j).setCellValue(list.get(i-8).get(column[j - 3]).toString());
+            }
+            for (int j=7;i!=7&&i!=8?j<=9:j<=9;j++){
+                row.getCell(j).setCellValue(list.get(i-8).get(column[j - 4]).toString());
+            }
+        }
+
 
     }
 

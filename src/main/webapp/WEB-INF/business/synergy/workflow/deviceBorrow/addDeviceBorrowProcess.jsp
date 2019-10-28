@@ -33,7 +33,7 @@
     </div>
     <div class="col-md-9">
         <input id="f_requestDate" type="datetime-local" class="validate[required,maxSize[100]] form-control"
-               value="${deviceBorrow.requestDate}" readonly="readonly"/>
+               value="${deviceBorrow.requestDate}" ="readonly"/>
     </div>
 
 </div>

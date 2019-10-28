@@ -406,7 +406,8 @@
             FUNC_GET_DICVALUE(e.staff_status,'JZGSS') staffBelongsShow ,
             u.ID_CARD_PHOTO_URL photoUrl,
             e.filenumber,
-            e.deadline
+            e.deadline,
+            e.TEACHER_TYPE
         FROM
             t_rs_employee e,
             t_sys_dept d,
@@ -440,7 +441,7 @@
                 permanent_residence,permanent_residence_local,examine_political,
                 educational_level,education_technique,graduate_school,graduate_time,
                 major,positional_titles,positional_level,remark,class_positions,post,academic_degree,
-                FILENUMBER,DEADLINE
+                FILENUMBER,DEADLINE,TEACHER_TYPE
             )
         VALUES (
                 #{personId},#{name},#{sex},#{idCard},
@@ -457,7 +458,7 @@
                 #{nativePlace},to_date('${entryDate}','yyyy-mm-dd'),
                 #{permanentResidence},#{permanentResidenceLocal},#{examinePolitical},
                 #{educationalLevel},#{educationTechnique},#{graduateSchool},to_date('${graduateTime}','yyyy-mm-dd'),
-                #{major},#{positionalTitles},#{positionalLevel},#{remark},#{classPositions},#{post},#{academicDegree},#{filenumber},#{deadline}
+                #{major},#{positionalTitles},#{positionalLevel},#{remark},#{classPositions},#{post},#{academicDegree},#{filenumber},#{deadline},#{teacherType}
             )
     </insert>
     <insert id="saveEmpDeptRelation"
@@ -642,6 +643,9 @@
         </if>
         <if test="filenumber != null and filenumber != '' ">
             FILENUMBER=#{filenumber},
+        </if>
+        <if test="teacherType != null and teacherType != '' ">
+            TEACHER_TYPE=#{teacherType},
         </if>
         VALID_FLAG = '1',
         change_time=sysdate,

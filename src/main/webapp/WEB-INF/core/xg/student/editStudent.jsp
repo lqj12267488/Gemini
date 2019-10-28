@@ -340,6 +340,13 @@
                     <div class="col-md-4">
                         <select id="enSchType" class="js-example-basic-single" value=""></select>
                     </div>
+
+                    <div class="col-md-2 tar">
+                        是否残疾
+                    </div>
+                    <div class="col-md-4">
+                        <select id="disability" class="js-example-basic-single" ></select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -514,7 +521,9 @@
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     $(document).ready(function () {
-
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=SF", function (data) {
+            addOption(data, "disability", '${student.disability}');
+        });
         //入学形式
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=RXXS", function (data) {
             addOption(data, "enSchType", '${student.enSchType}');
@@ -846,7 +855,8 @@
             documentaryLikaPoorFamilie: documentaryLikaPoorFamilie,
             duringEmployment: duringEmployment,
             totalEnrollmentScore: totalEnrollmentScore,
-            enSchType:$("#enSchType").val()
+            enSchType:$("#enSchType").val(),
+            disability:$("#disability").val()
         }, function (msg) {
             hideSaveLoading();
             if (msg.status == 1) {

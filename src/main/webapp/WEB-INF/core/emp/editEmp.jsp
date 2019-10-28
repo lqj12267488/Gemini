@@ -390,15 +390,14 @@
                         <select id="sfzs" class="js-example-basic-single"></select>
                     </div>
                 </div>
-
-                <%--<div class="form-row">--%>
-                    <%--<div class="col-md-2 tar" >--%>
-                        <%--<span class="iconBtx">*</span>入职日期--%>
-                    <%--</div>--%>
-                    <%--<div class="col-md-3">--%>
-                        <%--<input id="rz" type="date" class="js-example-basic-single" value="${emp.entryDate}"/>--%>
-                    <%--</div>--%>
-                <%--</div>--%>
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        教职工分类
+                    </div>
+                    <div class="col-md-3">
+                        <select id="teacherType" class="js-example-basic-single"></select>
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="col-md-2 tar">
                         备注
@@ -454,6 +453,10 @@
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     $(document).ready(function () {
+
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=JZGFL", function (data) {
+            addOption(data, "teacherType",'${emp.teacherType}');
+        });
         $("#idType").change(function () {
             if ($("#idType option:selected").val() != "") {
                 $("#idTypeCode").html($("<span class='iconBtx'>*</span> "+"#idType option:selected").text() + "号");
@@ -764,6 +767,7 @@
                     "personId": $("#personId").val(),
                     "filenumber":$("#filenumber").val(),
                     "deadline":$("#deadline").val(),
+                    "teacherType":$("#teacherType").val()
                 })
             , success: function (msg) {
                 hideSaveLoading();

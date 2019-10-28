@@ -131,6 +131,16 @@ public class Emp extends BaseBean {
     private String HIGHESTGRADE;
     private String COOPERATION;
 
+    private String teacherType;
+
+    public String getTeacherType() {
+        return teacherType;
+    }
+
+    public void setTeacherType(String teacherType) {
+        this.teacherType = teacherType;
+    }
+
     public String getPostfunction() {
         return postfunction;
     }

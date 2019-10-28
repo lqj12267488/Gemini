@@ -22,6 +22,7 @@ public interface StudentChangeLogDao {
     void saveLog(StudentChangeLog studentChangeLog);
 
     void updateStudentStatus(Student student);
+    void updateReason(Student student);
 
     List<StudentChangeLog> getStudentChangeStatisticsList(StudentChangeLog studentChangeLog);
 }

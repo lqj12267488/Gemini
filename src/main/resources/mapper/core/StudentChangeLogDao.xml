@@ -50,8 +50,22 @@
     <update id="updateStudentStatus" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student SET
           STUDENT_STATUS = #{studentStatus}
+          <if test='retireReason!= null and retireReason!= ""'>
+          ,RETIRE_REASON = #{retireReason}
+          </if>
+        <if test="dropOutReason!=null and dropOutReason != ''">
+          ,DROP_OUT_REASON = #{dropOutReason}
+        </if>
         WHERE student_id = #{studentId}
     </update>
+
+    <update id="updateReason" parameterType="com.goisan.system.bean.Student">
+        UPDATE t_xg_student SET
+            RETIRE_REASON = #{retireReason}
+            ,DROP_OUT_REASON = #{dropOutReason}
+        WHERE student_id = #{studentId}
+    </update>
+
     <select id="getStudentChangeStatisticsList" parameterType="com.goisan.system.bean.StudentChangeLog"
             resultType="com.goisan.system.bean.StudentChangeLog">
        select count(distinct STUDENT_ID) studentCount

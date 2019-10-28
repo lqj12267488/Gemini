@@ -97,6 +97,36 @@ public class Student extends BaseBean {
 
     private String enSchTypeShow;
 
+    private String retireReason;
+    private String dropOutReason;
+
+    /**是否残疾*/
+    private String disability;
+
+    public String getDisability() {
+        return disability;
+    }
+
+    public void setDisability(String disability) {
+        this.disability = disability;
+    }
+
+    public String getRetireReason() {
+        return retireReason;
+    }
+
+    public void setRetireReason(String retireReason) {
+        this.retireReason = retireReason;
+    }
+
+    public String getDropOutReason() {
+        return dropOutReason;
+    }
+
+    public void setDropOutReason(String dropOutReason) {
+        this.dropOutReason = dropOutReason;
+    }
+
     public String getEnSchTypeShow() {
         return enSchTypeShow;
     }

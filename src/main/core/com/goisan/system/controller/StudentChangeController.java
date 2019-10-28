@@ -100,13 +100,36 @@ public class StudentChangeController {
         Student student=studentService.getStudentByIdNoClassId(studentId);
         mv.addObject("studentId",studentId);
         mv.addObject("student",student);
+        /**
+         * 如果先休学后辍学都要显示出来
+         * 页面渲染根据flag标识
+         */
+        mv.addObject("flag","0");
+        if ("2".equals(student.getStudentStatus()) ||"5".equals(student.getStudentStatus())){
+            mv.addObject("flag","1");
+        }
+        if ("12".equals(student.getStudentStatus())){
+            mv.addObject("flag","2");
+            StudentChangeLog log = new StudentChangeLog();
+            log.setStudentId(student.getStudentId());
+            List<StudentChangeLog> r = studentChangeLogService.getStudentChangeLogList(log);
+            /**
+             * 查询修改先是否是休学
+             */
+            if (r.size()>0){
+                StudentChangeLog scl = r.get(0);
+                if ("5".equals(scl.getOldCode())||"2".equals(scl.getOldCode())){
+                    mv.addObject("flag","3");
+                }
+            }
+        }
         return mv;
     }
 
 
     @ResponseBody
     @RequestMapping("/studentChangeLog/updateStatus")
-    public Message updateStatus(String studentId, String studentStatus) {
+    public Message updateStatus(String studentId, String studentStatus,String retireReason,String dropOutReason) {
         LoginUser loginUser = CommonUtil.getLoginUser();
 
         Select2 selectOld = studentChangeLogService.getStatusByStudentId(studentId);
@@ -114,6 +137,8 @@ public class StudentChangeController {
         Student student = new Student();
         student.setStudentId(studentId);
         student.setStudentStatus(studentStatus);
+        student.setRetireReason(retireReason);
+        student.setDropOutReason(dropOutReason);
         studentChangeLogService.updateStudentStatus(student);
 
         Select2 selectNew = studentChangeLogService.getStatusByStudentId(studentId);
@@ -129,6 +154,18 @@ public class StudentChangeController {
         studentChangeLog.setCreator(loginUser.getPersonId());
         studentChangeLogService.saveLog(studentChangeLog);
         return new Message(1, "保存成功！", null);
+    }
+
+    @RequestMapping("/studentChangeLog/updateReason")
+    @ResponseBody
+    public Message updateReason(String studentId,String retireReason,String dropOutReason){
+        Student student = new Student();
+        student.setStudentId(studentId);
+        student.setRetireReason(retireReason);
+        student.setDropOutReason(dropOutReason);
+        studentChangeLogService.updateReason(student);
+        return new Message(1, "保存成功！", null);
+
     }
 
     @RequestMapping("/studentChangeLog/logByStudent")

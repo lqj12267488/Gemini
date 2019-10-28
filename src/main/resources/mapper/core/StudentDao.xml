@@ -230,7 +230,8 @@
                   allowancesFlagShow,
                   s."FROM",
                   s.EN_SCH_TYPE,
-                  FUNC_GET_DICVALUE( s.EN_SCH_TYPE,'RXXS') enSchTypeShow
+                  FUNC_GET_DICVALUE( s.EN_SCH_TYPE,'RXXS') enSchTypeShow,
+                  DISABILITY
         FROM t_xg_student s,T_XG_STUDENT_CLASS t
         WHERE s.STUDENT_ID = t.STUDENT_ID
             and s.student_id = #{studentId}
@@ -395,7 +396,9 @@
                           s.ALLOWANCES_FLAG,
                   'SF')
                   allowancesFlagShow,
-                  s."FROM"
+                  s."FROM",
+                  RETIRE_REASON,
+                  DROP_OUT_REASON
         FROM t_xg_student s
         WHERE  s.student_id = #{studentId}
     </select>
@@ -435,7 +438,8 @@ INSERT INTO t_xg_student
  external_teaching_point,
  subsection_culture, trailing_children_flag, "FROM", NAME_OF_MEMBER, MEMBER_RELATIONSHIP, IS_GUARDIAN,
  MEMBER_TELEPHONE_NUMBER, GRADUATION_SCHOOL,
- FROM_ARMY,RURAL_HOUSEHOLD_REGISTRATIO,ORDER_TRAINING,DOCUMENTARY_LIKA_POOR_FAMILIE,DURING_EMPLOYMENT,TOTAL_ENROLLMENT_SCORE,EN_SCH_TYPE)
+ FROM_ARMY,RURAL_HOUSEHOLD_REGISTRATIO,ORDER_TRAINING,DOCUMENTARY_LIKA_POOR_FAMILIE,DURING_EMPLOYMENT,TOTAL_ENROLLMENT_SCORE,EN_SCH_TYPE,
+ DISABILITY)
 VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
         to_date('${birthday}', 'yyyy-mm-dd'), '${joinYear}', '${joinMonth}',
         '${householdRegisterType}',
@@ -463,7 +467,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         '${trailingChildrenFlag}', '${from}', '${nameOfMember}', '${memberRelationship}', '${isGuardian}',
         '${memberTelephoneNumber}', '${graduationSchool}',
         '${fromArmy}','${ruralHouseholdRegistratio}','${orderTraining}','${documentaryLikaPoorFamilie}','${duringEmployment}','${totalEnrollmentScore}'
-        ,'${enSchType}')
+        ,'${enSchType}','${disability}')
     </insert>
     <update id="updateStudent" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student
@@ -538,7 +542,8 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
             during_employment = #{duringEmployment},
             TOTAL_ENROLLMENT_SCORE = #{totalEnrollmentScore},
             "FROM" = #{from},
-            EN_SCH_TYPE=#{enSchType}
+            EN_SCH_TYPE=#{enSchType},
+            DISABILITY = #{disability}
         WHERE student_id = #{studentId}
     </update>
     <delete id="delStudent" parameterType="java.lang.String">

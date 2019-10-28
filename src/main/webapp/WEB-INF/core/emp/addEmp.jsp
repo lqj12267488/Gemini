@@ -401,6 +401,15 @@
                         <select id="sfzs" class="js-example-basic-single"></select>
                     </div>
                 </div>
+
+                <div class="form-row">
+                    <div class="col-md-2 tar">
+                        教职工分类
+                    </div>
+                    <div class="col-md-3">
+                        <select id="teacherType" class="js-example-basic-single"></select>
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="col-md-2 tar">
                         备注
@@ -561,6 +570,9 @@
     var path = '<%=request.getContextPath()%>';
     $(document).ready(function () {
         addAdministrativeDivisions("nativePlaceProvince", "", "nativePlaceCity", "", "nativePlaceCounty", "", path);
+        $.get("<%=request.getContextPath()%>/common/getSysDict?name=JZGFL", function (data) {
+            addOption(data, "teacherType");
+        });
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=MZ", function (data) {
             addOption(data, "nation");
         });
@@ -853,7 +865,8 @@
             "academicDegree": $("#academic_degreeSel option:selected").val(),
             // "img": img,
             "deadline":$("#deadline").val(),
-            "filenumber":$("#filenumber").val()
+            "filenumber":$("#filenumber").val(),
+            "teacherType":$("#teacherType").val()
         })
         , success: function (msg) {
                 hideSaveLoading();
