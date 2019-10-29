@@ -88,4 +88,11 @@ public interface StudentService {
 
     /**获取系部专业，毕业班级，待毕业班级*/
     List<Tree> getDeptMajorGradClassTree(String level);
+
+    List<Tree> getMajorClassTree2();
+    List<Tree> getMajorClassTree3();
+    List<Student> getGradStudentListByDept(String deptId);
+    List<Student> getGradStudentListByMajor(String majorCode);
+    List<Student> getStudentListByMajor2(String majorCode);
+    List<Student> getStudentListByDept2(String deptId);
 }

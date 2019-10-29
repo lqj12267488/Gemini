@@ -84,7 +84,16 @@ public class StudentController {
     @ResponseBody
     @RequestMapping("/student/getMajorClassTree")
     public List<Tree> getMajorClassTree() {
-        List<Tree> a = studentService.getMajorClassTree();
+//        List<Tree> a = studentService.getMajorClassTree();
+        List<Tree> a = studentService.getMajorClassTree2();
+        return a;
+    }
+
+    @ResponseBody
+    @RequestMapping("/student/getMajorGraduateClassTree")
+    public List<Tree> getMajorGraduateClassTree() {
+//        List<Tree> a = studentService.getMajorClassTree();
+        List<Tree> a = studentService.getMajorClassTree3();
         return a;
     }
 

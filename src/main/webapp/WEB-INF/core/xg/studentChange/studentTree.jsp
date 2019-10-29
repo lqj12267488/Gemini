@@ -57,14 +57,26 @@
     };
 
     function zTreeOnClick(event, treeId, treeNode) {
-        studentChangeTable.ajax.url("<%=request.getContextPath()%>/studentChangeLog/getStudentList?deptId=" + treeNode.id).load();
+        if ('${flag}' == '1'){
+            studentChangeTable.ajax.url("<%=request.getContextPath()%>/studentChangeLog/getGraduateStudentList?deptId=" + treeNode.id+"&type="+treeNode.type).load();
+        } else {
+            studentChangeTable.ajax.url("<%=request.getContextPath()%>/studentChangeLog/getStudentList?deptId=" + treeNode.id).load();
+        }
     }
 
     $(document).ready(function () {
-        $.get("<%=request.getContextPath()%>/student/getMajorClassTree", function (data) {
-            majorClassTree = $.fn.zTree.init($("#majorClassTree"), setting, data);
-            majorClassTree.expandAll(true);
-        })
+        if ('${flag}' == '1') {
+            $.get("<%=request.getContextPath()%>/student/getMajorGraduateClassTree", function (data) {
+                majorClassTree = $.fn.zTree.init($("#majorClassTree"), setting, data);
+                majorClassTree.expandAll(true);
+            })
+        }else {
+            $.get("<%=request.getContextPath()%>/student/getMajorClassTree", function (data) {
+                majorClassTree = $.fn.zTree.init($("#majorClassTree"), setting, data);
+                majorClassTree.expandAll(true);
+            })
+        }
+
 
         studentChangeTable = $("#studentChangeGrid").DataTable({
             "destroy": true,
@@ -107,18 +119,6 @@
         });
 
     });
-
-    function searchGrid() {
-        studentChangeTable.ajax.url("<%=request.getContextPath()%>/studentChangeLog/getStudentList?deptId=" + treeNode.id).load();
-    }
-
-    function refreTree() {
-        $.get("<%=request.getContextPath()%>/getMenuTree", function (data) {
-            majorClassTree = $.fn.zTree.init($("#majorClassTree"), setting, data);
-            majorClassTree.expandAll(true);
-        });
-    }
-
 
 </script>
 <style>

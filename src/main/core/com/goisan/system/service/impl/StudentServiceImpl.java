@@ -797,4 +797,34 @@ public class StudentServiceImpl implements StudentService {
     public List<Tree> getDeptMajorGradClassTree(String level) {
         return studentDao.getDeptMajorGradClassTree(level);
     }
+
+    @Override
+    public List<Tree> getMajorClassTree2() {
+        return studentDao.getMajorClassTree2();
+    }
+
+    @Override
+    public List<Tree> getMajorClassTree3() {
+        return studentDao.getMajorClassTree3();
+    }
+
+    @Override
+    public List<Student> getGradStudentListByDept(String deptId) {
+        return studentDao.getGradStudentListByDept(deptId);
+    }
+
+    @Override
+    public List<Student> getGradStudentListByMajor(String majorCode) {
+        return studentDao.getGradStudentListByMajor(majorCode);
+    }
+
+    @Override
+    public List<Student> getStudentListByMajor2(String majorCode) {
+        return studentDao.getStudentListByMajor2(majorCode);
+    }
+
+    @Override
+    public List<Student> getStudentListByDept2(String deptId) {
+        return studentDao.getStudentListByDept2(deptId);
+    }
 }

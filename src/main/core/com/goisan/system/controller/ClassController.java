@@ -1,12 +1,17 @@
 package com.goisan.system.controller;
 
 import com.goisan.system.bean.ClassBean;
+import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Student;
+import com.goisan.system.bean.StudentChangeLog;
 import com.goisan.system.service.ClassService;
+import com.goisan.system.service.StudentChangeLogService;
 import com.goisan.system.service.StudentService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,6 +28,9 @@ public class ClassController {
     private ClassService classService;
     @Resource
     private StudentService studentService;
+
+    @Resource
+    private StudentChangeLogService studentChangeLogService;
 
     @RequestMapping("/classManagement/classList")
     public ModelAndView classList() {
@@ -61,6 +69,7 @@ public class ClassController {
 
     @ResponseBody
     @RequestMapping("/classManagement/savaClass")
+    @Transactional
     public Message savaClass(ClassBean classBean) {
         List<ClassBean> list = classService.getClassByClass(classBean);
         if(null == classBean.getClassId() || "".equals(classBean.getClassId())){
@@ -79,6 +88,47 @@ public class ClassController {
                 classBean.setChanger(CommonUtil.getPersonId());
                 classBean.setChangeDept(CommonUtil.getLoginUser().getDefaultDeptId());
                 classService.updateClass(classBean);
+                /**
+                 * 新增学籍异动,
+                 * 2在籍——毕业
+                 */
+                if ("2".equals(classBean.getGraduationFlag())){
+                    /**
+                     * classId 获取 在籍学生，新增异动记录，更新
+                     */
+                    List<Student> zjStuList = classService.getZJStuListByClassId(classBean.getClassId());
+                    for (Student student:zjStuList) {
+                        String studentId = student.getStudentId();
+                        StudentChangeLog studentChangeLog = new StudentChangeLog();
+                        studentChangeLog.setChangeType("2");
+                        studentChangeLog.setStudentId(studentId);
+                        studentChangeLog.setNewCode("6");
+                        studentChangeLog.setNewContent("已毕业");
+                        studentChangeLog.setOldCode("1");
+                        studentChangeLog.setOldContent("在籍");
+                        studentChangeLog.setCreateDept(CommonUtil.getDefaultDept());
+                        studentChangeLog.setCreator(CommonUtil.getPersonId());
+                        studentChangeLogService.saveLog(studentChangeLog);
+                    }
+                    studentChangeLogService.updateGradStudentStatusByClass(classBean.getClassId(),"6");
+                } else if ("3".equals(classBean.getGraduationFlag())){
+                    List<Student> zjStuList = classService.getZJStuListByClassId(classBean.getClassId());
+                    for (Student student:zjStuList){
+                        String studentId = student.getStudentId();
+                        StudentChangeLog studentChangeLog = new StudentChangeLog();
+                        studentChangeLog.setChangeType("2");
+                        studentChangeLog.setStudentId(studentId);
+                        studentChangeLog.setNewCode("15");
+                        studentChangeLog.setNewContent("应届毕业");
+                        studentChangeLog.setOldCode("1");
+                        studentChangeLog.setOldContent("在籍");
+                        studentChangeLog.setCreateDept(CommonUtil.getDefaultDept());
+                        studentChangeLog.setCreator(CommonUtil.getPersonId());
+                        studentChangeLogService.saveLog(studentChangeLog);
+                    }
+                    studentChangeLogService.updateGradStudentStatusByClass(classBean.getClassId(),"15");
+                }
+
                 return new Message(1, "修改成功！", null);
             }
         }

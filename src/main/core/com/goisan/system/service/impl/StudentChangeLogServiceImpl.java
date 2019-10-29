@@ -44,6 +44,16 @@ public class StudentChangeLogServiceImpl implements StudentChangeLogService {
         studentChangeLogDao.updateReason(student);
     }
 
+    @Override
+    public void updateGradStudentStatusByClass(String classId,String studentStatus) {
+        studentChangeLogDao.updateGradStudentStatusByClass(classId,studentStatus);
+    }
+
+    @Override
+    public void updateNoGradStudentStatusByClass(String classId) {
+        studentChangeLogDao.updateNoGradStudentStatusByClass(classId);
+    }
+
     public List<StudentChangeLog> getStudentChangeStatisticsList(StudentChangeLog studentChangeLog) {
         return studentChangeLogDao.getStudentChangeStatisticsList(studentChangeLog);
     }

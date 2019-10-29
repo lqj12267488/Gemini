@@ -59,6 +59,24 @@
         WHERE student_id = #{studentId}
     </update>
 
+
+    <update id="updateGradStudentStatusByClass">
+        UPDATE t_xg_student t SET
+        t.STUDENT_STATUS = #{studentStatus}
+        where  t.student_id in (select s.student_id from t_xg_student s, T_XG_STUDENT_CLASS r ,t_xg_class c
+        where r.student_id = s.student_id AND r.class_id = c.class_id
+        and s.STUDENT_STATUS = '1' and c.class_id = #{classId}
+        )
+    </update>
+    <update id="updateNoGradStudentStatusByClass">
+        UPDATE t_xg_student t SET
+        t.STUDENT_STATUS = '1'
+        where  t.student_id in (select s.student_id from t_xg_student s, T_XG_STUDENT_CLASS r ,t_xg_class c
+        where r.student_id = s.student_id AND r.class_id = c.class_id
+        and s.STUDENT_STATUS = '6' and c.class_id = #{classId}
+        )
+    </update>
+
     <update id="updateReason" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student SET
             RETIRE_REASON = #{retireReason}

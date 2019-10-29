@@ -170,4 +170,16 @@
               and
             t.CLASS_ID = #{classId}
     </select>
+
+    <select id="getZJStuListByClassId" resultType="com.goisan.system.bean.Student">
+        select s.student_id,s.name from T_XG_STUDENT_CLASS  t,T_XG_STUDENT s
+        where t.class_id = #{classId} and t.student_id = s.student_id
+        and s.student_status ='1'
+    </select>
+
+    <select id="getBYStuListByClassId" resultType="com.goisan.system.bean.Student">
+        select s.student_id,s.name from T_XG_STUDENT_CLASS  t,T_XG_STUDENT s
+        where t.class_id = #{classId} and t.student_id = s.student_id
+        and s.student_status ='1'
+    </select>
 </mapper>

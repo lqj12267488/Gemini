@@ -22,5 +22,8 @@ public interface StudentChangeLogService {
     void updateStudentStatus(Student student);
     void updateReason(Student student);
 
+    void updateGradStudentStatusByClass( String classId,String studentStatus);
+    void updateNoGradStudentStatusByClass(String classId);
+
     List<StudentChangeLog> getStudentChangeStatisticsList(StudentChangeLog studentChangeLog);
 }

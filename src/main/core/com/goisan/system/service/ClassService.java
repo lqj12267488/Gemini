@@ -2,6 +2,7 @@ package com.goisan.system.service;
 
 import com.goisan.system.bean.ClassBean;
 import com.goisan.system.bean.Student;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -30,5 +31,7 @@ public interface ClassService {
     int checkDeleteClass(String classId);
 
     List<Student> getStudentListByClassId(String classId);
+    List<Student> getZJStuListByClassId(String classId);
+    List<Student> getBYStuListByClassId(String classId);
 
 }

@@ -34,4 +34,7 @@ public interface ClassDao {
     int checkDeleteClass(String classId);
 
     List<Student> getStudentListByClassId(String classId);
+
+    List<Student> getZJStuListByClassId(@Param("classId")String classId);
+    List<Student> getBYStuListByClassId(@Param("classId")String classId);
 }

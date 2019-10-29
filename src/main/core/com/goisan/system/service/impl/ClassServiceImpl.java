@@ -80,4 +80,14 @@ public class ClassServiceImpl implements ClassService {
     public List<Student> getStudentListByClassId(String classId){
        return classDao.getStudentListByClassId(classId);
     }
+
+    @Override
+    public List<Student> getZJStuListByClassId(String classId) {
+        return classDao.getZJStuListByClassId(classId);
+    }
+
+    @Override
+    public List<Student> getBYStuListByClassId(String classId) {
+        return classDao.getBYStuListByClassId(classId);
+    }
 }

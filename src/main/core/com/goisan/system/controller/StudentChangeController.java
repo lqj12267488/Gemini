@@ -25,10 +25,15 @@ public class StudentChangeController {
     @Resource
     private StudentChangeLogService studentChangeLogService;
 
+    /**
+     * @param flag 毕业标识
+     * @return
+     */
     @RequestMapping("/studentChangeLog/studentChange")
-    public ModelAndView studentList() {
+    public ModelAndView studentList(String flag) {
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/core/xg/studentChange/studentTree");
+        mv.addObject("flag",flag);
         return mv;
     }
 
@@ -38,10 +43,31 @@ public class StudentChangeController {
         String tablename = studentService.getTreeTable(deptId);
         Map<String, List<Student>> studentList = new HashMap<String, List<Student>>();
         if("T_XG_MAJOR".equals(tablename)){
-            studentList.put("data",studentService.getStudentListByMajor(deptId , "", "",level));
+            studentList.put("data",studentService.getStudentListByMajor2(deptId));
         }else if("T_SYS_DEPT".equals(tablename)){
-            studentList.put("data",studentService.getStudentListByDept(deptId ,deptId+"%", "", "",level));
+            studentList.put("data",studentService.getStudentListByDept2(deptId));
         }else if("T_XG_CLASS".equals(tablename)){
+            Student student = new Student();
+            student.setClassId(deptId);
+            studentList.put("data",studentService.getStudentList(student));
+        }
+        return studentList;
+    }
+
+
+    /**
+     * @param type 1 系部，2 专业，3 班级
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/studentChangeLog/getGraduateStudentList")
+    public Map<String, List<Student>> getGraduateStudentList(String deptId,String type){
+        Map<String, List<Student>> studentList = new HashMap<>();
+        if("1".equals(type)){
+            studentList.put("data",studentService.getGradStudentListByDept(deptId));
+        }else if("2".equals(type)){
+            studentList.put("data",studentService.getGradStudentListByMajor(deptId));
+        }else if("3".equals(type)){
             Student student = new Student();
             student.setClassId(deptId);
             studentList.put("data",studentService.getStudentList(student));

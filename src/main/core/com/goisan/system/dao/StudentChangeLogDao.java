@@ -4,6 +4,7 @@ import com.goisan.system.bean.EmpChangeLog;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Student;
 import com.goisan.system.bean.StudentChangeLog;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public interface StudentChangeLogDao {
     void saveLog(StudentChangeLog studentChangeLog);
 
     void updateStudentStatus(Student student);
+    void updateGradStudentStatusByClass(@Param("classId") String classId ,@Param("studentStatus") String studentStatus);
+    void updateNoGradStudentStatusByClass(@Param("classId") String classId);
     void updateReason(Student student);
 
     List<StudentChangeLog> getStudentChangeStatisticsList(StudentChangeLog studentChangeLog);

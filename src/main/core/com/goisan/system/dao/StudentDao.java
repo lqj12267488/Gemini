@@ -36,6 +36,8 @@ public interface StudentDao {
     void delRoleByStudentId(String studentId);
 
     List<Tree> getMajorClassTree();
+    List<Tree> getMajorClassTree2();
+    List<Tree> getMajorClassTree3();
 
     List<Tree> getMajorClassTreeByLevel(@Param("level") String level);
 
@@ -58,9 +60,16 @@ public interface StudentDao {
             @Param("deptId") String deptId, @Param("deptIdLike") String deptIdLike,
             @Param("name") String name, @Param("idcard") String idcard, @Param("level") String level);
 
+
+    List<Student> getStudentListByDept2(@Param("deptId") String deptId);
+    List<Student> getGradStudentListByDept(@Param("deptId") String deptId);
+
     List<Student> getStudentListByMajor(
             @Param("majorCode") String majorCode, @Param("name") String name,
             @Param("idcard") String idcard, @Param("level") String level);
+
+    List<Student> getGradStudentListByMajor(@Param("majorCode") String majorCode);
+    List<Student> getStudentListByMajor2(@Param("majorCode") String majorCode);
 
     List<Tree> getStudentTree(String roleId);
 
