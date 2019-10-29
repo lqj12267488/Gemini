@@ -7,7 +7,7 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--<jsp:include page="../../../../include.jsp"/>--%>\
+<%--<jsp:include page="../../../../include.jsp"/>--%>
 <head>
     <style type="text/css">
         textarea {
@@ -20,61 +20,63 @@
     <input id="studentReissueid" hidden value="${studentReissue.id}">
     <input type="file" name="file" style="display: none" id="imgFile" onchange="fileChange(this)">
     <div class="form-row">
-        <div class="col-md-3 tar" style="float: left;">
-            申请时间
+        <div class="col-md-11 wrapLf" style="padding-left: 3%;">
+            <div class="col-md-3 tar addWdlf" style="float: left;">
+                申请时间
+            </div>
+                <div class="col-md-9 addWdrt" style="margin-bottom: 10px">
+                <input id="f_requestDate" type="datetime-local" readonly="readonly"
+                       class="validate[required,maxSize[100]] form-control"
+                       value="${studentReissue.requestDate}"/>
+            </div>
+            <div class="col-md-3 tar addWdlf" style="float: left;">
+                学生姓名
+            </div>
+                <div class="col-md-9 addWdrt" style="margin-bottom: 10px">
+                <select id="studentId" disabled="disabled"
+                        class="validate[required,maxSize[100]] form-control"></select>
+            </div>
+            <div class="col-md-3 tar addWdlf" style="float: left;">
+                民族
+            </div>
+            <div class="col-md-9 addWdrt" style="margin-bottom: 10px">
+                <select id="f_nation" disabled="disabled"
+                        class="validate[required,maxSize[100]] form-control"></select>
+            </div>
+            <div class="col-md-3 tar addWdlf" style="float: left;">
+                性别
+            </div>
+            <div class="col-md-9 addWdrt" style="margin-bottom: 10px">
+                <select id="f_sex" disabled="disabled"
+                        class="validate[required,maxSize[100]] form-control"></select>
+            </div>
+            <div class="col-md-3 tar addWdlf" style="float: left;">
+                班级
+            </div>
+            <div class="col-md-9 addWdrt">
+                <select id="classIdId" type="text" disabled="disabled"
+                        class="validate[required,maxSize[100]] form-control"></select>
+            </div>
         </div>
-        <div class="col-md-4" style="margin-top: 4px;">
-            <input id="f_requestDate" type="datetime-local" readonly="readonly"
-                   class="validate[required,maxSize[100]] form-control"
-                   value="${studentReissue.requestDate}"/>
-        </div>
-        <div style="float: right;width: 230px;height: 160px;">
-            <div style="width: 160px;height: 160px;margin-top: -4px;">
+        <div class="col-md-1 wrapRt" style="padding-left: 0;">
+            <div style="width:100%;">
                 <c:choose>
-                    <c:when test="${studentReissue.img == null}">
+                    <c:when test="${studentReissue.img != null}">
+                        <img onclick="showInputFile()"
+                             style="width:100%;height: 189px; cursor:pointer;"
+                             src="data:image/png;base64,${studentReissue.img}"
+                             height="150"
+                             width="110" alt="" id="userImg">
+                    </c:when>
+                    <%--<c:otherwise>
                         <img onclick="showInputFile()"
                              style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
                              src="<%=request.getContextPath()%>/libs/img/upload.png"
                              height="150"
                              width="110" alt="" id="userImg">
-                    </c:when>
-                    <c:otherwise>
-                        <img onclick="showInputFile()"
-                             style="width: 130px;height: 172px;margin-top: 4px;margin-left: 46px"
-                             src="data:image/png;base64,${studentReissue.img}"
-                             height="150"
-                             width="110" alt="" id="userImg">
-                    </c:otherwise>
+                    </c:otherwise>--%>
                 </c:choose>
             </div>
-        </div>
-        <div class="col-md-3 tar" style="float: left;">
-            学生姓名
-        </div>
-        <div class="col-md-4" style="margin-top: 4px;">
-            <select id="studentId" disabled="disabled"
-                    class="validate[required,maxSize[100]] form-control"></select>
-        </div>
-        <div class="col-md-3 tar" style="float: left;">
-            民族
-        </div>
-        <div class="col-md-4" style="margin-top: 4px;">
-            <select id="f_nation" disabled="disabled"
-                    class="validate[required,maxSize[100]] form-control"></select>
-        </div>
-        <div class="col-md-3 tar" style="float: left;">
-            性别
-        </div>
-        <div class="col-md-4" style="margin-top: 4px;">
-            <select id="f_sex" disabled="disabled"
-                    class="validate[required,maxSize[100]] form-control"></select>
-        </div>
-        <div class="col-md-3 tar" style="float: left;">
-            班级
-        </div>
-        <div class="col-md-4" style="margin-top: 4px;">
-            <select id="classIdId" type="text" disabled="disabled"
-                    class="validate[required,maxSize[100]] form-control"></select>
         </div>
     </div>
     <div class="form-row">
@@ -167,6 +169,22 @@
 <input id="houseProvinceValue" type="hidden" value="${studentReissue.province}"/>
 <input id="houseCityValue" type="hidden" value="${studentReissue.regional}"/>
 <input id="houseCountyValue" type="hidden" value="${studentReissue.city}"/>
+<style>
+    @media (max-width:1367px){
+        .wrapLf {
+            width: 87%;
+        }
+        .wrapRt {
+            width: 13%;
+        }
+        .addWdlf {
+            width: 26.2%;
+        }
+        .addWdrt {
+            width: 73.8%;
+        }
+    }
+</style>
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
 

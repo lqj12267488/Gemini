@@ -331,7 +331,8 @@ public class TalentRecruitmentController {
         mv.addObject("handleList", list);
         mv.addObject("size", size);
         mv.addObject("state", state);
-        if (talentRecruitment.getSex().length() > 1) {
+
+        if (talentRecruitment.getSex()!=null && talentRecruitment.getSex().length() > 1) {
             talentRecruitment.setSex("4");
         }
         String requestDate = talentRecruitment.getRequestDate().replace("T", " ");

@@ -29,8 +29,7 @@
         members_num membersNum,
         CHANGE_TIME
         FROM t_kh_evaluation_group
-        WHERE 1=1 AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level}) AND group_type != '6' AND group_type is
-        not null
+        WHERE 1=1 AND create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
         <if test="groupName != null and groupName != '' ">
             AND GROUP_NAME LIKE #{groupName}
         </if>

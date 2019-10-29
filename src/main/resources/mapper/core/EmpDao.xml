@@ -406,8 +406,7 @@
             FUNC_GET_DICVALUE(e.staff_status,'JZGSS') staffBelongsShow ,
             u.ID_CARD_PHOTO_URL photoUrl,
             e.filenumber,
-            e.deadline,
-            e.TEACHER_TYPE
+            e.deadline
         FROM
             t_rs_employee e,
             t_sys_dept d,

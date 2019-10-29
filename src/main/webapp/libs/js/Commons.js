@@ -35,7 +35,7 @@ function addOption(data, select, selected) {
  * @param url 数据源url
  * @param el_val 存放选中的id值元素id
  */
-function autoComplateOptions(el, url, el_val, ) {
+function autoComplateOptions(el, url, el_val ) {
     $("#"+el).autocomplete({
         source: function (request , response) {
             $.get(url,{

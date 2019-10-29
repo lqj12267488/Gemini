@@ -922,7 +922,7 @@ public class EnrollmentController {
                 enrollmentStudent.setCreateDept(CommonUtil.getDefaultDept());
                 enrollmentStudentList = enrollmentService.getEnrollmentStudentList(enrollmentStudent);
             } else {
-                enrollmentStudent.setDepartmentsId(CommonUtil.getDefaultDept());
+                //enrollmentStudent.setDepartmentsId(CommonUtil.getDefaultDept());
                 enrollmentStudent.setCreator(CommonUtil.getPersonId());
                 enrollmentStudent.setCreateDept(CommonUtil.getDefaultDept());
                 enrollmentStudentList = enrollmentService.getEnrollmentStudentList(enrollmentStudent);

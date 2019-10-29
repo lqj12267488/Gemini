@@ -72,6 +72,7 @@
 <script>
     $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
     var workflow;
+    var workflowId= $("#workflowId option:selected").val();
     $(document).ready(function () {
         $.get("<%=request.getContextPath()%>/common/getTableDict",{
                 id: " workflow_id ",
@@ -83,13 +84,20 @@
             function (data) {
                 addOption(data, "workflowId");
             })
+        var workflowId= $("#workflowId option:selected").val();
+        if (workflowId==undefined || workflowId == ""){
+            workflowId = '%%';
+        }else{
+            workflowId = '%'+$("#workflowId option:selected").val()+'%';
+        }
 
         workflow = $("#workflowGrid").DataTable({
             "ajax": {
                 "type": "post",
                 "url": '<%=request.getContextPath()%>/funds2/workflowList',
                 "data": {
-                    id:  $("#id").val()
+                    id:  $("#id").val(),
+                    workflowId : workflowId
                 }
             },
             "destroy": true,

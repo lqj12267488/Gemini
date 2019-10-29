@@ -56,6 +56,8 @@ public class SalaryController {
     @RequestMapping("/salary/getSalaryList")
     public Map<String, Object> getGroupList(Salary salary,int draw, int start, int length) {
         PageHelper.startPage(start / length + 1, length);
+        LoginUser login = CommonUtil.getLoginUser();
+        salary.setStaffId(login.getPersonId());
         Map<String, Object> salaryList = new HashMap();
         List<Salary> salaryList1 = salaryService.getSalaryList(salary);
         PageInfo<List<Salary>> info = new PageInfo(salaryList1);
@@ -101,6 +103,7 @@ public class SalaryController {
         if(null ==salary.getId() || salary.getId().equals("")){
             salary.setCreator(login.getPersonId());
             salary.setCreateDept(login.getDefaultDeptId());
+            salary.setStaffId(login.getPersonId());
             salaryService.insertSalary(salary);
             return new Message(1, "新增成功！", null);
         }else{

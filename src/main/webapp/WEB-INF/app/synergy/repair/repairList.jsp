@@ -152,14 +152,13 @@
                     var emlistData = jsonStr;
                 }
                 $.each(emlistData, function(key, map){
-                    console.log(map)
                     var  title = decodeURI(decodeURI(map.title));
                     var id = map.id;
                     var requestFlag=decodeURI(decodeURI(map.requestFlag));
                     var repairmanPersonID=decodeURI(decodeURI(map.repairmanPersonID)).replace(/%2C/g,",");
                     var name = map.creator;
                     var feedback = map.feedback;
-                    var str = "申请人："+name+"  维修状态:"+repairmanPersonID+" 反馈状态:"+feedback;
+                    var str = "申请人："+name+"  维修状态:"+requestFlag+" 反馈状态:"+feedback;
                     title = decodeURI(decodeURI(title));
                     requestFlag=decodeURI(decodeURI(requestFlag));
                     // repairmanPersonID=decodeURI(decodeURI(repairmanPersonID));

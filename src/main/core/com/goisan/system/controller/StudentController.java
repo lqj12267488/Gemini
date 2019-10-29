@@ -24,6 +24,7 @@ import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -412,22 +413,40 @@ public class StudentController {
         if (param.get("type").equals("0")) {
             wb = studentService.getStudentExcelTemplate(param.get("type").toString());
             HSSFSheet sheet = wb.getSheetAt(0);
+            sheet.createRow(0).createCell(0).setCellValue("新疆现代职业技术学院学生基本信息导出版");
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 14));
+            HSSFRow hssfRow = null;
             for (int i = 0; i < stuS.size(); i++) {
-                sheet.createRow(i + 1).createCell(0).setCellValue(stuS.get(i).getCandidateNumberDz());
-                sheet.getRow(i + 1).createCell(1).setCellValue(stuS.get(i).getStudentNumber());
-                sheet.getRow(i + 1).createCell(2).setCellValue(stuS.get(i).getName());
-                sheet.getRow(i + 1).createCell(3).setCellValue(stuS.get(i).getSex());
-                sheet.getRow(i + 1).createCell(4).setCellValue(CommonUtil.formatData("yyyy-MM-dd", stuS.get(i).getBirthday()));
-                sheet.getRow(i + 1).createCell(5).setCellValue(stuS.get(i).getIdcard());
-                sheet.getRow(i + 1).createCell(6).setCellValue(stuS.get(i).getPoliticalStatus());
-                sheet.getRow(i + 1).createCell(7).setCellValue(stuS.get(i).getNation());
-                sheet.getRow(i + 1).createCell(8).setCellValue(stuS.get(i).getMajorCode());
-                sheet.getRow(i + 1).createCell(9).setCellValue(stuS.get(i).getMajorShow());
-                sheet.getRow(i + 1).createCell(10).setCellValue(stuS.get(i).getTrainingLevel());
-                sheet.getRow(i + 1).createCell(11).setCellValue(stuS.get(i).getEductionalSystem());
-                sheet.getRow(i + 1).createCell(12).setCellValue(stuS.get(i).getLearnMode());
-                sheet.getRow(i + 1).createCell(13).setCellValue(stuS.get(i).getTotalPoints());
-                sheet.getRow(i + 1).createCell(14).setCellValue(stuS.get(i).getClassId());
+                //sheet.createRow(i + 2).createCell(0).setCellValue(stuS.get(i).getCandidateNumberDz());
+                 hssfRow = sheet.createRow(i + 2);
+                hssfRow.createCell(0).setCellValue(stuS.get(i).getStudentNumber());
+                hssfRow.createCell(1).setCellValue(stuS.get(i).getName());
+                hssfRow.createCell(2).setCellValue(stuS.get(i).getSex());
+                hssfRow.createCell(3).setCellValue(CommonUtil.formatData("yyyyMMdd", stuS.get(i).getBirthday()));
+                hssfRow.createCell(4).setCellValue(stuS.get(i).getIdcard());
+                hssfRow.createCell(5).setCellValue(stuS.get(i).getPoliticalStatus());
+                hssfRow.createCell(6).setCellValue(stuS.get(i).getNation());
+                hssfRow.createCell(7).setCellValue(stuS.get(i).getMajorCode());
+                hssfRow.createCell(8).setCellValue(stuS.get(i).getMajorShow());
+                hssfRow.createCell(9).setCellValue(stuS.get(i).getTrainingLevel());
+                hssfRow.createCell(10).setCellValue(stuS.get(i).getEductionalSystem());
+                hssfRow.createCell(11).setCellValue(stuS.get(i).getLearnMode());
+                //sheet.getRow(i + 2).createCell(13).setCellValue(stuS.get(i).getTotalPoints());
+                hssfRow.createCell(12).setCellValue(stuS.get(i).getClassId());
+            }
+            for (int i = 0; i < 13; i++) {
+                sheet.setColumnWidth(i,15 * 256);
+                if (i==7 || i==11){
+                    continue;
+                }
+                if (i==4){
+                    sheet.setColumnWidth(4,30 * 256);
+                    continue;
+                }
+                if (i==0 || i==3  || i==9 || i==13){
+                    sheet.setColumnWidth(i,20 * 256);
+                }
+
             }
         } else {
             wb = studentService.getStudentExcelTemplate1();
@@ -486,7 +505,7 @@ public class StudentController {
         OutputStream os = null;
         response.setContentType("application/vnd.ms-excel");
         try {
-            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("学生基本信息.xls", "utf-8"));
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("学生基本信息（导出版）.xls", "utf-8"));
             os = response.getOutputStream();
             wb.write(os);
         } catch (IOException e) {
@@ -527,7 +546,7 @@ public class StudentController {
         OutputStream os = null;
         try {
             response.setContentType("application/vnd.ms-excel");
-            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("学生基本信息模板.xls", "utf-8"));
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode("新疆现代职业技术学院学生基本信息导入模板.xls", "utf-8"));
             os = response.getOutputStream();
             wb.write(os);
         } catch (IOException e) {

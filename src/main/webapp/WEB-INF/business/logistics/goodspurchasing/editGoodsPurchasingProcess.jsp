@@ -136,7 +136,9 @@
             });
             return;
         }
-        if (!reg2.test($("#goodsNum01").val())) {
+        var reg2 = /^[0-9]+.?[0-9]*$/;
+        var reg3 = new RegExp("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,4})?$");
+        if (!reg2.test($("#goodsNum").val())) {
             swal({
                 title: "采购数量请填写数字！",
                 type: "info"

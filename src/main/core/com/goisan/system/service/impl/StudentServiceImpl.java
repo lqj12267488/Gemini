@@ -163,6 +163,7 @@ public class StudentServiceImpl implements StudentService {
         List<ClassBean> classList = classService.getClassList(new ClassBean());
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("sheet");
+
         HSSFSheet sheet2 = wb.createSheet("sheet2");
         for (int i = 0; i < ZZMM.size(); i++) {
             HSSFRow row = sheet2.getRow(i);
@@ -252,91 +253,112 @@ public class StudentServiceImpl implements StudentService {
         style.cloneStyleFrom(headStyle);
         style.setAlignment(HorizontalAlignment.LEFT);
         if(type.equals("0")){
-            HSSFRow hssfRow = sheet.createRow(0);
-            hssfRow.createCell(0).setCellValue("考生号");
-            hssfRow.getCell(0).setCellStyle(headStyle);
-            hssfRow.createCell(1).setCellValue("学号");
-            hssfRow.getCell(1).setCellStyle(headStyle);
-            hssfRow.createCell(2).setCellValue("姓名");
-            hssfRow.getCell(2).setCellStyle(headStyle);
-            hssfRow.createCell(3).setCellValue("性别");
-            hssfRow.getCell(3).setCellStyle(headStyle);
-            hssfRow.createCell(4).setCellValue("出生日期");
-            hssfRow.getCell(4).setCellStyle(headStyle);
-            hssfRow.createCell(5).setCellValue("身份证号");
-            hssfRow.getCell(5).setCellStyle(headStyle);
-            hssfRow.createCell(6).setCellValue("政治面貌");
-            hssfRow.getCell(6).setCellStyle(headStyle);
-            hssfRow.createCell(7).setCellValue("民族");
-            hssfRow.getCell(7).setCellStyle(headStyle);
-            hssfRow.createCell(8).setCellValue("专业代码");
-            hssfRow.getCell(8).setCellStyle(cellStyle);
-            hssfRow.createCell(9).setCellValue("专业名称");
-            hssfRow.getCell(9).setCellStyle(headStyle);
-            hssfRow.createCell(10).setCellValue("层次");
-            hssfRow.getCell(10).setCellStyle(headStyle);
-            hssfRow.createCell(11).setCellValue("学制");
-            hssfRow.getCell(11).setCellStyle(headStyle);
-            hssfRow.createCell(12).setCellValue("学习形式");
-            hssfRow.getCell(12).setCellStyle(cellStyle);
-            hssfRow.createCell(13).setCellValue("总分");
-            hssfRow.getCell(13).setCellStyle(cellStyle);
-            hssfRow.createCell(14).setCellValue("班级");
-            hssfRow.getCell(14).setCellStyle(headStyle);
-            setDataValidation(sheet, "Sheet2!$H$1:$H$" + sexs.size(), 2, 65535, 3, 3);
-            setDataValidation(sheet, "Sheet2!$A$1:$A$" + ZZMM.size(), 2, 65535, 6, 6);
-            setDataValidation(sheet, "Sheet2!$B$1:$B$" + mz.size(), 2, 65535, 7, 7);
-            setDataValidation(sheet, "Sheet2!$F$1:$F$" + majorList.size(), 2, 65535, 9, 9);
-            setDataValidation(sheet, "Sheet2!$C$1:$C$" + cc.size(), 2, 65535, 11, 11);
-            setDataValidation(sheet, "Sheet2!$D$1:$D$" + xz.size(), 2, 65535, 10, 10);
-            setDataValidation(sheet, "Sheet2!$E$1:$E$" + xxxs.size(), 2, 65535, 12, 12);
-            setDataValidation(sheet, "Sheet2!$G$1:$G$" + classList.size(), 2, 65535, 14, 14);
+            HSSFRow hssfRow2 = sheet.createRow(1);
+            /*hssfRow2.createCell(0).setCellValue("考生号");
+            hssfRow2.getCell(0).setCellStyle(headStyle);*/
+            hssfRow2.createCell(0).setCellValue("学号");
+            hssfRow2.getCell(0).setCellStyle(cellStyle);
+            hssfRow2.createCell(1).setCellValue("姓名");
+            hssfRow2.getCell(1).setCellStyle(cellStyle);
+            hssfRow2.createCell(2).setCellValue("性别");
+            hssfRow2.getCell(2).setCellStyle(cellStyle);
+            hssfRow2.createCell(3).setCellValue("出生日期");
+            hssfRow2.getCell(3).setCellStyle(cellStyle);
+            hssfRow2.createCell(4).setCellValue("身份证号");
+            hssfRow2.getCell(4).setCellStyle(cellStyle);
+            hssfRow2.createCell(5).setCellValue("政治面貌");
+            hssfRow2.getCell(5).setCellStyle(cellStyle);
+            hssfRow2.createCell(6).setCellValue("民族");
+            hssfRow2.getCell(6).setCellStyle(cellStyle);
+            hssfRow2.createCell(7).setCellValue("专业代码");
+            hssfRow2.getCell(7).setCellStyle(cellStyle);
+            hssfRow2.createCell(8).setCellValue("专业名称");
+            hssfRow2.getCell(8).setCellStyle(cellStyle);
+            hssfRow2.createCell(9).setCellValue("层次");
+            hssfRow2.getCell(9).setCellStyle(cellStyle);
+            hssfRow2.createCell(10).setCellValue("学制");
+            hssfRow2.getCell(10).setCellStyle(cellStyle);
+            hssfRow2.createCell(11).setCellValue("学习形式");
+            hssfRow2.getCell(11).setCellStyle(cellStyle);
+            /*hssfRow2.createCell(13).setCellValue("总分");
+            hssfRow2.getCell(13).setCellStyle(cellStyle);*/
+            hssfRow2.createCell(12).setCellValue("班级");
+            hssfRow2.getCell(12).setCellStyle(cellStyle);
+            setDataValidation(sheet, "Sheet2!$H$1:$H$" + sexs.size(), 3, 65535, 2, 2);
+            setDataValidation(sheet, "Sheet2!$A$1:$A$" + ZZMM.size(), 3, 65535, 5, 5);
+            setDataValidation(sheet, "Sheet2!$B$1:$B$" + mz.size(), 3, 65535, 6, 6);
+            setDataValidation(sheet, "Sheet2!$F$1:$F$" + majorList.size(), 3, 65535, 8, 8);
+            setDataValidation(sheet, "Sheet2!$C$1:$C$" + cc.size(), 3, 65535, 10, 10);
+            setDataValidation(sheet, "Sheet2!$D$1:$D$" + xz.size(), 3, 65535, 9, 9);
+            setDataValidation(sheet, "Sheet2!$E$1:$E$" + xxxs.size(), 3, 65535, 11, 11);
+            setDataValidation(sheet, "Sheet2!$G$1:$G$" + classList.size(), 3, 65535, 12, 12);
             sheet.setDefaultColumnWidth(15);
             return wb;
         }else{
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 14));
             HSSFRow head = sheet.createRow(0);
-            head.createCell(0).setCellValue("红色字段为必填项");
-            head.getCell(0).setCellStyle(style);
+            head.createCell(0).setCellValue("新疆现代职业技术学院学生基本信息导入模板");
+            //head.createCell(0).setCellValue("红色字段为必填项");
+            //head.getCell(0).setCellStyle(style);
+
             HSSFRow hssfRow = sheet.createRow(1);
-            hssfRow.createCell(0).setCellValue("考生号");
-            hssfRow.getCell(0).setCellStyle(headStyle);
-            hssfRow.createCell(1).setCellValue("学号");
-            hssfRow.getCell(1).setCellStyle(headStyle);
-            hssfRow.createCell(2).setCellValue("姓名");
-            hssfRow.getCell(2).setCellStyle(headStyle);
-            hssfRow.createCell(3).setCellValue("性别");
-            hssfRow.getCell(3).setCellStyle(headStyle);
-            hssfRow.createCell(4).setCellValue("出生日期");
-            hssfRow.getCell(4).setCellStyle(headStyle);
-            hssfRow.createCell(5).setCellValue("身份证号");
-            hssfRow.getCell(5).setCellStyle(headStyle);
-            hssfRow.createCell(6).setCellValue("政治面貌");
-            hssfRow.getCell(6).setCellStyle(headStyle);
-            hssfRow.createCell(7).setCellValue("民族");
-            hssfRow.getCell(7).setCellStyle(headStyle);
-            hssfRow.createCell(8).setCellValue("专业代码");
-            hssfRow.getCell(8).setCellStyle(cellStyle);
-            hssfRow.createCell(9).setCellValue("专业名称");
-            hssfRow.getCell(9).setCellStyle(headStyle);
-            hssfRow.createCell(10).setCellValue("层次");
-            hssfRow.getCell(10).setCellStyle(headStyle);
-            hssfRow.createCell(11).setCellValue("学制");
-            hssfRow.getCell(11).setCellStyle(headStyle);
-            hssfRow.createCell(12).setCellValue("学习形式");
-            hssfRow.getCell(12).setCellStyle(cellStyle);
-            hssfRow.createCell(13).setCellValue("总分");
-            hssfRow.getCell(13).setCellStyle(cellStyle);
-            hssfRow.createCell(14).setCellValue("班级");
-            hssfRow.getCell(14).setCellStyle(headStyle);
-            setDataValidation(sheet, "Sheet2!$H$1:$H$" + sexs.size(), 2, 65535, 3, 3);
-            setDataValidation(sheet, "Sheet2!$A$1:$A$" + ZZMM.size(), 2, 65535, 6, 6);
-            setDataValidation(sheet, "Sheet2!$B$1:$B$" + mz.size(), 2, 65535, 7, 7);
-            setDataValidation(sheet, "Sheet2!$F$1:$F$" + majorList.size(), 2, 65535, 9, 9);
-            setDataValidation(sheet, "Sheet2!$C$1:$C$" + cc.size(), 2, 65535, 11, 11);
-            setDataValidation(sheet, "Sheet2!$D$1:$D$" + xz.size(), 2, 65535, 10, 10);
-            setDataValidation(sheet, "Sheet2!$E$1:$E$" + xxxs.size(), 2, 65535, 12, 12);
-            setDataValidation(sheet, "Sheet2!$G$1:$G$" + classList.size(), 2, 65535, 14, 14);
+            for (int i = 0; i < 13; i++) {
+                sheet.setColumnWidth(i,15 * 256);
+                if (i==7 || i==11){
+                    continue;
+                }
+                if (i==4){
+                    sheet.setColumnWidth(4,30 * 256);
+                    hssfRow.createCell(i).setCellValue("此处为必填项 ，格式：19980101");
+                    hssfRow.getCell(i).setCellStyle(style);
+                    continue;
+                }
+                if (i==0 || i==3  || i==9 || i==13){
+                    sheet.setColumnWidth(i,20 * 256);
+                }
+
+                hssfRow.createCell(i).setCellValue("此处为必填项");
+                hssfRow.getCell(i).setCellStyle(style);
+            }
+            HSSFRow hssfRow2 = sheet.createRow(2);
+            /*hssfRow2.createCell(0).setCellValue("考生号");
+            hssfRow2.getCell(0).setCellStyle(headStyle);*/
+            hssfRow2.createCell(0).setCellValue("学号");
+            hssfRow2.getCell(0).setCellStyle(cellStyle);
+            hssfRow2.createCell(1).setCellValue("姓名");
+            hssfRow2.getCell(1).setCellStyle(cellStyle);
+            hssfRow2.createCell(2).setCellValue("性别");
+            hssfRow2.getCell(2).setCellStyle(cellStyle);
+            hssfRow2.createCell(3).setCellValue("出生日期");
+            hssfRow2.getCell(3).setCellStyle(cellStyle);
+            hssfRow2.createCell(4).setCellValue("身份证号");
+            hssfRow2.getCell(4).setCellStyle(cellStyle);
+            hssfRow2.createCell(5).setCellValue("政治面貌");
+            hssfRow2.getCell(5).setCellStyle(cellStyle);
+            hssfRow2.createCell(6).setCellValue("民族");
+            hssfRow2.getCell(6).setCellStyle(cellStyle);
+            hssfRow2.createCell(7).setCellValue("专业代码");
+            hssfRow2.getCell(7).setCellStyle(cellStyle);
+            hssfRow2.createCell(8).setCellValue("专业名称");
+            hssfRow2.getCell(8).setCellStyle(cellStyle);
+            hssfRow2.createCell(9).setCellValue("层次");
+            hssfRow2.getCell(9).setCellStyle(cellStyle);
+            hssfRow2.createCell(10).setCellValue("学制");
+            hssfRow2.getCell(10).setCellStyle(cellStyle);
+            hssfRow2.createCell(11).setCellValue("学习形式");
+            hssfRow2.getCell(11).setCellStyle(cellStyle);
+            /*hssfRow2.createCell(13).setCellValue("总分");
+            hssfRow2.getCell(13).setCellStyle(cellStyle);*/
+            hssfRow2.createCell(12).setCellValue("班级");
+            hssfRow2.getCell(12).setCellStyle(cellStyle);
+            setDataValidation(sheet, "Sheet2!$H$1:$H$" + sexs.size(), 3, 65535, 2, 2);
+            setDataValidation(sheet, "Sheet2!$A$1:$A$" + ZZMM.size(), 3, 65535, 5, 5);
+            setDataValidation(sheet, "Sheet2!$B$1:$B$" + mz.size(), 3, 65535, 6, 6);
+            setDataValidation(sheet, "Sheet2!$F$1:$F$" + majorList.size(), 3, 65535, 8, 8);
+            setDataValidation(sheet, "Sheet2!$C$1:$C$" + cc.size(), 3, 65535, 10, 10);
+            setDataValidation(sheet, "Sheet2!$D$1:$D$" + xz.size(), 3, 65535, 9, 9);
+            setDataValidation(sheet, "Sheet2!$E$1:$E$" + xxxs.size(), 3, 65535, 11, 11);
+            setDataValidation(sheet, "Sheet2!$G$1:$G$" + classList.size(), 3, 65535, 12, 12);
             sheet.setDefaultColumnWidth(15);
             return wb;
         }
