@@ -1625,13 +1625,13 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(3).setCellValue(list.get(i).getMajorName());
                 row.getCell(4).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(5).setCellValue(list.get(i).getMajorDirectionShow());
-                row.getCell(6).setCellValue("");
+                row.getCell(6).setCellValue(list.get(i).getClassCode());
                 row.getCell(7).setCellValue(list.get(i).getClassName());
                 row.getCell(8).setCellValue(list.get(i).getStudentNumber());
                 row.getCell(9).setCellValue(list.get(i).getName());
                 row.getCell(10).setCellValue(list.get(i).getSex());
-                row.getCell(11).setCellValue("");
-                row.getCell(12).setCellValue("");
+                row.getCell(11).setCellValue(list.get(i).getDropOutReason());
+                row.getCell(12).setCellValue(list.get(i).getStatusDate());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",

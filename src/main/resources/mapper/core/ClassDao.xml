@@ -36,7 +36,8 @@
         FUNC_GET_TABLEVALUE(head_teacher_dept, 'T_SYS_DEPT', 'DEPT_ID',
         'DEPT_NAME')                                                                         headTeacherDeptShow,
         FUNC_GET_TABLEVALUE(room_id, 'T_JW_CLASSROOM', 'ID', 'CLASS_ROOM_NAME')                                  roomId,
-        t.create_time                                                                                            createTime
+        t.create_time                                                                                            createTime,
+        t.class_code                                                                                              classCode
         FROM T_XG_CLASS t,
         t_xg_major m
         WHERE 1 = 1
@@ -68,7 +69,7 @@
             FUNC_GET_DICVALUE(study_type ,'XXXS') studyTypeShow,
             FUNC_GET_TABLEVALUE(head_teacher_dept,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') headTeacherDeptShow,
             FUNC_GET_TABLEVALUE(head_teacher,'T_RS_EMPLOYEE','person_id','name') headTeacherShow,
-            room_id roomId
+            room_id roomId,class_code  classCode
       FROM
         T_XG_CLASS
         WHERE class_id = #{classId}
@@ -77,11 +78,11 @@
       INSERT INTO  T_XG_CLASS
       (class_id,class_name,year,departments_id,class_type,major_code
       ,head_teacher,spring_autumn,create_term,graduation_flag,head_teacher_dept,room_id
-      ,creator,create_time,create_dept,valid_flag,major_direction,training_level,study_type)
+      ,creator,create_time,create_dept,valid_flag,major_direction,training_level,study_type,class_code)
       VALUES
       (func_get_uuid,'${className}','${year}','${departmentsId}','${classType}','${majorCode}'
       ,'${headTeacher}','${springAutumn}','${createTerm}','${graduationFlag}','${headTeacherDept}','${roomId}'
-      ,'${creator}',sysdate,'${createDept}',1 ,'${majorDirection}','${trainingLevel}','${studyType}')
+      ,'${creator}',sysdate,'${createDept}',1 ,'${majorDirection}','${trainingLevel}','${studyType}','${classsCode}')
     </insert>
     <select id="getClassByClass" parameterType="com.goisan.system.bean.ClassBean" resultType="com.goisan.system.bean.ClassBean">
         SELECT  *  FROM T_XG_CLASS WHERE CLASS_NAME = #{className}
@@ -104,7 +105,8 @@
           training_level = #{trainingLevel},
           study_type = #{studyType},
           head_teacher_dept = #{headTeacherDept},
-          room_id=#{roomId}
+          room_id=#{roomId},
+          class_code=#{classCode}
       WHERE class_id = #{classId}
     </update>
     <delete id="delClass" parameterType="java.lang.String">

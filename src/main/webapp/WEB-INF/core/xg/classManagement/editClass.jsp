@@ -23,10 +23,18 @@
                     <div class="col-md-2 tar">
                         <span class="iconBtx">*</span>班级名称
                     </div>
-                    <div class="col-md-10">
+                    <div class="col-md-4">
                         <input id="className" onKeypress="javascript:if(event.keyCode == 32)event.returnValue = false;"
                                maxlength="30" placeholder="最多输入12个字" type="text" value="${classBean.className}"/>
                     </div>
+                    <div class="col-md-2 tar">
+                        <span class="iconBtx">*</span>班级代码
+                    </div>
+                    <div class="col-md-4">
+                        <input id="classCode" type="text"
+                               value="${classBean.classCode}"/>
+                    </div>
+
                 </div>
                 <div class="form-row">
                     <div class="col-md-2 tar">
@@ -281,6 +289,13 @@
             });
             return;
         }
+        if ($("#classCode").val() == "") {
+            swal({
+                title: "请填写班级代码!",
+                type: "info"
+            });
+            return;
+        }
         if ($("#year").val() == "") {
             swal({
                 title: "请填写入学年份!",
@@ -371,6 +386,7 @@
         $.post("<%=request.getContextPath()%>/classManagement/savaClass", {
             classId: $("#classId").val(),
             className: $("#className").val(),
+            classCode: $("#classCode").val(),
             year: $("#year").val(),
             departmentsId: $("#departmentsId option:selected").val(),
             classType: $("#classType option:selected").val(),

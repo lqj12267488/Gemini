@@ -102,6 +102,33 @@ public class Student extends BaseBean {
 
     /**是否残疾*/
     private String disability;
+    private String statusDate; //辍学日期
+    private String graduaDestina;//毕业去向
+    private String classCode;//毕业去向
+
+    public String getClassCode() {
+        return classCode;
+    }
+
+    public void setClassCode(String classCode) {
+        this.classCode = classCode;
+    }
+
+    public String getGraduaDestina() {
+        return graduaDestina;
+    }
+
+    public void setGraduaDestina(String graduaDestina) {
+        this.graduaDestina = graduaDestina;
+    }
+
+    public String getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(String statusDate) {
+        this.statusDate = statusDate;
+    }
 
     public String getDisability() {
         return disability;

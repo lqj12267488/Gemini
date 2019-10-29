@@ -41,7 +41,7 @@
         t.code_cooperative_eduation codeCooperativeEducation,
         t.external_teaching_point externalTeachingPoint,
         t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag,
+        t.trailing_children_flag trailingChildrenFlag,to_char(status_date, 'yyyy-mm-dd') statusDate,gradua_destina,
         t."FROM"
         FROM t_xg_student t ,T_XG_STUDENT_CLASS r,t_sys_user u
         WHERE 1 = 1 AND r.student_id = t.student_id
@@ -231,7 +231,8 @@
                   s."FROM",
                   s.EN_SCH_TYPE,
                   FUNC_GET_DICVALUE( s.EN_SCH_TYPE,'RXXS') enSchTypeShow,
-                  DISABILITY
+                  DISABILITY,to_char(status_date, 'yyyy-mm-dd') statusDate,
+                  gradua_destina         graduaDestina
         FROM t_xg_student s,T_XG_STUDENT_CLASS t
         WHERE s.STUDENT_ID = t.STUDENT_ID
             and s.student_id = #{studentId}
@@ -398,7 +399,8 @@
                   allowancesFlagShow,
                   s."FROM",
                   RETIRE_REASON,
-                  DROP_OUT_REASON
+                  DROP_OUT_REASON,to_char(status_date, 'yyyy-mm-dd') statusDate,
+                  gradua_destina         graduaDestina
         FROM t_xg_student s
         WHERE  s.student_id = #{studentId}
     </select>
@@ -439,7 +441,7 @@ INSERT INTO t_xg_student
  subsection_culture, trailing_children_flag, "FROM", NAME_OF_MEMBER, MEMBER_RELATIONSHIP, IS_GUARDIAN,
  MEMBER_TELEPHONE_NUMBER, GRADUATION_SCHOOL,
  FROM_ARMY,RURAL_HOUSEHOLD_REGISTRATIO,ORDER_TRAINING,DOCUMENTARY_LIKA_POOR_FAMILIE,DURING_EMPLOYMENT,TOTAL_ENROLLMENT_SCORE,EN_SCH_TYPE,
- DISABILITY)
+ DISABILITY,status_date,gradua_destina)
 VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
         to_date('${birthday}', 'yyyy-mm-dd'), '${joinYear}', '${joinMonth}',
         '${householdRegisterType}',
@@ -467,7 +469,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         '${trailingChildrenFlag}', '${from}', '${nameOfMember}', '${memberRelationship}', '${isGuardian}',
         '${memberTelephoneNumber}', '${graduationSchool}',
         '${fromArmy}','${ruralHouseholdRegistratio}','${orderTraining}','${documentaryLikaPoorFamilie}','${duringEmployment}','${totalEnrollmentScore}'
-        ,'${enSchType}','${disability}')
+        ,'${enSchType}','${disability}',to_date('${statusDate}','yyyy-mm-dd'),'${graduaDestina}')
     </insert>
     <update id="updateStudent" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student
@@ -543,7 +545,9 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
             TOTAL_ENROLLMENT_SCORE = #{totalEnrollmentScore},
             "FROM" = #{from},
             EN_SCH_TYPE=#{enSchType},
-            DISABILITY = #{disability}
+            DISABILITY = #{disability},
+            status_date = to_date(#{statusDate}, 'yyyy-mm-dd'),
+            gradua_destina=#{graduaDestina}
         WHERE student_id = #{studentId}
     </update>
     <delete id="delStudent" parameterType="java.lang.String">
@@ -825,7 +829,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         t.code_cooperative_eduation codeCooperativeEducation,
         t.external_teaching_point externalTeachingPoint,
         t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag
+        t.trailing_children_flag trailingChildrenFlag,to_char(status_date, 'yyyy-mm-dd') statusDate,gradua_destina
         FROM t_xg_student t ,T_XG_STUDENT_CLASS r ,t_xg_class c , t_sys_user u ,T_XG_MAJOR m
         WHERE
         1 = 1 AND r.student_id = t.student_id AND r.class_id = c.class_id AND t.student_id = u.user_id
@@ -960,7 +964,9 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         t.code_cooperative_eduation codeCooperativeEducation,
         t.external_teaching_point externalTeachingPoint,
         t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag
+        t.trailing_children_flag trailingChildrenFlag,
+        to_char(status_date, 'yyyy-mm-dd') statusDate,
+        gradua_destina
         FROM t_xg_student t ,T_XG_STUDENT_CLASS r, t_sys_user u
         WHERE 1 = 1 AND r.student_id = t.student_id AND t.student_id = u.user_id
         <if test="level != null and level != '' ">
@@ -1331,7 +1337,8 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         FUNC_GET_DICVALUE(t.LEARN_MODE, 'XXXS')) LEARN_MODE,
         m.MAJOR_CODE,
         m.MAJOR_NAME MAJOR_SHOW,
-        FUNC_GET_DICVALUE(m.TRAINING_LEVEL, 'ZXZYPYCC') TRAINING_LEVEL
+        FUNC_GET_DICVALUE(m.TRAINING_LEVEL, 'ZXZYPYCC') TRAINING_LEVEL,
+        to_char(status_date, 'yyyy-mm-dd') statusDate
         FROM t_xg_student t,
         T_XG_STUDENT_CLASS r,
         t_xg_class c,

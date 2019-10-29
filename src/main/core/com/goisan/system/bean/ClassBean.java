@@ -33,6 +33,15 @@ public class ClassBean extends BaseBean {
     private String majorDirectionShow;
     private String peopleNumber;
     private String classRoomName;
+    private String classCode;
+
+    public String getClassCode() {
+        return classCode;
+    }
+
+    public void setClassCode(String classCode) {
+        this.classCode = classCode;
+    }
 
     public String getRoomId() {
         return roomId;

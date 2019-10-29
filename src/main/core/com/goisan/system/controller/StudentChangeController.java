@@ -127,7 +127,7 @@ public class StudentChangeController {
         mv.addObject("studentId",studentId);
         mv.addObject("student",student);
         /**
-         * 如果先休学后辍学都要显示出来
+         * 如果先休退学后辍学都要显示出来
          * 页面渲染根据flag标识
          */
         mv.addObject("flag","0");
@@ -149,13 +149,16 @@ public class StudentChangeController {
                 }
             }
         }
+        if ("6".equals(student.getStudentStatus())){
+            mv.addObject("flag","4");
+        }
         return mv;
     }
 
 
     @ResponseBody
     @RequestMapping("/studentChangeLog/updateStatus")
-    public Message updateStatus(String studentId, String studentStatus,String retireReason,String dropOutReason) {
+    public Message updateStatus(String studentId, String studentStatus,String retireReason,String dropOutReason,String graduaDestina,String statusDate) {
         LoginUser loginUser = CommonUtil.getLoginUser();
 
         Select2 selectOld = studentChangeLogService.getStatusByStudentId(studentId);
@@ -163,8 +166,10 @@ public class StudentChangeController {
         Student student = new Student();
         student.setStudentId(studentId);
         student.setStudentStatus(studentStatus);
+        student.setGraduaDestina(graduaDestina);
         student.setRetireReason(retireReason);
         student.setDropOutReason(dropOutReason);
+        student.setStatusDate(statusDate);
         studentChangeLogService.updateStudentStatus(student);
 
         Select2 selectNew = studentChangeLogService.getStatusByStudentId(studentId);
@@ -184,11 +189,13 @@ public class StudentChangeController {
 
     @RequestMapping("/studentChangeLog/updateReason")
     @ResponseBody
-    public Message updateReason(String studentId,String retireReason,String dropOutReason){
+    public Message updateReason(String studentId,String retireReason,String dropOutReason,String statusDate,String graduaDestina){
         Student student = new Student();
         student.setStudentId(studentId);
         student.setRetireReason(retireReason);
         student.setDropOutReason(dropOutReason);
+        student.setStatusDate(statusDate);
+        student.setGraduaDestina(graduaDestina);
         studentChangeLogService.updateReason(student);
         return new Message(1, "保存成功！", null);
 

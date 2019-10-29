@@ -50,11 +50,15 @@
     <update id="updateStudentStatus" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student SET
           STUDENT_STATUS = #{studentStatus}
-          <if test='retireReason!= null and retireReason!= ""'>
+          <if test="retireReason!= null and retireReason!= ''">
           ,RETIRE_REASON = #{retireReason}
           </if>
         <if test="dropOutReason!=null and dropOutReason != ''">
           ,DROP_OUT_REASON = #{dropOutReason}
+        </if>
+            ,status_date = to_date(#{statusDate}, 'yyyy-mm-dd')
+        <if test="graduaDestina!=null and graduaDestina != ''">
+            ,gradua_destina=#{graduaDestina}
         </if>
         WHERE student_id = #{studentId}
     </update>
@@ -79,8 +83,10 @@
 
     <update id="updateReason" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student SET
-            RETIRE_REASON = #{retireReason}
+             RETIRE_REASON = #{retireReason}
             ,DROP_OUT_REASON = #{dropOutReason}
+            ,status_date = to_date(#{statusDate}, 'yyyy-mm-dd')
+            ,gradua_destina=#{graduaDestina}
         WHERE student_id = #{studentId}
     </update>
 

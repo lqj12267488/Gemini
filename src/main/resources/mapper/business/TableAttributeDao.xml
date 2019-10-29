@@ -613,19 +613,25 @@
                  left join t_xg_major m on c.major_code = m.major_code
     </select>
     <select id="getExpertExcel_A10_2_1" resultType="com.goisan.system.bean.Student">
-        select t.student_number,
-               t.name,
-               func_get_dicvalue(t.sex, 'XB')                 sex,
-               c.class_name,
-               c.major_code,
-               m.major_name,
-               m.MAJOR_DIRECTION,
-               func_get_dicvalue(m.major_direction, 'ZXZYFX') majorDirectionShow
-        from t_xg_student t
-                 left join t_xg_student_class sc on t.student_id = sc.student_id
-                 left join t_xg_class c on sc.class_id = c.class_id
-                 left join t_xg_major m on c.major_code = m.major_code
-        where t.student_status = '9'
+       select t.student_number,
+         t.name,
+         to_char(t.status_date,'YY-mm-dd') statusDate,
+         t.drop_out_reason,
+         func_get_dicvalue(t.sex, 'XB') sex,
+         c.class_code,
+         c.class_name,
+         c.major_code,
+         m.major_name,
+         m.MAJOR_DIRECTION,
+         func_get_dicvalue(m.major_direction, 'ZXZYFX') majorDirectionShow
+       from t_xg_student t
+       left join t_xg_student_class sc
+         on t.student_id = sc.student_id
+       left join t_xg_class c
+         on sc.class_id = c.class_id
+       left join t_xg_major m
+         on c.major_code = m.major_code
+       where t.student_status = '12'
     </select>
     <!--modify by lihanyue end-->
     <!--modify by yinzijian start-->
