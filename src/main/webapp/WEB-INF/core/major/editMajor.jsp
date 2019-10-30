@@ -505,13 +505,13 @@
         //     });
         //     return;
         // }
-        if ($("#remark").val() == "") {
+     /*   if ($("#remark").val() == "") {
             swal({
                 title: "请填写备注！",
                 type: "info"
             });
             return;
-        }
+        }*/
         var majorPrincipalList = $("#majorPrincipal").attr("keycode");
         if (typeof (majorPrincipalList) == 'undefined') {
             majorPrincipalList = ',';
