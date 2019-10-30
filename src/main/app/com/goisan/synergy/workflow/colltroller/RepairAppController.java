@@ -6,6 +6,7 @@ import com.goisan.logistics.repair.bean.Repair;
 import com.goisan.logistics.repair.service.RepairService;
 import com.goisan.system.bean.Files;
 import com.goisan.system.bean.RoleEmpDeptRelation;
+import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.TableDict;
 import com.goisan.system.service.CommonService;
 import com.goisan.system.service.EmpService;
@@ -319,6 +320,10 @@ public class RepairAppController {
         }
         mv.addObject("repair", repair);
         mv.addObject("flag", flag);
+        /**
+         * 维修状态
+         */
+        mv.addObject("reflag",commonService.getSysDict("WXLCZT", " (dic_code='2' or dic_code='3')"));
         return mv;
     }
 
