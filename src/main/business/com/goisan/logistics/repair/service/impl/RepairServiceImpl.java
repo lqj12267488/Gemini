@@ -296,6 +296,11 @@ public class RepairServiceImpl implements RepairService {
     }
 
     @Override
+    public String getNameByPersonId(String creator) {
+        return repairDao.getNameByPersonId(creator);
+    }
+
+    @Override
     public void repairDisMan(Repair repair) {
         CommonUtil.update(repair);
         repairDao.repairDisMan(repair);

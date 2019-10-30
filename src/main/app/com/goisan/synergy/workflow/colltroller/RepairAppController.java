@@ -330,6 +330,28 @@ public class RepairAppController {
     @RequestMapping("/repair/repairFeedback")
     public ModelAndView repairFeedback(String id,String repairmanPersonID){
         ModelAndView modelAndView = new ModelAndView("/app/synergy/repair/repairFeedback");
+        Repair repair = repairService.getRepairById(id);
+        String[] name_id = repair.getItemName().split(",");
+        StringBuilder newname = new StringBuilder();
+        for (String a : name_id) {
+            String name = userDicService.getDicName(a);
+            if (name != null) {
+                newname.append(name).append(",");
+            }
+        }
+        if(newname.length()>0){
+            repair.setItemNameShow(newname.substring(0, newname.length() - 1));
+        }else {
+            repair.setItemNameShow("");
+        }
+        String name = repairService.getNameByPersonId(repair.getCreator());
+        repair.setName(name);
+        if (repair.getFeedbackFlag()==null && repair.getFeedback()==null){
+            modelAndView.addObject("flag",0);
+        }else{
+            modelAndView.addObject("flag",1);
+        }
+        modelAndView.addObject("repair",repair);
         modelAndView.addObject("id",id);
         if ("未提交".equals(repairmanPersonID)){
             modelAndView.addObject("msg","1");

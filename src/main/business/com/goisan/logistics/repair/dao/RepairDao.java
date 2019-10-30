@@ -101,5 +101,7 @@ public interface RepairDao {
 
     void updateConfirmTime(Repair repair);
 
+    String getNameByPersonId(String creator);
+
     void repairDisMan(Repair repair);
 }
