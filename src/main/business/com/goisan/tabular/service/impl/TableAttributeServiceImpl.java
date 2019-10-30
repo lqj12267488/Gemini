@@ -209,7 +209,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             int rowIndex = 10;
             int count = 1;
             for (int i = 0; i < list.size(); i++) {
-               ProEvaAgency pea = (ProEvaAgency) list.get(i);
+                ProEvaAgency pea = (ProEvaAgency) list.get(i);
                 Row row = sheet.getRow(rowIndex + i);
                 row.getCell(1).setCellValue(count);
                 row.getCell(2).setCellValue(pea.getEvaName());
@@ -1625,13 +1625,13 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(3).setCellValue(list.get(i).getMajorName());
                 row.getCell(4).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(5).setCellValue(list.get(i).getMajorDirectionShow());
-                row.getCell(6).setCellValue(list.get(i).getClassCode());
+                row.getCell(6).setCellValue("");
                 row.getCell(7).setCellValue(list.get(i).getClassName());
                 row.getCell(8).setCellValue(list.get(i).getStudentNumber());
                 row.getCell(9).setCellValue(list.get(i).getName());
                 row.getCell(10).setCellValue(list.get(i).getSex());
-                row.getCell(11).setCellValue(list.get(i).getDropOutReason());
-                row.getCell(12).setCellValue(list.get(i).getStatusDate());
+                row.getCell(11).setCellValue("");
+                row.getCell(12).setCellValue("");
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
@@ -1738,33 +1738,33 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             int rowIndex = 10;
             int count = 1;
 
-                Row row = sheet.getRow(rowIndex+0);
-                row.getCell(1).setCellValue(redCross.getDepartment());
-                row.getCell(2).setCellValue(redCross.getCommunitycode());
-                row.getCell(3).setCellValue(redCross.getCommunityname());
-                row.getCell(4).setCellValue(redCross.getFounddateStr());
-                row.getCell(5).setCellValue(redCross.getSum());
-                row.getCell(6).setCellValue(redCross.getTeachingstaffnumber());
-                row.getCell(7).setCellValue(redCross.getStudentnumber());
-                row.getCell(8).setCellValue(redCross.getMoneynum());
-                row.getCell(9).setCellValue(redCross.getHandin());
-                row.getCell(10).setCellValue(redCross.getSelf());
-                row.getCell(11).setCellValue(redCross.getName());
-                row.getCell(12).setCellValue(redCross.getJob());
-                row.getCell(13).setCellValue(redCross.getFundssum());
-                row.getCell(14).setCellValue(redCross.getMembershipdues());
-                row.getCell(15).setCellValue(redCross.getAppropriatefunds());
-                row.getCell(16).setCellValue(redCross.getContributemoney());
-                row.getCell(17).setCellValue(redCross.getOther());
-                row.getCell(18).setCellValue(redCross.getContributesum());
-                row.getCell(19).setCellValue(redCross.getGoverningbody());
-                row.getCell(20).setCellValue(redCross.getSelfpreservation());
-                row.getCell(21).setCellValue(redCross.getActivitycontent());
-                row.getCell(22).setCellValue(redCross.getPersonsum());
-                row.getCell(23).setCellValue(redCross.getCertificatenumber());
-                row.getCell(24).setCellValue(redCross.getCollectionnumber());
-                row.getCell(25).setCellValue(redCross.getPairingnumber());
-                count++;
+            Row row = sheet.getRow(rowIndex+0);
+            row.getCell(1).setCellValue(redCross.getDepartment());
+            row.getCell(2).setCellValue(redCross.getCommunitycode());
+            row.getCell(3).setCellValue(redCross.getCommunityname());
+            row.getCell(4).setCellValue(redCross.getFounddateStr());
+            row.getCell(5).setCellValue(redCross.getSum());
+            row.getCell(6).setCellValue(redCross.getTeachingstaffnumber());
+            row.getCell(7).setCellValue(redCross.getStudentnumber());
+            row.getCell(8).setCellValue(redCross.getMoneynum());
+            row.getCell(9).setCellValue(redCross.getHandin());
+            row.getCell(10).setCellValue(redCross.getSelf());
+            row.getCell(11).setCellValue(redCross.getName());
+            row.getCell(12).setCellValue(redCross.getJob());
+            row.getCell(13).setCellValue(redCross.getFundssum());
+            row.getCell(14).setCellValue(redCross.getMembershipdues());
+            row.getCell(15).setCellValue(redCross.getAppropriatefunds());
+            row.getCell(16).setCellValue(redCross.getContributemoney());
+            row.getCell(17).setCellValue(redCross.getOther());
+            row.getCell(18).setCellValue(redCross.getContributesum());
+            row.getCell(19).setCellValue(redCross.getGoverningbody());
+            row.getCell(20).setCellValue(redCross.getSelfpreservation());
+            row.getCell(21).setCellValue(redCross.getActivitycontent());
+            row.getCell(22).setCellValue(redCross.getPersonsum());
+            row.getCell(23).setCellValue(redCross.getCertificatenumber());
+            row.getCell(24).setCellValue(redCross.getCollectionnumber());
+            row.getCell(25).setCellValue(redCross.getPairingnumber());
+            count++;
 
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
                     "utf-8"));
@@ -1884,6 +1884,9 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(6).setCellValue(list.get(i).getMajorDirection());
                 row.getCell(7).setCellValue(list.get(i).getPlanNumber());
                 row.getCell(8).setCellValue(list.get(i).getRealNumber());
+                row.getCell(12).setCellValue(list.get(i).getCityNumber());
+                row.getCell(14).setCellValue(list.get(i).getProvinceNumber());
+
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
@@ -1941,8 +1944,37 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(4).setCellValue(list1.get(i).getMajorName());
                 row.getCell(5).setCellValue(list1.get(i).getMajorDirectionCode());
                 row.getCell(6).setCellValue(list1.get(i).getMajorDirection());
-                row.getCell(7).setCellValue(list1.get(i).getGraduationNumber());
+                row.getCell(7).setCellValue(list1.get(i).getYjgraduationNumber());
                 row.getCell(8).setCellValue(list1.get(i).getEmploymentNumber());
+                row.getCell(12).setCellValue(list1.get(i).getArea());
+                row.getCell(10).setCellValue(list1.get(i).getDarea());
+                row.getCell(18).setCellValue(list1.get(i).getSalary());
+                row.getCell(19).setCellValue(list1.get(i).getDkNumber());
+
+                row.getCell(21).setCellValue(list1.get(i).getPtgNumber());
+                row.getCell(22).setCellValue(list1.get(i).getPtjNumber());
+                row.getCell(24).setCellValue(list1.get(i).getSxgNumber());
+                row.getCell(25).setCellValue(list1.get(i).getSxjNumber());
+                row.getCell(27).setCellValue(list1.get(i).getWngNumber());
+                row.getCell(28).setCellValue(list1.get(i).getWnjNumber());
+                row.getCell(30).setCellValue(list1.get(i).getOneNumber());
+                row.getCell(31).setCellValue(list1.get(i).getOnejNumber());
+                row.getCell(33).setCellValue(list1.get(i).getTwoNumber());
+                row.getCell(34).setCellValue(list1.get(i).getTwojNumber());
+                row.getCell(36).setCellValue(list1.get(i).getThreeNumber());
+                row.getCell(37).setCellValue(list1.get(i).getThreejNumber());
+                row.getCell(39).setCellValue(list1.get(i).getFourNumber());
+                row.getCell(40).setCellValue(list1.get(i).getFourjNumber());
+                row.getCell(42).setCellValue(list1.get(i).getFiveNumber());
+                row.getCell(43).setCellValue(list1.get(i).getFivejNumber());
+                row.getCell(45).setCellValue(list1.get(i).getSxgNumber());
+                row.getCell(46).setCellValue(list1.get(i).getSxjNumber());
+                row.getCell(48).setCellValue(list1.get(i).getSevenNumber());
+                row.getCell(49).setCellValue(list1.get(i).getSevenjNumber());
+                row.getCell(51).setCellValue(list1.get(i).getEightNumber());
+                row.getCell(52).setCellValue(list1.get(i).getEightjNumber());
+
+
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
@@ -2393,7 +2425,81 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
         }
     }
+    @Override
+    public void expertExcel_A11_6(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        List<Student> list = tableAttributeDao.getStudentByYear();
+        OutputStream os = null;
+        try {
+            FileInputStream in = new FileInputStream(file);
+            //      判断文件后缀名是xls,还是xlsx
+            //    如果是xls,使用HSSFWorkbook,如果是xlsx,使用XSSFWorkbook
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            Workbook wb = null;
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            String sheetName = sheet.getSheetName();
+            int rowIndex = 10;
+            int end = 2 + list.size();
+            int count = 1;
+            for (int i = 0; i < list.size(); i++) {
 
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(count);//序号
+                row.getCell(2).setCellValue(list.get(i).getStudentNumber());//学号
+                row.getCell(3).setCellValue(list.get(i).getName());//姓名
+                row.getCell(4).setCellValue(list.get(i).getSex());//性别
+                row.getCell(5).setCellValue(list.get(i).getNation());//民族
+                row.getCell(6).setCellValue(list.get(i).getStudentStatus());//学籍状态
+                row.getCell(7).setCellValue("");//电子邮箱
+                row.getCell(8).setCellValue(list.get(i).getHouseholdRegisterType());//生源地
+                row.getCell(9).setCellValue(list.get(i).getFromArmy());//来自军队
+                row.getCell(10).setCellValue(list.get(i).getAdmissionsWay());//招生方式
+                row.getCell(11).setCellValue(list.get(i).getStudentSource());//生源类型
+                row.getCell(12).setCellValue(list.get(i).getRuralHouseholdRegistratio());//是否常住户口在农村
+                row.getCell(13).setCellValue(list.get(i).getOrderTraining());//是否订单定向培养
+                row.getCell(14).setCellValue(list.get(i).getDocumentaryLikaPoorFamilie());//是否建档立卡贫困家庭
+                row.getCell(15).setCellValue(list.get(i).getYears()+"级");//年级
+                row.getCell(16).setCellValue(list.get(i).getEductionalSystem());//学制
+                row.getCell(17).setCellValue(list.get(i).getYears()+"年"+list.get(i).getMonth());//入学年月
+                row.getCell(18).setCellValue(list.get(i).getTotalEnrollmentScore());//入学总分
+                row.getCell(19).setCellValue(list.get(i).getDeptName());//所属系部
+                row.getCell(20).setCellValue(list.get(i).getClassCode());//班级代码
+                row.getCell(21).setCellValue(list.get(i).getClassName());//班级名称
+                row.getCell(22).setCellValue(list.get(i).getMajorCode());//专业代码
+                row.getCell(23).setCellValue(list.get(i).getMajorName());//专业全称
+                row.getCell(24).setCellValue(list.get(i).getMajorDirectionCode());//专业方向代码
+                row.getCell(25).setCellValue(list.get(i).getMajorDirection());//专业方向全称
+                count++;
+
+
+            }
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     public void expertExcel_A11_5(HttpServletResponse response, TabularFile tabularFile) {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
@@ -2478,7 +2584,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     /**
      * modify by hanjie start
      */
-@Override
+    @Override
     public void expertExcel_A6_1_1(HttpServletResponse response, TabularFile tabularFile) {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
@@ -3097,7 +3203,116 @@ public class TableAttributeServiceImpl implements TableAttributeService {
             }
         }
     }
+    @Override
+    public void expertExcel_A11_3(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Major> list = tableAttributeDao.expertExcel_A11_3();//查
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getSumArmy());//当年招生数总
+                row.getCell(2).setCellValue(list.get(i).getFzArmy());//复转军人
+                row.getCell(3).setCellValue(list.get(i).getTyArmy());//退役士兵
 
+                row.getCell(4).setCellValue(list.get(i).getSumZArmy());//在校生人数总
+                row.getCell(5).setCellValue(list.get(i).getFzZArmy());//复转军人
+                row.getCell(6).setCellValue(list.get(i).getTyZArmy());//退役士兵
+                row.getCell(7).setCellValue("");//社会培训总
+                row.getCell(8).setCellValue("");//复转军人
+                row.getCell(9).setCellValue("");//退役士兵
+
+            }
+
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    @Override
+    public void expertExcel_A11_2(HttpServletResponse response, TabularFile tabularFile) {
+        String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
+        File file = FileUtils.getFile(filePath);
+        OutputStream os = null;
+        Workbook wb = null;
+        List<Major> list = tableAttributeDao.expertExcel_A11_2();//查
+        try {
+            FileInputStream in = new FileInputStream(file);
+            String fileName = file.getName();
+            String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+            if ("xls".equals(suffix)) {
+                wb = new HSSFWorkbook(in);
+            }
+            if ("xlsx".equals(suffix)) {
+                wb = new XSSFWorkbook(in);
+            }
+            Sheet sheet = wb.getSheetAt(0);
+            int rowIndex = 10;
+            for (int i = 0; i < list.size(); i++) {
+                Row row = sheet.getRow(rowIndex + i);
+                row.getCell(1).setCellValue(list.get(i).getStudentNumber());//在校生总人数
+                row.getCell(2).setCellValue(list.get(i).getWsStudentNum());//外省学生人数
+                row.getCell(3).setCellValue("");//比例
+
+                row.getCell(4).setCellValue("");//西部地区学生人数
+                row.getCell(5).setCellValue("");//比例
+                row.getCell(6).setCellValue(list.get(i).getNcStudentNum());//常住户口所在地为农村人数
+                row.getCell(7).setCellValue("");//比例
+                row.getCell(8).setCellValue("");//贫困地区学生人数
+                row.getCell(9).setCellValue("");//比例
+                row.getCell(10).setCellValue(list.get(i).getMzStudentNum());//少数民族学生人数
+                row.getCell(11).setCellValue("");//比例
+                row.getCell(12).setCellValue("");//国际学生数
+                row.getCell(13).setCellValue("");//境外学生数
+
+            }
+
+            response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(tabularFile.getFileName(),
+                    "utf-8"));
+            os = response.getOutputStream();
+            wb.write(os);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (os != null) {
+                    os.flush();
+                    os.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     @Override
     public void expertExcel_A6_4_2_1(HttpServletResponse response, TabularFile tabularFile) {
         String filePath = COM_REPORT_PATH + tabularFile.getFileUrl();
@@ -3715,7 +3930,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
 
 
     public String toDateString(String date){
-           return !StringUtils.isEmpty(date)?date.replace("-",""):null;
+        return !StringUtils.isEmpty(date)?date.replace("-",""):null;
     }
 
     /**
@@ -3991,7 +4206,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         Map map= tableAttributeDao.expertExcel_GJ_332();
         Row row = sheet.getRow(8);
         for (int i=3;i<8;i++){
-             int index = i-3;
+            int index = i-3;
             row.getCell(i).setCellValue(map.get(column[index]).toString());
         }
 
@@ -4182,4 +4397,7 @@ public class TableAttributeServiceImpl implements TableAttributeService {
         }
 
     }
+
+
+
 }

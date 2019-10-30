@@ -63,6 +63,352 @@ public class Major extends BaseBean {
     private String normalMajor;//是否师范专业
     private String normalMajorShow;
     private String studentsNum;//新生总人数
+    private String yjgraduationNumber;//应届毕业生人数
+    private String area;//本省市就业人数
+    private String darea;//本地市就业人数
+    private String salary;//起薪线
+    private String dkNumber;//对口就业人数
+    private String ptgNumber;//普通高中生毕业人数
+    private String ptjNumber;//普通高中生就业人数
+    private String sxgNumber;//三校生毕业人数
+    private String sxjNumber;//三校生就业人数
+    private String wngNumber;//五年制高职毕业人数
+    private String wnjNumber;//五年制高职就业人数
+
+    private String oneNumber;//基于高考直接招生毕业人数
+    private String onejNumber;//就业人数
+    private String twoNumber;//基于高考就业加技能毕业人数
+    private String twojNumber;//就业人数
+    private String threeNumber;//对口招生毕业人数
+    private String threejNumber;//就业人数
+    private String fourNumber;//单独考试招生毕业人数
+    private String fourjNumber;//就业人数
+    private String fiveNumber;//综合评价招生毕业人数
+    private String fivejNumber;//就业人数
+    private String sixNumber;//中高职贯通毕业人数
+    private String sixjNumber;//就业人数
+    private String sevenNumber;//技能拔尖人才毕业人数
+    private String sevenjNumber;//就业人数
+    private String eightNumber;//补充方式毕业人数
+    private String eightjNumber;//就业人数
+
+    private String tyArmy;//当年退役军人
+    private String fzArmy;//当年复转军人
+    private String sumArmy;//当年合计人数
+    private String tyZArmy;//在校生退役军人
+    private String fzZArmy;//在校生复转军人
+    private String sumZArmy;//在校生合计军人人数
+
+    private String wsStudentNum;//外省在校生合计人数
+    private String ncStudentNum;//农村在校生合计人数
+    private String mzStudentNum;//民族在校生合计人数
+
+    private String provinceNumber;//本省招生人数
+    private String cityNumber;//本地市招生人数
+
+    public String getProvinceNumber() {
+        return provinceNumber;
+    }
+
+    public void setProvinceNumber(String provinceNumber) {
+        this.provinceNumber = provinceNumber;
+    }
+
+    public String getCityNumber() {
+        return cityNumber;
+    }
+
+    public void setCityNumber(String cityNumber) {
+        this.cityNumber = cityNumber;
+    }
+
+    public String getWsStudentNum() {
+        return wsStudentNum;
+    }
+
+    public void setWsStudentNum(String wsStudentNum) {
+        this.wsStudentNum = wsStudentNum;
+    }
+
+    public String getNcStudentNum() {
+        return ncStudentNum;
+    }
+
+    public void setNcStudentNum(String ncStudentNum) {
+        this.ncStudentNum = ncStudentNum;
+    }
+
+    public String getMzStudentNum() {
+        return mzStudentNum;
+    }
+
+    public void setMzStudentNum(String mzStudentNum) {
+        this.mzStudentNum = mzStudentNum;
+    }
+
+    public String getSumArmy() {
+        return sumArmy;
+    }
+
+    public void setSumArmy(String sumArmy) {
+        this.sumArmy = sumArmy;
+    }
+
+    public String getSumZArmy() {
+        return sumZArmy;
+    }
+
+    public void setSumZArmy(String sumZArmy) {
+        this.sumZArmy = sumZArmy;
+    }
+
+    public String getTyArmy() {
+        return tyArmy;
+    }
+
+    public void setTyArmy(String tyArmy) {
+        this.tyArmy = tyArmy;
+    }
+
+    public String getFzArmy() {
+        return fzArmy;
+    }
+
+    public void setFzArmy(String fzArmy) {
+        this.fzArmy = fzArmy;
+    }
+
+    public String getTyZArmy() {
+        return tyZArmy;
+    }
+
+    public void setTyZArmy(String tyZArmy) {
+        this.tyZArmy = tyZArmy;
+    }
+
+    public String getFzZArmy() {
+        return fzZArmy;
+    }
+
+    public void setFzZArmy(String fzZArmy) {
+        this.fzZArmy = fzZArmy;
+    }
+
+    public String getPtgNumber() {
+        return ptgNumber;
+    }
+
+    public void setPtgNumber(String ptgNumber) {
+        this.ptgNumber = ptgNumber;
+    }
+
+    public String getPtjNumber() {
+        return ptjNumber;
+    }
+
+    public void setPtjNumber(String ptjNumber) {
+        this.ptjNumber = ptjNumber;
+    }
+
+    public String getSxgNumber() {
+        return sxgNumber;
+    }
+
+    public void setSxgNumber(String sxgNumber) {
+        this.sxgNumber = sxgNumber;
+    }
+
+    public String getSxjNumber() {
+        return sxjNumber;
+    }
+
+    public void setSxjNumber(String sxjNumber) {
+        this.sxjNumber = sxjNumber;
+    }
+
+    public String getWngNumber() {
+        return wngNumber;
+    }
+
+    public void setWngNumber(String wngNumber) {
+        this.wngNumber = wngNumber;
+    }
+
+    public String getWnjNumber() {
+        return wnjNumber;
+    }
+
+    public void setWnjNumber(String wnjNumber) {
+        this.wnjNumber = wnjNumber;
+    }
+
+    public String getOneNumber() {
+        return oneNumber;
+    }
+
+    public void setOneNumber(String oneNumber) {
+        this.oneNumber = oneNumber;
+    }
+
+    public String getOnejNumber() {
+        return onejNumber;
+    }
+
+    public void setOnejNumber(String onejNumber) {
+        this.onejNumber = onejNumber;
+    }
+
+    public String getTwoNumber() {
+        return twoNumber;
+    }
+
+    public void setTwoNumber(String twoNumber) {
+        this.twoNumber = twoNumber;
+    }
+
+    public String getTwojNumber() {
+        return twojNumber;
+    }
+
+    public void setTwojNumber(String twojNumber) {
+        this.twojNumber = twojNumber;
+    }
+
+    public String getThreeNumber() {
+        return threeNumber;
+    }
+
+    public void setThreeNumber(String threeNumber) {
+        this.threeNumber = threeNumber;
+    }
+
+    public String getThreejNumber() {
+        return threejNumber;
+    }
+
+    public void setThreejNumber(String threejNumber) {
+        this.threejNumber = threejNumber;
+    }
+
+    public String getFourNumber() {
+        return fourNumber;
+    }
+
+    public void setFourNumber(String fourNumber) {
+        this.fourNumber = fourNumber;
+    }
+
+    public String getFourjNumber() {
+        return fourjNumber;
+    }
+
+    public void setFourjNumber(String fourjNumber) {
+        this.fourjNumber = fourjNumber;
+    }
+
+    public String getFiveNumber() {
+        return fiveNumber;
+    }
+
+    public void setFiveNumber(String fiveNumber) {
+        this.fiveNumber = fiveNumber;
+    }
+
+    public String getFivejNumber() {
+        return fivejNumber;
+    }
+
+    public void setFivejNumber(String fivejNumber) {
+        this.fivejNumber = fivejNumber;
+    }
+
+    public String getSixNumber() {
+        return sixNumber;
+    }
+
+    public void setSixNumber(String sixNumber) {
+        this.sixNumber = sixNumber;
+    }
+
+    public String getSixjNumber() {
+        return sixjNumber;
+    }
+
+    public void setSixjNumber(String sixjNumber) {
+        this.sixjNumber = sixjNumber;
+    }
+
+    public String getSevenNumber() {
+        return sevenNumber;
+    }
+
+    public void setSevenNumber(String sevenNumber) {
+        this.sevenNumber = sevenNumber;
+    }
+
+    public String getSevenjNumber() {
+        return sevenjNumber;
+    }
+
+    public void setSevenjNumber(String sevenjNumber) {
+        this.sevenjNumber = sevenjNumber;
+    }
+
+    public String getEightNumber() {
+        return eightNumber;
+    }
+
+    public void setEightNumber(String eightNumber) {
+        this.eightNumber = eightNumber;
+    }
+
+    public String getEightjNumber() {
+        return eightjNumber;
+    }
+
+    public void setEightjNumber(String eightjNumber) {
+        this.eightjNumber = eightjNumber;
+    }
+
+    public String getYjgraduationNumber() {
+        return yjgraduationNumber;
+    }
+
+    public void setYjgraduationNumber(String yjgraduationNumber) {
+        this.yjgraduationNumber = yjgraduationNumber;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getDarea() {
+        return darea;
+    }
+
+    public void setDarea(String darea) {
+        this.darea = darea;
+    }
+
+    public String getSalary() {
+        return salary;
+    }
+
+    public void setSalary(String salary) {
+        this.salary = salary;
+    }
+
+    public String getDkNumber() {
+        return dkNumber;
+    }
+
+    public void setDkNumber(String dkNumber) {
+        this.dkNumber = dkNumber;
+    }
 
     public String getStudentsNum() {
         return studentsNum;

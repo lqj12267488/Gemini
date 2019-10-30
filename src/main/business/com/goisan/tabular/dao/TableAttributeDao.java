@@ -179,9 +179,13 @@ public interface TableAttributeDao {
 
     List<Export> expertExcel_A6_4_2_1();
 
+
     List<Export> expertExcel_A9_4();
     List<Export> expertExcel_A9_6_1();
     List<Export> expertExcel_A7_5();
+    List<Major> expertExcel_A11_2();
+    List<Major> expertExcel_A11_3();
+    List<Student> getStudentByYear();
     /**
      * modify by hanjie end
      */
@@ -251,4 +255,5 @@ public interface TableAttributeDao {
     List<Map> expertExcel_GJ_411();
     List<Map> expertExcel_GJ_421();
     Map expertExcel_GJ_331();
+
 }

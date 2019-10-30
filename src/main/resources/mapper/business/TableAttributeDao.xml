@@ -613,65 +613,88 @@
                  left join t_xg_major m on c.major_code = m.major_code
     </select>
     <select id="getExpertExcel_A10_2_1" resultType="com.goisan.system.bean.Student">
-       select t.student_number,
-         t.name,
-         to_char(t.status_date,'YY-mm-dd') statusDate,
-         t.drop_out_reason,
-         func_get_dicvalue(t.sex, 'XB') sex,
-         c.class_code,
-         c.class_name,
-         c.major_code,
-         m.major_name,
-         m.MAJOR_DIRECTION,
-         func_get_dicvalue(m.major_direction, 'ZXZYFX') majorDirectionShow
-       from t_xg_student t
-       left join t_xg_student_class sc
-         on t.student_id = sc.student_id
-       left join t_xg_class c
-         on sc.class_id = c.class_id
-       left join t_xg_major m
-         on c.major_code = m.major_code
-       where t.student_status = '12'
+        select t.student_number,
+               t.name,
+               func_get_dicvalue(t.sex, 'XB')                 sex,
+               c.class_name,
+               c.major_code,
+               m.major_name,
+               m.MAJOR_DIRECTION,
+               func_get_dicvalue(m.major_direction, 'ZXZYFX') majorDirectionShow
+        from t_xg_student t
+                 left join t_xg_student_class sc on t.student_id = sc.student_id
+                 left join t_xg_class c on sc.class_id = c.class_id
+                 left join t_xg_major m on c.major_code = m.major_code
+        where t.student_status = '9'
     </select>
     <!--modify by lihanyue end-->
     <!--modify by yinzijian start-->
     <select id="getZhaoshengList" resultType="com.goisan.educational.major.bean.Major"
             parameterType="com.goisan.educational.major.bean.Major">
-        SELECT M.MAJOR_ID,
+       SELECT M.MAJOR_ID,
                FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') MAJOR_SCHOOL,
                M.MAJOR_CODE,
                M.MAJOR_NAME,
                M.MAJOR_DIRECTION_CODE,
                M.MAJOR_DIRECTION,
                P.PLAN_NUMBER,
-               P.REAL_NUMBER
+               P.REAL_NUMBER,
+              x.provinceNumber,x.cityNumber
         FROM T_XG_MAJOR M
-                 LEFT JOIN T_XG_ENROLLMENT_PLAN P ON M.MAJOR_ID = P.MAJOR_ID
+         LEFT JOIN T_XG_ENROLLMENT_PLAN P ON M.MAJOR_ID = P.MAJOR_ID
+  left join
+  ( select count(case when t.HOUSEHOLD_REGISTER_PROVINCE='650000' then 1 else null end) provinceNumber,
+   count(case when t.HOUSEHOLD_REGISTER_CITY='650100' then 1 else null end) cityNumber,
+   c.major_code
+   from t_xg_student  t
+      left join t_xg_student_class sc  on t.student_id=sc.student_id
+      left join t_xg_class c on sc.class_id =c.class_id
+   group by  c.major_code) x on x.major_code=m.major_code
     </select>
     <select id="getGraduationList" resultType="com.goisan.educational.major.bean.Major"
             parameterType="com.goisan.educational.major.bean.Major">
-        SELECT
-        M.MAJOR_ID,
-        FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') MAJOR_SCHOOL,
-        M.MAJOR_CODE,
-        M.MAJOR_NAME,
-        M.MAJOR_DIRECTION_CODE,
-        M.MAJOR_DIRECTION,
-        DECODE(STUDENT_STATUS,'6', COUNT(STUDENT_STATUS),0)
-        graduation, <!-- DECODE(STUDENT_STATUS,'1',10,'2',2,'3',3) S  过滤作用 判断如果是毕业的 查询显示毕业的人数-->
-        COUNT(ES.EMPLOYMENT_ID) EMPLOYMENT
-        FROM T_XG_MAJOR M LEFT JOIN T_XG_CLASS C ON M.MAJOR_CODE=C.MAJOR_CODE LEFT JOIN T_XG_STUDENT_CLASS SC ON
-        C.CLASS_ID=SC.CLASS_ID LEFT JOIN T_XG_STUDENT S ON SC.STUDENT_ID=S.STUDENT_ID
-        LEFT JOIN T_XG_EMPLOYMENT_STUDENT ES ON S.STUDENT_ID=ES.STUDENT_ID
-        GROUP BY M.MAJOR_ID,
-        M.MAJOR_SCHOOL,
-        M.DEPARTMENTS_ID,
-        M.MAJOR_CODE,
-        M.MAJOR_NAME,
-        M.MAJOR_DIRECTION_CODE,
-        M.MAJOR_DIRECTION,
-        STUDENT_STATUS,
-        ES.EMPLOYMENT_ID
+       SELECT M.MAJOR_ID,
+FUNC_GET_TABLEVALUE(M.DEPARTMENTS_ID, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME') MAJOR_SCHOOL,
+M.MAJOR_CODE, M.MAJOR_NAME,M.MAJOR_DIRECTION_CODE, M.MAJOR_DIRECTION,
+min(FUNC_GET_DICVALUE(salary, 'GZSRSP'))  salary,
+COUNT(case when area='650000' and employment_id is not null then 1 else null end)  area,
+COUNT(case when area='650100' and employment_id is not null then 1 else null end)  darea,
+COUNT(case when c.graduation_flag='3' then 1 else null end) yjgraduationNumber,
+COUNT(case when STUDENT_STATUS='6' then 1 else null end) graduationNumber,
+COUNT(case when ES.EMPLOYMENT_ID is not null then 1 else null end) employmentNumber,
+COUNT(case when major_match_flag='1' then 1 else null end) dkNumber,
+
+COUNT(case when STUDENT_SOURCE='1' then 1 else null end) ptgNumber,
+COUNT(case when STUDENT_SOURCE='2' then 1 else null end) sxgNumber,
+COUNT(case when STUDENT_SOURCE='4' then 1 else null end) wngNumber,
+COUNT(case when STUDENT_SOURCE='1'and employment_id is not null then 1 else null end) ptjNumber,
+COUNT(case when STUDENT_SOURCE='2'and employment_id is not null then 1 else null end) sxjNumber,
+COUNT(case when STUDENT_SOURCE='4'and employment_id is not null then 1 else null end) wnjNumber,
+
+COUNT(case when ADMISSIONS_WAY='1' then 1 else null end) oneNumber,
+COUNT(case when ADMISSIONS_WAY='2' then 1 else null end) twoNumber,
+COUNT(case when ADMISSIONS_WAY='3' then 1 else null end) threeNumber,
+COUNT(case when ADMISSIONS_WAY='4' then 1 else null end) fourNumber,
+COUNT(case when ADMISSIONS_WAY='5' then 1 else null end) fiveNumber,
+COUNT(case when ADMISSIONS_WAY='6' then 1 else null end) sixNumber,
+COUNT(case when ADMISSIONS_WAY='7' then 1 else null end) sevenNumber,
+COUNT(case when ADMISSIONS_WAY='8' then 1 else null end) eightNumber,
+
+COUNT(case when ADMISSIONS_WAY='1' and employment_id is not null then 1 else null end) onejNumber,
+COUNT(case when ADMISSIONS_WAY='2' and employment_id is not null then 1 else null end) twojNumber,
+COUNT(case when ADMISSIONS_WAY='3'and employment_id is not null then 1 else null end) threejNumber,
+COUNT(case when ADMISSIONS_WAY='4'and employment_id is not null then 1 else null end) fourjNumber,
+COUNT(case when ADMISSIONS_WAY='5'and employment_id is not null then 1 else null end) fivejNumber,
+COUNT(case when ADMISSIONS_WAY='6'and employment_id is not null then 1 else null end) sixjNumber,
+COUNT(case when ADMISSIONS_WAY='7'and employment_id is not null then 1 else null end) sevenjNumber,
+COUNT(case when ADMISSIONS_WAY='8'and employment_id is not null then 1 else null end) eightjNumber
+
+FROM T_XG_MAJOR M LEFT JOIN T_XG_CLASS C   ON M.MAJOR_CODE = C.MAJOR_CODE
+LEFT JOIN T_XG_STUDENT_CLASS SC ON C.CLASS_ID = SC.CLASS_ID
+LEFT JOIN T_XG_STUDENT S  ON SC.STUDENT_ID = S.STUDENT_ID
+LEFT JOIN T_XG_EMPLOYMENT_STUDENT ES ON S.STUDENT_ID = ES.STUDENT_ID
+GROUP BY M.MAJOR_ID,M.MAJOR_SCHOOL, M.DEPARTMENTS_ID, M.MAJOR_CODE,
+M.MAJOR_NAME,   M.MAJOR_DIRECTION_CODE,M.MAJOR_DIRECTION
     </select>
     <select id="getPastgraduationList" parameterType="com.goisan.educational.major.bean.Major"
             resultType="com.goisan.educational.major.bean.Major">
@@ -681,8 +704,8 @@
                M.MAJOR_NAME,
                M.MAJOR_DIRECTION_CODE,
                M.MAJOR_DIRECTION,
-               DECODE(STUDENT_STATUS, '6', COUNT(STUDENT_STATUS), 0)                       graduation,
-               COUNT(ES.EMPLOYMENT_ID)                                                     EMPLOYMENT
+               COUNT(case when STUDENT_STATUS='6' then 1 else null end) graduationNumber,
+               COUNT(case when ES.EMPLOYMENT_ID is not null then 1 else null end) employmentNumber
         FROM T_XG_MAJOR M
                  LEFT JOIN T_XG_CLASS C ON M.MAJOR_CODE = C.MAJOR_CODE
                  LEFT JOIN T_XG_STUDENT_CLASS SC ON C.CLASS_ID = SC.CLASS_ID
@@ -1501,7 +1524,7 @@ select count(t.student_id) beijingEn from T_XG_STUDENT t where t.HOUSEHOLD_REGIS
   from T_RS_EMPLOYEE e where e.POSITIONAL_LEVEL = '5'
     </select>
 
-<select id="expertExcel_GJ_421" resultType="java.util.Map">
+    <select id="expertExcel_GJ_421" resultType="java.util.Map">
     select
 '0' as type,
 COUNT(CASE WHEN c.COURSE_TYPE = '1' and  e.TEACHER_TYPE='1'and e.sex ='2' THEN 1 ELSE NULL END) GGKC,
@@ -1879,4 +1902,53 @@ T_XG_STUDENT_CHANGE_LOG cl on cl.student_id = t2.student_id
         order by dic_code
     </select>
 
+    <select id="expertExcel_A11_3" resultType="com.goisan.educational.major.bean.Major"
+            parameterType="com.goisan.educational.major.bean.Major">
+    select COUNT(case when FROM_ARMY='3' and year=to_char(sysdate, 'yyyy') then 1 else null end)  tyArmy ，
+    COUNT(case when FROM_ARMY='2'  and year=to_char(sysdate, 'yyyy')  then 1 else null end)  fzArmy ,
+    count(case when  FROM_ARMY='2' and year=to_char(sysdate, 'yyyy') or FROM_ARMY='3'
+    and year=to_char(sysdate, 'yyyy') then 1 else null end) sumArmy,
+    COUNT(case when FROM_ARMY='3'  then 1 else null end)  tyZArmy ，
+    COUNT(case when FROM_ARMY='2'  then 1 else null end)  fzZArmy ,
+    count(case when  FROM_ARMY='2' or FROM_ARMY='3'  then 1 else null end) sumZArmy
+    from t_xg_student
+    </select>
+    <select id="expertExcel_A11_2" resultType="com.goisan.educational.major.bean.Major"
+            parameterType="com.goisan.educational.major.bean.Major">
+    select COUNT(student_id)   studentNumber，
+    COUNT(case when HOUSEHOLD_REGISTER_PROVINCE='650000'  then null else 1 end)  wsStudentNum ,
+    COUNT(case when RURAL_HOUSEHOLD_REGISTRATIO='1'  then 1 else null end)  ncStudentNum ,
+    COUNT(case when NATION='01'  then null else 1 end)  mzStudentNum
+    from t_xg_student
+    </select>
+    <select id="getStudentByYear" resultType="com.goisan.system.bean.Student">
+
+    SELECT s.STUDENT_NUMBER studentNumber,
+    s.name name,
+    FUNC_GET_DICVALUE(s.SEX, 'XB') as SEX,
+    FUNC_GET_DICVALUE(s.nation, 'MZ') as nation,
+    FUNC_GET_DICVALUE(s.student_status, 'XSZT') as studentStatus,
+    HOUSEHOLD_REGISTER_PLACE householdRegisterType,
+    FUNC_GET_DICVALUE(s.from_army, 'LZJD') as fromArmy,
+    ADMISSIONS_WAY admissionsWay,
+    FUNC_GET_DICVALUE(s.STUDENT_SOURCE, 'XSLY') as studentSource,
+    FUNC_GET_DICVALUE(s.RURAL_HOUSEHOLD_REGISTRATIO, 'SF') as ruralHouseholdRegistratio,
+    FUNC_GET_DICVALUE(s.order_training, 'SF') as orderTraining,
+    EDUCTIONAL_SYSTEM eductionalSystem,
+    FUNC_GET_DICVALUE(s.documentary_lika_poor_familie, 'SF') as documentaryLikaPoorFamilie,
+    FUNC_GET_DICVALUE(s.year, 'ND') as years,
+    FUNC_GET_DICVALUE(s.month, 'YF') as month,
+    TOTAL_ENROLLMENT_SCORE totalEnrollmentScore,
+    FUNC_GET_TABLEVALUE(t.class_id,'t_xg_class','class_id','CLASS_CODE')  classCode ,
+    FUNC_GET_TABLEVALUE(t.class_id,'t_xg_class','class_id','class_name')  className ,
+    FUNC_GET_TABLEVALUE(t.class_id,'t_xg_class','class_id','MAJOR_CODE')  majorCode,
+    FUNC_GET_TABLEVALUE(FUNC_GET_TABLEVALUE(t.class_id,'t_xg_class','class_id','MAJOR_CODE') ,'t_xg_major','major_code','MAJOR_NAME')  majorName,
+    FUNC_GET_TABLEVALUE(FUNC_GET_TABLEVALUE(t.class_id,'t_xg_class','class_id','MAJOR_CODE'),'t_xg_major','MAJOR_code','MAJOR_DIRECTION_CODE')  majorDirectionCode,
+    FUNC_GET_TABLEVALUE(t.class_id,'t_xg_class','class_id','MAJOR_DIRECTION')  majorDirection,
+    FUNC_GET_TABLEVALUE( FUNC_GET_TABLEVALUE
+    (FUNC_GET_TABLEVALUE(t.class_id,'t_xg_class','class_id','MAJOR_CODE'),'t_xg_major','MAJOR_code','departments_id')  ,'t_sys_dept','dept_id','dept_name')  deptName
+
+    FROM t_xg_student s, T_XG_STUDENT_CLASS t
+    WHERE s.STUDENT_ID = t.STUDENT_ID and year=to_char(sysdate, 'yyyy') and month between 9 and 12
+</select>
 </mapper>

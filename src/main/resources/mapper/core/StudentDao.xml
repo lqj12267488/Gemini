@@ -41,7 +41,7 @@
         t.code_cooperative_eduation codeCooperativeEducation,
         t.external_teaching_point externalTeachingPoint,
         t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag,to_char(status_date, 'yyyy-mm-dd') statusDate,gradua_destina,
+        t.trailing_children_flag trailingChildrenFlag,
         t."FROM"
         FROM t_xg_student t ,T_XG_STUDENT_CLASS r,t_sys_user u
         WHERE 1 = 1 AND r.student_id = t.student_id
@@ -231,8 +231,7 @@
                   s."FROM",
                   s.EN_SCH_TYPE,
                   FUNC_GET_DICVALUE( s.EN_SCH_TYPE,'RXXS') enSchTypeShow,
-                  DISABILITY,to_char(status_date, 'yyyy-mm-dd') statusDate,
-                  gradua_destina         graduaDestina
+                  DISABILITY
         FROM t_xg_student s,T_XG_STUDENT_CLASS t
         WHERE s.STUDENT_ID = t.STUDENT_ID
             and s.student_id = #{studentId}
@@ -399,8 +398,7 @@
                   allowancesFlagShow,
                   s."FROM",
                   RETIRE_REASON,
-                  DROP_OUT_REASON,to_char(status_date, 'yyyy-mm-dd') statusDate,
-                  gradua_destina         graduaDestina
+                  DROP_OUT_REASON
         FROM t_xg_student s
         WHERE  s.student_id = #{studentId}
     </select>
@@ -441,7 +439,7 @@ INSERT INTO t_xg_student
  subsection_culture, trailing_children_flag, "FROM", NAME_OF_MEMBER, MEMBER_RELATIONSHIP, IS_GUARDIAN,
  MEMBER_TELEPHONE_NUMBER, GRADUATION_SCHOOL,
  FROM_ARMY,RURAL_HOUSEHOLD_REGISTRATIO,ORDER_TRAINING,DOCUMENTARY_LIKA_POOR_FAMILIE,DURING_EMPLOYMENT,TOTAL_ENROLLMENT_SCORE,EN_SCH_TYPE,
- DISABILITY,status_date,gradua_destina)
+ DISABILITY)
 VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
         to_date('${birthday}', 'yyyy-mm-dd'), '${joinYear}', '${joinMonth}',
         '${householdRegisterType}',
@@ -469,7 +467,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         '${trailingChildrenFlag}', '${from}', '${nameOfMember}', '${memberRelationship}', '${isGuardian}',
         '${memberTelephoneNumber}', '${graduationSchool}',
         '${fromArmy}','${ruralHouseholdRegistratio}','${orderTraining}','${documentaryLikaPoorFamilie}','${duringEmployment}','${totalEnrollmentScore}'
-        ,'${enSchType}','${disability}',to_date('${statusDate}','yyyy-mm-dd'),'${graduaDestina}')
+        ,'${enSchType}','${disability}')
     </insert>
     <update id="updateStudent" parameterType="com.goisan.system.bean.Student">
         UPDATE t_xg_student
@@ -545,9 +543,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
             TOTAL_ENROLLMENT_SCORE = #{totalEnrollmentScore},
             "FROM" = #{from},
             EN_SCH_TYPE=#{enSchType},
-            DISABILITY = #{disability},
-            status_date = to_date(#{statusDate}, 'yyyy-mm-dd'),
-            gradua_destina=#{graduaDestina}
+            DISABILITY = #{disability}
         WHERE student_id = #{studentId}
     </update>
     <delete id="delStudent" parameterType="java.lang.String">
@@ -582,47 +578,6 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
              )
         order by name
     </select>
-
-    <select id="getMajorClassTree2" resultType="com.goisan.system.bean.Tree">
-        SELECT id,name,pId,type
-        FROM (
-                 SELECT t.dept_id id, t.dept_name name,t.parent_dept_id pId,'1' as type
-                 FROM T_SYS_DEPT t
-                 WHERE t.dept_type = 8
-                 UNION ALL
-                 SELECT DISTINCT d.major_code id, d.major_name || ' -- ' || FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,d.departments_id pId,'2' as type
-                 FROM T_XG_MAJOR d
-                 WHERE d.valid_flag = 1
-                 UNION ALL
-                 SELECT e.class_id id,e.class_name name,e.major_code pId,'3' as type
-                 FROM T_XG_CLASS e
-                 WHERE e.valid_flag = 1 and e.GRADUATION_FLAG = '1'
-             )
-        order by name
-    </select>
-
-    <select id="getMajorClassTree3" resultType="com.goisan.system.bean.Tree">
-         SELECT id, name, pId,type
-  FROM (SELECT t.dept_id id, t.dept_name name, t.parent_dept_id pId,'1' as type
-          FROM T_SYS_DEPT t
-         WHERE t.dept_type = 8
-        UNION ALL
-        SELECT DISTINCT d.major_code id,
-                        d.major_name || ' -- ' ||
-                        FUNC_GET_DICVALUE(d.training_level, 'ZXZYPYCC') name,
-                        d.departments_id pId,
-                        '2' as type
-          FROM T_XG_MAJOR d,T_XG_CLASS c
-         WHERE d.valid_flag = 1 and d.major_code = c.major_code and c.graduation_flag in ('2','3')
-        UNION ALL
-        SELECT e.class_id id, e.class_name name, e.major_code pId,
-          '3' as type
-          FROM T_XG_CLASS e
-         WHERE e.valid_flag = 1
-           and e.GRADUATION_FLAG in ('2', '3'))
- order by name
-    </select>
-
 
     <select id="getMajorCodeByMajorName" parameterType="java.lang.String" resultType="java.lang.String">
         select MAJOR_CODE from T_XG_MAJOR where MAJOR_NAME = #{majorName}
@@ -829,7 +784,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         t.code_cooperative_eduation codeCooperativeEducation,
         t.external_teaching_point externalTeachingPoint,
         t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag,to_char(status_date, 'yyyy-mm-dd') statusDate,gradua_destina
+        t.trailing_children_flag trailingChildrenFlag
         FROM t_xg_student t ,T_XG_STUDENT_CLASS r ,t_xg_class c , t_sys_user u ,T_XG_MAJOR m
         WHERE
         1 = 1 AND r.student_id = t.student_id AND r.class_id = c.class_id AND t.student_id = u.user_id
@@ -848,89 +803,6 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
             AND t.idcard like #{idcard}
         </if>
     </select>
-
-    <select id="getStudentListByDept2" resultType="com.goisan.system.bean.Student">
-        SELECT
-        t.create_time createTime,
-        t.student_id studentId,t.name,t.sex,t.idcard,
-        t.student_number studentNumber,t.birthday,
-        t.nationality,t.nation,t.address,t.household_register_place householdRegisterPlace,
-        t.household_register_province houseProvince, t.household_register_city houseCity,
-        t.household_register_county houseCounty,t.political_status politicalStatus,
-        t.home_phone homePhone,t.tel,t.study_mode_dz,t.total_points,
-        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
-        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
-        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
-        r.class_id classId,
-        FUNC_GET_TABLEVALUE(r.class_id,'T_XG_CLASS','class_id','class_name') classShow,
-        FUNC_GET_DICVALUE(t.STUDENT_STATUS, 'XSZT') studentStatusShow,
-        t.candidate_number_dz candidateNumberDz, t.study_mode_dz learnModeDz,
-        t.total_points totalPoints,t.idcard_type idCardType,
-        t.spell_name spellName,t.learn_mode learnMode,
-        t.enrollment_type enrollmentType, t.studying_way studyingWay,
-        t.marital_status maritalStatus,t.train_interval trainInterval,
-        t.source_place_division_code sourcePlaceDivisionCode,
-        t.birth_place_division_code birthPlaceDivisionCode,
-        t.native_place_division_code nativePlaceDivisionCode,
-        t.subordinate_station subordinateStation, t.residence_division_code residenceDivisionCode,
-        t.student_residence_type studentResidenceType,t.professional_expertise professionalExpertise,
-        t.eductional_system eductionalSystem, t.health_condition healthCondition,
-        t.enrollment_target enrollmentTarget,t.admissions_way admissionsWay,
-        t.cooperation_type cooperationType, t.examination_card_number examinationCardNumber,
-        t.candidate_number candidateNumber, t.test_scores testScores,
-        t.form_cooperative_eduation formCooperativeEducation,
-        t.code_cooperative_eduation codeCooperativeEducation,
-        t.external_teaching_point externalTeachingPoint,
-        t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag
-        FROM t_xg_student t ,T_XG_STUDENT_CLASS r ,t_xg_class c,T_SYS_DEPT d
-        WHERE
-        r.student_id = t.student_id AND r.class_id = c.class_id
-        AND c.departments_id  =d.dept_id and d.dept_id = #{deptId} and c.graduation_flag ='1'
-    </select>
-
-    <select id="getGradStudentListByDept" resultType="com.goisan.system.bean.Student">
-        SELECT
-        t.create_time createTime,
-        t.student_id studentId,t.name,t.sex,t.idcard,
-        t.student_number studentNumber,t.birthday,
-        t.nationality,t.nation,t.address,t.household_register_place householdRegisterPlace,
-        t.household_register_province houseProvince, t.household_register_city houseCity,
-        t.household_register_county houseCounty,t.political_status politicalStatus,
-        t.home_phone homePhone,t.tel,t.study_mode_dz,t.total_points,
-        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
-        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
-        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
-        r.class_id classId,
-        FUNC_GET_TABLEVALUE(r.class_id,'T_XG_CLASS','class_id','class_name') classShow,
-        FUNC_GET_DICVALUE(t.STUDENT_STATUS, 'XSZT') studentStatusShow,
-        t.candidate_number_dz candidateNumberDz, t.study_mode_dz learnModeDz,
-        t.total_points totalPoints,t.idcard_type idCardType,
-        t.spell_name spellName,t.learn_mode learnMode,
-        t.enrollment_type enrollmentType, t.studying_way studyingWay,
-        t.marital_status maritalStatus,t.train_interval trainInterval,
-        t.source_place_division_code sourcePlaceDivisionCode,
-        t.birth_place_division_code birthPlaceDivisionCode,
-        t.native_place_division_code nativePlaceDivisionCode,
-        t.subordinate_station subordinateStation, t.residence_division_code residenceDivisionCode,
-        t.student_residence_type studentResidenceType,t.professional_expertise professionalExpertise,
-        t.eductional_system eductionalSystem, t.health_condition healthCondition,
-        t.enrollment_target enrollmentTarget,t.admissions_way admissionsWay,
-        t.cooperation_type cooperationType, t.examination_card_number examinationCardNumber,
-        t.candidate_number candidateNumber, t.test_scores testScores,
-        t.form_cooperative_eduation formCooperativeEducation,
-        t.code_cooperative_eduation codeCooperativeEducation,
-        t.external_teaching_point externalTeachingPoint,
-        t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag
-        FROM t_xg_student t ,T_XG_STUDENT_CLASS r ,t_xg_class c,T_SYS_DEPT d
-        WHERE
-        r.student_id = t.student_id AND r.class_id = c.class_id
-        AND c.departments_id  =d.dept_id and d.dept_id = #{deptId} and c.graduation_flag in (2,3)
-    </select>
-
-
-
     <select id="getStudentListByMajor" resultType="com.goisan.system.bean.Student" parameterType="java.lang.String">
         SELECT
         t.create_time createTime,
@@ -964,9 +836,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         t.code_cooperative_eduation codeCooperativeEducation,
         t.external_teaching_point externalTeachingPoint,
         t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag,
-        to_char(status_date, 'yyyy-mm-dd') statusDate,
-        gradua_destina
+        t.trailing_children_flag trailingChildrenFlag
         FROM t_xg_student t ,T_XG_STUDENT_CLASS r, t_sys_user u
         WHERE 1 = 1 AND r.student_id = t.student_id AND t.student_id = u.user_id
         <if test="level != null and level != '' ">
@@ -981,85 +851,6 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
             AND t.idcard like #{idcard}
         </if>
     </select>
-
-    <select id="getStudentListByMajor2" resultType="com.goisan.system.bean.Student">
-       SELECT
-        t.create_time createTime,
-        t.student_id studentId,t.name,t.sex,t.idcard,
-        t.student_number studentNumber,t.birthday,
-        t.nationality,t.nation,t.address,t.household_register_place householdRegisterPlace,
-        t.household_register_province houseProvince, t.household_register_city houseCity,
-        t.household_register_county houseCounty,t.political_status politicalStatus,
-        t.home_phone homePhone,t.tel,t.study_mode_dz,t.total_points,
-        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
-        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
-        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
-        r.class_id classId,
-        FUNC_GET_TABLEVALUE(r.class_id,'T_XG_CLASS','class_id','class_name') classShow,
-        FUNC_GET_DICVALUE(t.STUDENT_STATUS, 'XSZT') studentStatusShow,
-        t.candidate_number_dz candidateNumberDz, t.study_mode_dz learnModeDz,
-        t.total_points totalPoints,t.idcard_type idCardType,
-        t.spell_name spellName,t.learn_mode learnMode,
-        t.enrollment_type enrollmentType, t.studying_way studyingWay,
-        t.marital_status maritalStatus,t.train_interval trainInterval,
-        t.source_place_division_code sourcePlaceDivisionCode,
-        t.birth_place_division_code birthPlaceDivisionCode,
-        t.native_place_division_code nativePlaceDivisionCode,
-        t.subordinate_station subordinateStation, t.residence_division_code residenceDivisionCode,
-        t.student_residence_type studentResidenceType,t.professional_expertise professionalExpertise,
-        t.eductional_system eductionalSystem, t.health_condition healthCondition,
-        t.enrollment_target enrollmentTarget,t.admissions_way admissionsWay,
-        t.cooperation_type cooperationType, t.examination_card_number examinationCardNumber,
-        t.candidate_number candidateNumber, t.test_scores testScores,
-        t.form_cooperative_eduation formCooperativeEducation,
-        t.code_cooperative_eduation codeCooperativeEducation,
-        t.external_teaching_point externalTeachingPoint,
-        t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag
-        FROM t_xg_student t ,T_XG_STUDENT_CLASS r ,t_xg_class c,T_XG_MAJOR m
-        WHERE  r.student_id = t.student_id AND r.class_id = c.class_id
-        and m.major_code = #{majorCode} and c.major_code = m.major_code and c.graduation_flag = '1'
-    </select>
-
-    <select id="getGradStudentListByMajor" resultType="com.goisan.system.bean.Student">
-       SELECT
-        t.create_time createTime,
-        t.student_id studentId,t.name,t.sex,t.idcard,
-        t.student_number studentNumber,t.birthday,
-        t.nationality,t.nation,t.address,t.household_register_place householdRegisterPlace,
-        t.household_register_province houseProvince, t.household_register_city houseCity,
-        t.household_register_county houseCounty,t.political_status politicalStatus,
-        t.home_phone homePhone,t.tel,t.study_mode_dz,t.total_points,
-        FUNC_GET_DICVALUE(t.sex ,'XB') sexShow,
-        FUNC_GET_DICVALUE(t.nationality,'GJ') nationalityShow,
-        FUNC_GET_DICVALUE(t.nation,'MZ') nationShow,
-        r.class_id classId,
-        FUNC_GET_TABLEVALUE(r.class_id,'T_XG_CLASS','class_id','class_name') classShow,
-        FUNC_GET_DICVALUE(t.STUDENT_STATUS, 'XSZT') studentStatusShow,
-        t.candidate_number_dz candidateNumberDz, t.study_mode_dz learnModeDz,
-        t.total_points totalPoints,t.idcard_type idCardType,
-        t.spell_name spellName,t.learn_mode learnMode,
-        t.enrollment_type enrollmentType, t.studying_way studyingWay,
-        t.marital_status maritalStatus,t.train_interval trainInterval,
-        t.source_place_division_code sourcePlaceDivisionCode,
-        t.birth_place_division_code birthPlaceDivisionCode,
-        t.native_place_division_code nativePlaceDivisionCode,
-        t.subordinate_station subordinateStation, t.residence_division_code residenceDivisionCode,
-        t.student_residence_type studentResidenceType,t.professional_expertise professionalExpertise,
-        t.eductional_system eductionalSystem, t.health_condition healthCondition,
-        t.enrollment_target enrollmentTarget,t.admissions_way admissionsWay,
-        t.cooperation_type cooperationType, t.examination_card_number examinationCardNumber,
-        t.candidate_number candidateNumber, t.test_scores testScores,
-        t.form_cooperative_eduation formCooperativeEducation,
-        t.code_cooperative_eduation codeCooperativeEducation,
-        t.external_teaching_point externalTeachingPoint,
-        t.subsection_culture subsectionCulture,
-        t.trailing_children_flag trailingChildrenFlag
-        FROM t_xg_student t ,T_XG_STUDENT_CLASS r ,t_xg_class c,T_XG_MAJOR m
-        WHERE  r.student_id = t.student_id AND r.class_id = c.class_id
-        and m.major_code = #{majorCode} and c.major_code = m.major_code and c.graduation_flag in (2,3)
-    </select>
-
     <select id="getStudentTree" resultType="com.goisan.system.bean.Tree" parameterType="java.lang.String">
         SELECT id,name,pid,checked1 as checked
         FROM
@@ -1337,8 +1128,7 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         FUNC_GET_DICVALUE(t.LEARN_MODE, 'XXXS')) LEARN_MODE,
         m.MAJOR_CODE,
         m.MAJOR_NAME MAJOR_SHOW,
-        FUNC_GET_DICVALUE(m.TRAINING_LEVEL, 'ZXZYPYCC') TRAINING_LEVEL,
-        to_char(status_date, 'yyyy-mm-dd') statusDate
+        FUNC_GET_DICVALUE(m.TRAINING_LEVEL, 'ZXZYPYCC') TRAINING_LEVEL
         FROM t_xg_student t,
         T_XG_STUDENT_CLASS r,
         t_xg_class c,
@@ -1528,4 +1318,5 @@ VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentN
         default_dept=#{classId}
         WHERE user_id = #{studentId}
     </update>
+
 </mapper>

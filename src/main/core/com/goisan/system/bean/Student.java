@@ -11,10 +11,10 @@ public class Student extends BaseBean {
     private String sex;
     private String idcard;
     private String userAccount;
-    private String studentNumber;
+    private String studentNumber;//学号
     private Date birthday;
     private String nationality;
-    private String nation;
+    private String nation;//民族
     private String householdRegisterPlace;//----户籍详细住址
     private String houseProvince;
     private String houseCity;
@@ -102,17 +102,10 @@ public class Student extends BaseBean {
 
     /**是否残疾*/
     private String disability;
-    private String statusDate; //辍学日期
-    private String graduaDestina;//毕业去向
-    private String classCode;//毕业去向
+    private String classCode;//班级代码
 
-    public String getClassCode() {
-        return classCode;
-    }
-
-    public void setClassCode(String classCode) {
-        this.classCode = classCode;
-    }
+    private String graduaDestina;
+    private String statusDate;
 
     public String getGraduaDestina() {
         return graduaDestina;
@@ -128,6 +121,22 @@ public class Student extends BaseBean {
 
     public void setStatusDate(String statusDate) {
         this.statusDate = statusDate;
+    }
+
+    public String getClassCode() {
+        return classCode;
+    }
+
+    public void setClassCode(String classCode) {
+        this.classCode = classCode;
+    }
+
+    public String getMajorDirectionCode() {
+        return majorDirectionCode;
+    }
+
+    public void setMajorDirectionCode(String majorDirectionCode) {
+        this.majorDirectionCode = majorDirectionCode;
     }
 
     public String getDisability() {
@@ -308,6 +317,17 @@ public class Student extends BaseBean {
     private String deptId;
     private String majorName;
     private String majorDirectionShow;
+    private String majorDirectionCode;//专业方向代码
+    private String deptName;
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
     public String getFormCooperativeEducation() {
         return formCooperativeEducation;
     }
