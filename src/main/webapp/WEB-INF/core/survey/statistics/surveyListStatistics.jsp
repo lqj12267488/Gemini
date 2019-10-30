@@ -32,12 +32,6 @@
                     </div>
                 </div>
                 <div class="block block-drop-shadow content">
-                    <div class="form-row">
-                        <button type="button" class="btn btn-default btn-clean"
-                                onclick="add()">新增
-                        </button>
-                        <br>
-                    </div>
                     <div class="form-row block" style="overflow-y:auto;">
                         <table id="surveytable" cellpadding="0" cellspacing="0"
                                width="100%" style="max-height: 50%;min-height: 10%;"
