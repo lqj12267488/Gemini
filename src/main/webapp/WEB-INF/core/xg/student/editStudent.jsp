@@ -666,6 +666,7 @@
     $("#studentNumber").blur(function () {
         if ($("#studentNumber").val() != "") {
             $.post("/student/checkStudentNumber?studentNumber=" + $("#studentNumber").val(), function (data) {
+                console.log(data)
                 if ($("#studentId").val() == "") {
                     if (data.status > 0) {
                         $("#studentNumberAlert").html('<a class="styleRed">您录入的学号已存在</a>');
@@ -804,9 +805,16 @@
             }
         }
 
-        if ($("a").hasClass("styleRed")) {
+        if ($("#idcardAlert a").hasClass("styleRed")) {
             swal({
                 title: "您填写的身份证号已存在!",
+                type: "info"
+            });
+            return;
+        }
+        if ($("#studentNumberAlert a").hasClass("styleRed")) {
+            swal({
+                title: "您填写的学籍号已存在!",
                 type: "info"
             });
             return;

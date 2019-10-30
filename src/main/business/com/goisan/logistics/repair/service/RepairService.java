@@ -136,5 +136,6 @@ public interface RepairService {
 
     void updateConfirmTime(Date date,String repairID);
 
+    String getNameByPersonId(String creator);
     void repairDisMan(Repair repair);
 }

@@ -110,7 +110,7 @@
         (#{repairID},
         '${repairType}','${assetsID}','${position}','${createDept}','${itemName}','${repairAddress}','${faultDescription}',
         '${contactNumber}','${repairmanID}','${repairmanPersonID}','${repairmanDeptID}','${repairResult}','0','0',
-        '${feedback}','0','${checker}','${checkerDept}','0','${checkResult}','${creator}',
+        '${feedback}',#{feedbackFlag},'${checker}','${checkerDept}','0','${checkResult}','${creator}',
         '${createDept}',sysdate)
     </insert>
     <delete id="deleteRepairById" parameterType="java.lang.String">
@@ -127,10 +127,13 @@
        DEPT,
        FUNC_GET_DEPTNAME(DEPT) dept,
        ITEM_NAME itemName,
+       t.creator,
        func_get_userdicvalue(ITEM_NAME, 'BXWPXX') itemNameShow,
        REPAIR_ADDRESS,
        FAULT_DESCRIPTION,
        CONTACT_NUMBER,
+       t.FEEDBACK,
+       t.FEEDBACK_FLAG,
        REPAIRMAN_ID,
        REPAIRMAN_PERSON_ID,
        REPAIRMAN_DEPT_ID,
@@ -1249,6 +1252,10 @@
 
       select t.*, t.rowid from T_ZW_REPAIR t where t.request_flag = '3'
 
+    </select>
+
+    <select id="getNameByPersonId" parameterType="java.lang.String" resultType="java.lang.String">
+        select t.name from T_SYS_USER t where t.user_id = #{creator}
     </select>
 
 </mapper>

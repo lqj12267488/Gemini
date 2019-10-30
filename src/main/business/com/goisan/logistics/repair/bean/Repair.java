@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class Repair  extends BaseBean {
     private String id;
+    private String name;//报修人
     private String repairID;
     private String repairType;//报修种类
     private String assetsID;  //资产编号
@@ -53,6 +54,14 @@ public class Repair  extends BaseBean {
     private String url;//附件url
 
     private Date confirmTime1 ;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getUrl() {
         return url;
