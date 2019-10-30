@@ -202,7 +202,6 @@
             alert("请填写维修说明！")
             return;
         }
-        debugger;
         $.post("<%=request.getContextPath()%>/repair/saveContent", {
             repairID: "${repair.repairID}",
             content: $("#contentaa").val(),

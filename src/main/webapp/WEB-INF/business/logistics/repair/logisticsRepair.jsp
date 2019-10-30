@@ -41,8 +41,8 @@
                     </div>
                 </div>
                 <div class="content">
-                    <table id="repairTable" cellpadding="0" cellspacing="0" width="100%"
-                           class="table table-bordered table-striped sortable_default">
+                    <table id="repairTable" cellpadding="0" cellspacing="0" width="2000px"
+                           class="table table-bordered table-striped sortable_default" style="white-space:nowrap;">
                     </table>
                 </div>
             </div>
@@ -55,9 +55,9 @@
     //主页面显示的条件
     $(document).ready(function () {
         repairTable = $("#repairTable").DataTable({
-            "scrollY": 200,
+            // "scrollY": 200,
             "scrollX": true,
-            "autoWidth":true,
+            // "autoWidth":true,
             "ajax": {
                 "url": '<%=request.getContextPath()%>/repair/repairDefine',
             },
@@ -70,7 +70,7 @@
                 { "width": "9%", "data":"repairTypeShow", "title": "报修种类"},
                 // { "width":"9%", "data": "assetsID", "title": "资产编号"},
                 // { "width":"9%", "data": "position", "title": "所在位置"},
-                { "width": "8%", "data":"creatorName", "title": "申请人"},
+                { "sidth": "8%", "data":"creatorName", "title": "申请人"},
                 { "width": "8%", "data":"dept", "title": "所在部门"},
                 { "width": "9%", "data":"itemNameShow", "title": "报修物品名称"},
                 { "width": "9%", "data":"repairAddress", "title": "维修地址"},
@@ -80,12 +80,7 @@
                 { "width": "11%", "data":"suppliesFlag", "title": "是否使用耗材"},
                 { "width": "8%", "data":"feedback", "title": "反馈意见"},
                 { "width": "8%", "data":"feedbackFlag", "title": "反馈状态"},
-                // { "width": "8%", "data":"contactNumber", "title": "联系人电话"},
-                // { "width": "8%", "data":"requestFlag", "title": "请求状态"},
                 {"width":"7%","data":"assignTime","title":"分配时间"},
-                //{ "width": "8%", "data":"suppliesFlag", "title": "是否使用耗材"},
-                /*{ "width": "8%", "data":"feedback", "title": "反馈意见"},
-                { "width": "6%", "data":"feedbackFlag", "title": "反馈状态"},*/
                 {"width": "8%","title": "操作", "render": function () {
                     return "<a id='editRepair' class='icon-edit' title='确认维修'></a>&nbsp;&nbsp;&nbsp;" +
                         "<a id='addSupplies' class='icon-plus' title='添加耗材'></a>&nbsp;&nbsp;&nbsp;"+
@@ -156,4 +151,5 @@
         return repairID.substring(0,24)+repairmanID.substring(24,36);
     }
 </script>
+
 
