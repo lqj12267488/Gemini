@@ -1024,7 +1024,8 @@ public class ArchivesController {
     public void downloadArchivesFile(String archivesId, String fileId, HttpServletResponse response) {
         COM_REPORT_PATH = new File(this.getClass().getResource("/").getPath()).getParentFile()
                 .getParentFile().getPath();
-        Files archivesFile = filesService.getFileById(fileId);
+//        Files archivesFile = filesService.getFileById(fileId);
+        ArchivesFile archivesFile = archivesService.getArchivesFileByFileId(fileId);
         String filePath = COM_REPORT_PATH + archivesFile.getFileUrl();
         File file = FileUtils.getFile(filePath);
         OutputStream os = null;

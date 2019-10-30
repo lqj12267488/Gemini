@@ -64,6 +64,15 @@
              style="display:none;z-index:999;position:absolute;width: 100%;height: 100px;text-align: center"></div>
         <div class="mainBodyClass">
             <div class="col-md-3 tar">
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>维修状态
+            </div>
+            <select id="reFlag">
+                <option value="">请选择</option>
+                <c:forEach var="re" items="${reflag}">
+                    <option value="${re.id}">${re.text}</option>
+                </c:forEach>
+            </select>
+            <div class="col-md-3 tar">
                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>报修类型
             </div>
             <div class="col-md-9" style="height:40px;vertical-align:middle;text-align:center;">
@@ -147,6 +156,8 @@
 </div>
 <script>
     $(document).ready(function () {
+        $("#reFlag").val('${repair.requestFlag}');
+
         $.post("<%=request.getContextPath()%>/files/getFilesByBusinessId", {
             businessId: '${repair.repairID}',
         }, function (data) {
@@ -194,7 +205,7 @@
         $.post("<%=request.getContextPath()%>/repair/saveContent", {
             repairID: "${repair.repairID}",
             content: $("#contentaa").val(),
-            requestFlag: "3"
+            requestFlag: $("#reFlag").val()
         }, function (msg) {
             alert(msg.msg)
             if (msg.status == 1) {

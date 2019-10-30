@@ -94,7 +94,7 @@
                FUNC_GET_TABLEVALUE(departments_id, 'T_SYS_DEPT', 'DEPT_ID', 'DEPT_NAME')         departmentsIdShow,
                FUNC_GET_DICVALUE(t.ORDERS_STUDENT_NUM, 'ZXZYLX') as                              StudentnumShow,
                FUNC_GET_DICVALUE(t.school_system, 'ZXZYXZ')      as                              schoolSystemShow,
-               t.major_direction,,
+               t.major_direction,
                FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC')   as                              trainingLevelShow,
                FUNC_GET_DICVALUE(t.CLASS_NUM, 'SF')              as                              classNumShow,
                FUNC_GET_DICVALUE(t.ORDERS_CLASS_NUM, 'SF')       as                              ordersClassnumShow,

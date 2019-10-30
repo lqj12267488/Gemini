@@ -49,7 +49,7 @@
     $(document).ready(function () {
         filesTable = $("#filesTable").DataTable({
             "ajax": {
-                "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId?archivesId=' + $("#archivesId").val(),
+                "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId2?archivesId=' + $("#archivesId").val(),
             },
             "destroy": true,
             "columns": [
@@ -83,7 +83,6 @@
         } else if ($("#fileType").val() == '4') {
             fileSuffix = ['txt', 'doc', 'docx', 'xlsx', 'ppt', 'pdf', 'xls', 'xlsx', 'rar', 'zip', 'pptx','jpg', 'png', 'jpeg','gif','bmp'];
         }
-        debugger;
         $('#ssi-upload').ssi_uploader({
             url: '<%=request.getContextPath()%>/archives/insertArchivesFiles?archivesId=${archivesId}&archivesName=' +
             archivesName + '&archivesCode=${archivesCode}&flag=${flag}&role=${role}',
