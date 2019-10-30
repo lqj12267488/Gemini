@@ -109,4 +109,5 @@ public interface ArchivesDao {
     List<Archives> getArchivesListBumen(Archives archives);
 
     List<Archives> getArchivesListLingDao(Archives archives);
+    ArchivesFile getArchivesFileByFileId(@Param("fileId") String fileId);
 }

@@ -55,6 +55,9 @@
     //主页面显示的条件
     $(document).ready(function () {
         repairTable = $("#repairTable").DataTable({
+            "scrollY": 200,
+            "scrollX": true,
+            "autoWidth":true,
             "ajax": {
                 "url": '<%=request.getContextPath()%>/repair/repairDefine',
             },

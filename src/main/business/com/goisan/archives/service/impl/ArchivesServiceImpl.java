@@ -279,4 +279,9 @@ public class ArchivesServiceImpl implements ArchivesService {
     public Files getFileById(String fileId) {
         return filesDao.getFileById(fileId);
     }
+
+    @Override
+    public ArchivesFile getArchivesFileByFileId(String fileId) {
+        return archivesDao.getArchivesFileByFileId(fileId);
+    }
 }

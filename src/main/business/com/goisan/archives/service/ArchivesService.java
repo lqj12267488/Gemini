@@ -4,6 +4,7 @@ import com.goisan.archives.bean.Archives;
 import com.goisan.archives.bean.ArchivesFile;
 import com.goisan.archives.bean.ArchivesRole;
 import com.goisan.system.bean.*;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -111,4 +112,6 @@ public interface ArchivesService {
     List<Files> getFilesByBusinessId(String businessId);
 
     Files getFileById(String fileId);
+
+    ArchivesFile getArchivesFileByFileId(@Param("fileId") String fileId);
 }

@@ -51,7 +51,7 @@
     $(document).ready(function () {
         $("#filesTables").DataTable({
             "ajax": {
-                "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId?archivesId=' + $("#archivesId").val(),
+                "url": '<%=request.getContextPath()%>/archives/getFilesByArchivesId2?archivesId=' + $("#archivesId").val(),
             },
             "destroy": true,
             "columns": [
