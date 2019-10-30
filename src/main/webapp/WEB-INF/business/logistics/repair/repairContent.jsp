@@ -70,7 +70,7 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-2 tar">
-                        报修状态:
+                        维修状态:
                     </div>
                     <div class="col-md-4" id="rflag">
                         <select id="reFlag" class="js-example-basic-single"></select>

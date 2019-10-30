@@ -237,8 +237,7 @@
         t.FAULT_DESCRIPTION,
         t.CONTACT_NUMBER,
         t.REPAIRMAN_ID,
-        t.REPAIRMAN_PERSON_ID,
-        FUNC_GET_USERNAME(t.REPAIRMAN_PERSON_ID) repairmanPersonID,
+        FUNC_GET_USERNAME(t.REPAIRMAN_ID) repairmanShow,
         t.REPAIRMAN_DEPT_ID,
         t.REPAIR_RESULT,
         func_get_dicvalue(t.REQUEST_FLAG,'WXLCZT') requestFlag,
@@ -349,6 +348,49 @@
         DELETE FROM  T_ZW_REPAIRMAN WHERE ID = #{id}
     </delete>
     <!--后勤维修查询-->
+    <!--<select id="repairDefine" resultType="com.goisan.logistics.repair.bean.Repair"-->
+            <!--parameterType="com.goisan.logistics.repair.bean.Repair">-->
+        <!--SELECT DISTINCT t.REPAIR_ID,-->
+        <!--t.REPAIR_TYPE,-->
+        <!--func_get_userdicvalue(t.REPAIR_TYPE, 'BXLXGL') repairTypeShow,-->
+        <!--func_get_dicvalue(t.SUPPLIES_FLAG, 'SF') suppliesFlag,-->
+        <!--t.ASSETS_ID,-->
+        <!--t.POSITION,-->
+        <!--FUNC_GET_DEPTNAME(t.DEPT) dept,-->
+        <!--t.DEPT deptName,-->
+        <!--t.ITEM_NAME,-->
+        <!--t.REPAIR_ADDRESS,-->
+        <!--t.FAULT_DESCRIPTION,-->
+        <!--t.CONTACT_NUMBER,-->
+        <!--t.REPAIRMAN_ID,-->
+        <!--t.REPAIRMAN_PERSON_ID,-->
+        <!--t.REPAIRMAN_DEPT_ID,-->
+        <!--t.REPAIR_RESULT,-->
+        <!--func_get_dicvalue(t.REQUEST_FLAG, 'WXLCZT') requestFlag,-->
+        <!--t.FEEDBACK,-->
+        <!--func_get_dicvalue(t.FEEDBACK_FLAG, 'GZLFKZT') feedbackFlag,-->
+        <!--to_char(e.create_time,'yyyy-mm-dd hh24:mi') assignTime,-->
+        <!--to_char(t.submit_time,'yyyy-mm-dd hh24:mi') submitTime,-->
+        <!--t.CHECKER,-->
+        <!--t.CHECKER_DEPT,-->
+        <!--t.CHECK_FLAG,-->
+        <!--t.CHECK_RESULT,-->
+        <!--t.CREATOR,-->
+        <!--t.CREATE_TIME,-->
+        <!--t.CREATE_DEPT,-->
+        <!--t.CHANGER,-->
+        <!--t.CHANGE_TIME,-->
+        <!--t.CHANGE_DEPT-->
+        <!--FROM T_ZW_REPAIR t,T_ZW_REPAIR_EXECUTE e-->
+        <!--WHERE 1 = 1-->
+        <!--and (t.REQUEST_FLAG='2' or t.REQUEST_FLAG='3')-->
+        <!--and t.repair_id=e.repair_id-->
+        <!--<if test="creator != 'sa'  and creator != null and creator != '' ">-->
+            <!--AND e.PERSON_ID= #{creator}-->
+        <!--</if>-->
+        <!--ORDER BY t.create_time DESC-->
+    <!--</select>-->
+
     <select id="repairDefine" resultType="com.goisan.logistics.repair.bean.Repair"
             parameterType="com.goisan.logistics.repair.bean.Repair">
         SELECT DISTINCT t.REPAIR_ID,
@@ -360,7 +402,6 @@
         FUNC_GET_DEPTNAME(t.DEPT) dept,
         t.DEPT deptName,
         t.ITEM_NAME,
-        --func_get_userdicvalue(t.ITEM_NAME, 'BXWPXX') itemNameShow,
         t.REPAIR_ADDRESS,
         t.FAULT_DESCRIPTION,
         t.CONTACT_NUMBER,
@@ -371,8 +412,8 @@
         func_get_dicvalue(t.REQUEST_FLAG, 'WXLCZT') requestFlag,
         t.FEEDBACK,
         func_get_dicvalue(t.FEEDBACK_FLAG, 'GZLFKZT') feedbackFlag,
-        to_char(e.create_time,'yyyy-mm-dd hh24:mi') assignTime,
-        to_char(t.submit_time,'yyyy-mm-dd hh24:mi') submitTime,
+        to_char(ASSIGN_TIME, 'yyyy-mm-dd hh24:mi') assignTime,
+        to_char(t.submit_time, 'yyyy-mm-dd hh24:mi') submitTime,
         t.CHECKER,
         t.CHECKER_DEPT,
         t.CHECK_FLAG,
@@ -383,15 +424,12 @@
         t.CHANGER,
         t.CHANGE_TIME,
         t.CHANGE_DEPT
-        FROM T_ZW_REPAIR t,T_ZW_REPAIR_EXECUTE e
+        FROM T_ZW_REPAIR t
         WHERE 1 = 1
-        and (t.REQUEST_FLAG='2' or t.REQUEST_FLAG='3')
-        and t.repair_id=e.repair_id
-        <if test="creator != 'sa'  and creator != null and creator != '' ">
-            AND e.PERSON_ID= #{creator}
-        </if>
+        and (t.REQUEST_FLAG = '2' or t.REQUEST_FLAG = '3')
         ORDER BY t.create_time DESC
     </select>
+
     <select id="checkRequestFlag" parameterType="com.goisan.logistics.repair.bean.Repair"
             resultType="com.goisan.logistics.repair.bean.Repair">
         select * from T_ZW_REPAIR_EXECUTE where repair_id = #{repairID} and person_id = #{creator} and request_flag='3'
@@ -851,6 +889,18 @@
         T_ZW_REPAIR
         SET
         REQUEST_FLAG='2'
+        WHERE
+        REPAIR_ID=#{repairID}
+    </update>
+
+    <update id="repairDisMan" parameterType="com.goisan.logistics.repair.bean.Repair">
+        update
+        T_ZW_REPAIR
+        SET
+        REPAIRMAN_ID = #{repairmanID},
+        REQUEST_FLAG='2',
+        ASSIGN_TIME = sysdate,
+        changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
         WHERE
         REPAIR_ID=#{repairID}
     </update>

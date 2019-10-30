@@ -100,6 +100,7 @@
             "destroy": true,
             "columns": [
                 {"data": "personId", "visible": false},
+                {"data": "deptId", "visible": false},
                 {"width": "10%", "data": "name", "title": "姓名"},
                 {"width": "25%", "data": "userAccount", "title": "登录账号"},
                 {"width": "10%", "data": "deptName", "title": "所在部门"},
@@ -115,7 +116,7 @@
                     }
                 }
             ],
-            'order': [1, 'desc'],
+            'order': [2, 'desc'],
              paging: true,
             "dom": 'rtlip',
             language: language
@@ -124,7 +125,7 @@
             var data = table.row($(this).parent()).data();
             var personId = data.personId;
             if (this.id == "showDetailed") {
-                $("#dialog").load("<%=request.getContextPath()%>/emp/showDetailed?personId=" + personId);
+                $("#dialog").load("<%=request.getContextPath()%>/emp/showDetailed?personId=" + personId+"&deptId="+data.deptId);
                 $("#dialog").modal("show");
             }
             if (this.id === "recoveryEmp") {

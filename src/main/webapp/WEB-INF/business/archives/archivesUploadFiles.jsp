@@ -9,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <link rel="stylesheet" href="/libs/js/plugins/ssi-uploader/css/ssi-uploader.css">
-<script src="/libs/js/plugins/ssi-uploader/js/archives-ssi-uploader.js"></script>
+<script src="/libs/js/plugins/ssi-uploader/js/ssi-uploader.js"></script>
 
 <div class="modal-dialog">
     <div class="modal-content block-fill-white">
@@ -83,6 +83,7 @@
         } else if ($("#fileType").val() == '4') {
             fileSuffix = ['txt', 'doc', 'docx', 'xlsx', 'ppt', 'pdf', 'xls', 'xlsx', 'rar', 'zip', 'pptx','jpg', 'png', 'jpeg','gif','bmp'];
         }
+        debugger;
         $('#ssi-upload').ssi_uploader({
             url: '<%=request.getContextPath()%>/archives/insertArchivesFiles?archivesId=${archivesId}&archivesName=' +
             archivesName + '&archivesCode=${archivesCode}&flag=${flag}&role=${role}',

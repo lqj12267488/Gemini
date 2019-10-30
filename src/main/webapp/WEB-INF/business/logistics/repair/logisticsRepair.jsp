@@ -63,6 +63,7 @@
                 {"data": "repairID", "visible": false},
                 {"data": "createTime", "visible": false},
                 {"data": "repairType", "visible": false},
+                {"data": "repairmanID", "visible": false},
                 { "width": "9%", "data":"repairTypeShow", "title": "报修种类"},
                 // { "width":"9%", "data": "assetsID", "title": "资产编号"},
                 // { "width":"9%", "data": "position", "title": "所在位置"},
@@ -84,7 +85,10 @@
                 { "width": "6%", "data":"feedbackFlag", "title": "反馈状态"},*/
                 {"width": "8%","title": "操作", "render": function () {
                     return "<a id='editRepair' class='icon-edit' title='确认维修'></a>&nbsp;&nbsp;&nbsp;" +
-                        "<a id='addSupplies' class='icon-plus' title='添加耗材'></a>";}}
+                        "<a id='addSupplies' class='icon-plus' title='添加耗材'></a>&nbsp;&nbsp;&nbsp;"+
+                        "<a id='upload' class='icon-cloud-upload' title='上传维修附件'></a>&nbsp;&nbsp;&nbsp;" +
+                        "<a id='dolw' class='icon-eye-open' title='维修附件查看'></a>";
+                }}
             ],
             'order' : [1,'desc'],
             "dom": 'rtlip',
@@ -122,6 +126,16 @@
                 $("#right").load("<%=request.getContextPath()%>/repair/addSupplies?repairID=" +repairID);
             }
 
+            if (this.id == "upload") {
+                $('#dialogFile').load('<%=request.getContextPath()%>/files/filesUpload?businessId=' + getBusinessId(repairID,data.repairmanID)+ '&businessType=TEST&tableName=T_ZW_REPAIR');
+                $('#dialogFile').modal('show');
+            }
+
+            if (this.id == "dolw") {
+                $('#dialogFile').load('<%=request.getContextPath()%>/files/filesUpload1?businessId=' + getBusinessId(repairID,data.repairmanID) + '&businessType=TEST&tableName=T_ZW_REPAIR');
+                $('#dialogFile').modal('show');
+            }
+
         });
     })
     function searchclear() {
@@ -132,6 +146,11 @@
     function search() {
        var itemName = $("#rname").val();
         repairTable.ajax.url("<%=request.getContextPath()%>/repair/repairDefine?itemName=" +itemName).load();
+    }
+
+
+    function getBusinessId(repairID,repairmanID) {
+        return repairID.substring(0,24)+repairmanID.substring(24,36);
     }
 </script>
 

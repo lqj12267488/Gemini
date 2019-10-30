@@ -105,8 +105,6 @@ public class StudentController {
         return a;
     }
 
-
-
     @ResponseBody
     @RequestMapping("/student/getDeptMajorGradClassTree")
     public List<Tree> getDeptMajorGradClassTree(String level) {
@@ -254,7 +252,11 @@ public class StudentController {
                 }
                 userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
                 loginUser.setId(CommonUtil.getUUID());
-                loginUser.setUserAccount(student.getStudentId());
+                /**
+                 * 登录账号 studentId->学号
+                 */
+//                loginUser.setUserAccount(student.getStudentId());
+                loginUser.setUserAccount(student.getStudentNumber());
                 loginUser.setPersonId(student.getStudentId());
                 loginUser.setPassword((new SimpleHash("MD5", "123456", null, 1).toString()));
                 loginUser.setUserType("1");
@@ -276,7 +278,8 @@ public class StudentController {
                 }
                 userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
                 loginUser.setId(CommonUtil.getUUID());
-                loginUser.setUserAccount(student.getStudentId());
+//                loginUser.setUserAccount(student.getStudentId());
+                loginUser.setUserAccount(student.getStudentNumber());
                 loginUser.setPersonId(student.getStudentId());
                 loginUser.setPassword((new SimpleHash("MD5", "123456", null, 1).toString()));
                 loginUser.setUserType("1");
@@ -297,8 +300,11 @@ public class StudentController {
             LoginUser LoginUser = new LoginUser();
             LoginUser.setPersonId(student.getStudentId());
             LoginUser.setName(student.getName());
+            /**
+             * 修改学号，修改登录账号
+             */
+            LoginUser.setUserAccount(student.getStudentNumber());
             loginUserService.upadtedeLoginUser(LoginUser);
-
             return new Message(1, "修改成功！", "success");
         }
     }
@@ -1660,11 +1666,16 @@ public class StudentController {
                 studentService.addRelation(CSRelation);
 
                 LoginUser loginUser = new LoginUser();
+
                 String userAccount = student.getName();
                 userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
                 loginUser.setId(CommonUtil.getUUID());
                 loginUser.setName(student.getName());
-                loginUser.setUserAccount(student.getIdcard());
+                /**
+                 * 账号——学号
+                 */
+//                loginUser.setUserAccount(student.getIdcard());
+                loginUser.setUserAccount(student.getStudentNumber());
                 loginUser.setPersonId(student.getStudentId());
                 loginUser.setPassword((new SimpleHash("MD5", "123456", null, 1).toString()));
                 loginUser.setUserType("1");

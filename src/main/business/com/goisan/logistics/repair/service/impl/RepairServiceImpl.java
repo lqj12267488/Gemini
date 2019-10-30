@@ -7,6 +7,7 @@ import com.goisan.logistics.repair.service.RepairService;
 import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Tree;
+import com.goisan.system.tools.CommonUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -292,6 +293,12 @@ public class RepairServiceImpl implements RepairService {
         repair.setRepairID(repairID);
         repair.setConfirmTime1(date);
         repairDao.updateConfirmTime(repair);
+    }
+
+    @Override
+    public void repairDisMan(Repair repair) {
+        CommonUtil.update(repair);
+        repairDao.repairDisMan(repair);
     }
 
 

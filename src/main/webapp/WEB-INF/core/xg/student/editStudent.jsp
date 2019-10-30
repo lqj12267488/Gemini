@@ -82,7 +82,7 @@
                 </div>
                 <div class="form-row">
                     <div class="col-md-2 tar" id="studentNumberAlert">
-                        学籍号
+                        <span class="iconBtx">*</span> 学号
                     </div>
                     <div class="col-md-4">
                         <input id="studentNumber" type="text" value="${student.studentNumber}"/>
@@ -668,15 +668,15 @@
             $.post("/student/checkStudentNumber?studentNumber=" + $("#studentNumber").val(), function (data) {
                 if ($("#studentId").val() == "") {
                     if (data.status > 0) {
-                        $("#studentNumberAlert").html('<a class="styleRed">您录入的学籍号已存在</a>');
+                        $("#studentNumberAlert").html('<a class="styleRed">您录入的学号已存在</a>');
                     } else {
-                        $("#studentNumberAlert").html('学籍号');
+                        $("#studentNumberAlert").html('学号');
                     }
                 } else {
                     if (data.status > 1) {
-                        $("#studentNumberAlert").html('<a class="styleRed">您录入的学籍号已存在</a>');
+                        $("#studentNumberAlert").html('<a class="styleRed">您录入的学号已存在</a>');
                     } else {
-                        $("#studentNumberAlert").html('学籍号');
+                        $("#studentNumberAlert").html('学号');
                     }
                 }
             });
@@ -775,6 +775,14 @@
             });
             return;
         }
+        if ($("#studentNumber").val() == "" || $("#studentNumber").val() == undefined) {
+            swal({
+                title: "请填写入学号!",
+                type: "info"
+            });
+            return;
+        }
+
         if ($("#homePhone").val() != "") {
             var telNum = /^0\d{2,3}-[1-9]\d{6,7}$/;  ///^1\d{10}$/;
             if (telNum.test($("#homePhone").val()) === false) {

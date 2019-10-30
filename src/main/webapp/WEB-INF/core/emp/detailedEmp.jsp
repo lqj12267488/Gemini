@@ -191,14 +191,14 @@
                     </div>
                     <div class="col-md-4">
                         <input id="post" disabled="true"
-                                value="${emp.postShow}"></input>
+                                value="${emp.post}">
                     </div>
                     <div class="col-md-2 tar">
                         职称类型
                     </div>
                     <div class="col-md-4">
                         <input id="positionalTitles" disabled="true"
-                                value="${emp.positionalTitlesShow}"></input>
+                                value="${emp.positionalTitles}">
                     </div>
                 </div>
                 <div class="form-row">

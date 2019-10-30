@@ -1453,8 +1453,8 @@ public class EmpController {
             return new Message(1, "导入失败！请重新导入", null);
         } else {
             HSSFSheet sheet = workbook.getSheetAt(0);
-            int end = getRealLastRowNum(workbook) + 2;
-            for (int i = 4; i < end; i++) {
+            int end = getRealLastRowNum(workbook) + 4;
+            for (int i = 4; i <= end; i++) {
                 HSSFRow row = sheet.getRow(i);
                 int flag = 1;
                 Emp emp = new Emp();

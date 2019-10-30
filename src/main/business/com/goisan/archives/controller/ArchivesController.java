@@ -942,6 +942,12 @@ public class ArchivesController {
         return CommonUtil.tableMap(archivesService.getFilesByBusinessId(archivesId));
     }
 
+    @ResponseBody
+    @RequestMapping("/archives/getFilesByArchivesId2")
+    public Map getFilesByArchivesId2(String archivesId) {
+        return CommonUtil.tableMap(archivesService.getFilesByArchivesId(archivesId));
+    }
+
     public static String COM_REPORT_PATH = null;
 
     @Resource

@@ -136,7 +136,11 @@
                 { "width": "8%", "data":"feedback", "title": "反馈意见"},
                 { "width": "9%", "data":"feedbackFlag", "title": "反馈状态"},
                 { "width": "8%", "data":"feedbackTime", "title": "反馈时间"},
-                {"width": "6%","title": "操作", "render": function () {return "<a id='infoRepair' class='icon-search' title='详情'></a>";}}
+                {"width": "6%","title": "操作",
+                    "render": function () {return "<a id='infoRepair' class='icon-search' title='详情'></a>&nbsp;&nbsp;&nbsp;&nbsp;"+
+                        "<a id='dolw1' class='icon-eye-close' title='报修附件查看'></a>&nbsp;&nbsp;&nbsp;&nbsp;"+
+                        "<a id='dolw' class='icon-eye-open' title='维修附件查看'></a>";
+                }}
             ],
             'order' : [1,'desc'],
             "dom": 'rtlip',
@@ -150,6 +154,14 @@
                     $("#dialog").load("<%=request.getContextPath()%>/repair/repairListInfo?repairID=" + repairID);
                     $("#dialog").modal("show");
                 }
+            if (this.id == "dolw1") {
+                $('#dialogFile').load('<%=request.getContextPath()%>/files/filesUpload1?businessId=' + repairID + '&businessType=TEST&tableName=T_ZW_REPAIR');
+                $('#dialogFile').modal('show');
+            }
+            if (this.id == "dolw") {
+                $('#dialogFile').load('<%=request.getContextPath()%>/files/filesUpload1?businessId=' + getBusinessId(repairID,data.repairmanID) + '&businessType=TEST&tableName=T_ZW_REPAIR');
+                $('#dialogFile').modal('show');
+            }
         });
 
     })

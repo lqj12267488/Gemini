@@ -221,7 +221,7 @@ public class RepairController {
     @ResponseBody
     @RequestMapping("/repair/getDistribution")
     public ModelAndView getDistribution(Repair repair) {
-        ModelAndView mv = new ModelAndView("/business/logistics/repair/getDistribution");
+        ModelAndView mv = new ModelAndView("/business/logistics/repair/getDistribution2");
         mv.addObject("head", "维修任务分配");
         mv.addObject("repair", repair);
         return mv;
@@ -271,23 +271,37 @@ public class RepairController {
     }
 
     /*分配任务*/
+//    @ResponseBody
+//    @RequestMapping("/repair/FenPei")
+//    public Message repairFenPei(String ids) {
+//        Repair repair = new Repair();
+//        repair.setCreator(CommonUtil.getPersonId());
+//        repair.setCreateDept(CommonUtil.getDefaultDept());
+//        String[] arr_id = ids.split("','");
+//        String pname = "";
+//        for (int i = 0; i < arr_id.length; i++) {
+//            String[] arr_values = arr_id[i].split(",");
+//            repair.setDeptName(arr_values[0].replace("'", ""));
+//            repair.setPersonName(arr_values[1]);
+//            repair.setRepairID(arr_values[2]);
+//            pname = pname + arr_values[1] + ",";
+//            repairService.insertRepairExecute(repair);
+//        }
+//        repairService.repairFenPei(repair);
+//        return new Message(1, "分配成功！", null);
+//    }
+
+    /**
+     * 分配维修人员
+     * @return
+     */
     @ResponseBody
-    @RequestMapping("/repair/FenPei")
-    public Message repairFenPei(String ids) {
+    @RequestMapping("/repair/disMan")
+    public Message disMan(String repairID,String repairmanID) {
         Repair repair = new Repair();
-        repair.setCreator(CommonUtil.getPersonId());
-        repair.setCreateDept(CommonUtil.getDefaultDept());
-        String[] arr_id = ids.split("','");
-        String pname = "";
-        for (int i = 0; i < arr_id.length; i++) {
-            String[] arr_values = arr_id[i].split(",");
-            repair.setDeptName(arr_values[0].replace("'", ""));
-            repair.setPersonName(arr_values[1]);
-            repair.setRepairID(arr_values[2]);
-            pname = pname + arr_values[1] + ",";
-            repairService.insertRepairExecute(repair);
-        }
-        repairService.repairFenPei(repair);
+        repair.setRepairID(repairID);
+        repair.setRepairmanID(repairmanID);
+        repairService.repairDisMan(repair);
         return new Message(1, "分配成功！", null);
     }
 
@@ -415,7 +429,7 @@ public class RepairController {
     @ResponseBody
     @RequestMapping("/repair/Info")
     public Map<String, List<Repair>> repairInfo(Repair repair) {
-        Map<String, List<Repair>> repairMap = new HashMap<String, List<Repair>>();
+        Map<String, List<Repair>> repairMap = new HashMap<>();
         repair.setCreator(CommonUtil.getPersonId());
         repair.setCreateDept(CommonUtil.getDefaultDept());
         repair.setLevel(CommonUtil.getLoginUser().getLevel());
@@ -428,7 +442,10 @@ public class RepairController {
                 String a = arr_id[j];
                 name = userDicService.getDicName(a);
                 if (name != null) {
-                    newname = newname + name + ",";
+                    newname = newname + name;
+                    if (j<arr_id.length-1){
+                        newname =  newname+ ",";
+                    }
                 }
             }
             ll.get(i).setItemNameShow(newname);

@@ -100,4 +100,6 @@ public interface RepairDao {
     String selectName(String creator);
 
     void updateConfirmTime(Repair repair);
+
+    void repairDisMan(Repair repair);
 }

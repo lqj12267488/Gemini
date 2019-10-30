@@ -70,6 +70,7 @@
                 {"data": "repairID", "visible": false},
                 {"data": "createTime", "visible": false},
                 {"data": "repairType", "visible": false},
+                {"data": "repairmanID", "visible": false},
                 {"width": "10%", "data": "repairTypeShow", "title": "报修种类"},
                 /*{"width": "9%", "data": "assetsID", "title": "资产编号"},*/
                 /*{"width": "8%", "data": "position", "title": "所在位置"},*/

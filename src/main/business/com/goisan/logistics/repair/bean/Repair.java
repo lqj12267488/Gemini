@@ -62,6 +62,16 @@ public class Repair  extends BaseBean {
         this.url = url;
     }
 
+    private String repairmanShow;
+
+    public String getRepairmanShow() {
+        return repairmanShow;
+    }
+
+    public void setRepairmanShow(String repairmanShow) {
+        this.repairmanShow = repairmanShow;
+    }
+
     public Date getConfirmTime1() {
         return confirmTime1;
     }
