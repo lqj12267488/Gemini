@@ -50,8 +50,17 @@ public class Repair  extends BaseBean {
     private String sysName; //派单人
     private String PersonIdShow; //维修人
     private String creatorName;
+    private String url;//附件url
 
     private Date confirmTime1 ;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public Date getConfirmTime1() {
         return confirmTime1;

@@ -5,7 +5,7 @@
 	var defaultGroupName = '__DEFAULT';
 	var div = document.createElement('div');
 	var imgId = 0;
-	var PreviewImage = function(options) {
+/*	var PreviewImage = function(options) {
 		this.options = $.extend(true, {
 			id: '__MUI_PREVIEWIMAGE',
 			zoom: true,
@@ -14,7 +14,7 @@
 		}, options || {});
 		this.init();
 		this.initEvent();
-	};
+	};*/
 	var proto = PreviewImage.prototype;
 	proto.init = function() {
 		var options = this.options;

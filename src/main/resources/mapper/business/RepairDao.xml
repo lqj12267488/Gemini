@@ -107,7 +107,7 @@
         REPAIRMAN_PERSON_ID,REPAIRMAN_DEPT_ID,REPAIR_RESULT,REQUEST_FLAG,SUPPLIES_FLAG,FEEDBACK,FEEDBACK_FLAG,CHECKER,CHECKER_DEPT,
         CHECK_FLAG,CHECK_RESULT,CREATOR,CREATE_DEPT,CREATE_TIME
        )values
-        (FUNC_GET_UUID,
+        (#{repairID},
         '${repairType}','${assetsID}','${position}','${createDept}','${itemName}','${repairAddress}','${faultDescription}',
         '${contactNumber}','${repairmanID}','${repairmanPersonID}','${repairmanDeptID}','${repairResult}','0','0',
         '${feedback}','0','${checker}','${checkerDept}','0','${checkResult}','${creator}',
@@ -119,32 +119,31 @@
     <!--修改查询-->
     <select id="getRepairById" resultType="com.goisan.logistics.repair.bean.Repair"
             parameterType="java.lang.String">
-        SELECT
-        REPAIR_ID,
-        REPAIR_TYPE,
-        func_get_userdicvalue(REPAIR_TYPE, 'BXLXGL') repairTypeShow,
-        ASSETS_ID,
-        POSITION,
-        DEPT,
-        FUNC_GET_DEPTNAME(DEPT) dept,
-        ITEM_NAME itemName,
-        func_get_userdicvalue(ITEM_NAME,'BXWPXX') itemNameShow,
-        REPAIR_ADDRESS,
-        FAULT_DESCRIPTION,
-        CONTACT_NUMBER,
-        REPAIRMAN_ID,
-        REPAIRMAN_PERSON_ID,
-        REPAIRMAN_DEPT_ID,
-        REPAIR_RESULT,
-        REQUEST_FLAG requestFlag,
-        FEEDBACK,
-        CHECKER,
-        CHECKER_DEPT,
-        CHECK_RESULT
-        FROM
-        T_ZW_REPAIR t
-        WHERE
-        REPAIR_ID = #{repairID}
+      SELECT REPAIR_ID,
+       REPAIR_TYPE,
+       func_get_userdicvalue(REPAIR_TYPE, 'BXLXGL') repairTypeShow,
+       ASSETS_ID,
+       POSITION,
+       DEPT,
+       FUNC_GET_DEPTNAME(DEPT) dept,
+       ITEM_NAME itemName,
+       func_get_userdicvalue(ITEM_NAME, 'BXWPXX') itemNameShow,
+       REPAIR_ADDRESS,
+       FAULT_DESCRIPTION,
+       CONTACT_NUMBER,
+       REPAIRMAN_ID,
+       REPAIRMAN_PERSON_ID,
+       REPAIRMAN_DEPT_ID,
+       REPAIR_RESULT,
+       REQUEST_FLAG requestFlag,
+       FEEDBACK,
+       CHECKER,
+       CHECKER_DEPT,
+       CHECK_RESULT,
+       r.file_url url
+  FROM T_ZW_REPAIR t,T_SYS_FILES r
+ WHERE t.REPAIR_ID = #{id}
+ and t.repair_id = r.business_id
     </select>
     <update id="updateRepair" parameterType="com.goisan.logistics.repair.bean.Repair">
         update

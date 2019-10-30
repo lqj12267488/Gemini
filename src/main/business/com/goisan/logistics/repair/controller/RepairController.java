@@ -128,12 +128,12 @@ public class RepairController {
             repair.setCreateDept(CommonUtil.getDefaultDept());
             repair.setRepairID(CommonUtil.getUUID());
             repairService.insertRepair(repair);
-            return new Message(1, "新增成功！", null);
+            return new Message(1, "新增成功！", repair.getRepairID());
         } else {
             repair.setChanger(CommonUtil.getPersonId());
             repair.setChangeDept(CommonUtil.getDefaultDept());
             repairService.updateRepair(repair);
-            return new Message(1, "修改成功！", null);
+            return new Message(1, "修改成功！", repair.getRepairID());
         }
     }
 
