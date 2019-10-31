@@ -201,4 +201,9 @@ public class MajorServiceImpl implements MajorService {
     public List<Major> getMajorNumList() {
         return majorDao.getMajorNumList();
     }
+
+    @Override
+    public Major getMajorByName(String majorName) {
+        return majorDao.getMajorByName(majorName);
+    }
 }

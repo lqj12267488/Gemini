@@ -490,7 +490,7 @@ COUNT(case
     </select>
     <insert id="insertStudent" parameterType="com.goisan.system.bean.Student">
 INSERT INTO t_xg_student
-(student_id, class_name, name, sex, idcard, student_number, birthday, year, month,
+(student_id, name, sex, idcard, student_number, birthday, year, month,
  household_register_type,
  address_province,
  address_city,
@@ -526,7 +526,7 @@ INSERT INTO t_xg_student
  MEMBER_TELEPHONE_NUMBER, GRADUATION_SCHOOL,
  FROM_ARMY,RURAL_HOUSEHOLD_REGISTRATIO,ORDER_TRAINING,DOCUMENTARY_LIKA_POOR_FAMILIE,DURING_EMPLOYMENT,TOTAL_ENROLLMENT_SCORE,EN_SCH_TYPE,
  DISABILITY,status_date,gradua_destina)
-VALUES ('${idcard}', '${classId}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
+VALUES ('${idcard}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
         to_date('${birthday}', 'yyyy-mm-dd'), '${joinYear}', '${joinMonth}',
         '${householdRegisterType}',
         '${addressProvince}',

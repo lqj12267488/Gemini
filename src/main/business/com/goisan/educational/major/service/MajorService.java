@@ -5,6 +5,7 @@ import com.goisan.educational.major.bean.Major;
 import com.goisan.educational.major.bean.TalentTrain;
 import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.Files;
+import org.apache.ibatis.annotations.Param;
 import org.apache.poi.ss.formula.functions.T;
 
 import java.util.List;
@@ -106,4 +107,6 @@ public interface MajorService {
     Major getStudentNumberList(Major major);
 
     Major getSourceTypeList(Major major);
-    List<Major> getMajorNumList();}
+    List<Major> getMajorNumList();
+    Major getMajorByName(String majorName);
+}
