@@ -1500,7 +1500,8 @@ public class StudentController {
             Student student = new Student();
             student.setStudentStatus("1");
             if (row.getCell(0) != null) {
-                String studentNumber = row.getCell(0).toString();
+//                double studentNumber = row.getCell(0).getNumericCellValue();
+                String studentNumber =String.valueOf(Math.round(Double.parseDouble(row.getCell(0).toString())));
                 if (isNumeric(studentNumber)) {
                     Student stu = studentService.getStudentByStudentNumber(studentNumber);
                     if (stu == null) {
