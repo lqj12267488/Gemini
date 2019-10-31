@@ -102,6 +102,9 @@
         FUNC_GET_TABLEVALUE(ar.arcad_county,'T_SYS_ADMINISTRATIVE_DIVISIONS', 'ID', 'NAME')  arcadCountyShow,
         FUNC_GET_TABLEVALUE(c.CLASS_ID, 'T_XG_CLASS', 'CLASS_ID', 'CLASS_NAME') className,
         ar.arcad_detail,
+        ar.ARCAD_PROVINCE,
+        ar.ARCAD_CITY,
+        ar.ARCAD_COUNTY,
         c.class_id
         from  T_XG_STUDENT_CLASS c left join T_XG_STU_ARCHIVESADDR t
         on  t.valid_flag = '1' and  c.student_id = t.student_id left join T_XG_ARCHIVESADDR ar on ar.arcad_id = t.arcad_id and  ar.valid_flag = '1'
@@ -116,13 +119,16 @@
             and  x.class_id = #{classId}
         </if>
         <if test='null!=arcadProvince and ""!=arcadProvince'>
-            and arcadProvince = #{arcadProvince}
+            and ARCAD_PROVINCE = #{arcadProvince}
         </if>
         <if test='null!=arcadCity and ""!=arcadCity'>
-            and arcadCity = #{arcadCity}
+            and ARCAD_CITY = #{arcadCity}
         </if>
         <if test='null!=arcadCounty and ""!=arcadCounty'>
-            and arcadCounty = #{arcadCounty}
+            and ARCAD_COUNTY = #{arcadCounty}
+        </if>
+        <if test='null!=studentName and ""!=studentName'>
+            and studentName = #{studentName}
         </if>
     </select>
     
