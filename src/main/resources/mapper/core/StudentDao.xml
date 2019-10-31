@@ -60,6 +60,90 @@
             resultType="java.lang.String">
         select DEPARTMENTS_ID from T_XG_CLASS where CLASS_ID = (select distinct CLASS_ID from T_XG_STUDENT_CLASS where STUDENT_ID = #{studentId})
     </select>
+    <select id="getStudentNumList" parameterType="com.goisan.system.bean.Student"
+            resultType="com.goisan.system.bean.Student">
+SELECT
+
+ COUNT(case
+         when m.training_level = '高职' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') THEN
+          1
+         ELSE
+          NULL
+       END) studentnums,
+
+ COUNT(case
+         when m.training_level = '高职' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') AND ADMISSIONS_WAY = '1' THEN
+          1
+         ELSE
+          NULL
+       END) astudentnums,
+
+ COUNT(case
+         when m.training_level = '高职' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') AND ADMISSIONS_WAY = '2' THEN
+          1
+         ELSE
+          NULL
+       END) bstudentnums,
+
+ COUNT(case
+         when m.training_level = '高职' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') AND ADMISSIONS_WAY = '3' THEN
+          1
+         ELSE
+          NULL
+       END) cstudentnums,
+
+ COUNT(case
+         when m.training_level = '高职' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') AND ADMISSIONS_WAY = '4' THEN
+          1
+         ELSE
+          NULL
+       END) dstudentnums,
+
+ COUNT(case
+         when m.training_level = '1' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') AND ADMISSIONS_WAY = '5' THEN
+          1
+         ELSE
+          NULL
+       END) estudentnums,
+
+ COUNT(case
+         when m.training_level = '高职' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') AND ADMISSIONS_WAY = '6' THEN
+          1
+         ELSE
+          NULL
+       END) fstudentnums,
+
+ COUNT(case
+         when m.training_level = '高职' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') AND ADMISSIONS_WAY = '7' THEN
+          1
+         ELSE
+          NULL
+       END) gstudentnums,
+COUNT(case
+         when m.training_level = '高职' and EDUFORM = '全日制' AND
+              S.YEAR = TO_CHAR(SYSDATE, 'YYYY') AND ADMISSIONS_WAY = '8' THEN
+          1
+         ELSE
+          NULL
+       END) hstudentnums
+  FROM T_XG_MAJOR M
+ inner JOIN T_XG_CLASS C
+    ON M.MAJOR_CODE = C.MAJOR_CODE
+  LEFT JOIN T_XG_STUDENT_CLASS SC
+    ON SC.CLASS_ID = C.CLASS_ID
+  LEFT JOIN T_XG_STUDENT S
+    ON SC.STUDENT_ID = S.STUDENT_ID
+ WHERE M.VALID_FLAG = '1'
+
+    </select>
     <select id="getStudentById" parameterType="java.lang.String"
             resultType="com.goisan.system.bean.Student">
         SELECT

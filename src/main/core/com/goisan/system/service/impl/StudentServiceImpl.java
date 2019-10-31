@@ -849,4 +849,9 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> getStudentListByDept2(String deptId) {
         return studentDao.getStudentListByDept2(deptId);
     }
+
+    @Override
+    public List<Student> getStudentNumList() {
+        return studentDao.getStudentNumList();
+    }
 }

@@ -95,4 +95,5 @@ public interface StudentService {
     List<Student> getGradStudentListByMajor(String majorCode);
     List<Student> getStudentListByMajor2(String majorCode);
     List<Student> getStudentListByDept2(String deptId);
+    List<Student> getStudentNumList();
 }

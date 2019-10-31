@@ -16,6 +16,7 @@ import java.util.List;
 @Repository
 public interface MajorDao {
 
+    List<Major> getMajorNumList();
 
     //清空TalentTrain的teachFile
     void clearTeachFile(String talentTrainId);

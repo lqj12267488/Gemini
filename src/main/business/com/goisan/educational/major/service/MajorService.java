@@ -106,4 +106,4 @@ public interface MajorService {
     Major getStudentNumberList(Major major);
 
     Major getSourceTypeList(Major major);
-}
+    List<Major> getMajorNumList();}

@@ -196,4 +196,9 @@ public class MajorServiceImpl implements MajorService {
     public Major getSourceTypeList(Major major) {
         return majorDao.getSourceTypeList(major);
     }
+
+    @Override
+    public List<Major> getMajorNumList() {
+        return majorDao.getMajorNumList();
+    }
 }

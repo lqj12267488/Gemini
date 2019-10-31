@@ -104,6 +104,96 @@ public class Student extends BaseBean {
     private String disability;
     private String classCode;//班级代码
 
+    /*对应全部招生方式*/
+    private String studentnums;
+    private String astudentnums;
+    private String bstudentnums;
+    private String cstudentnums;
+    private String dstudentnums;
+    private String estudentnums;
+    private String fstudentnums;
+    private String gstudentnums;
+    private String hstudentnums;
+
+    public String getHstudentnums() {
+        return hstudentnums;
+    }
+
+    public void setHstudentnums(String hstudentnums) {
+        this.hstudentnums = hstudentnums;
+    }
+
+    public String getStudentnums() {
+        return studentnums;
+    }
+
+    public void setStudentnums(String studentnums) {
+        this.studentnums = studentnums;
+    }
+
+    public String getAstudentnums() {
+        return astudentnums;
+    }
+
+    public void setAstudentnums(String astudentnums) {
+        this.astudentnums = astudentnums;
+    }
+
+    public String getBstudentnums() {
+        return bstudentnums;
+    }
+
+    public void setBstudentnums(String bstudentnums) {
+        this.bstudentnums = bstudentnums;
+    }
+
+    public String getCstudentnums() {
+        return cstudentnums;
+    }
+
+    public void setCstudentnums(String cstudentnums) {
+        this.cstudentnums = cstudentnums;
+    }
+
+    public String getDstudentnums() {
+        return dstudentnums;
+    }
+
+    public void setDstudentnums(String dstudentnums) {
+        this.dstudentnums = dstudentnums;
+    }
+
+    public String getEstudentnums() {
+        return estudentnums;
+    }
+
+    public void setEstudentnums(String estudentnums) {
+        this.estudentnums = estudentnums;
+    }
+
+    public String getFstudentnums() {
+        return fstudentnums;
+    }
+
+    public void setFstudentnums(String fstudentnums) {
+        this.fstudentnums = fstudentnums;
+    }
+
+    public String getGstudentnums() {
+        return gstudentnums;
+    }
+
+    public void setGstudentnums(String gstudentnums) {
+        this.gstudentnums = gstudentnums;
+    }
+
+    public String getClassCode() {
+        return classCode;
+    }
+
+    public void setClassCode(String classCode) {
+        this.classCode = classCode;
+    }
     private String graduaDestina;
     private String statusDate;
 
@@ -121,22 +211,6 @@ public class Student extends BaseBean {
 
     public void setStatusDate(String statusDate) {
         this.statusDate = statusDate;
-    }
-
-    public String getClassCode() {
-        return classCode;
-    }
-
-    public void setClassCode(String classCode) {
-        this.classCode = classCode;
-    }
-
-    public String getMajorDirectionCode() {
-        return majorDirectionCode;
-    }
-
-    public void setMajorDirectionCode(String majorDirectionCode) {
-        this.majorDirectionCode = majorDirectionCode;
     }
 
     public String getDisability() {
