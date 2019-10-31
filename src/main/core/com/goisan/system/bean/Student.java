@@ -94,6 +94,7 @@ public class Student extends BaseBean {
 
     /**入学形式*/
     private String enSchType;
+    private String majorDirectionCode;
 
     private String enSchTypeShow;
 
@@ -196,6 +197,14 @@ public class Student extends BaseBean {
     }
     private String graduaDestina;
     private String statusDate;
+
+    public String getMajorDirectionCode() {
+        return majorDirectionCode;
+    }
+
+    public void setMajorDirectionCode(String majorDirectionCode) {
+        this.majorDirectionCode = majorDirectionCode;
+    }
 
     public String getGraduaDestina() {
         return graduaDestina;
@@ -391,7 +400,6 @@ public class Student extends BaseBean {
     private String deptId;
     private String majorName;
     private String majorDirectionShow;
-    private String majorDirectionCode;//专业方向代码
     private String deptName;
 
     public String getDeptName() {
