@@ -55,7 +55,7 @@
                             <span class="iconBtx">*</span>专业方向名称
                         </div>
                         <div class="col-md-4">
-                            <select id="majorDirection" name="majorDirection" class="js-example-basic-single"></select>
+                            <input id="majorDirection" name="majorDirection" class="js-example-basic-single"></input>
                         </div>
                         <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>专业方向代码
@@ -82,13 +82,13 @@
 
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>批准设置时间
+                            批准设置时间
                         </div>
                         <div class="col-md-4">
                             <input id="approvalTime" name="approvalTime" type="month" value="${major.approvalTime}"/>
                         </div>
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>首次招生时间
+                            首次招生时间
                         </div>
                         <div class="col-md-4">
                             <input id="firstRecruitTime" name="firstRecruitTime" type="month"
@@ -97,13 +97,13 @@
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>停止招生时间
+                            停止招生时间
                         </div>
                         <div class="col-md-4">
                             <input id="endtime" name="endRecruittime" type="month" value="${major.endRecruittime}"/>
                         </div>
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>班级总数
+                            班级总数
                         </div>
                         <div class="col-md-4">
                             <input id="classNum" name="classNum" type="text" value="${major.classNum}"/>
@@ -111,14 +111,14 @@
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>重点专业
+                            重点专业
                         </div>
                         <div class="col-md-4">
                             <select id="focusCourseType" name="focusCourseType"
                                     class="js-example-basic-single"></select>
                         </div>
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>特色专业
+                            特色专业
                         </div>
                         <div class="col-md-4">
                             <select id="uniqueCourseType" name="uniqueCourseType"
@@ -127,13 +127,13 @@
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>现在学徒制试点专业
+                            现在学徒制试点专业
                         </div>
                         <div class="col-md-4">
                             <select id="majorNow" name="majorNow" class="js-example-basic-single"></select>
                         </div>
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>国际合作专业
+                           国际合作专业
                         </div>
                         <div class="col-md-4">
                             <select id="majorGlobal" name="majorGlobal" class="js-example-basic-single"></select>
@@ -141,14 +141,14 @@
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>订单培养班级数
+                            订单培养班级数
                         </div>
                         <div class="col-md-4">
                             <input id="ordersClassnum" name="ordersClassnum" type="text"
                                    value="${major.ordersClassnum}"/>
                         </div>
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>订单培养学生数
+                                订单培养学生数
                         </div>
                         <div class="col-md-4">
                             <input id="ordersStudentnum" name="ordersStudentnum" type="text"
@@ -184,7 +184,7 @@
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>专业特点
+                            专业特点
                         </div>
                         <div class="col-md-10">
                             <textarea name="professionCharact" id="professionCharact" cols="30"
@@ -201,7 +201,7 @@
                     <%--</div>--%>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            <span class="iconBtx">*</span>备注
+                            备注
                         </div>
                         <div class="col-md-10">
                             <textarea name="remark" id="remark" cols="30" rows="2">${major.remark}</textarea>
@@ -240,10 +240,10 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZXZYXZ", function (data) {
             addOption(data, 'schoolSystem', '${major.schoolSystem}');
         });
-        //专业方向 majorDirection
+        /*//专业方向 majorDirection
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZXZYFX", function (data) {
             addOption(data, 'majorDirection', '${major.majorDirection}');
-        });
+        });*/
         //培养层次 trainingLevel
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZXZYPYCC", function (data) {
             addOption(data, 'trainingLevel', '${major.trainingLevel}');
@@ -389,7 +389,7 @@
             });
             return;
         }
-        if ($("#approvalTime").val() == "") {
+       /* if ($("#approvalTime").val() == "") {
             swal({
                 title: "请填写批准设置时间！",
                 type: "info"
@@ -402,7 +402,7 @@
                 type: "info"
             });
             return;
-        }
+        }*/
         // if ($("#approvalTime").val() < $("#firstRecruitTime").val()) {
         //     swal({
         //         title: "批准设置时间不可在首次招生时间之前！",
@@ -410,7 +410,7 @@
         //     });
         //     return;
         // }
-        if ($("#endtime").val() == "") {
+       /* if ($("#endtime").val() == "") {
             swal({
                 title: "请选择停止招生时间！",
                 type: "info"
@@ -487,7 +487,7 @@
             });
             return;
         }
-
+*/
         if ($("#springAutumnFlag option:selected").val() == "" || $("#springAutumnFlag option:selected").val() == null) {
             swal({
                 title: "请选择是否招生！",
@@ -509,13 +509,13 @@
             });
             return;
         }
-        if ($("#professionCharact").val() == "") {
+      /*  if ($("#professionCharact").val() == "") {
             swal({
                 title: "请填写专业特点！",
                 type: "info"
             });
             return;
-        }
+        }*/
         // if ($("#file").val() == "") {
         //     swal({
         //         title: "请填写专业设置批文！",
@@ -523,13 +523,13 @@
         //     });
         //     return;
         // }
-        if ($("#remark").val() == "") {
+      /*  if ($("#remark").val() == "") {
             swal({
                 title: "请填写备注！",
                 type: "info"
             });
             return;
-        }
+        }*/
         var majorPrincipalList = $("#majorPrincipal").attr("keycode");
         if (typeof (majorPrincipalList) == 'undefined') {
             majorPrincipalList = ',';
