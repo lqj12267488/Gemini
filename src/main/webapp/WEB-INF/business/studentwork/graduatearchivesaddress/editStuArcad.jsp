@@ -211,7 +211,8 @@
             arcadDetail:$("#arcadDetailEdit").val(),
             studentIds:$("#honorMember").val()
         },function (msg) {
-            swal({title: msg.msg,type: "success"});
+            swal(
+                {title: msg.msg,type: "success"});
             $("#dialog").modal('hide');
             $('#stuArcadGrid').DataTable().ajax.reload();
         })
