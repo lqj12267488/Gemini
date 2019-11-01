@@ -115,13 +115,15 @@ public class FilesController extends HttpServlet {
     }
 
     /**
+     * 文件查看
      * 文件下载跳转
      */
     @RequestMapping("/files/filesUploadTable1")
     public ModelAndView filesUpload1(String businessId, String tableName, String businessType) {
         ModelAndView mv = new ModelAndView("core/files/addFilesTable1");
         List<Files> files = filesService.getFilesByBusinessId(businessId);
-        mv.addObject("head", "文件上传");
+//        mv.addObject("head", "文件上传");
+        mv.addObject("head", "文件查看");
         mv.addObject("businessId", businessId);
         mv.addObject("tableName", tableName);
         mv.addObject("businessType", businessType);

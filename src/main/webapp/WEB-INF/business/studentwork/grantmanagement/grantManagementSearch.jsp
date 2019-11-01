@@ -213,7 +213,9 @@
             var id = data.id;
             var requestFlag = data.requestFlag;
             if (this.id=="previewSel") {
-                $("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + id + "&role=leader");
+                // /archives/preview电子档案专有
+                <%--$("#dialog").load("<%=request.getContextPath()%>/archives/preview?archivesId=" + id + "&role=leader");--%>
+                $("#dialog").load("<%=request.getContextPath()%>/files/filesUploadTable1?businessId=" + id );
                 $("#dialog").modal("show");
             }
         });
