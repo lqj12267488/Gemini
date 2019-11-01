@@ -57,7 +57,7 @@ public class SalaryController {
     public Map<String, Object> getGroupList(Salary salary,int draw, int start, int length) {
         PageHelper.startPage(start / length + 1, length);
         LoginUser login = CommonUtil.getLoginUser();
-        salary.setStaffId(login.getPersonId());
+//        salary.setStaffId(login.getPersonId());
         Map<String, Object> salaryList = new HashMap();
         List<Salary> salaryList1 = salaryService.getSalaryList(salary);
         PageInfo<List<Salary>> info = new PageInfo(salaryList1);
