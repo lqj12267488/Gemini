@@ -19,6 +19,7 @@ import com.goisan.system.service.LoginUserService;
 import com.goisan.system.service.StudentService;
 import com.goisan.system.tools.CommonUtil;
 import com.goisan.system.tools.Message;
+import com.goisan.system.tools.PoiUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -1490,36 +1491,17 @@ public class StudentController {
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setDataFormat(workbook.createDataFormat().getFormat("@"));
         int end = sheet.getLastRowNum();
-        for (int i = 1; i <= end - 1; i++) {
+        for (int i = 3; i <= end; i++) {
             boolean b = true;
-            HSSFRow row = sheet.getRow(i + 1);
+            HSSFRow row = sheet.getRow(i);
             if (null == row && count == 0) {
                 return new Message(0, "无数据，导入失败！", "error");
             }
             Student student = new Student();
             student.setStudentStatus("1");
             if (row.getCell(0) != null) {
-                row.getCell(0).setCellStyle(cellStyle);
-                row.getCell(0).setCellType(CellType.STRING);
-                String candidateNumber = row.getCell(0).toString();
-                if (isNumeric(candidateNumber)) {
-                    Student stu = studentService.getStudentByCandidateNumber(candidateNumber);
-                    if (stu == null) {
-                        student.setCandidateNumberDz(candidateNumber);
-                    } else {
-                        b = false;
-                    }
-                } else {
-                    b = false;
-                }
-            } else {
-                b = false;
-            }
-
-            if (row.getCell(1) != null) {
-                row.getCell(1).setCellStyle(cellStyle);
-                row.getCell(1).setCellType(CellType.STRING);
-                String studentNumber = row.getCell(1).toString();
+//                double studentNumber = row.getCell(0).getNumericCellValue();
+                String studentNumber =String.valueOf(Math.round(Double.parseDouble(row.getCell(0).toString())));
                 if (isNumeric(studentNumber)) {
                     Student stu = studentService.getStudentByStudentNumber(studentNumber);
                     if (stu == null) {
@@ -1534,50 +1516,42 @@ public class StudentController {
                 b = false;
             }
 
+            if (row.getCell(1) == null) {
+                b = false;
+            } else {
+                row.getCell(1).setCellStyle(cellStyle);
+                row.getCell(1).setCellType(CellType.STRING);
+                String name = row.getCell(1).toString();
+                student.setName(name);
+            }
+
             if (row.getCell(2) == null) {
                 b = false;
             } else {
                 row.getCell(2).setCellStyle(cellStyle);
                 row.getCell(2).setCellType(CellType.STRING);
-                String name = row.getCell(2).toString();
-                student.setName(name);
+                String sex = row.getCell(2).toString();
+                student.setSex(xb.get(sex));
             }
-
+            String idCard = "";
             if (row.getCell(3) == null) {
                 b = false;
             } else {
                 row.getCell(3).setCellStyle(cellStyle);
                 row.getCell(3).setCellType(CellType.STRING);
-                String sex = row.getCell(3).toString();
-                student.setSex(xb.get(sex));
-            }
-
-            if (row.getCell(4) == null) {
-                b = false;
-            } else {
-                row.getCell(4).setCellStyle(cellStyle);
-                row.getCell(4).setCellType(CellType.STRING);
-                String birthday = row.getCell(4).toString();
-                try {
-                    student.setBirthday(new Date(sdf.parse(birthday).getTime()));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    b = false;
-                }
-            }
-
-            String idCard = "";
-            if (row.getCell(5) == null) {
-                b = false;
-            } else {
-                row.getCell(5).setCellStyle(cellStyle);
-                row.getCell(5).setCellType(CellType.STRING);
-                idCard = row.getCell(5).toString();
+                idCard = row.getCell(3).toString();
                 if (idCard.length() == 18 || idCard.length() == 15) {
-                    if (loginUserService.getLoginUserByLoginId(idCard) == null) {
+//                    if (loginUserService.getLoginUserByLoginId(idCard) == null) {
+                    if (studentService.getStudentByIdcard(idCard) == null) {
                         student.setStudentId(idCard);
                         student.setIdcard(idCard);
                         student.setIdCardType("1");
+                        String birth = idCard.substring(6, 14);
+                        try {
+                            student.setBirthday(new Date(sdf.parse(birth).getTime()));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         b = false;
                     }
@@ -1586,68 +1560,42 @@ public class StudentController {
                 }
             }
 
-            if (row.getCell(6) == null) {
+            if (row.getCell(4) == null) {
                 b = false;
             } else {
-                row.getCell(6).setCellStyle(cellStyle);
-                row.getCell(6).setCellType(CellType.STRING);
-                String politicalStatus = row.getCell(6).toString();
+                row.getCell(4).setCellStyle(cellStyle);
+                row.getCell(4).setCellType(CellType.STRING);
+                String politicalStatus = row.getCell(4).toString();
                 student.setPoliticalStatus(zzmm.get(politicalStatus));
             }
-
-            if (row.getCell(7) == null) {
+            if (row.getCell(5) == null) {
                 b = false;
             } else {
-                row.getCell(7).setCellStyle(cellStyle);
-                row.getCell(7).setCellType(CellType.STRING);
-                String nation = row.getCell(7).toString();
+                row.getCell(5).setCellStyle(cellStyle);
+                row.getCell(5).setCellType(CellType.STRING);
+                String nation = row.getCell(5).toString();
                 student.setNation(mz.get(nation));
             }
+            student.setMajorCode(PoiUtils.cellValue(row.getCell(6)));
 
-            if (row.getCell(9) == null) {
-                b = false;
+            if (row.getCell(7)!=null && !"".equals(row.getCell(7))){
+                majorService.getMajorByName(row.getCell(7).toString());
             }
-            if (row.getCell(10) == null) {
-                b = false;
-            }
-            if (row.getCell(11) == null) {
-                b = false;
-            } else {
-                row.getCell(11).setCellStyle(cellStyle);
-                row.getCell(11).setCellType(CellType.STRING);
-                String eductionalSystem = row.getCell(11).toString();
+            if (row.getCell(9) != null) {
+                String eductionalSystem = row.getCell(9).toString();
                 student.setEductionalSystem(xz.get(eductionalSystem));
             }
-
-            if (row.getCell(12) != null) {
-                row.getCell(12).setCellStyle(cellStyle);
-                row.getCell(12).setCellType(CellType.STRING);
-                student.setLearnMode(xxxs.get(row.getCell(12).toString()));
-            }
-            if (row.getCell(13) != null) {
-                row.getCell(13).setCellStyle(cellStyle);
-                row.getCell(13).setCellType(CellType.STRING);
-                student.setTotalPoints(row.getCell(13).toString());
+            if (row.getCell(10) != null) {
+                row.getCell(10).setCellStyle(cellStyle);
+                row.getCell(10).setCellType(CellType.STRING);
+                student.setLearnMode(xxxs.get(row.getCell(10).toString()));
             }
             String className = "";
             String classIds = "";
-            if (row.getCell(14) == null) {
-                b = false;
-            } else {
-                row.getCell(14).setCellStyle(cellStyle);
-                row.getCell(14).setCellType(CellType.STRING);
-                className = row.getCell(14).toString();
+            if (row.getCell(11) != null) {
+                className = row.getCell(11).toString();
                 classIds = studentService.getClassIdByClassName(className);
-                b = true;
-//                student.setClassId(classIds);
-//                for (ClassBean classBean : classList) {
-//                    if (className.equals(classBean.getClassName())) {
-//                        classIda = classBean.getClassId();
-//                        break;
-//                    }
-//                }
             }
-
 
             if (b) {
                 student.setCreateDept(CommonUtil.getDefaultDept());
@@ -1655,7 +1603,6 @@ public class StudentController {
                 student.setCreator(CommonUtil.getPersonId());
                 student.setClassName(className);
                 studentService.insertStudent(student);
-
                 ClassStudentRelation CSRelation = new ClassStudentRelation();
                 CSRelation.setId(CommonUtil.getUUID());
                 CSRelation.setStudentId(student.getStudentId());
@@ -1685,44 +1632,8 @@ public class StudentController {
                 loginUser.setDefaultDeptId(classId);
                 loginUserService.saveUser(loginUser);
                 count++;
-            } else {
-                HSSFCellStyle textStyle = wb.createCellStyle();
-                textStyle.setBorderLeft(BorderStyle.THIN);//左边框
-                textStyle.setBorderTop(BorderStyle.THIN);//上边框
-                textStyle.setBorderRight(BorderStyle.THIN);//右边框
-                textStyle.setBorderBottom(BorderStyle.THIN); //下边框
-                textStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
-                textStyle.setDataFormat(wb.createDataFormat().getFormat("@"));
-                HSSFRow row1 = wb.getSheetAt(0).createRow(tmp);
-                for (int j = 0; j < 15; j++) {
-                    if (row.getCell(j) != null) {
-                        row1.createCell(j).setCellValue(row.getCell(j).toString());
-                        row1.getCell(j).setCellStyle(textStyle);
-                    }
-                }
-                tmp++;
             }
         }
-//        SimpleDateFormat ddd = new SimpleDateFormat("yyyy-MM-dd-mm-ss");
-//        fileName = "/tmp/错误数据_" + ddd.format(System.currentTimeMillis()) + ".xls";
-//        String rootPath = new File(getClass().getResource("/").getPath()).getParentFile().getParent();
-//        FileOutputStream outputStream = null;
-//        try {
-//            outputStream = new FileOutputStream(rootPath + fileName);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            wb.write(outputStream);
-//            outputStream.close();
-//            wb.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        if (tmp > 2) {
-//            return new Message(2, "共导入" + count + "条", fileName);
-//        }
-
         return new Message(1, "共导入" + count + "条", "success");
     }
 

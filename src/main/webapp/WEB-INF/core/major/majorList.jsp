@@ -173,7 +173,7 @@
                 {"data": "createTime", "visible": false},
                 {"width": "7%", "data": "majorSchoolShow", "title": "所属学院"},
                 {"width": "20%", "data": "departmentsIdShow", "title": "系部"},
-                {"width": "10%", "data": "majorDirectionShow", "title": "专业方向"},
+                {"width": "10%", "data": "majorDirection", "title": "专业方向"},
                 {"width": "20%", "data": "majorName", "title": "专业名称"},
                 {"width": "10%", "data": "trainingLevelShow", "title": "培养层次"},
             /*    {"width": "10%", "data": "majorCode", "title": "专业代码"},*/

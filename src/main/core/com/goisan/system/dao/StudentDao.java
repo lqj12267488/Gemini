@@ -1,5 +1,6 @@
 package com.goisan.system.dao;
 
+import com.goisan.educational.major.bean.Major;
 import com.goisan.system.bean.ClassStudentRelation;
 import com.goisan.system.bean.Student;
 import com.goisan.system.bean.Tree;
@@ -100,4 +101,5 @@ public interface StudentDao {
     String getStudentNumByClassId(String classId);
 
     void updateUser(@Param("studentId") String studentId,@Param("classId") String classId);
+    List<Student> getStudentNumList();
 }

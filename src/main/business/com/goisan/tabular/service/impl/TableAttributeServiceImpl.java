@@ -3,6 +3,7 @@ package com.goisan.tabular.service.impl;
 import com.goisan.educational.course.bean.Course;
 import com.goisan.educational.course.service.CourseService;
 import com.goisan.educational.major.bean.*;
+import com.goisan.educational.major.dao.MajorDao;
 import com.goisan.educational.major.service.MajorLeaderService;
 import com.goisan.educational.major.service.MajorService;
 import com.goisan.educational.skillappraisal.bean.SkillAppraisal;
@@ -14,6 +15,7 @@ import com.goisan.studentwork.studentrewardpunish.bean.SchoolBurse;
 import com.goisan.system.bean.*;
 import com.goisan.system.dao.EmpDao;
 import com.goisan.system.dao.ParameterDao;
+import com.goisan.system.dao.StudentDao;
 import com.goisan.system.tools.PoiUtils;
 import com.goisan.table.bean.*;
 import com.goisan.table.dao.*;
@@ -87,7 +89,10 @@ public class TableAttributeServiceImpl implements TableAttributeService {
     private InstitutionalAreaDao institutionalAreaDao;
     @Resource
     private TeacherInfoDao teacherInfoDao;
-
+    @Resource
+    private MajorDao majorDao;
+    @Resource
+    private StudentDao studentDao;
     /**
      * 导出带有数据得表格 命名expertExcel_A加上数字
      * 例
@@ -164,6 +169,38 @@ public class TableAttributeServiceImpl implements TableAttributeService {
                 row.getCell(14).setCellValue(list1.get(i).getContactsAreaFax());
                 row.getCell(15).setCellValue(list1.get(i).getAreaContactsPost());
                 row.getCell(16).setCellValue(list1.get(i).getContactsMailBox());
+                count++;
+            }
+
+            int rowIndex3 = 24;
+            List<Major> list2 = majorDao.getMajorNumList();
+
+            for (int i = 0; i < list1.size(); i++) {
+                Row row = sheet.getRow(rowIndex3 + i);
+                row.getCell(1).setCellValue(list2.get(i).getMajornums());
+                row.getCell(2).setCellValue(list2.get(i).getMajornum());
+                row.getCell(3).setCellValue(list2.get(i).getStudentnums());
+                row.getCell(4).setCellValue(list2.get(i).getPtnum());
+                row.getCell(6).setCellValue(list2.get(i).getTsnum());
+                row.getCell(8).setCellValue(list2.get(i).getTenum());
+                row.getCell(10).setCellValue(list2.get(i).getFfnum());
+                row.getCell(12).setCellValue(list2.get(i).getOthernum());
+                count++;
+            }
+            int rowIndex4 = 30;
+            List<Student> list3 = studentDao.getStudentNumList();
+
+            for (int i = 0; i < list1.size(); i++) {
+                Row row = sheet.getRow(rowIndex4 + i);
+                row.getCell(1).setCellValue(list3.get(i).getStudentnums());
+                row.getCell(2).setCellValue(list3.get(i).getAstudentnums());
+                row.getCell(4).setCellValue(list3.get(i).getBstudentnums());
+                row.getCell(6).setCellValue(list3.get(i).getCstudentnums());
+                row.getCell(8).setCellValue(list3.get(i).getDstudentnums());
+                row.getCell(10).setCellValue(list3.get(i).getEstudentnums());
+                row.getCell(12).setCellValue(list3.get(i).getFstudentnums());
+                row.getCell(14).setCellValue(list3.get(i).getGstudentnums());
+                row.getCell(16).setCellValue(list3.get(i).getHstudentnums());
                 count++;
             }
             response.setHeader("Content-disposition", "attachment;filename=" + URLEncoder.encode(sheetName + ".xlsx",

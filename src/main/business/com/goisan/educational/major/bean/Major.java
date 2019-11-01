@@ -63,6 +63,90 @@ public class Major extends BaseBean {
     private String normalMajor;//是否师范专业
     private String normalMajorShow;
     private String studentsNum;//新生总人数
+    private String eduform;//教育形式
+
+
+
+    private String majornums;//设置全日制专业总数
+    private String majornum;//全日制高职专业总数
+    private String studentnums;//招生总数
+    private String ptnum;//普通高中招生数
+    private String tsnum;//三校生招生数
+    private String tenum;//3+2招生数
+    private String ffnum;//五年制前四学年招生数
+    private String othernum;//其他招生数
+
+    public String getPtnum() {
+        return ptnum;
+    }
+
+    public void setPtnum(String ptnum) {
+        this.ptnum = ptnum;
+    }
+
+    public String getTsnum() {
+        return tsnum;
+    }
+
+    public void setTsnum(String tsnum) {
+        this.tsnum = tsnum;
+    }
+
+    public String getTenum() {
+        return tenum;
+    }
+
+    public void setTenum(String tenum) {
+        this.tenum = tenum;
+    }
+
+    public String getFfnum() {
+        return ffnum;
+    }
+
+    public void setFfnum(String ffnum) {
+        this.ffnum = ffnum;
+    }
+
+    public String getOthernum() {
+        return othernum;
+    }
+
+    public void setOthernum(String othernum) {
+        this.othernum = othernum;
+    }
+
+    public String getMajornums() {
+        return majornums;
+    }
+
+    public void setMajornums(String majornums) {
+        this.majornums = majornums;
+    }
+
+    public String getMajornum() {
+        return majornum;
+    }
+
+    public void setMajornum(String majornum) {
+        this.majornum = majornum;
+    }
+
+    public String getStudentnums() {
+        return studentnums;
+    }
+
+    public void setStudentnums(String studentnums) {
+        this.studentnums = studentnums;
+    }
+
+    public String getEduform() {
+        return eduform;
+    }
+
+    public void setEduform(String eduform) {
+        this.eduform = eduform;
+    }
     private String yjgraduationNumber;//应届毕业生人数
     private String area;//本省市就业人数
     private String darea;//本地市就业人数

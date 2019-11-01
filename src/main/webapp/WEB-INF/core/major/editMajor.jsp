@@ -118,7 +118,7 @@
                                     class="js-example-basic-single"></select>
                         </div>
                         <div class="col-md-2 tar">
-                           特色专业
+                            特色专业
                         </div>
                         <div class="col-md-4">
                             <select id="uniqueCourseType" name="uniqueCourseType"
@@ -133,7 +133,7 @@
                             <select id="majorNow" name="majorNow" class="js-example-basic-single"></select>
                         </div>
                         <div class="col-md-2 tar">
-                            国际合作专业
+                           国际合作专业
                         </div>
                         <div class="col-md-4">
                             <select id="majorGlobal" name="majorGlobal" class="js-example-basic-single"></select>
@@ -148,7 +148,7 @@
                                    value="${major.ordersClassnum}"/>
                         </div>
                         <div class="col-md-2 tar">
-                            订单培养学生数
+                                订单培养学生数
                         </div>
                         <div class="col-md-4">
                             <input id="ordersStudentnum" name="ordersStudentnum" type="text"
@@ -172,7 +172,19 @@
                     </div>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                          专业特点
+                            <span class="iconBtx">*</span>教育形式
+                        </div>
+                        <div class="col-md-4">
+                            <select id="eduform" name="eduform" class="js-example-basic-single">
+                                <option value="" selected="selected">请选择</option>
+                                <option value="全日制">全日制</option>
+                                <option value="非全日制">非全日制</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-2 tar">
+                            专业特点
                         </div>
                         <div class="col-md-10">
                             <textarea name="professionCharact" id="professionCharact" cols="30"
@@ -189,7 +201,7 @@
                     <%--</div>--%>
                     <div class="form-row">
                         <div class="col-md-2 tar">
-                            >备注
+                            备注
                         </div>
                         <div class="col-md-10">
                             <textarea name="remark" id="remark" cols="30" rows="2">${major.remark}</textarea>
@@ -228,7 +240,7 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZXZYXZ", function (data) {
             addOption(data, 'schoolSystem', '${major.schoolSystem}');
         });
-       /* //专业方向 majorDirection
+        /*//专业方向 majorDirection
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZXZYFX", function (data) {
             addOption(data, 'majorDirection', '${major.majorDirection}');
         });*/
@@ -260,6 +272,7 @@
             /*$("#majorDirection").attr("",);
             $("#trainingLevel").attr("",);*/
         }
+        $("#eduform").val("${major.eduform}");
     });
 
     function checkmajorCode() {
@@ -376,7 +389,7 @@
             });
             return;
         }
-      /*  if ($("#approvalTime").val() == "") {
+       /* if ($("#approvalTime").val() == "") {
             swal({
                 title: "请填写批准设置时间！",
                 type: "info"
@@ -397,7 +410,7 @@
         //     });
         //     return;
         // }
-      /*  if ($("#endtime").val() == "") {
+       /* if ($("#endtime").val() == "") {
             swal({
                 title: "请选择停止招生时间！",
                 type: "info"
@@ -473,8 +486,8 @@
                 type: "info"
             });
             return;
-        }*/
-
+        }
+*/
         if ($("#springAutumnFlag option:selected").val() == "" || $("#springAutumnFlag option:selected").val() == null) {
             swal({
                 title: "请选择是否招生！",
@@ -482,7 +495,6 @@
             });
             return;
         }
-
         if ($("#normalMajor option:selected").val() == "" || $("#normalMajor option:selected").val() == null) {
             swal({
                 title: "请选择是否师范专业！",
@@ -490,8 +502,14 @@
             });
             return;
         }
-
-       /* if ($("#professionCharact").val() == "") {
+        if ($("#eduform").val() == "" || $("#eduform").val() == null) {
+            swal({
+                title: "请选择教育形式！",
+                type: "info"
+            });
+            return;
+        }
+      /*  if ($("#professionCharact").val() == "") {
             swal({
                 title: "请填写专业特点！",
                 type: "info"
@@ -505,7 +523,7 @@
         //     });
         //     return;
         // }
-     /*   if ($("#remark").val() == "") {
+      /*  if ($("#remark").val() == "") {
             swal({
                 title: "请填写备注！",
                 type: "info"

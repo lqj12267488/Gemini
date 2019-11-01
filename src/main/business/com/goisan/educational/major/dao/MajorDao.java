@@ -6,6 +6,7 @@ import com.goisan.educational.major.bean.TalentTrain;
 import com.goisan.system.bean.AutoComplete;
 import com.goisan.system.bean.Files;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @Repository
 public interface MajorDao {
 
+    List<Major> getMajorNumList();
 
     //清空TalentTrain的teachFile
     void clearTeachFile(String talentTrainId);
@@ -104,5 +106,8 @@ public interface MajorDao {
     Major getStudentNumberList(Major major);
 
     Major getSourceTypeList(Major major);
+
+    @Select("select * from t_xg_major where  MAJOR_NAME = #{majorName}")
+    Major getMajorByName(@Param("majorName") String majorName);
 
 }

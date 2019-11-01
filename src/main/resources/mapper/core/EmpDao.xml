@@ -428,7 +428,7 @@
             t_rs_employee (
                 person_id,name,sex,idcard,
                 birthday,address,nation,creator,
-                create_time,create_dept,valid_flag,
+                create_time,create_dept,
                 tel,
                 nationality,staff_id,used_name,id_type,
                 native_place_province,native_place_city,native_place_county,
@@ -445,7 +445,7 @@
         VALUES (
                 #{personId},#{name},#{sex},#{idCard},
                 to_date('${birthday}','yyyy-mm-dd'),#{address},#{nation},#{creator},
-                 sysdate,#{createDept},#{validFlag},
+                 sysdate,#{createDept},
                 #{tel},
                 #{nationality},#{staffId},#{usedName},#{idType},
                 #{nativePlaceProvince},#{nativePlaceCity},#{nativePlaceCounty},

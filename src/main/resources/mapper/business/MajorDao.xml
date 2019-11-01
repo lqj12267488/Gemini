@@ -57,7 +57,8 @@
         remark,
         FILE_URL,
         PROFESSION_CHARACT,
-        t.create_time createTime
+        t.create_time createTime,
+        t.eduform eduform
         from t_xg_major t
         WHERE 1 = 1
         and t.valid_flag = '1'
@@ -108,11 +109,39 @@
                remark,
                FILE_URL,
                PROFESSION_CHARACT,
-               t.create_time                                                                     createTime
+               t.create_time                                                                     createTime,
+               t.eduform                                                                         eduform
         from t_xg_major t
         where t.VALID_FLAG = '1'
     </select>
+    <select id="getMajorNumList" resultType="com.goisan.educational.major.bean.Major">
+SELECT
+COUNT(case when m.training_level = '高职' and EDUFORM = '全日制' AND S.YEAR = TO_CHAR(SYSDATE, 'YYYY')
+THEN  1  ELSE   NULL  END)                                                             studentnums,
+COUNT(case when m.training_level = '高职' and EDUFORM = '全日制' AND S.YEAR = TO_CHAR(SYSDATE, 'YYYY')
+AND STUDENT_SOURCE = '1' THEN   1 ELSE NULL  END)                                            ptnum,
+COUNT(case   when m.training_level = '1' and EDUFORM = '全日制' AND   S.YEAR = TO_CHAR(SYSDATE, 'YYYY')
+AND STUDENT_SOURCE = '2' THEN  1 ELSE NULL   END)                                            tsnum,
+COUNT(case   when m.training_level = '高职' and EDUFORM = '全日制' AND  S.YEAR = TO_CHAR(SYSDATE, 'YYYY')
+AND STUDENT_SOURCE = '3' THEN 1   ELSE   NULL  END)                                           tenum,
+COUNT(case  when m.training_level = '高职' and EDUFORM = '全日制' AND S.YEAR = TO_CHAR(SYSDATE, 'YYYY')
+AND STUDENT_SOURCE = '4' THEN 1  ELSE   NULL   END)                                           ffnum,
+COUNT(case  when m.training_level = '高职' and EDUFORM = '全日制' AND  S.YEAR = TO_CHAR(SYSDATE, 'YYYY')
+AND STUDENT_SOURCE = '5' THEN  1  ELSE NULL END)                                            othernum,
+   g.majornum,g.majornums
+FROM T_XG_MAJOR M
 
+inner JOIN T_XG_CLASS C ON M.MAJOR_CODE = C.MAJOR_CODE
+inner JOIN T_XG_STUDENT_CLASS SC ON SC.CLASS_ID = C.CLASS_ID
+inner JOIN T_XG_STUDENT S ON SC.STUDENT_ID = S.STUDENT_ID
+
+inner join (
+select m.VALID_FLAG,COUNT(case when m.training_level = '高职' and EDUFORM = '全日制' THEN 1 ELSE NULL END)   majornums,
+COUNT(case when m.training_level = '高职' and EDUFORM = '全日制' AND  SPRING_AUTUMN_FLAG = '1' THEN 1  ELSE NULL  END)    majornum
+from  T_XG_MAJOR M
+WHERE M.VALID_FLAG = '1' group by m.VALID_FLAG) g on g.VALID_FLAG=m.VALID_FLAG
+group by  g.majornum,g.majornums
+    </select>
     <select id="getMajorListExport" parameterType="com.goisan.educational.major.bean.Major"
             resultType="com.goisan.educational.major.bean.Major">
         select  t.major_id majorId,
@@ -154,7 +183,7 @@
         remark,
         FILE_URL,
         PROFESSION_CHARACT,
-        t.create_time createTime,g.studentsNum
+        t.create_time createTime,g.studentsNum,t.eduform
         from t_xg_major t
         left join (select major_code, count(s.student_id) studentsNum from t_xg_student s
         inner join T_XG_STUDENT_CLASS sc on s.student_id=sc.student_id
@@ -211,7 +240,8 @@
                --         FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE,'T_RS_EMPLOYEE','person_id','name') directionCodeShow,
                --         FUNC_GET_TABLEVALUE(t.NOW_MAJOR,'T_RS_EMPLOYEE','person_id','name') majorNowShow,
                remark,
-               t.PROFESSION_CHARACT                     professionCharact
+               t.PROFESSION_CHARACT                     professionCharact,
+               t.eduform                                eduform
         from t_xg_major t
         WHERE major_id = #{majorId}
     </select>
@@ -242,7 +272,7 @@
         school_system, departments_id, training_level, CLASS_NUM, ORDERS_CLASS_NUM, spring_autumn_flag,
         MAJOR_DIRECTION_CODE, NOW_MAJOR, approval_time, first_recruit_time, FOCUS_COURSE_TYPE,
         MAX_YEAR, GLOBAL_MAJOR, UNIQUE_COURSE_TYPE, END_RECRUIT_TIME,NORMAL_MAJOR,
-        creator, create_time, create_dept, remark, profession_Charact<if test="fileUrl != null and fileUrl != ''">
+        creator, create_time, create_dept, remark,eduform, profession_Charact<if test="fileUrl != null and fileUrl != ''">
         ,file_url</if>)
         VALUES
         ('1', func_get_uuid, '${majorName}', '${majorCode}', '${majorSchool}', '${majorDirection}',
@@ -253,7 +283,7 @@
         'yyyy-mm'),
         '${focusCourseType}', '${maxYear}', '${majorGlobal}', '${uniqueCourseType}', to_date('${endRecruittime}',
         'yyyy-mm'),'${normalMajor}',
-        '${creator}', sysdate, '${createDept}', '${remark}', '${professionCharact}'<if
+        '${creator}', sysdate, '${createDept}', '${remark}','${eduform}', '${professionCharact}'<if
             test="fileUrl != null and fileUrl != ''">,#{fileUrl}</if>)
     </insert>
 
@@ -317,6 +347,7 @@
         PROFESSION_CHARACT = #{professionCharact},
         normal_major = #{normalMajor},
         TRAINING_LEVEL = #{trainingLevel},
+        eduform=#{eduform},
         <if test="approvalTime != null ">
             approval_time = to_date('${approvalTime}','yyyy-mm'),
         </if>
