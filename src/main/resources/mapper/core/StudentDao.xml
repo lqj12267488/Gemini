@@ -1323,7 +1323,7 @@ VALUES ('${idcard}', '${name}', '${sex}', '${idcard}', '${studentNumber}',
             AND s.nation=#{nation}
         </if>
         <if test="politicalStatus != null and politicalStatus != '' ">
-            AND s.POLITICAL_STATUS=#{sex}
+            AND s.POLITICAL_STATUS=#{politicalStatus}
         </if>
     </select>
 
