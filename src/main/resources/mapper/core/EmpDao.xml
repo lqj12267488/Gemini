@@ -548,6 +548,7 @@
         </if>
         <if test="toSchoolTime != null ">
             to_school_time=#{toSchoolTime},
+            ENTRY_DATE = #{toSchoolTime},
         </if>
         <if test="staffSource != null and staffSource != '' ">
             staff_source=#{staffSource},
@@ -590,9 +591,6 @@
         </if>
         <if test="nativePlace != null and nativePlace != '' ">
             NATIVE_PLACE=#{nativePlace},
-        </if>
-        <if test="entryDate != null  ">
-            ENTRY_DATE = #{entryDate},
         </if>
         <if test="permanentResidence != null and permanentResidence != '' ">
             PERMANENT_RESIDENCE=#{permanentResidence},
