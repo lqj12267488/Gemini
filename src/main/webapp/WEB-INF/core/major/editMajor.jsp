@@ -55,7 +55,7 @@
                             <span class="iconBtx">*</span>专业方向名称
                         </div>
                         <div class="col-md-4">
-                            <input id="majorDirection" name="majorDirection" class="js-example-basic-single"></input>
+                            <select id="majorDirection" name="majorDirection" class="js-example-basic-single"></select>
                         </div>
                         <div class="col-md-2 tar">
                             <span class="iconBtx">*</span>专业方向代码
@@ -240,10 +240,10 @@
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZXZYXZ", function (data) {
             addOption(data, 'schoolSystem', '${major.schoolSystem}');
         });
-        /*//专业方向 majorDirection
+        //专业方向 majorDirection
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZXZYFX", function (data) {
             addOption(data, 'majorDirection', '${major.majorDirection}');
-        });*/
+        });
         //培养层次 trainingLevel
         $.get("<%=request.getContextPath()%>/common/getSysDict?name=ZXZYPYCC", function (data) {
             addOption(data, 'trainingLevel', '${major.trainingLevel}');
@@ -269,8 +269,8 @@
         if (null != $("#majorId").val() && $("#majorId").val() != "") {
             $("#majorCode").attr("readonly", "readonly");
             $("#majorName").attr("readonly", "readonly");
-            /*$("#majorDirection").attr("",);
-            $("#trainingLevel").attr("",);*/
+            $("#majorDirection").attr("",);
+            /*$("#trainingLevel").attr("",);*/
         }
         $("#eduform").val("${major.eduform}");
     });
