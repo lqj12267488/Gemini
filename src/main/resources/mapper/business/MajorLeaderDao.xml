@@ -50,19 +50,19 @@
         FUNC_GET_DEPTNAME(DEPARTMENTS_ID) departmentsIdShow,FUNC_GET_TABLEVALUE(MAJOR_ID, 'T_XG_MAJOR', 'major_ID', 'major_name') majorIdShow,
         to_char(BIRTHDAY, 'yyyy-mm-dd') birthdayShow,to_char(POSITION_DATE, 'yyyy-mm') positionDate,
         FUNC_GET_DICVALUE(TEACHERCATEGORY, 'JSLB') teacherCategoryShow,FUNC_GET_USERNAME(PERSON_ID) personIdShow,FUNC_GET_DICVALUE(sex, 'XB') sexShow,
-        j.id,
+        --j.id,
         j.major_leader_id majorLeaderId,
         j.name,
         j.get_prize_class getPrizeClass,
         j.detail,
         j.get_date getDate,
-        j.cooperation_detail cooperationDetail,
-        j.creator,
+        j.cooperation_detail cooperationDetail
+        /*j.creator,
         j.create_dept createDept,
         j.changer,
         j.change_time changeTime,
         j.change_dept changeDept,
-        j.valid_flag calidFlag
+        j.valid_flag calidFlag*/
         from T_JW_MAJOR_LEADER t,t_jw_research_result j
         WHERE 1 = 1 and j.major_leader_id=t.id
         and t.valid_flag = '1'

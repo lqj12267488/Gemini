@@ -169,7 +169,7 @@
         <td class="left" align="center" style="text-align:center;width: 140px;">办理情况</td>
         <td align="center" class="left1" style="text-align:center;" colspan="6">
             <div>
-                <span class="right" style="width:60px; float: left">${studentReissue.studentId}</span>
+                <span class="right" style="width:120px; float: left">${studentReissue.studentId}</span>
                 <span style="float: left">同学的学生证已于 </span>
                 <span class="right" style="width:40px; float: left">${requestDateYear}</span>
                 <span style="float: left">年</span>
@@ -177,13 +177,14 @@
                 <span style="float: left">月</span>
                 <span class="right" style="width:20px; float: left">${requestDateDay}</span>
                 <span style="float: left">日办理完毕，于 </span>
-                <span class="right" style="width:10px; float: left"></span>年
+                <span class="right" style="width:10px; float: left"></span>
                 <span style="float: left">年</span>
                 <span class="right" style="width:10px; float: left"></span>
-                <span style="float: left">月</span>
-                <span class="right" style="width:10px; float: left"></span>
+
             </div>
             <div>
+                <span style="float: left">月</span>
+                <span class="right" style="width:10px; float: left"></span>
                 <span style="float: left">日发放。特备此表备查。</span>
             </div>
 
@@ -191,7 +192,8 @@
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;报纸上声明丢失；</div>
             <br>
             <div class="clearBoth footTxt" style="width: 220px; margin-top: 10px">
-                <span align="right">学生签名：20 &nbsp;&nbsp;&nbsp;年 &nbsp;&nbsp;&nbsp;月 &nbsp;&nbsp;&nbsp;日</span>
+                <span align="right">学生签名：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+                &nbsp;&nbsp;&nbsp;<span align="right">20 &nbsp;&nbsp;&nbsp;年 &nbsp;&nbsp;&nbsp;月 &nbsp;&nbsp;&nbsp;日</span>
             </div>
         </td>
     </tr>

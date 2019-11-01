@@ -3,6 +3,7 @@ package com.goisan.logistics.repair.dao;
 import com.goisan.logistics.repair.bean.Repair;
 import com.goisan.logistics.repair.bean.RepairSupplies;
 import com.goisan.system.bean.AutoComplete;
+import com.goisan.system.bean.Files;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Tree;
 import com.sun.org.apache.regexp.internal.RE;
@@ -104,4 +105,8 @@ public interface RepairDao {
     String getNameByPersonId(String creator);
 
     void repairDisMan(Repair repair);
+
+    Files selectUploadFiles(String id);
+
+    Repair getRepairById1(String id);
 }

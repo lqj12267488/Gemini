@@ -74,7 +74,6 @@ public class MajorLeaderController {
     @ResponseBody
     @RequestMapping("/majorLeader/majorLeaderList")
     public Map<String, Object> majorLeaderList(MajorLeader m,int draw, int start, int length){
-        PageHelper.startPage(start / length + 1, length);
         Map<String,Object> tmapList = new HashMap<String, Object>();
         if(m.getPersonIdShow() !=null && m.getPersonIdShow() !=""){
             try {
@@ -83,6 +82,7 @@ public class MajorLeaderController {
                 e.printStackTrace();
             }
         }
+        PageHelper.startPage(start / length + 1, length);
         List<MajorLeader> list = majorLeaderService.getMajorLeaderList(m);
         PageInfo<List<MajorLeader>> info = new PageInfo(list);
         tmapList.put("draw", draw);

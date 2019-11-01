@@ -50,10 +50,11 @@ public class TeachContactController {
     @RequestMapping("/teachcontact/saveTeachContact")
     public Message saveTeachContact(TeachContact teachContact) {
         if (null != teachContact.getId() && !"".equals(teachContact.getId())) {
-           CommonUtil.update(teachContact);
+            CommonUtil.update(teachContact);
             teachContactService.updateTeachContact(teachContact);
             return new Message(0, "修改成功！", null);
         } else {
+            teachContact.setPersonId(teachContact.getPersonId().split(",")[1]);
             CommonUtil.save(teachContact);
             teachContactService.saveTeachContact(teachContact);
             return new Message(0, "添加成功！", null);

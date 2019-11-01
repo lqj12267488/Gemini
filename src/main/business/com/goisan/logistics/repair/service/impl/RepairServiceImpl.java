@@ -5,6 +5,7 @@ import com.goisan.logistics.repair.bean.RepairSupplies;
 import com.goisan.logistics.repair.dao.RepairDao;
 import com.goisan.logistics.repair.service.RepairService;
 import com.goisan.system.bean.AutoComplete;
+import com.goisan.system.bean.Files;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Tree;
 import com.goisan.system.tools.CommonUtil;
@@ -304,6 +305,16 @@ public class RepairServiceImpl implements RepairService {
     public void repairDisMan(Repair repair) {
         CommonUtil.update(repair);
         repairDao.repairDisMan(repair);
+    }
+
+    @Override
+    public Files selectUploadFiles(String id) {
+        return repairDao.selectUploadFiles(id);
+    }
+
+    @Override
+    public Repair getRepairById1(String id) {
+        return repairDao.getRepairById1(id);
     }
 
 

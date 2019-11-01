@@ -146,7 +146,38 @@
        r.file_url url
   FROM T_ZW_REPAIR t,T_SYS_FILES r
  WHERE t.REPAIR_ID = #{id}
- and t.repair_id = r.business_id
+     and t.repair_id = r.business_id
+
+    </select>
+    <select id="getRepairById1" resultType="com.goisan.logistics.repair.bean.Repair"
+            parameterType="java.lang.String">
+        SELECT REPAIR_ID,
+        REPAIR_TYPE,
+        func_get_userdicvalue(REPAIR_TYPE, 'BXLXGL') repairTypeShow,
+        ASSETS_ID,
+        POSITION,
+        DEPT,
+        FUNC_GET_DEPTNAME(DEPT) dept,
+        ITEM_NAME itemName,
+        t.creator,
+        func_get_userdicvalue(ITEM_NAME, 'BXWPXX') itemNameShow,
+        REPAIR_ADDRESS,
+        FAULT_DESCRIPTION,
+        CONTACT_NUMBER,
+        t.FEEDBACK,
+        t.FEEDBACK_FLAG,
+        REPAIRMAN_ID,
+        REPAIRMAN_PERSON_ID,
+        REPAIRMAN_DEPT_ID,
+        REPAIR_RESULT,
+        REQUEST_FLAG requestFlag,
+        FEEDBACK,
+        CHECKER,
+        CHECKER_DEPT,
+        CHECK_RESULT
+        FROM T_ZW_REPAIR t
+        WHERE t.REPAIR_ID = #{id}
+
     </select>
     <update id="updateRepair" parameterType="com.goisan.logistics.repair.bean.Repair">
         update
@@ -1256,6 +1287,10 @@
 
     <select id="getNameByPersonId" parameterType="java.lang.String" resultType="java.lang.String">
         select t.name from T_SYS_USER t where t.user_id = #{creator}
+    </select>
+
+    <select id="selectUploadFiles" parameterType="java.lang.String" resultType="com.goisan.system.bean.Files">
+        select * from T_SYS_FILES r where r.business_id = #{id}
     </select>
 
 </mapper>

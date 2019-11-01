@@ -58,7 +58,7 @@ public class RepairAppController {
     @RequestMapping("/repair/getRepaireName")
     public String getRepairName(int page) {
         //获取当前登录人
-        String personId = CommonUtil.getPersonId();
+            String personId = CommonUtil.getPersonId();
         //获取当前登录人角色
         //是否维修员
         List<RoleEmpDeptRelation> roles = commonService.getRoleByPersonId(personId);
@@ -330,7 +330,14 @@ public class RepairAppController {
     @RequestMapping("/repair/repairFeedback")
     public ModelAndView repairFeedback(String id,String repairmanPersonID){
         ModelAndView modelAndView = new ModelAndView("/app/synergy/repair/repairFeedback");
-        Repair repair = repairService.getRepairById(id);
+        //查询是否上传了附件
+        Files files =  repairService.selectUploadFiles(id);
+        Repair repair = null;
+        if (files==null){
+             repair = repairService.getRepairById1(id);
+        }else{
+            repair = repairService.getRepairById(id);
+        }
         String[] name_id = repair.getItemName().split(",");
         StringBuilder newname = new StringBuilder();
         for (String a : name_id) {
