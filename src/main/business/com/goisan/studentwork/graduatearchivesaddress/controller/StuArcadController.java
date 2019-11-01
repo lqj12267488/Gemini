@@ -63,7 +63,7 @@ public class StuArcadController {
     @RequestMapping("/stuArcad/editStuArcad")
     public ModelAndView editStuArcad(StuArcad stuArcad){
         ModelAndView modelAndView = new ModelAndView();
-        if (!"".equals(stuArcad.getArcadId())&&null!=stuArcad.getArcadId()){
+        if (!"".equals(stuArcad.getArcadId())&& null!=stuArcad.getArcadId()){
             List<StuArcad> stuArcadList = stuArcadService.getStuByArcadId(stuArcad.getArcadId());
             StringBuilder studentIds = new StringBuilder();
             StringBuilder studentNames = new StringBuilder();
