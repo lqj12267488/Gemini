@@ -306,7 +306,7 @@
         }
         if ($("#horizontaltopicEdit").val() == "" || $("#horizontaltopicEdit").val() == undefined || $("#horizontaltopicEdit").val() == null) {
             swal({
-                title: "请填写是否横向课题  1是  0否！",
+                title: "请填写是否横向课题！",
                 type: "warning"
             });
             return;

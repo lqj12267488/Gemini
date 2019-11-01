@@ -107,7 +107,7 @@
                ARCHIVES_CODE                                                       archivesCode,
                ARCHIVES_NAME                                                       archivesName,
                DEPT_CODE                                                           deptCode,
-               to_char(request_date, 'yyyy-mm-dd')                                 requestDate,
+               to_char(request_date, 'yyyy-mm-dd')                                requestDate,
                SCHOOL_CODE                                                         schoolCode,
                FUNC_GET_TABLEVALUE(ONE_LEVEL, 'DZDA_TYPE', 'TYPE_ID', 'TYPE_NAME') oneLevel,
                FUNC_GET_TABLEVALUE(TWO_LEVEL, 'DZDA_TYPE', 'TYPE_ID', 'TYPE_NAME') twoLevel,
