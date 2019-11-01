@@ -47,14 +47,14 @@ public class StuArcadServiceImpl implements StuArcadService {
         if (null==arcad){
             return new Message(1,"新增失败，档案地址错误",null);
         }
-        for (String studentId: stuArray) {
+       /* for (String studentId: stuArray) {
 //            检查该学生是否已存在
             stuArcad.setStudentId(studentId);
             List<StuArcad> stuArcads = stuArcadDao.checkStudent(stuArcad);
             if (stuArcads.size()>0){
                 return new Message(1,"新增失败，该学生已存在",null);
             }
-        }
+        }*/
         for (String studentId: stuArray){
             stuArcad.setStudentId(studentId);
             stuArcadDao.delStuArcadByArcadId(stuArcad);
@@ -63,7 +63,7 @@ public class StuArcadServiceImpl implements StuArcadService {
             stuArcad.setCreateDept(CommonUtil.getDefaultDept());
             stuArcadDao.insertStuArcad(stuArcad);
         }
-        return new Message(0,"新增成功",null);
+        return new Message(0,"保存成功",null);
     }
 
     @Override

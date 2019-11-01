@@ -3,6 +3,7 @@ package com.goisan.logistics.repair.service;
 import com.goisan.logistics.repair.bean.Repair;
 import com.goisan.logistics.repair.bean.RepairSupplies;
 import com.goisan.system.bean.AutoComplete;
+import com.goisan.system.bean.Files;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Tree;
 
@@ -138,4 +139,8 @@ public interface RepairService {
 
     String getNameByPersonId(String creator);
     void repairDisMan(Repair repair);
+
+    Files selectUploadFiles(String id);
+
+    Repair getRepairById1(String id);
 }

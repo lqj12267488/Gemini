@@ -144,7 +144,7 @@
         }
         $.post("<%=request.getContextPath()%>/teachcontact/saveTeachContact", {
             id: "${data.id}",
-            personId: $("#personIdEdit").val().split(",")[1],
+            personId: $("#personIdEdit").val(),
             responsibilities: $("#responsibilitiesEdit").val(),
             attendLectures: $("#attendLecturesEdit").val(),
             studentDorm: $("#studentDormEdit").val(),

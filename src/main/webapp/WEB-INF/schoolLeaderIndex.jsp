@@ -278,7 +278,7 @@
                     </div>
                 </div>
             </div>
-            <div id="right" class="col-md-10">
+            <div id="right" class="col-md-10" style="content:' '; display: table;">
             </div>
         </div>
     </div>

@@ -54,6 +54,7 @@
         FUNC_GET_DICVALUE(t.FOCUS_COURSE_TYPE, 'ZDZY') as focusTypeShow,
         FUNC_GET_DICVALUE(t.UNIQUE_COURSE_TYPE, 'TSZY') as uniqueTypeShow,
         FUNC_GET_DICVALUE(t.NORMAL_MAJOR, 'SF') as normalMajorShow,
+        FUNC_GET_DICVALUE(t.major_direction, 'ZXZYFX')  majorDirectionShow,
         remark,
         FILE_URL,
         PROFESSION_CHARACT,

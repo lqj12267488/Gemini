@@ -56,7 +56,8 @@
     };
 
     $(document).ready(function () {
-        $.get("<%=request.getContextPath()%>/student/getMajorClassTree", function (data) {
+        <%--$.get("<%=request.getContextPath()%>/student/getMajorClassTree", function (data) {--%>
+        $.get("<%=request.getContextPath()%>/student/getMajorClassTreeByLevel?level=1,2,3", function (data) {
             relTree = $.fn.zTree.init($("#relationTree"), setting, data);
             relTree.expandAll(true);
             var node;

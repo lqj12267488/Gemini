@@ -82,7 +82,7 @@
       VALUES
       (func_get_uuid,'${className}','${year}','${departmentsId}','${classType}','${majorCode}'
       ,'${headTeacher}','${springAutumn}','${createTerm}','${graduationFlag}','${headTeacherDept}','${roomId}'
-      ,'${creator}',sysdate,'${createDept}',1 ,'${majorDirection}','${trainingLevel}','${studyType}','${classsCode}')
+      ,'${creator}',sysdate,'${createDept}',1 ,'${majorDirection}','${trainingLevel}','${studyType}','${classCode}')
     </insert>
     <select id="getClassByClass" parameterType="com.goisan.system.bean.ClassBean" resultType="com.goisan.system.bean.ClassBean">
         SELECT  *  FROM T_XG_CLASS WHERE CLASS_NAME = #{className}
