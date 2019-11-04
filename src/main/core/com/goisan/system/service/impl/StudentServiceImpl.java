@@ -1,6 +1,7 @@
 package com.goisan.system.service.impl;
 
 import com.goisan.educational.major.bean.Major;
+import com.goisan.educational.major.dao.MajorDao;
 import com.goisan.educational.major.service.MajorService;
 import com.goisan.system.bean.*;
 import com.goisan.system.dao.StudentDao;
@@ -156,10 +157,12 @@ public class StudentServiceImpl implements StudentService {
         List<Select2> ZZMM = commonService.getSysDict("ZZMM", "");
         List<Select2> sexs = commonService.getSysDict("XB", "");
         List<Select2> mz = commonService.getSysDict("MZ", "");
-        List<Select2> xz = commonService.getSysDict("XZ", "");
-        List<Select2> cc = commonService.getSysDict("CC", "");
+//        List<Select2> xz = commonService.getSysDict("XZ", "");
+        List<Select2> xz = commonService.getSysDict("XYNX", "");
+        List<Select2> cc = commonService.getSysDict("ZXZYPYCC", "");
         List<Select2> xxxs = commonService.getSysDict("XXXS", "");
-        List<Major> majorList = majorService.getMajorList(new Major());
+        List<Major> majorList = majorDao.getMajorList2();
+
         List<ClassBean> classList = classService.getClassList(new ClassBean());
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("sheet");
@@ -288,8 +291,8 @@ public class StudentServiceImpl implements StudentService {
             setDataValidation(sheet, "Sheet2!$A$1:$A$" + ZZMM.size(), 3, 65535, 4, 4);
             setDataValidation(sheet, "Sheet2!$B$1:$B$" + mz.size(), 3, 65535, 5, 5);
             setDataValidation(sheet, "Sheet2!$F$1:$F$" + majorList.size(), 3, 65535, 7, 7);
-            setDataValidation(sheet, "Sheet2!$C$1:$C$" + cc.size(), 3, 65535, 9, 9);
-            setDataValidation(sheet, "Sheet2!$D$1:$D$" + xz.size(), 3, 65535, 8, 8);
+            setDataValidation(sheet, "Sheet2!$C$1:$C$" + xz.size(), 3, 65535, 9, 9);
+            setDataValidation(sheet, "Sheet2!$D$1:$D$" + cc.size(), 3, 65535, 8, 8);
             setDataValidation(sheet, "Sheet2!$E$1:$E$" + xxxs.size(), 3, 65535, 10, 10);
             setDataValidation(sheet, "Sheet2!$G$1:$G$" + classList.size(), 3, 65535, 11, 11);
             sheet.setDefaultColumnWidth(15);
@@ -728,6 +731,8 @@ public class StudentServiceImpl implements StudentService {
     private CommonService commonService;
     @Autowired
     private MajorService majorService;
+    @Autowired
+    private MajorDao majorDao;
     @Autowired
     private ClassService classService;
 

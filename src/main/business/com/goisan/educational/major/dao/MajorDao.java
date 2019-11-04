@@ -31,6 +31,7 @@ public interface MajorDao {
     void addPracticeFileTalentTrain(TalentTrain talentTrain);
     String getStatusByTid(String tid);
     List<Major> getMajorList(Major major);
+    List<Major> getMajorList2();
 
     void insertMajor(Major major);
 
