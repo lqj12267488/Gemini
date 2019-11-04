@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<jsp:include page="../../../includebase.jsp"/>
 <div class="modal-dialog" style="width: 1200px">
     <div class="modal-content block-fill-white">
         <div class="modal-header">
@@ -206,16 +207,16 @@
 </div>
 
 <script>
-    $("#layout").load("<%=request.getContextPath()%>/common/commonSaveLoading");
+    $("#layout").load(path + "/common/commonSaveLoading");
 
     function showFiles(files){
-        $("#dialogFile").load("<%=request.getContextPath()%>/onlineregister/getOnlineRegisterPreview?id=${data.id}&files=" + files);
+        $("#dialogFile").load(path + "/onlineregister/getOnlineRegisterPreview?id=${data.id}&files=" + files);
         $("#dialogFile").modal("show");
     }
 
     function audit(flag) {
         showSaveLoading();
-        $.post("<%=request.getContextPath()%>/onlineregister/audit", {
+        $.post(path + "/onlineregister/audit", {
             ids: "${data.id}",
             flag: flag,
             mind: $("#s_auditmind").val()

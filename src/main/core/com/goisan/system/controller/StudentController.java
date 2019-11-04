@@ -1471,8 +1471,8 @@ public class StudentController {
         Map<String, String> zzmm = commonService.getSysDicMap("ZZMM");
         Map<String, String> xb = commonService.getSysDicMap("XB");
         Map<String, String> mz = commonService.getSysDicMap("MZ");
-        Map<String, String> xz = commonService.getSysDicMap("XZ");
-        Map<String, String> cc = commonService.getSysDicMap("CC");
+        Map<String, String> xz = commonService.getSysDicMap("XYNX");
+        Map<String, String> cc = commonService.getSysDicMap("ZXZYPYCC");
         Map<String, String> xxxs = commonService.getSysDicMap("XXXS");
         ClassBean classBean1 = new ClassBean();
         classBean1.setTrainingLevel("1,3");
@@ -1578,9 +1578,11 @@ public class StudentController {
             }
             student.setMajorCode(PoiUtils.cellValue(row.getCell(6)));
 
-            if (row.getCell(7)!=null && !"".equals(row.getCell(7))){
-                majorService.getMajorByName(row.getCell(7).toString());
-            }
+
+//            if (row.getCell(7)!=null && !"".equals(row.getCell(7))){
+//                String s = row.getCell(7).toString().split("--")[0];
+//                majorService.getMajorByName(s);
+//            }
             if (row.getCell(9) != null) {
                 String eductionalSystem = row.getCell(9).toString();
                 student.setEductionalSystem(xz.get(eductionalSystem));
