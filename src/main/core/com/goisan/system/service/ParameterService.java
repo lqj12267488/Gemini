@@ -18,4 +18,5 @@ public interface ParameterService {
     void updateSyear(Parameter parameter);
     String getParameterValue();
     String getParameterYearValue();
+    Boolean checkMac() throws Exception;
 }

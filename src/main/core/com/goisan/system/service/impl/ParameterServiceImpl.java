@@ -3,10 +3,12 @@ package com.goisan.system.service.impl;
 import com.goisan.system.bean.Parameter;
 import com.goisan.system.dao.ParameterDao;
 import com.goisan.system.service.ParameterService;
+import com.goisan.system.tools.CommonUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ParameterServiceImpl implements ParameterService{
@@ -65,5 +67,32 @@ public class ParameterServiceImpl implements ParameterService{
     @Override
     public String getParameterYearValue() {
         return parameterDao.getParameterYearValue();
+    }
+
+    /**
+     *  id：-1
+     *  type:校验开关1是0否
+     *  mac:服务器mac地址
+     *  create_time:有效期
+     *  change_time 最后登录时间
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public Boolean checkMac() throws Exception{
+        boolean flag = false;
+        if ("1".equals(parameterDao.getMacType())){
+            Map map = parameterDao.getMac();
+            if (map!=null && !map.isEmpty()){
+                List<String> list = CommonUtil.getMacList();
+                if (list.indexOf(map.get("VALUE")) >  -1){
+                    flag = true;
+                    parameterDao.updateLastTime();
+                }
+            }
+        }else {
+            flag = true;
+        }
+        return flag;
     }
 }

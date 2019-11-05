@@ -72,8 +72,10 @@
             success: function (msg) {
                 if (msg.status == 0) {
                     window.location.href = "<%=request.getContextPath()%>" + msg.result;
-                } else {
+                } else if (msg.status == 1){
                     $("#msg").html("* 用户名或密码错误！");
+                } else {
+                    $("#msg").html(msg.msg);
                 }
             }
         })
