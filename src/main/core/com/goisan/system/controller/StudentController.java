@@ -13,6 +13,7 @@ import com.goisan.studentwork.payment.service.PaymentService;
 import com.goisan.studentwork.studentrewardpunish.bean.StudentPunish;
 import com.goisan.studentwork.studentrewardpunish.service.StudentRewardPunishService;
 import com.goisan.system.bean.*;
+import com.goisan.system.dao.StudentDao;
 import com.goisan.system.service.ClassService;
 import com.goisan.system.service.CommonService;
 import com.goisan.system.service.LoginUserService;
@@ -58,6 +59,10 @@ import java.util.regex.Pattern;
 public class StudentController {
     @Resource
     private StudentService studentService;
+
+    @Resource
+    private StudentDao studentDao;
+
     @Resource
     private CommonService commonService;
     @Resource
@@ -1478,9 +1483,6 @@ public class StudentController {
         classBean1.setTrainingLevel("1,3");
         List<ClassBean> classList = classService.getClassList(classBean1);
         int count = 0;
-        int tmp = 2;
-        String fileName = "";
-        HSSFWorkbook wb = studentService.getStudentExcelTemplate("1");
         HSSFWorkbook workbook = null;
         try {
             workbook = new HSSFWorkbook(file.getInputStream());
@@ -1491,152 +1493,140 @@ public class StudentController {
         HSSFCellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setDataFormat(workbook.createDataFormat().getFormat("@"));
         int end = sheet.getLastRowNum();
+
+        int error = 0; //导入失败
+        StringBuilder e = new StringBuilder();
         for (int i = 3; i <= end; i++) {
-            boolean b = true;
             HSSFRow row = sheet.getRow(i);
-            if (null == row && count == 0) {
-                return new Message(0, "无数据，导入失败！", "error");
-            }
+            /**
+             * flag = 1 新增；flag = 0 修改
+             */
+            int flag = 1;
             Student student = new Student();
             student.setStudentStatus("1");
-            if (row.getCell(0) != null) {
-//                double studentNumber = row.getCell(0).getNumericCellValue();
-                String studentNumber =String.valueOf(Math.round(Double.parseDouble(row.getCell(0).toString())));
-                if (isNumeric(studentNumber)) {
-                    Student stu = studentService.getStudentByStudentNumber(studentNumber);
-                    if (stu == null) {
-                        student.setStudentNumber(studentNumber);
-                    } else {
-                        b = false;
-                    }
-                } else {
-                    b = false;
-                }
-            } else {
-                b = false;
-            }
 
-            if (row.getCell(1) == null) {
-                b = false;
-            } else {
-                row.getCell(1).setCellStyle(cellStyle);
-                row.getCell(1).setCellType(CellType.STRING);
-                String name = row.getCell(1).toString();
-                student.setName(name);
-            }
+            if (row.getCell(0) != null && row.getCell(1) != null &&  row.getCell(2) != null && row.getCell(3) != null
+                    && row.getCell(4) != null&& row.getCell(5) != null && row.getCell(7) != null && row.getCell(8) != null
+                    && row.getCell(9) != null && row.getCell(11) != null){
+               if (!"".equals(row.getCell(0).toString()) && !"".equals(row.getCell(1).toString()) &&!"".equals(row.getCell(2).toString()) &&
+                       !"".equals(row.getCell(3).toString()) &&!"".equals(row.getCell(4).toString()) &&!"".equals(row.getCell(5).toString()) &&
+                       !"".equals(row.getCell(7).toString()) && !"".equals(row.getCell(8).toString()) && !"".equals(row.getCell(9).toString()) &&
+                       !"".equals(row.getCell(11).toString())){
 
-            if (row.getCell(2) == null) {
-                b = false;
-            } else {
-                row.getCell(2).setCellStyle(cellStyle);
-                row.getCell(2).setCellType(CellType.STRING);
-                String sex = row.getCell(2).toString();
-                student.setSex(xb.get(sex));
-            }
-            String idCard = "";
-            if (row.getCell(3) == null) {
-                b = false;
-            } else {
-                row.getCell(3).setCellStyle(cellStyle);
-                row.getCell(3).setCellType(CellType.STRING);
-                idCard = row.getCell(3).toString();
-                if (idCard.length() == 18 || idCard.length() == 15) {
-//                    if (loginUserService.getLoginUserByLoginId(idCard) == null) {
-                    if (studentService.getStudentByIdcard(idCard) == null) {
-                        student.setStudentId(idCard);
-                        student.setIdcard(idCard);
-                        student.setIdCardType("1");
-                        String birth = idCard.substring(6, 14);
-                        try {
-                            student.setBirthday(new Date(sdf.parse(birth).getTime()));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        b = false;
-                    }
-                } else {
-                    b = false;
-                }
-            }
+                   String studentNumber = PoiUtils.cellDouble(row.getCell(0));
+                   student.setStudentNumber(studentNumber);
+                   student.setName(PoiUtils.cellValue(row.getCell(1)));
+                   student.setSex(xb.get(PoiUtils.cellValue(row.getCell(2))));
+                   String idCard = PoiUtils.cellValue(row.getCell(3));
+                   if (idCard.length() == 18 || idCard.length() == 15) {
+//                       Student oStu = studentService.getStudentByIdcard(idCard);
+                       Student oStu =  studentService.getStudentById(idCard);
+                       if (oStu == null) {
+                           student.setStudentId(idCard);
+                           student.setIdcard(idCard);
+                           student.setIdCardType("1");
+                           String birth = idCard.substring(6, 14);
+                           try {
+                               student.setBirthday(new Date(sdf.parse(birth).getTime()));
+                           } catch (ParseException e1) {
+                               e.append("第");
+                               e.append(i);
+                               e.append("行 ");
+                               error++;
+                               e1.printStackTrace();
+                           }
+                       }else {
+                           /**如果有该学生则进行更新*/
+                           flag = 0;
+                           student.setStudentId(oStu.getStudentId());
+                           student.setIdcard(oStu.getStudentId());
+                           student.setBirthday(oStu.getBirthday());
+                           student.setIdCardType("1");
+                       }
+                       student.setPoliticalStatus(zzmm.get( PoiUtils.cellValue(row.getCell(4))));
+                       student.setNation(mz.get( PoiUtils.cellValue(row.getCell(5))));
 
-            if (row.getCell(4) == null) {
-                b = false;
-            } else {
-                row.getCell(4).setCellStyle(cellStyle);
-                row.getCell(4).setCellType(CellType.STRING);
-                String politicalStatus = row.getCell(4).toString();
-                student.setPoliticalStatus(zzmm.get(politicalStatus));
-            }
-            if (row.getCell(5) == null) {
-                b = false;
-            } else {
-                row.getCell(5).setCellStyle(cellStyle);
-                row.getCell(5).setCellType(CellType.STRING);
-                String nation = row.getCell(5).toString();
-                student.setNation(mz.get(nation));
-            }
-            student.setMajorCode(PoiUtils.cellValue(row.getCell(6)));
+                       String className = "";
+                       String classIds = "";
+                       if (row.getCell(11) != null) {
+                           className = row.getCell(11).toString();
+                           classIds = studentService.getClassIdByClassName(className);
+                       }
+                       if (flag == 1){
+                           CommonUtil.save(student);
+                           studentService.insertStudent(student);
+                           ClassStudentRelation CSRelation = new ClassStudentRelation();
+                           CSRelation.setId(CommonUtil.getUUID());
+                           CSRelation.setStudentId(student.getStudentId());
+                           CSRelation.setClassId(classIds);
+                           CommonUtil.save(CSRelation);
+                           studentService.addRelation(CSRelation);
 
 
-//            if (row.getCell(7)!=null && !"".equals(row.getCell(7))){
-//                String s = row.getCell(7).toString().split("--")[0];
-//                majorService.getMajorByName(s);
-//            }
-            if (row.getCell(9) != null) {
-                String eductionalSystem = row.getCell(9).toString();
-                student.setEductionalSystem(xz.get(eductionalSystem));
-            }
-            if (row.getCell(10) != null) {
-                row.getCell(10).setCellStyle(cellStyle);
-                row.getCell(10).setCellType(CellType.STRING);
-                student.setLearnMode(xxxs.get(row.getCell(10).toString()));
-            }
-            String className = "";
-            String classIds = "";
-            if (row.getCell(11) != null) {
-                className = row.getCell(11).toString();
-                classIds = studentService.getClassIdByClassName(className);
-            }
+                           LoginUser loginUser = new LoginUser();
+//                           String userAccount = student.getName();
+//                           userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
+                           loginUser.setId(CommonUtil.getUUID());
+                           loginUser.setName(student.getName());
+                           /**
+                            * 账号——学号
+                            */
+                           loginUser.setUserAccount(student.getStudentNumber());
+                           loginUser.setPersonId(student.getStudentId());
+                           loginUser.setPassword((new SimpleHash("MD5", "123456", null, 1).toString()));
+                           loginUser.setUserType("1");
+                           loginUser.setCreateDept(CommonUtil.getDefaultDept());
+                           loginUser.setCreateTime(CommonUtil.getDate());
+                           loginUser.setCreator(CommonUtil.getPersonId());
+                           loginUser.setDefaultDeptId(classId);
+                           loginUserService.saveUser(loginUser);
 
-            if (b) {
-                student.setCreateDept(CommonUtil.getDefaultDept());
-                student.setCreateTime(CommonUtil.getDate());
-                student.setCreator(CommonUtil.getPersonId());
-                student.setClassName(className);
-                studentService.insertStudent(student);
-                ClassStudentRelation CSRelation = new ClassStudentRelation();
-                CSRelation.setId(CommonUtil.getUUID());
-                CSRelation.setStudentId(student.getStudentId());
-                CSRelation.setClassId(classIds);
-                CSRelation.setCreator(CommonUtil.getPersonId());
-                CSRelation.setCreateDept(CommonUtil.getDefaultDept());
-                CSRelation.setCreateTime(CommonUtil.getDate());
-                studentService.addRelation(CSRelation);
-
-                LoginUser loginUser = new LoginUser();
-
-                String userAccount = student.getName();
-                userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
-                loginUser.setId(CommonUtil.getUUID());
-                loginUser.setName(student.getName());
-                /**
-                 * 账号——学号
-                 */
-//                loginUser.setUserAccount(student.getIdcard());
-                loginUser.setUserAccount(student.getStudentNumber());
-                loginUser.setPersonId(student.getStudentId());
-                loginUser.setPassword((new SimpleHash("MD5", "123456", null, 1).toString()));
-                loginUser.setUserType("1");
-                loginUser.setCreateDept(CommonUtil.getDefaultDept());
-                loginUser.setCreateTime(CommonUtil.getDate());
-                loginUser.setCreator(CommonUtil.getPersonId());
-                loginUser.setDefaultDeptId(classId);
-                loginUserService.saveUser(loginUser);
-                count++;
+                       }else {
+                           CommonUtil.update(student);
+                           studentService.updateStudent(student);
+                           /**
+                            * 根据StudentId获取CSRelation
+                            */
+                           List<ClassStudentRelation> cr = studentService.getClassStudentRelation(student.getStudentId());
+                            if (cr.size()>0){
+                                ClassStudentRelation relation = cr.get(0);
+                                relation.setClassId(classIds);
+                                relation.setStudentId(oStu.getStudentId());
+                                CommonUtil.update(relation);
+                                studentDao.updateRelation(relation);
+                            }
+                           /**
+                            * 学号是否修改，学号修改更新登录账号
+                            */
+                            if (!studentNumber.equals(oStu.getStudentNumber())){
+                                    LoginUser loginUser = new LoginUser();
+                                    CommonUtil.update(loginUser);
+                                    loginUser.setPersonId(oStu.getStudentId());
+                                    loginUser.setUserAccount(studentNumber);
+                                    loginUserService.upadtedeLoginUser(loginUser);
+                            }
+                       }
+                       count++;
+                   }else {
+                       e.append("第");
+                       e.append(i);
+                       e.append("行 ");
+                       error++;
+                   }
+               }else {
+                   e.append("第");
+                   e.append(i);
+                   e.append("行 ");
+                   error++;
+               }
+            }else {
+                e.append("第");
+                e.append(i);
+                e.append("行 ");
+                error++;
             }
         }
-        return new Message(1, "共导入" + count + "条", "success");
+        return error>0?new Message(1, "共导入" + count + "条", "success"):new Message(1, "共导入" + count + "条 "+e.toString()+"导入失败", "success");
     }
 
     @RequestMapping("/student/toImportStudent")

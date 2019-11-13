@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -238,6 +239,19 @@ public class PoiUtils {
         }else {
             return target;
         }
+    }
+
+
+    public static String cellDouble(HSSFCell cell){
+        String s = cellValue(cell);
+        if (null!=s){
+            if (s.contains("E")) {
+                NumberFormat nf = NumberFormat.getInstance();
+                String format = nf.format(Double.parseDouble(s)).replace(",", "");
+                return format;
+            }
+        }
+        return s;
     }
 
     /**

@@ -216,7 +216,7 @@
         </div>
     </div>
     <!--设置背景结束-->
-    <div class="foot" style="text-align: center">Copyright © 吉林省勾陈科技有限公司版权所有 .com All rights reserved</div>
+    <div class="foot" style="text-align: center">天眼（深圳）光学技术发展有限公司</div>
     <div class="modal modal-draggable"  id="audit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
     </div>

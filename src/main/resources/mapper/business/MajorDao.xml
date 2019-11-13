@@ -75,6 +75,51 @@
         order by t.create_time desc
     </select>
 
+
+    <select id="getMajorList2"
+            resultType="com.goisan.educational.major.bean.Major">
+    select t.major_id majorId,
+    (t.major_name || '--' ||func_get_dicvalue(t.training_level, 'ZXZYPYCC')) as majorName,
+    t.major_code majorCode ,
+    FUNC_GET_DICVALUE(t.max_year, 'XYNX') as maxYear,
+    t.MAJOR_SCHOOL majorSchool,
+    func_get_dicvalue(t.major_direction,'ZXZYFX') as majorDirectionShow,
+    t.ORDERS_STUDENT_NUM ordersStudentnum,
+    t.school_system schoolSystem,
+    t.departments_id departmentsId,
+    t.spring_autumn_flag springAutumnFlag,
+    t.training_level trainingLevel,
+    t.CLASS_NUM classNum,
+    t.ORDERS_CLASS_NUM ordersClassnum,
+    t.MAJOR_DIRECTION_CODE majorDirectionCode,
+    t.NORMAL_MAJOR normalMajor,
+    t.NOW_MAJOR majorNow,
+    to_char(t.APPROVAL_TIME ,'yyyy-mm-dd') approvalTime,
+    to_char(t.first_recruit_time,'yyyy-mm-dd') firstRecruitTime,
+    FUNC_GET_TABLEVALUE(departments_id,'T_SYS_DEPT','DEPT_ID','DEPT_NAME') departmentsIdShow,
+    FUNC_GET_DICVALUE(t.ORDERS_STUDENT_NUM, 'ZXZYLX') as StudentnumShow,
+    FUNC_GET_DICVALUE(t.school_system, 'ZXZYXZ') as schoolSystemShow,
+    t.major_direction,
+    FUNC_GET_DICVALUE(t.training_level, 'ZXZYPYCC') as trainingLevelShow,
+    FUNC_GET_DICVALUE(t.CLASS_NUM, 'SF') as classNumShow,
+    FUNC_GET_DICVALUE(t.ORDERS_CLASS_NUM, 'SF') as ordersClassnumShow,
+    FUNC_GET_DICVALUE(t.spring_autumn_flag, 'SF') as springAutumnFlagShow,
+    FUNC_GET_DICVALUE(t.valid_flag, 'SF') as validFlagShow,
+    FUNC_GET_DICVALUE(t.MAJOR_SCHOOL, 'XY') as majorSchoolShow,
+    FUNC_GET_TABLEVALUE(t.MAJOR_DIRECTION_CODE,'T_RS_EMPLOYEE','person_id','name') directionCodeShow,
+    FUNC_GET_TABLEVALUE(t.NOW_MAJOR,'T_RS_EMPLOYEE','person_id','name') majorNowShow,
+    FUNC_GET_DICVALUE(t.FOCUS_COURSE_TYPE, 'ZDZY') as focusTypeShow,
+    FUNC_GET_DICVALUE(t.UNIQUE_COURSE_TYPE, 'TSZY') as uniqueTypeShow,
+    FUNC_GET_DICVALUE(t.NORMAL_MAJOR, 'SF') as normalMajorShow,
+    remark,
+    FILE_URL,
+    PROFESSION_CHARACT,
+    t.create_time createTime,
+    t.eduform eduform
+    from t_xg_major t
+    WHERE 1 = 1
+    and t.valid_flag = '1'
+    </select>
     <!--获得所有的专业-->
     <select id="getAllMajor" resultType="com.goisan.educational.major.bean.Major">
         select t.major_id                                                                        majorId,

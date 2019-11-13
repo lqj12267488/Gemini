@@ -1453,276 +1453,292 @@ public class EmpController {
             return new Message(1, "导入失败！请重新导入", null);
         } else {
             HSSFSheet sheet = workbook.getSheetAt(0);
-            int end = getRealLastRowNum(workbook) + 4;
+//            int end = getRealLastRowNum(workbook) + 4;
+            int end = sheet.getLastRowNum();
             for (int i = 4; i <= end; i++) {
                 HSSFRow row = sheet.getRow(i);
                 int flag = 1;
                 Emp emp = new Emp();
                 emp.setStaffStatus("100");
                 if (row.getCell(11)!=null){
-                    String idCard = CommonUtil.toIdcardCheck(PoiUtils.cellValue(row.getCell(11)));
-                    String time = idCard.substring(5, 13);
-                    SimpleDateFormat df1 = new SimpleDateFormat("yyyyMMdd");
-                    java.sql.Date formatDate = null;
-                    //必须捕获异常
-                    try {
-                        java.util.Date Date = df1.parse(time);
-                        formatDate = new java.sql.Date(Date.getTime());
-                        emp.setBirthday(formatDate);
-                    } catch (ParseException px) {
-                        px.printStackTrace();
-                    }
-                    Emp e = empService.getEmpByIdCard(idCard);
-                if (e == null) {
-                    emp.setIdCard(idCard);
-                } else {
-                    emp = e;
-                    emp.setBirthday(formatDate);
-                    flag = 0;
-                }
-                String name = CommonUtil.changeToString(row.getCell(0));
-                emp.setName(name);
+                    if (!"".equals(row.getCell(11).toString())) {
+                        String idCard = CommonUtil.toIdcardCheck(PoiUtils.cellValue(row.getCell(11)));
+                        String time = idCard.substring(5, 13);
+                        SimpleDateFormat df1 = new SimpleDateFormat("yyyyMMdd");
+                        java.sql.Date formatDate = null;
+                        //必须捕获异常
+                        try {
+                            java.util.Date Date = df1.parse(time);
+                            formatDate = new java.sql.Date(Date.getTime());
+                            emp.setBirthday(formatDate);
+                        } catch (ParseException px) {
+                            px.printStackTrace();
+                        }
+                        Emp e = empService.getEmpByIdCard(idCard);
+                        if (e == null) {
+                            emp.setIdCard(idCard);
+                        } else {
+                            emp = e;
+                            emp.setBirthday(formatDate);
+                            flag = 0;
+                        }
+                        String name = CommonUtil.changeToString(row.getCell(0));
+                        emp.setName(name);
 
-                String Dept = CommonUtil.changeToString(row.getCell(1));
-                if (!"".equals(Dept)) {
-                    for (Select2 dept : deptname) {
-                        if (dept.getText().equals(Dept)) {
-                            emp.setDeptId(dept.getId());
-                            break;
+                        String Dept = CommonUtil.changeToString(row.getCell(1));
+                        if (!"".equals(Dept)) {
+                            for (Select2 dept : deptname) {
+                                if (dept.getText().equals(Dept)) {
+                                    emp.setDeptId(dept.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String gw = CommonUtil.changeToString(row.getCell(2));
+                        if (!"".equals(gw)) {
+                            for (Select2 jobs : gangwei) {
+                                if (jobs.getText().equals(gw)) {
+                                    emp.setJob(jobs.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String time1 = CommonUtil.changeToString(row.getCell(3));
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+                        //必须捕获异常
+                        try {
+                            java.util.Date Date = df.parse(time1);
+                            java.sql.Date formatDate2 = new java.sql.Date(Date.getTime());
+                            emp.setEntryDate(formatDate2);
+                            emp.setToSchoolTime(formatDate2);
+                        } catch (ParseException px) {
+                            px.printStackTrace();
+                        }
+
+                        String hyzk = CommonUtil.changeToString(row.getCell(4));
+                        if (!"".equals(hyzk)) {
+                            for (Select2 hy : maritalStatus) {
+                                if (hy.getText().equals(hyzk)) {
+                                    emp.setMaritalStatus(hy.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String zj = CommonUtil.changeToString(row.getCell(5));
+                        if (!"".equals(zj)) {
+                            for (Select2 pl : classPositions) {
+                                if (pl.getText().equals(zj)) {
+                                    emp.setClassPositions(pl.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        emp.setFilenumber(PoiUtils.cellValue(row.getCell(6)));
+                        emp.setDeadline(PoiUtils.cellValue(row.getCell(7)));
+
+                        String Sex = CommonUtil.changeToString(row.getCell(8));
+                        if (!"".equals(Sex)) {
+                            for (Select2 sex : sexs) {
+                                if (sex.getText().equals(Sex)) {
+                                    emp.setSex(sex.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String nation = CommonUtil.changeToString(row.getCell(9));
+                        if (!"".equals(nation)) {
+                            for (Select2 mz : mzs) {
+                                if (mz.getText().equals(nation)) {
+                                    emp.setNation(mz.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String idType = CommonUtil.changeToString(row.getCell(10));
+                        if (!"".equals(idType)) {
+                            for (Select2 zjlx1 : zjlx) {
+                                if (zjlx1.getText().equals(idType)) {
+                                    emp.setIdType(zjlx1.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+//                String tel = CommonUtil.changeToString(row.getCell(12));
+                        String tel = PoiUtils.cellDouble(row.getCell(12));
+                        emp.setTel(tel);
+
+                        String jg = CommonUtil.changeToString(row.getCell(13));
+                        if (!"".equals(jg)) {
+                            for (Select2 jg1 : list7) {
+                                if (jg1.getText().equals(jg)) {
+                                    emp.setNativePlaceProvince(jg1.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String hkszd = CommonUtil.changeToString(row.getCell(14));
+                        emp.setPermanentResidence(hkszd);
+
+                        String permanentResidenceLocal = CommonUtil.changeToString(row.getCell(15));
+                        if (!"".equals(permanentResidenceLocal)) {
+                            for (Select2 permanentResidenceLocal1 : ssdq) {
+                                if (permanentResidenceLocal1.getText().equals(permanentResidenceLocal)) {
+                                    emp.setPermanentResidenceLocal(permanentResidenceLocal1.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String sfzs = CommonUtil.changeToString(row.getCell(16));
+                        if (!"".equals(sfzs)) {
+                            for (Select2 examinePolitical1 : examinePolitical) {
+                                if (examinePolitical1.getText().equals(sfzs)) {
+                                    emp.setExaminePolitical(examinePolitical1.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String dz = CommonUtil.changeToString(row.getCell(17));
+                        emp.setAddress(dz);
+
+
+                        String zzmm = CommonUtil.changeToString(row.getCell(18));
+                        if (!"".equals(zzmm)) {
+                            for (Select2 politicalStatus1 : politicalStatus) {
+                                if (politicalStatus1.getText().equals(zzmm)) {
+                                    emp.setPoliticalStatus(politicalStatus1.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String whcd = CommonUtil.changeToString(row.getCell(19));
+                        if (!"".equals(whcd)) {
+                            for (Select2 educationalLevel1 : educationalLevel) {
+                                if (educationalLevel1.getText().equals(whcd)) {
+                                    emp.setEducationalLevel(educationalLevel1.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String jyfs = CommonUtil.changeToString(row.getCell(20));
+                        if (!"".equals(jyfs)) {
+                            for (Select2 educationTechnique1 : educationTechnique) {
+                                if (educationTechnique1.getText().equals(jyfs)) {
+                                    emp.setEducationTechnique(educationTechnique1.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String byyx = CommonUtil.changeToString(row.getCell(21));
+                        emp.setGraduateSchool(byyx);
+
+                        String zy = CommonUtil.changeToString(row.getCell(22));
+                        emp.setMajor(zy);
+
+                        String time2 = CommonUtil.changeToString(row.getCell(23));
+                        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
+                        //必须捕获异常
+                        try {
+                            java.util.Date Date = df2.parse(time2);
+                            java.sql.Date formatDate3 = new java.sql.Date(Date.getTime());
+                            emp.setGraduateTime(formatDate3);
+                        } catch (ParseException px) {
+                            px.printStackTrace();
+                        }
+
+
+                        String mc = CommonUtil.changeToString(row.getCell(24));
+                        emp.setPositionalTitles(mc);
+
+                        String zcjb = CommonUtil.changeToString(row.getCell(25));
+                        if (!"".equals(zcjb)) {
+                            for (Select2 positionalLevel1 : positionalLevel) {
+                                if (positionalLevel1.getText().equals(zcjb)) {
+                                    emp.setPositionalLevel(positionalLevel1.getId());
+                                    break;
+                                }
+                            }
+                        }
+
+                        String bz = CommonUtil.changeToString(row.getCell(26));
+                        emp.setRemark(bz);
+                        if (flag == 1) {
+                            emp.setPersonId(CommonUtil.getUUID());
+                            CommonUtil.save(emp);
+                        } else {
+                            CommonUtil.update(emp);
+                        }
+                        EmpDeptRelation edr = new EmpDeptRelation();
+                        edr.setId(CommonUtil.getUUID());
+                        edr.setPersonId(emp.getPersonId());
+                        edr.setDeptId(emp.getDeptId());
+                        edr.setCreator(CommonUtil.getPersonId());
+                        edr.setCreateDept(CommonUtil.getDefaultDept());
+                        edr.setCreateTime(CommonUtil.getDate());
+
+                        LoginUser loginUser = new LoginUser();
+                        //String userAccount = emp.getName();
+                        String userAccount = null;
+                        try {
+                            userAccount = PinyinHelper.convertToPinyinString(emp.getName(), "", PinyinFormat
+                                    .WITHOUT_TONE);
+                            String s = loginUserService.selectPersonIdByTel(tel);
+                        } catch (PinyinException e1) {
+                            flag = 0;
+                        }
+                        userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
+//                userAccount = CommonUtil.checkUserAccount(tel, loginUserService);
+                        loginUser.setPhotoUrl(tel);
+                        loginUser.setId(CommonUtil.getUUID());
+//                loginUser.setUserAccount(userAccount);
+                        loginUser.setUserAccount(tel);
+                        loginUser.setPersonId(emp.getPersonId());
+                        loginUser.setPassword((new SimpleHash("MD5", "123456", null, 1).toString()));
+                        loginUser.setUserType("0");
+                        loginUser.setDefaultDeptId(emp.getDeptId());
+                        loginUser.setCreateDept(CommonUtil.getDefaultDept());
+                        loginUser.setCreateTime(CommonUtil.getDate());
+                        loginUser.setCreator(CommonUtil.getPersonId());
+                        loginUser.setName(emp.getName());
+                        if (flag == 1) {
+                            try {
+                                empService.saveEmp(emp, edr, loginUser);
+                            } catch (Exception e1) {
+                                flag = 0;
+                                e1.printStackTrace();
+                            }
+                        }
+                        if (flag == 0) {
+                            msg += i + ",";
+                            count++;
+                            empService.updateEmp(emp);
+
+                            /**
+                             *更新登录账号
+                             */
+                            String s = loginUserService.selectPersonIdByTel(tel);
+                            if (null != s) {
+                                LoginUser user = new LoginUser();
+                                user.setPersonId(s);
+                                user.setUserAccount(tel);
+                                CommonUtil.update(user);
+                                loginUserService.upadtedeLoginUser(user);
+                            }
                         }
                     }
                 }
-
-                String gw = CommonUtil.changeToString(row.getCell(2));
-                if (!"".equals(gw)) {
-                    for (Select2 jobs : gangwei) {
-                        if (jobs.getText().equals(gw)) {
-                            emp.setJob(jobs.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String time1 = CommonUtil.changeToString(row.getCell(3));
-                SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-                //必须捕获异常
-                try {
-                    java.util.Date Date = df.parse(time1);
-                    java.sql.Date formatDate2 = new java.sql.Date(Date.getTime());
-                    emp.setEntryDate(formatDate2);
-                    emp.setToSchoolTime(formatDate2);
-                } catch (ParseException px) {
-                    px.printStackTrace();
-                }
-
-                String hyzk = CommonUtil.changeToString(row.getCell(4));
-                if (!"".equals(hyzk)) {
-                    for (Select2 hy : maritalStatus) {
-                        if (hy.getText().equals(hyzk)) {
-                            emp.setMaritalStatus(hy.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String zj = CommonUtil.changeToString(row.getCell(5));
-                if (!"".equals(zj)) {
-                    for (Select2 pl : classPositions) {
-                        if (pl.getText().equals(zj)) {
-                            emp.setClassPositions(pl.getId());
-                            break;
-                        }
-                    }
-                }
-
-                emp.setFilenumber(PoiUtils.cellValue(row.getCell(6)));
-                emp.setDeadline(PoiUtils.cellValue(row.getCell(7)));
-
-                String Sex = CommonUtil.changeToString(row.getCell(8));
-                if (!"".equals(Sex)) {
-                    for (Select2 sex : sexs) {
-                        if (sex.getText().equals(Sex)) {
-                            emp.setSex(sex.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String nation = CommonUtil.changeToString(row.getCell(9));
-                if (!"".equals(nation)) {
-                    for (Select2 mz : mzs) {
-                        if (mz.getText().equals(nation)) {
-                            emp.setNation(mz.getId());
-                            break;
-                        }
-                    }
-                }
-
-
-                String idType = CommonUtil.changeToString(row.getCell(10));
-                if (!"".equals(idType)) {
-                    for (Select2 zjlx1 : zjlx) {
-                        if (zjlx1.getText().equals(idType)) {
-                            emp.setIdType(zjlx1.getId());
-                            break;
-                        }
-                    }
-                }
-
-
-                String tel = CommonUtil.changeToString(row.getCell(12));
-                emp.setTel(tel);
-
-                String jg = CommonUtil.changeToString(row.getCell(13));
-                if (!"".equals(jg)) {
-                    for (Select2 jg1 : list7) {
-                        if (jg1.getText().equals(jg)) {
-                            emp.setNativePlaceProvince(jg1.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String hkszd = CommonUtil.changeToString(row.getCell(14));
-                emp.setPermanentResidence(hkszd);
-
-                String permanentResidenceLocal = CommonUtil.changeToString(row.getCell(15));
-                if (!"".equals(permanentResidenceLocal)) {
-                    for (Select2 permanentResidenceLocal1 : ssdq) {
-                        if (permanentResidenceLocal1.getText().equals(permanentResidenceLocal)) {
-                            emp.setPermanentResidenceLocal(permanentResidenceLocal1.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String sfzs = CommonUtil.changeToString(row.getCell(16));
-                if (!"".equals(sfzs)) {
-                    for (Select2 examinePolitical1 : examinePolitical) {
-                        if (examinePolitical1.getText().equals(sfzs)) {
-                            emp.setExaminePolitical(examinePolitical1.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String dz = CommonUtil.changeToString(row.getCell(17));
-                emp.setAddress(dz);
-
-
-                String zzmm = CommonUtil.changeToString(row.getCell(18));
-                if (!"".equals(zzmm)) {
-                    for (Select2 politicalStatus1 : politicalStatus) {
-                        if (politicalStatus1.getText().equals(zzmm)) {
-                            emp.setPoliticalStatus(politicalStatus1.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String whcd = CommonUtil.changeToString(row.getCell(19));
-                if (!"".equals(whcd)) {
-                    for (Select2 educationalLevel1 : educationalLevel) {
-                        if (educationalLevel1.getText().equals(whcd)) {
-                            emp.setEducationalLevel(educationalLevel1.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String jyfs = CommonUtil.changeToString(row.getCell(20));
-                if (!"".equals(jyfs)) {
-                    for (Select2 educationTechnique1 : educationTechnique) {
-                        if (educationTechnique1.getText().equals(jyfs)) {
-                            emp.setEducationTechnique(educationTechnique1.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String byyx = CommonUtil.changeToString(row.getCell(21));
-                emp.setGraduateSchool(byyx);
-
-                String zy = CommonUtil.changeToString(row.getCell(22));
-                emp.setMajor(zy);
-
-                String time2 = CommonUtil.changeToString(row.getCell(23));
-                SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd");
-                //必须捕获异常
-                try {
-                    java.util.Date Date = df2.parse(time2);
-                    java.sql.Date formatDate3 = new java.sql.Date(Date.getTime());
-                    emp.setGraduateTime(formatDate3);
-                } catch (ParseException px) {
-                    px.printStackTrace();
-                }
-
-
-                String mc = CommonUtil.changeToString(row.getCell(24));
-                emp.setPositionalTitles(mc);
-
-                String zcjb = CommonUtil.changeToString(row.getCell(25));
-                if (!"".equals(zcjb)) {
-                    for (Select2 positionalLevel1 : positionalLevel) {
-                        if (positionalLevel1.getText().equals(zcjb)) {
-                            emp.setPositionalLevel(positionalLevel1.getId());
-                            break;
-                        }
-                    }
-                }
-
-                String bz = CommonUtil.changeToString(row.getCell(26));
-                emp.setRemark(bz);
-                if (flag == 1) {
-                    emp.setPersonId(CommonUtil.getUUID());
-                    CommonUtil.save(emp);
-                } else {
-                    CommonUtil.update(emp);
-                }
-                EmpDeptRelation edr = new EmpDeptRelation();
-                edr.setId(CommonUtil.getUUID());
-                edr.setPersonId(emp.getPersonId());
-                edr.setDeptId(emp.getDeptId());
-                edr.setCreator(CommonUtil.getPersonId());
-                edr.setCreateDept(CommonUtil.getDefaultDept());
-                edr.setCreateTime(CommonUtil.getDate());
-
-                LoginUser loginUser = new LoginUser();
-                //String userAccount = emp.getName();
-                String userAccount = null;
-                try {
-                    userAccount = PinyinHelper.convertToPinyinString(emp.getName(), "", PinyinFormat
-                            .WITHOUT_TONE);
-                } catch (PinyinException e1) {
-                    flag = 0;
-                }
-                userAccount = CommonUtil.checkUserAccount(userAccount, loginUserService);
-                //String tel = CommonUtil.changeToString(row.getCell(5));
-                loginUser.setPhotoUrl(tel);
-                loginUser.setId(CommonUtil.getUUID());
-                loginUser.setUserAccount(userAccount);
-                loginUser.setPersonId(emp.getPersonId());
-                loginUser.setPassword((new SimpleHash("MD5", "123456", null, 1).toString()));
-                loginUser.setUserType("0");
-                loginUser.setDefaultDeptId(emp.getDeptId());
-                loginUser.setCreateDept(CommonUtil.getDefaultDept());
-                loginUser.setCreateTime(CommonUtil.getDate());
-                loginUser.setCreator(CommonUtil.getPersonId());
-                loginUser.setName(emp.getName());
-                if (flag == 1) {
-                    try {
-                        empService.saveEmp(emp, edr, loginUser);
-                    } catch (Exception e1) {
-                        flag = 0;
-                        e1.printStackTrace();
-                    }
-                }
-                if (flag == 0) {
-                    msg += i + ",";
-                    count++;
-                    empService.updateEmp(emp);
-                }
-            }
             }
             if (count > 0) {
 //                msg = msg.substring(0, msg.length() - 1) + "行,人员身份信息已存在！请重新导入！";

@@ -13,8 +13,7 @@
         value as parametervalue
         FROM
         T_SYS_PARAMETER
-        where
-        1=1
+        where id!='-1'
         <if test="parametername != null and parametername !='' ">
             AND  name LIKE '%'||'${parametername}'||'%'
         </if>
@@ -97,4 +96,15 @@
     <select id="getParameterYearValue" resultType="java.lang.String">
         select t.value from T_SYS_PARAMETER t where code='DQXN'
     </select>
+    <select id="getMacType"  resultType="java.lang.String">
+        select type from t_sys_parameter where id='-1'
+    </select>
+    <select id="getMac" resultType="java.util.Map">
+        <![CDATA[
+        select value, type, change_time from t_sys_parameter where id='-1' and change_time<sysdate and create_time>sysdate
+         ]]>
+    </select>
+    <update id="updateLastTime">
+        UPDATE T_SYS_PARAMETER SET change_time= sysdate WHERE id='-1'
+    </update>
 </mapper>

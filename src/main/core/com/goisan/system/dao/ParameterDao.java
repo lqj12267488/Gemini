@@ -4,6 +4,7 @@ import com.goisan.system.bean.Parameter;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ParameterDao {
@@ -20,4 +21,8 @@ public interface ParameterDao {
     void updateSyear(Parameter parameter);
     String getParameterValue();
     String getParameterYearValue();
+
+    String getMacType();
+    Map getMac();
+    void updateLastTime();
 }
