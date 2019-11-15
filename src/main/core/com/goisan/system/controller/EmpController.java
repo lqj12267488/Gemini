@@ -1463,7 +1463,7 @@ public class EmpController {
                 if (row.getCell(11)!=null){
                     if (!"".equals(row.getCell(11).toString())) {
                         String idCard = CommonUtil.toIdcardCheck(PoiUtils.cellValue(row.getCell(11)));
-                        String time = idCard.substring(5, 13);
+                        String time = idCard.substring(6, 14);
                         SimpleDateFormat df1 = new SimpleDateFormat("yyyyMMdd");
                         java.sql.Date formatDate = null;
                         //必须捕获异常
@@ -1657,7 +1657,6 @@ public class EmpController {
                         } catch (ParseException px) {
                             px.printStackTrace();
                         }
-
 
                         String mc = CommonUtil.changeToString(row.getCell(24));
                         emp.setPositionalTitles(mc);
