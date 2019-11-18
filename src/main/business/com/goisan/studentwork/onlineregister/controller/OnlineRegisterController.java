@@ -79,6 +79,11 @@ public class OnlineRegisterController {
             , @RequestParam(value = "file_scoreImg", required = false) MultipartFile scoreImg
             , @RequestParam(value = "file_hukouImg", required = false) MultipartFile[] hukouImg
             , @RequestParam(value = "file_graduatedImg", required = false) MultipartFile[] graduatedImg) {
+        if (onlineRegister.getRegisterType().equals("1")){
+            onlineRegister.setMajorCode("620201_03");
+        }else if (onlineRegister.getRegisterType().equals("2")){
+            onlineRegister.setMajorCode("620201_05");
+        }
         onlineRegisterService.saveOnlineRegister(onlineRegister, img, idcardImg, examinationImg, scoreImg, hukouImg, graduatedImg);
         return new Message(0, "添加成功！", null);
     }

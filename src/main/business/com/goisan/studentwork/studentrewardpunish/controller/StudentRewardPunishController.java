@@ -101,7 +101,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 schoolBurse.setCreateDept(CommonUtil.getDefaultDept());
@@ -186,7 +186,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 stateBurse.setDepartmentsId(CommonUtil.getDefaultDept());
@@ -272,7 +272,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 fullBurse.setDepartmentsId(CommonUtil.getDefaultDept());
@@ -357,7 +357,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 tuitionFree.setDepartmentsId(CommonUtil.getDefaultDept());
@@ -505,7 +505,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 studentLoan.setDepartmentsId(CommonUtil.getDefaultDept());
@@ -590,7 +590,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 studentCadres.setDepartmentsId(CommonUtil.getDefaultDept());
@@ -676,7 +676,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 miyoshiClass.setDepartmentsId(CommonUtil.getDefaultDept());
@@ -774,7 +774,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 studentPunish.setDepartmentsId(CommonUtil.getDefaultDept());
@@ -859,7 +859,7 @@ public class StudentRewardPunishController {
         if (list.size() > 0) {
 
         } else {
-            if ("001007".equals(CommonUtil.getDefaultDept())) {
+            if ("001011".equals(CommonUtil.getDefaultDept())) {
 
             } else {
                 studentPunish.setDepartmentsId(CommonUtil.getDefaultDept());

@@ -189,7 +189,7 @@ public class ScoreMakeupController {
         mv.addObject("editFlag", examService.checkScoreTime(scoreExamId) ? "1" : "0");
         String deptId = CommonUtil.getDefaultDept();
         String flag = "";
-        if (deptId.equals("001007")) {
+        if (deptId.equals("001011")) {
             flag = "1";
         }
         mv.addObject("flag", flag);

@@ -185,7 +185,7 @@ public class RescheduleCourseController {
     public Message approveRCWithDept(RescheduleCourse rescheduleCourse) {
         rescheduleCourse.setChanger(CommonUtil.getPersonId());
         rescheduleCourse.setChangeDept(CommonUtil.getDefaultDept());
-        if (!"001007".equals(CommonUtil.getDefaultDept())) {
+        if (!"001011".equals(CommonUtil.getDefaultDept())) {
             rescheduleCourse.setApproveDptPersonId(CommonUtil.getPersonId());
             rescheduleCourseService.updRCWithDeptApprove(rescheduleCourse);
             return new Message(1, "批准成功", "success");

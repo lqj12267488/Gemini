@@ -697,7 +697,7 @@ public class MajorController {
         String dept=CommonUtil.getDefaultDept();
         String uid=null;
 //        //其中001004002为教务部门的id
-        if(!"001004002".equals(dept)){
+        if(!"001011".equals(dept)){
             uid=CommonUtil.getPersonId();
         }
         List<TalentTrain> list = majorService.getTalentTrainList(tt, uid);

@@ -181,7 +181,10 @@
                         <option value="" disabled selected><span style="color: red">*</span>县</option>
                     </select>
                 </div>
-
+                <div class="input-field col s6">
+                    <input name="graduationDate" id="" type="text" class="validate" value="护理" readonly/>
+                    <label for="s_graduationDate"><span style="color: red">*</span>专业</label>
+                </div>
                 <div class="input-field col s6">
                     <input name="graduatedSchool" type="text" id="s_graduatedSchool" class="validate"/>
                     <label for="s_graduatedSchool"><span style="color: red">*</span>毕业学校</label>
