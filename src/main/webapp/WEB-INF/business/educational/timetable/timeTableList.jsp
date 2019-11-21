@@ -123,15 +123,6 @@
     }
 
     function toTimeTableDepartment(id, timeTableName, sum, total) {
-        if (sum != undefined) {
-            if (sum != total || total == 0) {
-                swal({
-                    title: "请完成授课计划后查看",
-                    type: "success"
-                });
-                return;
-            }
-        }
         $("#right").load("<%=request.getContextPath()%>/timeTableDepartment/toTimeTableDepartment?timeTableName=" + timeTableName + "&id=" + id);
     }
 
