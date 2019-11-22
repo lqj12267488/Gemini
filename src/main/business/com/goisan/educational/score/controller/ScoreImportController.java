@@ -873,6 +873,11 @@ public class ScoreImportController {
                 Student student1 = scoreChangeService.getStudentByStudentId(studentId);
                 List<String> time = scoreChangeService.getStudentEndTime(studentId);
                 List<SchoolReport> infoList = schoolReportDao.getSchoolReportList(report);
+                for (SchoolReport schoolReport : infoList) {
+                    if (schoolReport.getStudentSource()==null) {
+                        schoolReport.setStudentSource("");
+                    }
+                }
                 List<ScoreImport> studentArrayClassLooks = scoreImportService.getScoreByStudentIdScoreExamId(studentId);
                 mv.addObject("arrayclassResultClassList", JsonUtils.toJson(infoList));
                 ScoreImport scoreImport = null;

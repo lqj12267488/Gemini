@@ -125,7 +125,7 @@ public class TimeTableDepartmentController {
 
     @RequestMapping("/getClassIdByMajorCode")
     public List<Select2> getClassIdByMajorCode(String id) {
-        return timeTableDepartmentService.getClassIdByMajorCode(id);
+        return timeTableDepartmentService.getClassIdByMajorCode(id.split(",")[0]);
 
     }
 

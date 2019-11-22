@@ -58,7 +58,8 @@
 
     <select id="getMajorCodeByDeptId" resultType="com.goisan.system.bean.Select2"
             parameterType="String">
-        select MAJOR_CODE id,MAJOR_NAME text
+        select MAJOR_CODE || ',' || TRAINING_LEVEL || ',' || MAJOR_DIRECTION id,
+                        MAJOR_NAME || ' -- ' || FUNC_GET_DICVALUE(TRAINING_LEVEL, 'ZXZYPYCC')                   text
         from T_XG_MAJOR
         where DEPARTMENTS_ID = #{id}
     </select>

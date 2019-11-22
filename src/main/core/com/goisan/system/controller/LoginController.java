@@ -103,13 +103,13 @@ public class LoginController {
                 return message;
             }
         }
-        try {
+        /*try {
             if (!parameterService.checkMac()){
                 return new Message(2, "系统已过试用期，登录失败！", null);
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
         LoginLog loginLog = new LoginLog();
         loginLog.setUserAccount(loginId);
         if ("sa".equals(loginId)) {
