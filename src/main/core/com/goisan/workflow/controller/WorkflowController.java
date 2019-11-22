@@ -7,6 +7,9 @@ import com.goisan.partybuilding.reportmanagement.bean.ReportManagement;
 import com.goisan.partybuilding.reportmanagement.service.ReportManagementService;
 import com.goisan.synergy.message.service.MessageService;
 import com.goisan.synergy.notice.service.NoticeService;
+import com.goisan.synergy.workflow.bean.Declare;
+import com.goisan.synergy.workflow.service.DeclareApproveService;
+import com.goisan.synergy.workflow.service.DeclareService;
 import com.goisan.system.bean.BaseBean;
 import com.goisan.system.bean.Select2;
 import com.goisan.system.bean.Tree;
@@ -36,7 +39,8 @@ import java.util.Map;
  */
 @Controller
 public class WorkflowController {
-
+@Resource
+private DeclareService declareService;
     @Resource
     private WorkflowService workflowService;
     @Resource
@@ -53,7 +57,8 @@ public class WorkflowController {
     private ScoreChangeService scoreChangeService;
     @Resource
     private ReportManagementService reportManagementService;
-
+@Resource
+private DeclareApproveService declareApproveService;
     @RequestMapping("/workflow")
     public String workflow() {
         return "/core/wf/workflow";
@@ -137,6 +142,9 @@ public class WorkflowController {
         start.setHandleName(empService.getPersonNameById(CommonUtil.getPersonId()));
         CommonUtil.save(start);
         workflowService.start(start);
+       /* start.getTableName() == "";
+        start.getBusinessId();
+        */
         workflowService.updateBusiness(start.getTableName(), start.getBusinessId(), "1");
         Node cuurentNodeId = workflowService.getStratNodeId(workflowId);
         Handle startHandle = new Handle();
@@ -239,6 +247,11 @@ public class WorkflowController {
                 Relation relation = workflowService.getRelation(start.getWorkflowId(), tableName);
                 Workflow workflow = workflowService.getWorkflowById(start.getWorkflowId());
                 SysTask task = new SysTask();
+                if ("T_BG_DECLARE_WF".equals(tableName)){
+                    Declare declare = declareService.getDeclareById(businessId);
+                    declareService.insertDeclareApprove(declare);
+
+                }
                 if ("T_JW_SCORE_CHANGE_WF".equals(tableName)) {
                     ScoreChange scoreChange = scoreChangeService.getScoreChangeById(businessId);
                     ScoreImport scoreImport = scoreChangeService.getScoreImportById2(scoreChange.getScoreId());

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--union-->
+<mapper namespace="com.goisan.synergy.workflow.dao.DeclareApproveDao">
+    <select id="getDeclareApproveList" resultType="com.goisan.synergy.workflow.bean.DeclareApprove" parameterType="com.goisan.synergy.workflow.bean.DeclareApprove">
+select
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
+        t.WORK_DEPT workDept,
+        t.name name,
+        t.APPLIED_LEVEL appliedLevel,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DECLARE_APPROVE_WF t
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="appliedLevel != null and appliedLevel != '' ">
+            AND t.applied_level like '%'||#{appliedLevel}||'%'
+        </if>
+        AND t.request_flag = '0'
+        ORDER BY t.create_time desc
+    </select>
+
+    <select id="getLeaveById" resultType="com.goisan.synergy.workflow.bean.DeclareApprove" parameterType="java.lang.String">
+        SELECT
+        id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        to_char(request_date,'yyyy-mm-dd') || 'T' || to_char(request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(requester) requester,
+       FUNC_GET_DICVALUE(sex,'XB') sex,
+       name name,
+       to_char(BIRTHDAY,'yyyy-mm-dd') as birthday,
+       FUNC_GET_DICVALUE(educational_level,'XL') educationalLevel,
+       WORKING_SENIORITY workingSeniority,
+       FUNC_GET_DICVALUE(ACADEMIC_DEGREE,'XW') academicDegree,
+       POSITIONAL_TITLES positionalTitles,
+       PRESENT_POST presentPost,
+       to_char(ENGAGE_TIME,'yyyy-mm-dd') as engageTime,
+       INCUMBENT_POST incumbentPost,
+        to_char(APPOINTMENT_TIME,'yyyy-mm-dd') as appointmentTime,
+        APPOINTMENT_POST appointmentPost,
+        to_char(ENTRY_TIME,'yyyy-mm-dd') as entryTime,
+        SCHOOL school,
+        APPLIED_LEVEL appliedLevel,
+        WORK_DEPT workDept,
+        REPRESENTATIVE_ACHIEVEMENTS representativeAchievements,
+        img,
+        request_flag,
+        creator,
+        create_time,
+        create_dept,
+        changer,
+        change_time,
+        change_dept,
+        valid_flag
+        FROM
+        T_BG_DECLARE_APPROVE_WF
+        WHERE 1 = 1 AND id = #{id}
+        ORDER BY create_time desc
+    </select>
+    <select id="getCancelById" resultType="com.goisan.synergy.workflow.bean.DeclareApprove" parameterType="com.goisan.synergy.workflow.bean.DeclareApprove">
+        SELECT
+        id,
+        FUNC_GET_DEPTNAME(request_dept) requestDept,
+        to_char(request_date,'yyyy-mm-dd') || 'T' || to_char(request_date,'hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(requester) requester,
+       FUNC_GET_DICVALUE(sex,'XB') sex,
+       name name,
+       to_char(BIRTHDAY,'yyyy-mm-dd') as birthday,
+       FUNC_GET_DICVALUE(educational_level,'XL') educationalLevel,
+       WORKING_SENIORITY workingSeniority,
+       FUNC_GET_DICVALUE(ACADEMIC_DEGREE,'XW') academicDegree,
+       POSITIONAL_TITLES positionalTitles,
+       PRESENT_POST presentPost,
+       to_char(ENGAGE_TIME,'yyyy-mm-dd') as engageTime,
+       INCUMBENT_POST incumbentPost,
+        to_char(APPOINTMENT_TIME,'yyyy-mm-dd') as appointmentTime,
+        APPOINTMENT_POST appointmentPost,
+        to_char(ENTRY_TIME,'yyyy-mm-dd') as entryTime,
+        SCHOOL school,
+        APPLIED_LEVEL appliedLevel,
+        WORK_DEPT workDept,
+        REPRESENTATIVE_ACHIEVEMENTS representativeAchievements,
+        img,
+        request_flag,
+        creator,
+        create_time,
+        create_dept,
+        changer,
+        change_time,
+        change_dept,
+        valid_flag
+        FROM
+        T_BG_DECLARE_APPROVE_WF
+        WHERE id = #{id}
+        ORDER BY create_time desc
+    </select>
+
+    <select id="autoCompleteDept" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.dept_id as "value",
+        t.dept_name as "label"
+        FROM T_SYS_DEPT t
+    </select>
+    <select id="autoCompleteEmployee" parameterType="java.lang.String" resultType="com.goisan.system.bean.AutoComplete">
+        select
+        t.name as "label",
+        t.person_id as "value"
+        FROM T_RS_EMPLOYEE t
+    </select>
+    <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.DeclareApprove" parameterType="com.goisan.synergy.workflow.bean.DeclareApprove">
+        SELECT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
+        t.WORK_DEPT workDept,
+        t.name name,
+        t.APPLIED_LEVEL appliedLevel,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DECLARE_APPROVE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="appliedLevel != null and appliedLevel != '' ">
+            AND t.applied_level like '%'||#{appliedLevel}||'%'
+        </if>
+        AND (r.state='1' or r.state='3')AND t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.synergy.workflow.bean.DeclareApprove" parameterType="com.goisan.synergy.workflow.bean.DeclareApprove">
+        SELECT
+        DISTINCT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
+        t.WORK_DEPT workDept,
+        t.name name,
+        t.APPLIED_LEVEL appliedLevel,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,
+        t.FEEDBACK feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DECLARE_APPROVE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="appliedLevel != null and appliedLevel != '' ">
+            AND t.applied_level like '%'||#{appliedLevel}||'%'
+        </if>
+        AND r.state='2' AND t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+
+</mapper>
+

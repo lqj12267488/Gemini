@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.goisan.synergy.workflow.dao.DeclareDao">
+    <select id="getDeclareList" resultType="com.goisan.synergy.workflow.bean.Declare"
+            parameterType="com.goisan.synergy.workflow.bean.Declare">
+        SELECT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
+        t.WORK_DEPT workDept,
+        t.name name,
+        t.APPLIED_LEVEL appliedLevel,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DECLARE_WF t
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date, 'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="appliedLevel != null and appliedLevel != '' ">
+            AND t.applied_level like '%'||#{appliedLevel}||'%'
+        </if>
+        AND t.request_flag = '0'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getEmpByPersonId" parameterType="java.lang.String" resultType="com.goisan.system.bean.Emp">
+        SELECT
+          t.PERSON_ID personId,
+           t.name,
+           t.tel,
+           t.idcard
+       FROM  T_RS_EMPLOYEE t
+        WHERE t.PERSON_ID = #{personId}
+    </select>
+    <select id="getDeclareById" resultType="com.goisan.synergy.workflow.bean.Declare"
+            parameterType="com.goisan.synergy.workflow.bean.Declare">
+        SELECT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd') || 'T' || to_char(t.request_date,'hh24:mi')  requestDate,
+         FUNC_GET_DEPTNAME(t.request_dept)  requestDept,
+        FUNC_GET_USERNAME(t.requester)     requester,
+        t.name name,
+        t.img img,
+        t.SEX sex,
+        t.NATION nation,
+        to_char(t.BIRTHDAY,'yyyy-mm-dd') birthday,
+        t.POLITICAL_STATUS politicalStatus,
+        t.IDCARD idcard,
+        to_char(t.WORK_TIME,'yyyy-mm-dd') workTime,
+        t.WORK_DEPT workDept,
+        t.ADMINISTRATIVE_POST administrativePost,
+        t.TECHNICAL_POSITION technicalPosition,
+        to_char(t.APPOINTMENT_TIME,'yyyy-mm-dd') appointmentTime,
+        t.APPLIED_LEVEL	appliedLevel,
+        t.MAJOR_TIME majorTime,
+        t.ACADEMIC_DEGREE	academicDegree,
+        t.EDUCATIONAL_LEVEL	educationalLevel,
+        t.SCHOOL	school,
+        t.major major,
+        to_char(t.ENTRY_TIME,'yyyy-mm-dd') entryTime,
+        to_char(t.GRADUATE_TIME,'yyyy-mm-dd') graduateTime,
+        t.ACQUISITION_TIME acquisitionTime,
+        t.ORGANIZATIONS_POSITIONS organizationsPositions,
+        t.ACADEMIC_TECHNOLOGY	academicTechnology,
+        to_char(t.CONTINUING_EDUCATION_TIME,'yyyy-mm-dd') continuingEducationTime,
+        t.POSTAL_ADDRESS postalAddress,
+        t.POST_CODE	postCode,
+        t.OFFICE_PHONE	officePhone,
+        t.TEL	tel,
+        t.EMAIL	email,
+        t.WORKING_SENIORITY	workingSeniority,
+        t.POSITIONAL_TITLES	positionalTitles,
+        t.PRESENT_POST	presentPost,
+        to_char(t.ENGAGE_TIME,'yyyy-mm-dd') engageTime,
+        t.INCUMBENT_POST incumbentPost,
+        t.APPOINTMENT_POST	appointmentPost,
+        t.REPRESENTATIVE_ACHIEVEMENTS representativeAchievements,
+        t.request_flag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DECLARE_WF t
+        WHERE id = #{id}
+        ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertDeclare" parameterType="com.goisan.synergy.workflow.bean.Declare">
+        INSERT INTO
+        T_BG_DECLARE_WF
+        (id,requester,request_dept,request_date,creator,create_time,create_dept,
+        request_flag,SEX,
+          NATION,
+          BIRTHDAY,
+          POLITICAL_STATUS,
+          IDCARD,
+          WORK_TIME,
+          WORK_DEPT,
+          ADMINISTRATIVE_POST,
+          TECHNICAL_POSITION,
+          APPOINTMENT_TIME,
+          APPLIED_LEVEL,
+          MAJOR_TIME,
+          ACADEMIC_DEGREE,
+          EDUCATIONAL_LEVEL,
+          SCHOOL,
+          major,
+          ENTRY_TIME,
+          GRADUATE_TIME,
+          ACQUISITION_TIME,
+          ORGANIZATIONS_POSITIONS,
+          ACADEMIC_TECHNOLOGY,
+          CONTINUING_EDUCATION_TIME,
+          POSTAL_ADDRESS,
+          POST_CODE,
+          OFFICE_PHONE,
+          TEL,
+          EMAIL,
+          WORKING_SENIORITY,
+          POSITIONAL_TITLES,
+          PRESENT_POST,
+          ENGAGE_TIME,
+          INCUMBENT_POST,
+          APPOINTMENT_POST,
+          REPRESENTATIVE_ACHIEVEMENTS,
+          NAME,img
+) values
+        (FUNC_GET_UUID,'${creator}','${createDept}',to_date('${requestDate}','yyyy-mm-dd hh24:mi'),
+        '${creator}',sysdate,'${createDept}','0','${sex}',
+        '${nation}',to_date('${birthday}','yyyy-mm-dd'),'${politicalStatus}','${idcard}',
+        to_date('${workTime}','yyyy-mm-dd'),
+        '${workDept}','${administrativePost}','${technicalPosition}',
+        to_date('${appointmentTime}','yyyy-mm-dd'),'${appliedLevel}','${majorTime}','${academicDegree}','${educationalLevel}',
+        '${school}','${major}',to_date('${entryTime}','yyyy-mm-dd'),to_date('${graduateTime}','yyyy-mm-dd'),'${acquisitionTime}',
+        '${organizationsPositions}','${academicTechnology}',
+        to_date('${continuingEducationTime}','yyyy-mm-dd'),'${postalAddress}',
+        '${postCode}','${officePhone}','${tel}','${email}',
+        '${workingSeniority}','${positionalTitles}','${presentPost}',to_date('${engageTime}','yyyy-mm-dd'),
+        '${incumbentPost}','${appointmentPost}','${representativeAchievements}','${name}',#{img})
+    </insert>
+    <delete id="deleteDeclareById" parameterType="java.lang.String">
+        DELETE FROM T_BG_DECLARE_WF WHERE id = #{id}
+    </delete>
+    <update id="updateDeclareById" parameterType="com.goisan.synergy.workflow.bean.Declare">
+        update
+        T_BG_DECLARE_WF t
+        SET
+        t.request_date = to_date(#{requestDate},'yyyy-mm-dd hh24:mi'),
+        t.SEX = #{sex},
+        t.img = #{img},
+        t.NATION = #{nation},
+        t.BIRTHDAY	= to_date(#{birthday},'yyyy-mm-dd'),
+        t.POLITICAL_STATUS = #{politicalStatus},
+        t.WORK_TIME	= to_date(#{workTime},'yyyy-mm-dd'),
+        t.WORK_DEPT	 = #{workDept},
+        t.ADMINISTRATIVE_POST = #{administrativePost},
+        t.TECHNICAL_POSITION = #{technicalPosition},
+        t.APPOINTMENT_TIME	= to_date(#{appointmentTime},'yyyy-mm-dd'),
+        t.APPLIED_LEVEL	= #{appliedLevel},
+        t.MAJOR_TIME = #{majorTime},
+        t.ACADEMIC_DEGREE = #{academicDegree},
+        t.EDUCATIONAL_LEVEL	= #{educationalLevel},
+        t.SCHOOL= #{school},
+        t.major = #{major},
+        t.ENTRY_TIME = to_date(#{entryTime},'yyyy-mm-dd'),
+        t.GRADUATE_TIME	 = to_date(#{graduateTime},'yyyy-mm-dd'),
+        t.ACQUISITION_TIME	= #{acquisitionTime},
+        t.ORGANIZATIONS_POSITIONS = #{organizationsPositions},
+        t.ACADEMIC_TECHNOLOGY = #{academicTechnology},
+        t.CONTINUING_EDUCATION_TIME	 = to_date(#{continuingEducationTime},'yyyy-mm-dd'),
+        t.POSTAL_ADDRESS = #{postalAddress},
+        t.POST_CODE	= #{postCode},
+        t.OFFICE_PHONE	= #{officePhone},
+        t.EMAIL	 = #{email},
+        t.WORKING_SENIORITY	= #{workingSeniority},
+        t.POSITIONAL_TITLES	= #{positionalTitles},
+        t.PRESENT_POST	= #{presentPost},
+        t.ENGAGE_TIME =	to_date(#{engageTime},'yyyy-mm-dd'),
+        t.INCUMBENT_POST = #{incumbentPost},
+        t.APPOINTMENT_POST	=#{appointmentPost},
+        t.REPRESENTATIVE_ACHIEVEMENTS	= #{representativeAchievements},
+        t.changer = #{changer},
+        t.change_dept = #{changeDept},
+        t.change_time = sysdate
+        WHERE
+      id = #{id}
+    </update>
+
+    <select id="getProcessList" resultType="com.goisan.synergy.workflow.bean.Declare"
+            parameterType="com.goisan.synergy.workflow.bean.Declare">
+        SELECT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
+        t.WORK_DEPT workDept,
+        t.name name,
+        t.APPLIED_LEVEL appliedLevel,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DECLARE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="appliedLevel != null and appliedLevel != '' ">
+            AND t.applied_level like '%'||#{appliedLevel}||'%'
+        </if>
+        AND (r.state='1' or r.state='3')AND t.id = s.business_id AND s.start_id = r.start_id AND t.request_flag != '4'
+        ORDER BY t.create_time desc
+    </select>
+    <select id="getCompleteList" resultType="com.goisan.synergy.workflow.bean.Declare"
+            parameterType="com.goisan.synergy.workflow.bean.Declare">
+        SELECT
+        DISTINCT
+        t.id,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi') requestDate,
+        FUNC_GET_DICVALUE(t.sex,'XB') sexShow,
+        t.WORK_DEPT workDept,
+        t.name name,
+        t.APPLIED_LEVEL appliedLevel,
+        FUNC_GET_DICVALUE(t.request_flag,'GZLLZZT') requestFlag,
+        FUNC_GET_DICVALUE(t.FEEDBACK_FLAG,'GZLFKZT') feedbackFlag,
+        t.FEEDBACK feedBack,
+        t.creator,
+        t.create_time,
+        t.create_dept,
+        t.changer,
+        t.change_time,
+        t.change_dept,
+        t.valid_flag
+        FROM
+        T_BG_DECLARE_WF t,t_sys_workflow_start s,t_sys_workflow_handle r
+        where 1 = 1
+        <if test="requestDate != null and requestDate != '' ">
+            AND to_char(t.request_date,'yyyy-mm-dd') LIKE #{requestDate}
+        </if>
+        <if test="name != null and name != '' ">
+            AND t.name like '%'||#{name}||'%'
+        </if>
+        <if test="appliedLevel != null and appliedLevel != '' ">
+            AND t.applied_level like '%'||#{appliedLevel}||'%'
+        </if>
+        AND r.state='2' AND t.id = s.business_id AND s.start_id = r.start_id
+        ORDER BY t.create_time desc
+    </select>
+
+    <select id="getPersonNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT name from t_rs_employee WHERE  person_id = #{personId}
+    </select>
+    <select id="getDeptNameById" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT dept_name from t_sys_dept WHERE  dept_id = #{deptId}
+    </select>
+
+    <select id="getLeaveBy" resultType="com.goisan.synergy.workflow.bean.Declare"
+            parameterType="com.goisan.synergy.workflow.bean.Declare">
+        SELECT
+        t.id,
+        FUNC_GET_DEPTNAME(t.request_dept) requestDept,
+        to_char(t.request_date,'yyyy-mm-dd hh24:mi')  requestDate,
+        FUNC_GET_USERNAME(t.requester) requester,
+          t.name name,
+          FUNC_GET_DICVALUE(t.nation,'MZ')     nation,
+          FUNC_GET_DICVALUE(t.sex,'XB')    sex,
+          to_char(t.BIRTHDAY,'yyyy-mm-dd') birthday,
+          FUNC_GET_DICVALUE(t.POLITICAL_STATUS,'ZZMM')    politicalStatus,
+          t.IDCARD idcard,
+          to_char(t.WORK_TIME,'yyyy-mm-dd') workTime,
+          t.WORK_DEPT workDept,
+          t.ADMINISTRATIVE_POST administrativePost,
+          t.TECHNICAL_POSITION technicalPosition,
+          to_char(t.APPOINTMENT_TIME,'yyyy-mm-dd') appointmentTime,
+          t.APPLIED_LEVEL	appliedLevel,
+          t.MAJOR_TIME majorTime,
+           FUNC_GET_DICVALUE(t.ACADEMIC_DEGREE,'XW')  academicDegree,
+           FUNC_GET_DICVALUE(t.EDUCATIONAL_LEVEL,'XL')  educationalLevel,
+          t.SCHOOL	school,
+          t.major major,
+          to_char(t.ENTRY_TIME,'yyyy-mm-dd') entryTime,
+          to_char(t.GRADUATE_TIME,'yyyy-mm-dd') graduateTime,
+          t.ACQUISITION_TIME acquisitionTime,
+          t.ORGANIZATIONS_POSITIONS organizationsPositions,
+          t.ACADEMIC_TECHNOLOGY	academicTechnology,
+          to_char(t.CONTINUING_EDUCATION_TIME,'yyyy-mm-dd') continuingEducationTime,
+          t.POSTAL_ADDRESS postalAddress,
+          t.POST_CODE	postCode,
+          t.OFFICE_PHONE	officePhone,
+          t.TEL	tel,
+          t.EMAIL	email,
+          t.WORKING_SENIORITY	workingSeniority,
+          t.POSITIONAL_TITLES	positionalTitles,
+          t.PRESENT_POST	presentPost,
+          to_char(t.ENGAGE_TIME,'yyyy-mm-dd') engageTime,
+          t.INCUMBENT_POST incumbentPost,
+          t.APPOINTMENT_POST	appointmentPost,
+          t.REPRESENTATIVE_ACHIEVEMENTS representativeAchievements,
+          t.img img,
+          t.request_flag,
+          t.creator,
+          t.create_time,
+          t.create_dept,
+          t.changer,
+          t.change_time,
+          t.change_dept,
+          t.valid_flag
+        FROM
+        T_BG_DECLARE_WF t
+        WHERE id = #{id}
+        ORDER BY t.create_time desc
+    </select>
+
+    <insert id="insertDeclareApprove" parameterType="com.goisan.synergy.workflow.bean.Declare">
+        INSERT INTO
+        T_BG_DECLARE_APPROVE_WF
+        (id,DECLARE_ID,requester,request_dept,request_date,creator,create_time,create_dept,
+        request_flag,SEX,
+           NAME,
+          BIRTHDAY,
+          EDUCATIONAL_LEVEL,
+          WORKING_SENIORITY,
+          ACADEMIC_DEGREE,
+          POSITIONAL_TITLES,
+          PRESENT_POST,
+          ENGAGE_TIME,
+          INCUMBENT_POST,
+          APPOINTMENT_TIME,
+          APPOINTMENT_POST,
+          ENTRY_TIME,
+          SCHOOL,
+          APPLIED_LEVEL,
+          WORK_DEPT,
+          REPRESENTATIVE_ACHIEVEMENTS,
+          img
+
+) SELECT FUNC_GET_UUID id,
+        j.id DECLARE_ID,requester,request_dept,request_date,creator,create_time,create_dept,
+        '0' request_flag,SEX,
+           NAME,
+          BIRTHDAY,
+          EDUCATIONAL_LEVEL,
+          WORKING_SENIORITY,
+          ACADEMIC_DEGREE,
+          POSITIONAL_TITLES,
+          PRESENT_POST,
+          ENGAGE_TIME,
+          INCUMBENT_POST,
+          APPOINTMENT_TIME,
+          APPOINTMENT_POST,
+          ENTRY_TIME,
+          SCHOOL,
+          APPLIED_LEVEL,
+          WORK_DEPT,
+          REPRESENTATIVE_ACHIEVEMENTS,
+          img
+        from T_BG_DECLARE_WF j where j.id = #{id}
+    </insert>
+</mapper>

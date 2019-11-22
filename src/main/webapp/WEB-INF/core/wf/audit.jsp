@@ -121,7 +121,7 @@
     var handleName = "";
     var personId = "";
     $(document).ready(function () {
-        if("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}' || "T_DT_REPORT_MANAGEMENT" == '${tableName}' || "T_RS_TALENT_RECRUITMENT_WF" == '${tableName}'){
+        if("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}' || "T_DT_REPORT_MANAGEMENT" == '${tableName}' || "T_RS_TALENT_RECRUITMENT_WF" == '${tableName}' || "T_BG_DECLARE_WF" == '${tableName}' || "T_BG_DECLARE_APPROVE_WF" == '${tableName}'){
             $("#dayin").hide();
         }
         $("#div1").hide();

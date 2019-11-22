@@ -35,7 +35,8 @@ public class StampController {
     @Resource
     private WorkflowService workflowService;
 
-    //印章申请跳转
+
+    @ResponseBody //印章申请跳转
     @RequestMapping("/stamp/request")
     public ModelAndView stampList() {
         ModelAndView mv = new ModelAndView();
@@ -78,7 +79,6 @@ public class StampController {
         return mv;
     }
     //印章修改
-    @ResponseBody
     @RequestMapping("/stamp/getStampById")
     public ModelAndView getStampById(String id) {
         ModelAndView mv = new ModelAndView("/business/synergy/workflow/stamp/editStamp");
