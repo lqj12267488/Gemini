@@ -86,7 +86,7 @@
             closeOnConfirm: false
         }, function () {
             if (tableName == "T_ZW_REPAIR") {
-                $.post("<%=request.getContextPath()%>", {
+                $.post("<%=request.getContextPath()%>/repair/requestFinish", {
                     repairID: businessId
                 }, function (msg) {
                     if (msg.status == 1) {

@@ -1245,4 +1245,17 @@ public class RepairController {
         mv.addObject("repair", repair);
         return mv;
     }
+    //判断是否检修完成
+    @ResponseBody
+    @RequestMapping("/repair/requestFinish")
+    public Message requestFinish(String repairID) {
+        String requestFlag = repairService.getRepairFinish(repairID);
+
+        if (requestFlag != "0" && !"0".equals(requestFlag)) {
+            return new Message(0, "维修已提交，不可删除附件！", null);
+        } else {
+            return new Message(1, "删除成功！", null);
+        }
+    }
+
 }

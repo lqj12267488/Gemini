@@ -316,6 +316,7 @@ public class RepairServiceImpl implements RepairService {
     public Repair getRepairById1(String id) {
         return repairDao.getRepairById1(id);
     }
-
+    @Override
+    public  String getRepairFinish(String repairID){return  repairDao.getRepairFinish(repairID);}
 
 }

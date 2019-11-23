@@ -1293,4 +1293,10 @@
         select * from T_SYS_FILES r where r.business_id = #{id}
     </select>
 
+    <select id="getRepairFinish" resultType="java.lang.String" parameterType="java.lang.String">
+
+     select request_flag requestFlag from T_ZW_REPAIR  where repair_id=#{repairID}
+
+</select>
+
 </mapper>

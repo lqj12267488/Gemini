@@ -143,4 +143,6 @@ public interface RepairService {
     Files selectUploadFiles(String id);
 
     Repair getRepairById1(String id);
+
+    String getRepairFinish(String repairID);
 }
