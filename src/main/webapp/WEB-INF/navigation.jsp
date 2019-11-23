@@ -9,7 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>勾陈数字校园管理平台</title>
+    <title>数字校园管理平台</title>
     <link href="<%=request.getContextPath()%>/libs/css/index.css" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/libs/css/stylesheets.css" rel="stylesheet" type="text/css"/>
     <link href="<%=request.getContextPath()%>/libs/css/sweetalert.css" rel="stylesheet">
@@ -58,7 +58,7 @@
             </ul>
         </div>
     </div>
-    <div class="foot">天眼（深圳）光学技术发展有限公司</div>
+    <div class="foot">技术支持：天眼（深圳）光学技术发展有限公司</div>
 </div>
 
 <script>

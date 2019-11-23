@@ -50,7 +50,7 @@
             '<div class="copyright">' +
                 '<div class="ico-g"><img src="<%=path%>/libs/img/resourcelibrary/ico-8.png" width="45" height="45"></div>' +
                 '<p>' +
-                    '<a href="#">网站地图</a>  ｜  <a href="#">关于我们</a> ｜  <a href="#">网站通告</a> ｜ <a href="#">友情链接</a><br>天眼（深圳）光学技术发展有限公司' +
+                    '<a href="#">网站地图</a>  ｜  <a href="#">关于我们</a> ｜  <a href="#">网站通告</a> ｜ <a href="#">友情链接</a><br>技术支持：天眼（深圳）光学技术发展有限公司' +
                 '</p>' +
                 '<ul class="clearfix">' +
                     '<li><a href="#">' +

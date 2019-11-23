@@ -144,9 +144,9 @@
        CHECKER_DEPT,
        CHECK_RESULT,
        r.file_url url
-  FROM T_ZW_REPAIR t,T_SYS_FILES r
+  FROM T_ZW_REPAIR t
+  left join T_SYS_FILES r on t.repair_id = r.business_id
  WHERE t.REPAIR_ID = #{id}
-     and t.repair_id = r.business_id
 
     </select>
     <select id="getRepairById1" resultType="com.goisan.logistics.repair.bean.Repair"

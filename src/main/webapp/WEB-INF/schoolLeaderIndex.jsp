@@ -282,7 +282,7 @@
             </div>
         </div>
     </div>
-    <div class="foot" style="text-align: center">天眼（深圳）光学技术发展有限公司</div>
+    <div class="foot" style="text-align: center">技术支持：天眼（深圳）光学技术发展有限公司</div>
 
     <div class="modal modal-draggable" id="audit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
