@@ -204,7 +204,7 @@
                 {"data": "createTime", "visible": false},
                 {"width": "15%", "data": "requestDate", "title": "申请日期"},
                 {"width": "15%", "data": "name", "title": "姓名"},
-                {"width": "15%", "data": "sexShow", "title": "姓别"},
+                {"width": "15%", "data": "sexShow", "title": "性别"},
                 {"width": "15%", "data": "workDept", "title": "工作部门"},
                 {"width": "15%", "data": "appliedLevel", "title": "拟申报职称层次"},
                 {

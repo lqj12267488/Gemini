@@ -130,7 +130,17 @@
                                class="validate[required,maxSize[20]] form-control"
                                value="${declare.idcard}"/>
                     </div>
+                    <div class="col-md-2 tar">
+                        毕业时间
+                    </div>
+                    <div class="col-md-4">
+                        <input id="graduateTime"  type="date"
+                               class="validate[required,maxSize[20]] form-control"
+                               value="${declare.graduateTime}"/>
+                    </div>
 
+                </div>
+                <div class="form-row">
                     <div class="col-md-2 tar">
                         工作时间
                     </div>
@@ -140,16 +150,6 @@
                                value="${declare.workTime}"/>
                     </div>
 
-                </div>
-                <div class="form-row">
-                    <div class="col-md-2 tar">
-                        专业
-                    </div>
-                    <div class="col-md-4">
-                        <input id="major"  type="text"
-                               class="validate[required,maxSize[20]] form-control"
-                               value="${declare.major}"/>
-                    </div>
                     <div class="col-md-2 tar">
                         入职时间
                     </div>
@@ -241,12 +241,12 @@
                                value="${declare.school}"/>
                     </div>
                     <div class="col-md-2 tar">
-                        毕业时间
+                        专业
                     </div>
                     <div class="col-md-4">
-                        <input id="graduateTime"  type="date"
+                        <input id="major"  type="text"
                                class="validate[required,maxSize[20]] form-control"
-                               value="${declare.graduateTime}"/>
+                               value="${declare.major}"/>
                     </div>
                 </div>
                 <div class="form-row">
