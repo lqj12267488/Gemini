@@ -2030,7 +2030,8 @@ public class ScoreMakeupController {
         }
 
         String name = "";
-        List<ScoreImport> scoreImports = scoreImportService.checkScoreImportListOther(scoreImportDao.getScoreImportList3(scoreImport));
+        List<ScoreImport> list = scoreImportDao.getScoreImportList3(scoreImport);
+        List<ScoreImport> scoreImports = scoreImportService.checkScoreImportListOther(list);
         String term = "";
         if (scoreImports.size() != 0) {
             term = scoreImports.get(0).getTermShow();
