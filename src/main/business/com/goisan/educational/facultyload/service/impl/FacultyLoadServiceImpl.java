@@ -87,7 +87,7 @@ public class FacultyLoadServiceImpl implements FacultyLoadService {
                     String term = facultyLoad.getTerm();
                     String teacherId = facultyLoad.getTeacherId();
                     int skjh = facultyLoadDao.getSkjhSum(teacherId, term);
-                    /*if (skjh == 0) {
+                    if (skjh == 0) {
                         return new Message(2, "请先维护授课计划、教案！", null);
                     }
                     int jxjh = facultyLoadDao.getJxjhSum(teacherId, term);
@@ -112,7 +112,7 @@ public class FacultyLoadServiceImpl implements FacultyLoadService {
                         if (pj != 100) {
                             return new Message(1, "请先完成评教！", null);
                         }
-                    }*/
+                    }
                     facultyLoad.setId(CommonUtil.getUUID());
                     CommonUtil.save(facultyLoad);
                     if (facultyLoadDao.insertFacultyLoad(facultyLoad) > 0) {
