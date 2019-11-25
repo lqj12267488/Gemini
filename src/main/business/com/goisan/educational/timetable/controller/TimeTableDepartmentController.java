@@ -90,6 +90,7 @@ public class TimeTableDepartmentController {
     @RequestMapping("saveTimeTableDepartment")
     public Message saveTimeTableDepartment(TimeTableDepartment timeTableDepartment) {
         TimeTableDepartment query = new TimeTableDepartment();
+        timeTableDepartment.setMajorId(timeTableDepartment.getMajorId().split(",")[0]);
         query.setTimeTableId(timeTableDepartment.getTimeTableId());
         List<TimeTableDepartment> timeTableDepartmentList = timeTableDepartmentService.getTimeTableDepartmentList(query);
         Classroom classroom = classroomService.getClassroomById(timeTableDepartment.getClassRom());

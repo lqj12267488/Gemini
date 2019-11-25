@@ -571,6 +571,7 @@ public class RepairController {
     @RequestMapping("/repair/saveContent")
     public Message saveContent(Repair repair) {
         List<Repair> re = repairService.getRepairExecute(repair.getRepairID());
+        repairService.YesRepair(repair, "1");
         repair.setCreator(CommonUtil.getPersonId());
         if (re.size() == 1) {//如果是最后一个人确认维修。
             repairService.YesRepair(repair, "1");//任务状态置为已完成，表示所有人都完成

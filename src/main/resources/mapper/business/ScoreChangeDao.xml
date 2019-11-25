@@ -319,7 +319,7 @@
         from T_JW_TEACHINGTASK t
         where t.course_id = #{course}
           and t.class_info = #{classes}
-          and t.SEMESTER = #{termShow}
+          and t.SEMESTER = #{term}
     </select>
     <select id="getHandleById" parameterType="java.lang.String" resultType="com.goisan.workflow.bean.Handle">
         SELECT to_char(handle_time, 'yyyy-mm-dd') handleTime,
