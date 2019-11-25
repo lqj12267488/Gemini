@@ -60,10 +60,15 @@
                                 <ul id="makeTree" class="ztree" checked></ul>
                             </div>
                         </div>
-                        <div class="col-md-9">
-                            <input id="makeClassName" style="height: 12%;"
+                        <%--<div class="col-md-9">
+                            <input type="textarea" id="makeClassName" style="height: 12%;"
                                    onclick="showMenuMake()" value="${stuArcadEdit.studentNames}"/>
                             <input id="honorMember" hidden placeholder="最多选择80人" autocomplete="off" />
+                        </div>--%>
+                        <div class="col-md-9">
+                            <textarea type="textarea" id="makeClassName" onclick="showMenuMake()"
+                                       style="height: 12%;">${stuArcadEdit.studentNames}</textarea>
+                            <textarea id="honorMember" hidden placeholder="最多选择80人" autocomplete="off" />
                         </div>
                 </div>
             </div>
@@ -164,8 +169,9 @@
                 }
             }
         })
-    })
 
+
+    })
 
     function arcadProvinceChange() {
 
@@ -270,8 +276,12 @@
                 nodes.push(treeNode[i].id);
             }
         }
+
         return nodes.join(",");
     }
+
+
+
 </script>
 
 <style type="text/css">
