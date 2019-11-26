@@ -89,12 +89,12 @@
                         <button id="batchClear" type="button" class="btn btn-default btn-clean"
                                 onclick="batchDel()">清除
                         </button>
-                        <button type="button" class="btn btn-default btn-clean" onclick="toCheckedClass(2,3)">
+                        <%--<button type="button" class="btn btn-default btn-clean" onclick="toCheckedClass(2,3)">
                             班级期末补考情况表
-                        </button>
-                        <button type="button" class="btn btn-default btn-clean" onclick="toCheckedClass(2,4)">
+                        </button>--%>
+                       <%-- <button type="button" class="btn btn-default btn-clean" onclick="toCheckedClass(2,4)">
                             期末补考不合格情况表
-                        </button>
+                        </button>--%>
                         <button type="button" class="btn btn-default btn-clean" onclick="toCheckedClass(2,5)">
                             期末补考所有情况表
                         </button>
