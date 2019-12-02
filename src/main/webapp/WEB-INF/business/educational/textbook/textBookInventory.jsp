@@ -165,7 +165,7 @@
         });
         if (ids == "") {
             swal({
-                title: "请选择要导出的学生！",
+                title: "请选择要导出的教材！",
                 type: "error"
             })
         } else {
