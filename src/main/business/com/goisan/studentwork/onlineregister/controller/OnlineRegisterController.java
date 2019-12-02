@@ -84,6 +84,7 @@ public class OnlineRegisterController {
         }else if (onlineRegister.getRegisterType().equals("2")){
             onlineRegister.setMajorCode("620201_05");
         }
+        onlineRegister.setGraduationDate(onlineRegister.getGraduationDate().split(",")[1]);
         onlineRegisterService.saveOnlineRegister(onlineRegister, img, idcardImg, examinationImg, scoreImg, hukouImg, graduatedImg);
         return new Message(0, "添加成功！", null);
     }
