@@ -1626,7 +1626,7 @@ public class StudentController {
                 error++;
             }
         }
-        return error>0?new Message(1, "共导入" + count + "条", "success"):new Message(1, "共导入" + count + "条 "+e.toString()+"导入失败", "success");
+        return error==0?new Message(1, "共导入" + count + "条", "success"):new Message(1, "共导入" + count + "条 "+e.toString()+"导入失败", "success");
     }
 
     @RequestMapping("/student/toImportStudent")
@@ -1682,7 +1682,8 @@ public class StudentController {
                 + "&nbsp;<span class=\"icon-arrow-right\"></span>&nbsp;"
                 + classBean.getClassName();
         Student student = new Student();
-        student.setName(loginUser.getName());
+//        student.setName(loginUser.getName());
+        student.setName(studentService.getStudentById(loginUser.getPersonId()).getName());
         student.setClassShow(name);
         return student;
     }
