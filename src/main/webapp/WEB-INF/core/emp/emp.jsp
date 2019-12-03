@@ -106,8 +106,8 @@
                 $("div.toolbar").html('');
                 $("div.toolbar").html('<button class="btn btn-info btn-clean" onclick="addEmp()">新增</button>&ensp;' +
                     '<a class="btn btn-info btn-clean" href="<%=request.getContextPath()%>/exportEmp?deptId=' + deptId + '">导出</a>&ensp;' +
-                    '<button class="btn btn-info btn-clean" onclick="showEmpDialog()" ">导入</button>'+
-                    '<button class="btn btn-info btn-clean" onclick="allot()">批量授权</button>&ensp;');
+                    '<button class="btn btn-info btn-clean" onclick="showEmpDialog()" ">导入</button>');
+                    // '<button class="btn btn-info btn-clean" onclick="allot()">批量授权</button>&ensp;');
             }
         }
     };
