@@ -44,20 +44,28 @@ public class StuArcadServiceImpl implements StuArcadService {
         query.setArcadCounty(stuArcad.getArcadCounty());
         query.setArcadDetail(stuArcad.getArcadDetail());
         Arcad arcad = arcadDao.checkArcad(query);
+
+
         if (null==arcad){
             return new Message(1,"新增失败，档案地址错误",null);
         }
-       /* for (String studentId: stuArray) {
+       for (String studentId: stuArray) {
 //            检查该学生是否已存在
             stuArcad.setStudentId(studentId);
             List<StuArcad> stuArcads = stuArcadDao.checkStudent(stuArcad);
             if (stuArcads.size()>0){
-                return new Message(1,"新增失败，该学生已存在",null);
+                StringBuffer sb = new StringBuffer();
+                for (StuArcad sa:stuArcads) {
+                    sb.append(sa.getStudentName());
+                    sb.append(" ");
+                }
+                return new Message(1,"新增失败,"+sb.toString()+"学生已存在",null);
             }
-        }*/
+        }
+        stuArcadDao.delStuArcadByArcadId1(arcad.getArcadId());
         for (String studentId: stuArray){
             stuArcad.setStudentId(studentId);
-            stuArcadDao.delStuArcadByArcadId(stuArcad);
+//            stuArcadDao.delStuArcadByArcadId(stuArcad);
             stuArcad.setArcadId(arcad.getArcadId());
             stuArcad.setCreator(CommonUtil.getPersonId());
             stuArcad.setCreateDept(CommonUtil.getDefaultDept());

@@ -37,7 +37,7 @@
     </insert>
 
     <select id="checkStudent" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad" resultType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
-        select * from T_XG_STU_ARCHIVESADDR where STUDENT_ID = #{studentId} and valid_flag = '1'
+        select t.*,FUNC_GET_TABLEVALUE(t.student_id, 'T_XG_STUDENT', 'STUDENT_ID', 'NAME')studentName  from T_XG_STU_ARCHIVESADDR t where STUDENT_ID = #{studentId} and valid_flag = '1'
     </select>
 
     <delete id="delStuArcadByArcadId" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
@@ -45,6 +45,10 @@
           where t.arcad_id=#{arcadId} and t.STUDENT_ID = #{studentId}
     </delete>
 
+
+    <delete id="delStuArcadByArcadId1" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
+          delete from T_XG_STU_ARCHIVESADDR t  where t.arcad_id=#{arcadId}
+    </delete>
 
     <update id="updStuArcadById" parameterType="com.goisan.studentwork.graduatearchivesaddress.bean.StuArcad">
         update T_XG_STU_ARCHIVESADDR t set t.arcad_id=#{arcadId},changer=#{changer},change_time=sysdate,change_dept=#{changeDept}
