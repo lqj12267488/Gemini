@@ -78,23 +78,23 @@
             <div class="col-md-9" style="vertical-align:middle;text-align:center; ">
                 <div id="itemNameSelect"></div>
             </div>
-            <div class="col-md-3 tar" style="background:#d0d0d0;height:25px;vertical-align:middle;">
+            <div class="col-md-3 tar">
                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>联系人电话
             </div>
-            <div class="col-md-9">
-                <input id="contactNumber" name="contactNumber"/>
+            <div>
+                <input id="contactNumber" name="contactNumber" type="text"/>
             </div>
             <div class="col-md-3 tar">
                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>故障描述
             </div>
-            <div class="col-md-9">
-                <input id="faultDescription" name="faultDescription"/>
+            <div>
+                <input id="faultDescription" name="faultDescription" type="text"/>
             </div>
             <div class="col-md-3 tar">
                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>维修地址
             </div>
-            <div class="col-md-9">
-                <input id="repairAddress" name="repairAddress"/>
+            <div>
+                <input id="repairAddress" name="repairAddress" type="text"/>
             </div>
 <%--            <div class="col-md-3 tar">
                 &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>资产编号

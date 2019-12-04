@@ -77,6 +77,11 @@ public class RepairAppController {
             //维修员
             workFlow =  repairService.RepairActionInfoList(personId);
         }
+        for (Repair repair1 : workFlow) {
+            if (repair1.getFeedback()==null){
+                repair1.setFeedbackFlag("未反馈");
+            }
+        }
 
         return getJsonTaskList(workFlow,page);
     }
