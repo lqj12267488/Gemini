@@ -266,7 +266,7 @@
         FUNC_GET_DEPTNAME(t.DEPT) dept,
         t.DEPT,
         t.ITEM_NAME itemName,
-        --func_get_userdicvalue(ITEM_NAME,'BXWPXX') itemNameShow,
+
         t.REPAIR_ADDRESS,
         t.FAULT_DESCRIPTION,
         t.CONTACT_NUMBER,
@@ -292,7 +292,7 @@
         FROM
         T_ZW_REPAIR t
         WHERE 1 = 1
-        AND t.REQUEST_FLAG !='0' and t.REQUEST_FLAG !='4'
+        AND t.REQUEST_FLAG ='1'
         AND t.create_dept LIKE FUNC_GET_RANGE(#{createDept},#{level})
         ORDER BY t.create_time DESC
     </select>
