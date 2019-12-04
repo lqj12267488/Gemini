@@ -3,6 +3,7 @@ package com.goisan.logistics.repair.bean;
 import com.goisan.system.bean.BaseBean;
 
 import java.util.Date;
+import java.util.List;
 
 public class Repair  extends BaseBean {
     private String id;
@@ -52,8 +53,16 @@ public class Repair  extends BaseBean {
     private String PersonIdShow; //维修人
     private String creatorName;
     private String url;//附件url
-
+    private List<String> urlList;
     private Date confirmTime1 ;
+
+    public List<String> getUrlList() {
+        return urlList;
+    }
+
+    public void setUrlList(List<String> urlList) {
+        this.urlList = urlList;
+    }
 
     public String getName() {
         return name;

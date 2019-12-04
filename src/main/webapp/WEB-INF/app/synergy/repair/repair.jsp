@@ -141,6 +141,15 @@
                             附件
                         </div>
                     </div>
+
+                <div class="col-md-3 tar">
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="iconBtx">*</span>附件上传
+                </div>
+                <div class="col-md-9">
+                    <form id="form" enctype="multipart/form-data" method="post">
+                        <input id="file1" name="file" type="file" multiple/>
+                    </form>
+                </div>
                     <div style="text-align: center" >
                     <center>
                         <button class="mui-btn mui-btn-primary" id="submit" style="width:80%; display: block; "

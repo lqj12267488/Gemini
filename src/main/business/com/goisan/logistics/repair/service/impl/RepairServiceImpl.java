@@ -308,7 +308,7 @@ public class RepairServiceImpl implements RepairService {
     }
 
     @Override
-    public Files selectUploadFiles(String id) {
+    public List<Files> selectUploadFiles(String id) {
         return repairDao.selectUploadFiles(id);
     }
 

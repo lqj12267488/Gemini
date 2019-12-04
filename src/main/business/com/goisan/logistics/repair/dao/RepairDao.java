@@ -106,7 +106,7 @@ public interface RepairDao {
 
     void repairDisMan(Repair repair);
 
-    Files selectUploadFiles(String id);
+    List<Files> selectUploadFiles(String id);
 
     Repair getRepairById1(String id);
 

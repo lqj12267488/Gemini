@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -304,7 +305,14 @@ public class RepairAppController {
     @RequestMapping("/repair/repair")
     public ModelAndView repair(String id, String flag) {
         ModelAndView mv = new ModelAndView("/app/synergy/repair/repair");
-        Repair repair = repairService.getRepairById(id);
+        List<Files> files =  repairService.selectUploadFiles(id);
+        Repair repair = null;
+        repair = repairService.getRepairById1(id);
+        ArrayList<String> list = new ArrayList<>();
+        for (Files file : files) {
+            list.add(file.getFileUrl());
+        }
+        repair.setUrlList(list);
         String[] name_id = repair.getItemName().split(",");
         StringBuilder newname = new StringBuilder();
         for (String a : name_id) {
@@ -331,13 +339,19 @@ public class RepairAppController {
     public ModelAndView repairFeedback(String id,String repairmanPersonID){
         ModelAndView modelAndView = new ModelAndView("/app/synergy/repair/repairFeedback");
         //查询是否上传了附件
-        Files files =  repairService.selectUploadFiles(id);
+        List<Files> files =  repairService.selectUploadFiles(id);
         Repair repair = null;
-        if (files==null){
+        /*if (files==null || files.size()==0){
              repair = repairService.getRepairById1(id);
         }else{
             repair = repairService.getRepairById(id);
+        }*/
+        repair = repairService.getRepairById1(id);
+        ArrayList<String> list = new ArrayList<>();
+        for (Files file : files) {
+            list.add(file.getFileUrl());
         }
+        repair.setUrlList(list);
         String[] name_id = repair.getItemName().split(",");
         StringBuilder newname = new StringBuilder();
         for (String a : name_id) {
