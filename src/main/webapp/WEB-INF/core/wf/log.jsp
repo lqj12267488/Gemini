@@ -18,7 +18,7 @@
         <button onclick="back()" class="btn btn-default btn-clean">返回</button>
         <c:if test="${2== states}">
             <button onclick="doPrint()" class="btn btn-default btn-clean" id="dayin">打印</button>
-            <button onclick="doExport()" class="btn btn-default btn-clean" id="daochu" hidden="hidden">导出</button>
+            <button onclick="doExport()" class="btn btn-default btn-clean" id="daochu">导出</button>
         </c:if>
         <div id="business"></div>
         <div id="file" class="form-row">
@@ -70,11 +70,12 @@
 <input id="tableName" hidden value="${tableName}">
 <script>
     $(document).ready(function () {
+        $("#daochu").hide();
         if ("T_XG_GRANT_MANAGEMENT_WF" == '${tableName}' || "T_DT_REPORT_MANAGEMENT" == '${tableName}' || "T_BG_DECLARE_WF" == '${tableName}' || "T_BG_DECLARE_APPROVE_WF" == '${tableName}') {
             $("#dayin").hide();
         }
         if ("T_BG_DECLARE_WF" == '${tableName}' || "T_BG_DECLARE_APPROVE_WF" == '${tableName}') {
-            $("#daochu").show();
+            $("#daochu").show()
         }
         $("#div1").hide();
         $("#business").load('${url}')
