@@ -19,7 +19,7 @@
         <druid.version>1.0.28</druid.version>
         <jackson-databind.version>2.8.7</jackson-databind.version>
         <mockito.version>1.10.19</mockito.version>
-        <shiro.version>1.4.0</shiro.version>
+        <shiro.version>1.7.1</shiro.version>
     </properties>
     <dependencies>
         <dependency>
